@@ -2,53 +2,81 @@
 
 namespace App\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Service\TenantResolver;
+use App\Service\TenantContext;
 
-class DefaultController extends AbstractTenantController
+class DefaultController extends AbstractController
 {
-    public function index(Request $request, ?Tenant $tenant = null): Response
+    private TenantResolver $tenantResolver;
+    private TenantContext $tenantContext;
+
+    public function __construct(TenantResolver $tenantResolver, TenantContext $tenantContext)
     {
-        return $this->renderWithTenant('dashboard/index.html.twig', [
-            'controller_name' => 'DefaultController',
-            'message' => 'Controlador genérico - No hay controlador personalizado para este tenant',
-            'available_actions' => ['index', 'dashboard', 'pacientes', 'citas']
+        $this->tenantResolver = $tenantResolver;
+        $this->tenantContext = $tenantContext;
+    }
+
+    public function index(Request $request): Response
+    {
+        // Obtener información del tenant actual
+        $tenantData = $this->tenantContext->getCurrentTenant();
+        
+        if (!$tenantData) {
+            // Si no hay tenant, redirigir al login
+            return $this->redirectToRoute('app_login');
+        }
+
+        // Redirigir al dashboard del tenant
+        return $this->redirectToRoute('app_dashboard', ['controller' => 'dashboard']);
+    }
+
+    public function handleDynamicRequest(Request $request): Response
+    {
+        $controller = $request->attributes->get('controller', 'dashboard');
+        $action = $request->attributes->get('action', 'index');
+        
+        // Obtener información del tenant actual
+        $tenantData = $this->tenantContext->getCurrentTenant();
+        
+        if (!$tenantData) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        // Intentar cargar controlador específico del tenant
+        $tenantController = $this->tryLoadTenantController($tenantData['subdomain'], $controller);
+        
+        if ($tenantController) {
+            return $this->forward($tenantController . '::' . $action, $request->query->all());
+        }
+
+        // Fallback a dashboard por defecto
+        return $this->render('dashboard/default.html.twig', [
+            'tenant_name' => $tenantData['name'] ?? 'Sistema Médico',
+            'subdomain' => $tenantData['subdomain'] ?? '',
+            'controller' => $controller,
+            'action' => $action
         ]);
     }
-    
-    public function dashboard(Request $request, ?Tenant $tenant = null): Response
+
+    private function tryLoadTenantController(string $subdomain, string $controller): ?string
     {
-        return $this->renderWithTenant('dashboard/index.html.twig', [
-            'controller_name' => 'DefaultController',
-            'action' => 'dashboard',
-            'message' => 'Dashboard genérico'
-        ]);
-    }
-    
-    public function pacientes(Request $request, ?Tenant $tenant = null): Response
-    {
-        return $this->renderWithTenant('pacientes/index.html.twig', [
-            'controller_name' => 'DefaultController',
-            'action' => 'pacientes',
-            'message' => 'Módulo de pacientes genérico',
-            'pacientes' => []
-        ]);
-    }
-    
-    public function citas(Request $request, ?Tenant $tenant = null): Response
-    {
-        return $this->renderWithTenant('citas/index.html.twig', [
-            'controller_name' => 'DefaultController',
-            'action' => 'citas',
-            'message' => 'Módulo de citas genérico',
-            'citas' => []
-        ]);
-    }
-    
-    public function notFound(Request $request, ?Tenant $tenant = null): Response
-    {
-        return $this->renderWithTenant('errors/404.html.twig', [
-            'message' => 'Acción no encontrada en el controlador genérico'
-        ], 404);
+        // Intentar cargar controlador específico por tenant
+        $controllerClass = 'App\\Controller\\Dashboard\\' . ucfirst($subdomain) . '\\DefaultController';
+        
+        if (class_exists($controllerClass)) {
+            return $controllerClass;
+        }
+
+        // Fallback a controlador por defecto
+        $defaultControllerClass = 'App\\Controller\\Dashboard\\Default\\DefaultController';
+        
+        if (class_exists($defaultControllerClass)) {
+            return $defaultControllerClass;
+        }
+
+        return null;
     }
 }

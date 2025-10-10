@@ -31,13 +31,13 @@ app_reset_password:
 # Ruta principal del sistema
 app_root:
     path: /
-    controller: App\Controller\TenantController::handleRootRequest
+    controller: App\Controller\DefaultController::index
     methods: [GET]
 
 # Rutas dinámicas para controladores específicos
 app_dynamic:
     path: /{controller}/{action}
-    controller: App\Controller\TenantController::handleDynamicRequest
+    controller: App\Controller\DefaultController::handleDynamicRequest
     requirements:
         controller: '[a-zA-Z0-9_-]+'
         action: '[a-zA-Z0-9_-]+'
@@ -48,7 +48,7 @@ app_dynamic:
 # Ruta específica para dashboard sin action
 app_dashboard:
     path: /{controller}
-    controller: App\Controller\TenantController::handleDynamicRequest
+    controller: App\Controller\DefaultController::handleDynamicRequest
     requirements:
         controller: '[a-zA-Z0-9_-]+'
     defaults:
