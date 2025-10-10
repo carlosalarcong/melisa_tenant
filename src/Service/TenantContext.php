@@ -2,50 +2,71 @@
 
 namespace App\Service;
 
-use App\Entity\Tenant;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class TenantContext
 {
-    private ?Tenant $currentTenant = null;
+    private ?array $currentTenant = null;
     private ?string $currentSubdomain = null;
+    private RequestStack $requestStack;
     
-    public function setCurrentTenant(?Tenant $tenant): void
+    public function __construct(RequestStack $requestStack)
+    {
+        $this->requestStack = $requestStack;
+    }
+    
+    public function setCurrentTenant(?array $tenant): void
     {
         $this->currentTenant = $tenant;
-        $this->currentSubdomain = $tenant?->getSubdomain();
+        $this->currentSubdomain = $tenant['subdomain'] ?? null;
     }
     
-    public function getCurrentTenant(): ?Tenant
+    public function getCurrentTenant(): ?array
     {
-        return $this->currentTenant;
-    }
-    
-    public function getCurrentSubdomain(): ?string
-    {
-        return $this->currentSubdomain;
-    }
-    
-    public function hasCurrentTenant(): bool
-    {
-        return $this->currentTenant !== null;
-    }
-    
-    public function extractSubdomain(string $host): ?string
-    {
-        // Extraer subdominio de URLs como: clinica1.melisa.com, hospital1.melisa
-        $parts = explode('.', $host);
+        if ($this->currentTenant) {
+            return $this->currentTenant;
+        }
         
-        // Si tiene al menos 2 partes (subdomain.domain)
-        if (count($parts) >= 2) {
-            return $parts[0];
+        // Intentar obtener de la sesión
+        $request = $this->requestStack->getCurrentRequest();
+        if ($request && $request->hasSession()) {
+            $session = $request->getSession();
+            $tenantData = $session->get('tenant');
+            
+            if ($tenantData && is_array($tenantData)) {
+                $this->setCurrentTenant($tenantData);
+                return $this->currentTenant;
+            }
         }
         
         return null;
     }
     
-    public function isValidTenantSubdomain(string $subdomain): bool
+    public function getCurrentSubdomain(): ?string
     {
-        // Validar que el subdominio tenga formato válido
-        return preg_match('/^[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9]$/', $subdomain);
+        if ($this->currentSubdomain) {
+            return $this->currentSubdomain;
+        }
+        
+        $tenantData = $this->getCurrentTenant();
+        return $tenantData['subdomain'] ?? null;
+    }
+    
+    public function hasCurrentTenant(): bool
+    {
+        return $this->getCurrentTenant() !== null;
+    }
+    
+    public function getCurrentTenantName(): ?string
+    {
+        $tenantData = $this->getCurrentTenant();
+        return $tenantData['name'] ?? null;
+    }
+    
+    public function getCurrentDatabaseName(): ?string
+    {
+        $tenantData = $this->getCurrentTenant();
+        return $tenantData['database_name'] ?? null;
     }
 }
