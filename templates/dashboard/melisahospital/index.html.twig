@@ -1,0 +1,230 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard - Hospital Central{% endblock %}
+
+{% block dashboard_indicator %}🏥 Hospital Central (Personalizado){% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block bg-dark sidebar position-fixed">
+            <div class="position-sticky pt-3">
+                <div class="text-center mb-4">
+                    <h5 class="text-white">🏥 Hospital Central</h5>
+                    <small class="text-muted">{{ subdomain }}.melisaupgrade.prod</small>
+                </div>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active text-white" href="/dashboard">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/pacientes">
+                            <i class="fas fa-users"></i> Pacientes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/emergencias">
+                            <i class="fas fa-ambulance"></i> Emergencias
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/quirofanos">
+                            <i class="fas fa-procedures"></i> Quirófanos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/laboratorio">
+                            <i class="fas fa-vial"></i> Laboratorio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/farmacia">
+                            <i class="fas fa-pills"></i> Farmacia
+                        </a>
+                    </li>
+                </ul>
+                
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Dashboard - Hospital Central</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <button type="button" class="btn btn-sm btn-danger">
+                            <i class="fas fa-exclamation-triangle"></i> Emergencias
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-download"></i> Reportes
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Cards -->
+            <div class="row">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-danger shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                        Emergencias Activas</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">3</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-ambulance fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Pacientes Internados</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">147</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-bed fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                        Cirugías Programadas</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-procedures fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                        Ocupación UCI</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">85%</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-heart-pulse fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hospital specific content -->
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 bg-danger text-white">
+                            <h6 class="m-0 font-weight-bold">🚨 Centro de Emergencias</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Prioridad</th>
+                                            <th>Paciente</th>
+                                            <th>Sintomas</th>
+                                            <th>Tiempo</th>
+                                            <th>Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="badge bg-danger">CRÍTICO</span></td>
+                                            <td>Paciente Anónimo</td>
+                                            <td>Trauma múltiple</td>
+                                            <td>5 min</td>
+                                            <td><span class="badge bg-warning">En atención</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge bg-warning">URGENTE</span></td>
+                                            <td>Carlos Méndez</td>
+                                            <td>Dolor torácico</td>
+                                            <td>15 min</td>
+                                            <td><span class="badge bg-info">Esperando</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge bg-success">LEVE</span></td>
+                                            <td>Ana Flores</td>
+                                            <td>Fiebre alta</td>
+                                            <td>30 min</td>
+                                            <td><span class="badge bg-info">Esperando</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Estado Quirófanos</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <span>Quirófano 1</span>
+                                    <span class="badge bg-danger">OCUPADO</span>
+                                </div>
+                                <small class="text-muted">Cirugía cardiovascular - Dr. Ramírez</small>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <span>Quirófano 2</span>
+                                    <span class="badge bg-success">DISPONIBLE</span>
+                                </div>
+                                <small class="text-muted">Listo para usar</small>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <span>Quirófano 3</span>
+                                    <span class="badge bg-warning">PREPARACIÓN</span>
+                                </div>
+                                <small class="text-muted">Cirugía programada 14:00</small>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <span>Quirófano 4</span>
+                                    <span class="badge bg-danger">OCUPADO</span>
+                                </div>
+                                <small class="text-muted">Cirugía ortopédica - Dr. Silva</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,5 +1,56 @@
-controllers:
-    resource:
-        path: ../src/Controller/
-        namespace: App\Controller
-    type: attribute
+# Rutas de autenticación
+app_login:
+    path: /login
+    controller: App\Controller\LoginController::login
+    methods: [GET, POST]
+
+app_logout:
+    path: /logout
+    controller: App\Controller\LoginController::logout
+    methods: [GET]
+
+# API para obtener empresas disponibles
+app_empresas_disponibles:
+    path: /api/empresas-disponibles
+    controller: App\Controller\LoginController::getEmpresasDisponibles
+    methods: [GET]
+
+# Rutas de recuperación de contraseña
+app_forgot_password:
+    path: /forgot-password
+    controller: App\Controller\PasswordResetController::forgotPassword
+    methods: [GET, POST]
+
+app_reset_password:
+    path: /reset-password/{token}
+    controller: App\Controller\PasswordResetController::resetPassword
+    requirements:
+        token: '[a-f0-9]{64}'
+    methods: [GET, POST]
+
+# Ruta principal del sistema
+app_root:
+    path: /
+    controller: App\Controller\TenantController::handleRootRequest
+    methods: [GET]
+
+# Rutas dinámicas para controladores específicos
+app_dynamic:
+    path: /{controller}/{action}
+    controller: App\Controller\TenantController::handleDynamicRequest
+    requirements:
+        controller: '[a-zA-Z0-9_-]+'
+        action: '[a-zA-Z0-9_-]+'
+    defaults:
+        action: 'index'
+    methods: [GET, POST]
+
+# Ruta específica para dashboard sin action
+app_dashboard:
+    path: /{controller}
+    controller: App\Controller\TenantController::handleDynamicRequest
+    requirements:
+        controller: '[a-zA-Z0-9_-]+'
+    defaults:
+        action: 'index'
+    methods: [GET, POST]

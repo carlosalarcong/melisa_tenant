@@ -1,17 +1,283 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}Melisa Healthcare System{% endblock %}</title>
+        
+        <!-- Bootstrap 5 CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        
+        <!-- Custom Styles -->
+        <style>
+            /* Navbar superior */
+            .navbar-top {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1030;
+                background-color: #fff;
+                border-bottom: 1px solid #e3e6f0;
+                height: 60px;
+            }
+            
+            .sidebar {
+                min-height: 100vh;
+                box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+                margin-top: 60px; /* Espacio para navbar superior */
+            }
+            
+            .sidebar .nav-link {
+                color: #333;
+            }
+            
+            .sidebar .nav-link:hover {
+                color: #007bff;
+            }
+            
+            .sidebar .nav-link.active {
+                color: #007bff;
+                font-weight: bold;
+                background-color: rgba(0, 123, 255, 0.1);
+            }
+            
+            /* Sidebar fijo */
+            .sidebar.position-fixed {
+                top: 60px; /* Debajo de navbar */
+                bottom: 0;
+                left: 0;
+                z-index: 100;
+                padding: 0;
+            }
+            
+            /* Offset para contenido principal cuando sidebar es fijo */
+            main.col-md-9.ms-sm-auto.col-lg-10 {
+                margin-left: 16.66667%; /* Para offset de sidebar */
+                margin-top: 60px; /* Para navbar superior */
+            }
+            
+            @media (max-width: 767.98px) {
+                main.col-md-9.ms-sm-auto.col-lg-10 {
+                    margin-left: 0;
+                    margin-top: 60px;
+                }
+                .sidebar.position-fixed {
+                    position: relative !important;
+                    margin-top: 0;
+                }
+                .navbar-top {
+                    position: fixed;
+                }
+            }
+            
+            main {
+                padding-top: 20px;
+            }
+            
+            .card {
+                box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+                border: 1px solid rgba(0, 0, 0, 0.125);
+            }
+            
+            .border-left-primary {
+                border-left: .25rem solid #007bff!important;
+            }
+            
+            .border-left-success {
+                border-left: .25rem solid #28a745!important;
+            }
+            
+            .border-left-info {
+                border-left: .25rem solid #17a2b8!important;
+            }
+            
+            .border-left-warning {
+                border-left: .25rem solid #ffc107!important;
+            }
+            
+            .border-left-danger {
+                border-left: .25rem solid #dc3545!important;
+            }
+            
+            .bg-gradient-primary {
+                background: linear-gradient(180deg, #007bff 10%, #0056b3 100%);
+            }
+            
+            .text-xs {
+                font-size: .75rem;
+            }
+            
+            .font-weight-bold {
+                font-weight: 700;
+            }
+            
+            .text-gray-800 {
+                color: #5a5c69!important;
+            }
+            
+            .text-gray-300 {
+                color: #dddfeb!important;
+            }
+            
+            /* Timeline styles */
+            .timeline {
+                position: relative;
+                padding: 0;
+            }
+            
+            .timeline-item {
+                position: relative;
+                padding-left: 30px;
+                margin-bottom: 20px;
+            }
+            
+            .timeline-marker {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+            }
+            
+            .timeline-content {
+                padding-left: 10px;
+            }
+            
+            .timeline-title {
+                font-size: 14px;
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+            
+            .timeline-text {
+                font-size: 13px;
+                margin-bottom: 3px;
+            }
+            
+            .icon-circle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 2.5rem;
+                width: 2.5rem;
+                border-radius: 100%;
+                font-size: 1rem;
+            }
+            
+            /* Sidebar específicos */
+            .sidebar.bg-dark .nav-link {
+                color: #fff;
+            }
+            
+            .sidebar.bg-dark .nav-link:hover {
+                color: #007bff;
+            }
+            
+            .sidebar.bg-dark .nav-link.active {
+                background-color: rgba(255, 255, 255, 0.1);
+                color: #fff;
+            }
+            
+            .sidebar.bg-light .nav-link {
+                color: #333;
+            }
+            
+            .sidebar.bg-light .nav-link:hover {
+                color: #28a745;
+            }
+            
+            .sidebar.bg-light .nav-link.active {
+                background-color: rgba(40, 167, 69, 0.1);
+                color: #28a745;
+                border-right: 3px solid #28a745;
+            }
+            
+            .sidebar.bg-gradient-primary .nav-link {
+                color: #fff;
+            }
+            
+            .sidebar.bg-gradient-primary .nav-link:hover {
+                color: #cce7ff;
+            }
+            
+            .sidebar.bg-gradient-primary .nav-link.active {
+                background-color: rgba(255, 255, 255, 0.1);
+                color: #fff;
+            }
+            
+            /* Estilos para navbar superior */
+            .navbar-top .dropdown-toggle::after {
+                display: none;
+            }
+            
+            .user-avatar {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background-color: #007bff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-weight: bold;
+                font-size: 14px;
+            }
+        </style>
+        
         {% block stylesheets %}
-        {% endblock %}
-
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
     </head>
     <body>
+        {% block navbar %}
+        <!-- Navbar Superior -->
+        <nav class="navbar navbar-expand-lg navbar-light navbar-top px-4">
+            <div class="container-fluid">
+                <!-- Indicador del tipo de dashboard -->
+                <div class="d-flex align-items-center">
+                    <span class="navbar-text fw-bold">
+                        {% block dashboard_indicator %}Dashboard{% endblock %}
+                    </span>
+                </div>
+                
+                <!-- Perfil del usuario -->
+                <div class="dropdown">
+                    <button class="btn btn-link d-flex align-items-center text-decoration-none dropdown-toggle" 
+                            type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="user-avatar me-2">
+                            {% set first_letter = logged_user.first_name|default('U')|first|upper %}
+                            {{ first_letter }}
+                        </div>
+                        <div class="d-none d-md-block text-start">
+                            <div class="fw-bold text-dark">{{ logged_user.first_name|default('Usuario') }} {{ logged_user.last_name|default('') }}</div>
+                            <small class="text-muted">{{ logged_user.role|default('user')|title }}</small>
+                        </div>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                        <li><a class="dropdown-item" href="#" onclick="return false;">
+                            <i class="fas fa-user me-2"></i> Ver Perfil
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="/logout">
+                            <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        {% endblock %}
+        
         {% block body %}{% endblock %}
+        
+        <!-- Bootstrap 5 JS Bundle -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        
+        {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% endblock %}
     </body>
 </html>
