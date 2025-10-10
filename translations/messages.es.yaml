@@ -1,0 +1,263 @@
+# =============================================================================
+# TRADUCCIONES ESPAÑOL - MELISA TENANT
+# Sistema Multi-Tenant de Gestión Médica
+# =============================================================================
+
+# NAVEGACIÓN Y MENÚS
+nav:
+  dashboard: 'Tablero'
+  patients: 'Pacientes'
+  appointments: 'Citas'
+  medical_records: 'Historiales Médicos'
+  reports: 'Reportes'
+  settings: 'Configuración'
+  logout: 'Cerrar Sesión'
+  profile: 'Perfil'
+  administration: 'Administración'
+
+# AUTENTICACIÓN
+auth:
+  login: 'Iniciar Sesión'
+  logout: 'Cerrar Sesión'
+  username: 'Usuario'
+  password: 'Contraseña'
+  remember_me: 'Recordarme'
+  forgot_password: 'Olvidé mi contraseña'
+  reset_password: 'Restablecer Contraseña'
+  new_password: 'Nueva Contraseña'
+  confirm_password: 'Confirmar Contraseña'
+  email: 'Correo Electrónico'
+  login_success: 'Sesión iniciada correctamente'
+  login_error: 'Usuario o contraseña incorrectos'
+  logout_success: 'Sesión cerrada correctamente'
+  access_denied: 'Acceso denegado'
+  session_expired: 'Su sesión ha expirado'
+  system_description: 'Sistema Multi-Tenant de Gestión Médica'
+  selected_company: 'Empresa Seleccionada'
+  subdomain: 'Subdominio'
+  show_hide_password: 'Mostrar/Ocultar contraseña'
+  show_password: 'Mostrar contraseña'
+  hide_password: 'Ocultar contraseña'
+  tenant_not_found: 'No se pudo determinar la empresa'
+  tenant_not_determined: 'No se pudo determinar la empresa desde la URL. Verifique el subdomain.'
+  user_not_found: 'Usuario no encontrado o inactivo en %tenant%'
+
+# TABLERO/DASHBOARD
+dashboard:
+  title: 'Tablero de Control'
+  welcome: 'Bienvenido'
+  today: 'Hoy'
+  this_week: 'Esta Semana'
+  this_month: 'Este Mes'
+  statistics: 'Estadísticas'
+  quick_actions: 'Acciones Rápidas'
+  recent_activity: 'Actividad Reciente'
+  upcoming_appointments: 'Próximas Citas'
+  total_patients: 'Total de Pacientes'
+  appointments_today: 'Citas Hoy'
+  pending_reports: 'Reportes Pendientes'
+
+# PACIENTES
+patients:
+  title: 'Gestión de Pacientes'
+  list: 'Lista de Pacientes'
+  add: 'Agregar Paciente'
+  edit: 'Editar Paciente'
+  view: 'Ver Paciente'
+  delete: 'Eliminar Paciente'
+  search: 'Buscar pacientes...'
+  first_name: 'Nombre'
+  last_name: 'Apellidos'
+  birth_date: 'Fecha de Nacimiento'
+  phone: 'Teléfono'
+  address: 'Dirección'
+  emergency_contact: 'Contacto de Emergencia'
+  medical_history: 'Historial Médico'
+  allergies: 'Alergias'
+  current_medications: 'Medicamentos Actuales'
+
+# CITAS MÉDICAS
+appointments:
+  title: 'Gestión de Citas'
+  schedule: 'Programar Cita'
+  reschedule: 'Reprogramar'
+  cancel: 'Cancelar'
+  confirm: 'Confirmar'
+  date: 'Fecha'
+  time: 'Hora'
+  duration: 'Duración'
+  doctor: 'Médico'
+  patient: 'Paciente'
+  reason: 'Motivo de Consulta'
+  status: 'Estado'
+  notes: 'Notas'
+  scheduled: 'Programada'
+  confirmed: 'Confirmada'
+  completed: 'Completada'
+  cancelled: 'Cancelada'
+  no_show: 'No se presentó'
+
+# HISTORIALES MÉDICOS
+medical_records:
+  title: 'Historiales Médicos'
+  create: 'Crear Registro'
+  view: 'Ver Historial'
+  edit: 'Editar Registro'
+  diagnosis: 'Diagnóstico'
+  treatment: 'Tratamiento'
+  prescription: 'Prescripción'
+  symptoms: 'Síntomas'
+  vital_signs: 'Signos Vitales'
+  blood_pressure: 'Presión Arterial'
+  heart_rate: 'Ritmo Cardíaco'
+  temperature: 'Temperatura'
+  weight: 'Peso'
+  height: 'Altura'
+  observations: 'Observaciones'
+  laboratory: 'Laboratorio'
+  pharmacy: 'Farmacia'
+  
+# HOSPITAL ESPECÍFICO
+hospital:
+  active_emergencies: 'Emergencias Activas'
+  inpatients: 'Pacientes Internados'
+  scheduled_surgeries: 'Cirugías Programadas'
+  icu_occupancy: 'Ocupación UCI'
+  emergency_center: 'Centro de Emergencias'
+  operating_rooms_status: 'Estado Quirófanos'
+  priority: 'Prioridad'
+  patient: 'Paciente'
+  symptoms: 'Síntomas'
+  time: 'Tiempo'
+  status: 'Estado'
+  critical: 'CRÍTICO'
+  urgent: 'URGENTE'
+  mild: 'LEVE'
+  occupied: 'OCUPADO'
+  available: 'DISPONIBLE'
+  preparation: 'PREPARACIÓN'
+  in_care: 'En atención'
+  waiting: 'Esperando'
+  ready_to_use: 'Listo para usar'
+  scheduled_surgery: 'Cirugía programada'
+  cardiovascular_surgery: 'Cirugía cardiovascular'
+  orthopedic_surgery: 'Cirugía ortopédica'
+  anonymous_patient: 'Paciente Anónimo'
+  multiple_trauma: 'Trauma múltiple'
+  chest_pain: 'Dolor torácico'
+  high_fever: 'Fiebre alta'
+
+# REPORTES
+reports:
+  title: 'Reportes y Estadísticas'
+  generate: 'Generar Reporte'
+  export: 'Exportar'
+  daily: 'Diario'
+  weekly: 'Semanal'
+  monthly: 'Mensual'
+  custom_range: 'Rango Personalizado'
+  patients_report: 'Reporte de Pacientes'
+  appointments_report: 'Reporte de Citas'
+  financial_report: 'Reporte Financiero'
+  from_date: 'Desde'
+  to_date: 'Hasta'
+
+# USUARIOS Y PERSONAL
+users:
+  title: 'Gestión de Personal'
+  add_user: 'Agregar Usuario'
+  edit_user: 'Editar Usuario'
+  full_name: 'Nombre Completo'
+  role: 'Rol'
+  active: 'Activo'
+  inactive: 'Inactivo'
+  last_login: 'Último Acceso'
+  permissions: 'Permisos'
+  
+# ROLES DEL SISTEMA
+roles:
+  admin: 'Administrador'
+  doctor: 'Médico'
+  nurse: 'Enfermera'
+  receptionist: 'Recepcionista'
+  technician: 'Técnico'
+
+# MENSAJES GENERALES
+messages:
+  success: 'Operación realizada exitosamente'
+  error: 'Ha ocurrido un error'
+  warning: 'Advertencia'
+  info: 'Información'
+  confirm_delete: '¿Está seguro de que desea eliminar este elemento?'
+  no_data: 'No hay datos disponibles'
+  loading: 'Cargando...'
+  save: 'Guardar'
+  cancel: 'Cancelar'
+  edit: 'Editar'
+  delete: 'Eliminar'
+  view: 'Ver'
+  search: 'Buscar'
+  filter: 'Filtrar'
+  clear: 'Limpiar'
+  refresh: 'Actualizar'
+  print: 'Imprimir'
+  export: 'Exportar'
+  import: 'Importar'
+
+# DÍAS DE LA SEMANA
+days:
+  monday: 'Lunes'
+  tuesday: 'Martes'
+  wednesday: 'Miércoles'
+  thursday: 'Jueves'
+  friday: 'Viernes'
+  saturday: 'Sábado'
+  sunday: 'Domingo'
+
+# MESES
+months:
+  january: 'Enero'
+  february: 'Febrero'
+  march: 'Marzo'
+  april: 'Abril'
+  may: 'Mayo'
+  june: 'Junio'
+  july: 'Julio'
+  august: 'Agosto'
+  september: 'Septiembre'
+  october: 'Octubre'
+  november: 'Noviembre'
+  december: 'Diciembre'
+
+# ESTABLECIMIENTOS ESPECÍFICOS
+establishments:
+  hospital: 'Hospital'
+  clinic: 'Clínica'
+  medical_center: 'Centro Médico'
+  emergency_room: 'Sala de Emergencias'
+  operating_room: 'Quirófano'
+  consultation_room: 'Sala de Consultas'
+
+# CONFIGURACIÓN
+settings:
+  title: 'Configuración'
+  general: 'General'
+  language: 'Idioma'
+  timezone: 'Zona Horaria'
+  theme: 'Tema'
+  notifications: 'Notificaciones'
+  security: 'Seguridad'
+  backup: 'Respaldo'
+  system: 'Sistema'
+
+# VALIDACIONES Y ERRORES
+validation:
+  required: 'Este campo es obligatorio'
+  email_invalid: 'Formato de correo electrónico inválido'
+  password_weak: 'La contraseña debe tener al menos 8 caracteres'
+  passwords_not_match: 'Las contraseñas no coinciden'
+  date_invalid: 'Fecha inválida'
+  phone_invalid: 'Número de teléfono inválido'
+  field_too_long: 'Este campo es demasiado largo'
+  field_too_short: 'Este campo es demasiado corto'
+  required_fields: 'Por favor complete todos los campos'

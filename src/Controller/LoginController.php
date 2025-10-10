@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Service\TenantResolver;
+use App\Service\LocalizationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,12 +15,17 @@ use Symfony\Component\Routing\Annotation\Route;
 class LoginController extends AbstractController
 {
     public function __construct(
-        private TenantResolver $tenantResolver
+        private TenantResolver $tenantResolver,
+        private LocalizationService $localizationService
     ) {}
 
     #[Route('/login', name: 'app_login', methods: ['GET', 'POST'])]
     public function login(Request $request, SessionInterface $session): Response
     {
+        // Establecer idioma desde request o configuración
+        $locale = $this->localizationService->getCurrentLocale();
+        $request->setLocale($locale);
+        
         if ($request->isMethod('POST')) {
             return $this->handleLogin($request, $session);
         }
@@ -31,7 +37,7 @@ class LoginController extends AbstractController
             'error' => null,
             'username' => '',
             'tenant' => $tenant,
-            'tenant_name' => $tenant ? $tenant['name'] : 'No se pudo determinar la empresa'
+            'tenant_name' => $tenant ? $tenant['name'] : $this->localizationService->trans('auth.tenant_not_found', [], 'messages')
         ]);
     }
 
@@ -44,10 +50,10 @@ class LoginController extends AbstractController
         // Validar datos básicos
         if (!$username || !$password) {
             return $this->render('login/form.html.twig', [
-                'error' => 'Por favor complete todos los campos',
+                'error' => $this->localizationService->trans('validation.required_fields', [], 'messages'),
                 'username' => $username,
                 'tenant' => null,
-                'tenant_name' => 'Error'
+                'tenant_name' => $this->localizationService->trans('messages.error', [], 'messages')
             ]);
         }
 
@@ -57,10 +63,10 @@ class LoginController extends AbstractController
             
             if (!$tenant) {
                 return $this->render('login/form.html.twig', [
-                    'error' => 'No se pudo determinar la empresa desde la URL. Verifique el subdomain.',
+                    'error' => $this->localizationService->trans('auth.tenant_not_determined', [], 'messages'),
                     'username' => $username,
                     'tenant' => null,
-                    'tenant_name' => 'Error de configuración'
+                    'tenant_name' => $this->localizationService->trans('messages.error', [], 'messages')
                 ]);
             }
 
@@ -79,7 +85,7 @@ class LoginController extends AbstractController
             
             if (!$user) {
                 return $this->render('login/form.html.twig', [
-                    'error' => 'Usuario no encontrado o inactivo en ' . $tenant['name'],
+                    'error' => $this->localizationService->trans('auth.user_not_found', ['%tenant%' => $tenant['name']], 'messages'),
                     'username' => $username,
                     'tenant' => $tenant,
                     'tenant_name' => $tenant['name']
@@ -89,7 +95,7 @@ class LoginController extends AbstractController
             // 4. Verificar contraseña
             if (!password_verify($password, $user['password'])) {
                 return $this->render('login/form.html.twig', [
-                    'error' => 'Contraseña incorrecta',
+                    'error' => $this->localizationService->trans('auth.login_error', [], 'messages'),
                     'username' => $username,
                     'tenant' => $tenant,
                     'tenant_name' => $tenant['name']
@@ -118,10 +124,10 @@ class LoginController extends AbstractController
 
         } catch (\Exception $e) {
             return $this->render('login/form.html.twig', [
-                'error' => 'Error del sistema: ' . $e->getMessage(),
+                'error' => $this->localizationService->trans('messages.error', [], 'messages') . ': ' . $e->getMessage(),
                 'username' => $username,
                 'tenant' => null,
-                'tenant_name' => 'Error de conexión'
+                'tenant_name' => $this->localizationService->trans('messages.error', [], 'messages')
             ]);
         }
     }

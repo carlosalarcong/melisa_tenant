@@ -28,6 +28,26 @@ app_reset_password:
         token: '[a-f0-9]{64}'
     methods: [GET, POST]
 
+# Rutas de idiomas/localización
+app_locale_change:
+    path: /locale/change/{locale}
+    controller: App\Controller\LocaleController::changeLocale
+    requirements:
+        locale: 'es|en'
+    methods: [GET, POST]
+
+app_locale_available:
+    path: /api/locale/available
+    controller: App\Controller\LocaleController::getAvailableLocales
+    methods: [GET]
+
+app_locale_translations:
+    path: /api/locale/translations/{domain}
+    controller: App\Controller\LocaleController::getTranslations
+    defaults:
+        domain: 'messages'
+    methods: [GET]
+
 # Ruta principal del sistema
 app_root:
     path: /

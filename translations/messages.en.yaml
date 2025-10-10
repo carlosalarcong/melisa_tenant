@@ -1,0 +1,263 @@
+# =============================================================================
+# ENGLISH TRANSLATIONS - MELISA TENANT
+# Multi-Tenant Medical Management System
+# =============================================================================
+
+# NAVIGATION AND MENUS
+nav:
+  dashboard: 'Dashboard'
+  patients: 'Patients'
+  appointments: 'Appointments'
+  medical_records: 'Medical Records'
+  reports: 'Reports'
+  settings: 'Settings'
+  logout: 'Logout'
+  profile: 'Profile'
+  administration: 'Administration'
+
+# AUTHENTICATION
+auth:
+  login: 'Login'
+  logout: 'Logout'
+  username: 'Username'
+  password: 'Password'
+  remember_me: 'Remember me'
+  forgot_password: 'Forgot password'
+  reset_password: 'Reset Password'
+  new_password: 'New Password'
+  confirm_password: 'Confirm Password'
+  email: 'Email'
+  login_success: 'Login successful'
+  login_error: 'Invalid username or password'
+  logout_success: 'Logout successful'
+  access_denied: 'Access denied'
+  session_expired: 'Your session has expired'
+  system_description: 'Multi-Tenant Medical Management System'
+  selected_company: 'Selected Company'
+  subdomain: 'Subdomain'
+  show_hide_password: 'Show/Hide password'
+  show_password: 'Show password'
+  hide_password: 'Hide password'
+  tenant_not_found: 'Could not determine the company'
+  tenant_not_determined: 'Could not determine the company from the URL. Please verify the subdomain.'
+  user_not_found: 'User not found or inactive in %tenant%'
+
+# DASHBOARD
+dashboard:
+  title: 'Dashboard'
+  welcome: 'Welcome'
+  today: 'Today'
+  this_week: 'This Week'
+  this_month: 'This Month'
+  statistics: 'Statistics'
+  quick_actions: 'Quick Actions'
+  recent_activity: 'Recent Activity'
+  upcoming_appointments: 'Upcoming Appointments'
+  total_patients: 'Total Patients'
+  appointments_today: 'Appointments Today'
+  pending_reports: 'Pending Reports'
+
+# PATIENTS
+patients:
+  title: 'Patient Management'
+  list: 'Patient List'
+  add: 'Add Patient'
+  edit: 'Edit Patient'
+  view: 'View Patient'
+  delete: 'Delete Patient'
+  search: 'Search patients...'
+  first_name: 'First Name'
+  last_name: 'Last Name'
+  birth_date: 'Birth Date'
+  phone: 'Phone'
+  address: 'Address'
+  emergency_contact: 'Emergency Contact'
+  medical_history: 'Medical History'
+  allergies: 'Allergies'
+  current_medications: 'Current Medications'
+
+# MEDICAL APPOINTMENTS
+appointments:
+  title: 'Appointment Management'
+  schedule: 'Schedule Appointment'
+  reschedule: 'Reschedule'
+  cancel: 'Cancel'
+  confirm: 'Confirm'
+  date: 'Date'
+  time: 'Time'
+  duration: 'Duration'
+  doctor: 'Doctor'
+  patient: 'Patient'
+  reason: 'Reason for Visit'
+  status: 'Status'
+  notes: 'Notes'
+  scheduled: 'Scheduled'
+  confirmed: 'Confirmed'
+  completed: 'Completed'
+  cancelled: 'Cancelled'
+  no_show: 'No Show'
+
+# MEDICAL RECORDS
+medical_records:
+  title: 'Medical Records'
+  create: 'Create Record'
+  view: 'View History'
+  edit: 'Edit Record'
+  diagnosis: 'Diagnosis'
+  treatment: 'Treatment'
+  prescription: 'Prescription'
+  symptoms: 'Symptoms'
+  vital_signs: 'Vital Signs'
+  blood_pressure: 'Blood Pressure'
+  heart_rate: 'Heart Rate'
+  temperature: 'Temperature'
+  weight: 'Weight'
+  height: 'Height'
+  observations: 'Observations'
+  laboratory: 'Laboratory'
+  pharmacy: 'Pharmacy'
+
+# HOSPITAL SPECIFIC
+hospital:
+  active_emergencies: 'Active Emergencies'
+  inpatients: 'Inpatients'
+  scheduled_surgeries: 'Scheduled Surgeries'
+  icu_occupancy: 'ICU Occupancy'
+  emergency_center: 'Emergency Center'
+  operating_rooms_status: 'Operating Rooms Status'
+  priority: 'Priority'
+  patient: 'Patient'
+  symptoms: 'Symptoms'
+  time: 'Time'
+  status: 'Status'
+  critical: 'CRITICAL'
+  urgent: 'URGENT'
+  mild: 'MILD'
+  occupied: 'OCCUPIED'
+  available: 'AVAILABLE'
+  preparation: 'PREPARATION'
+  in_care: 'In care'
+  waiting: 'Waiting'
+  ready_to_use: 'Ready to use'
+  scheduled_surgery: 'Scheduled surgery'
+  cardiovascular_surgery: 'Cardiovascular surgery'
+  orthopedic_surgery: 'Orthopedic surgery'
+  anonymous_patient: 'Anonymous Patient'
+  multiple_trauma: 'Multiple trauma'
+  chest_pain: 'Chest pain'
+  high_fever: 'High fever'
+
+# REPORTS
+reports:
+  title: 'Reports and Statistics'
+  generate: 'Generate Report'
+  export: 'Export'
+  daily: 'Daily'
+  weekly: 'Weekly'
+  monthly: 'Monthly'
+  custom_range: 'Custom Range'
+  patients_report: 'Patients Report'
+  appointments_report: 'Appointments Report'
+  financial_report: 'Financial Report'
+  from_date: 'From'
+  to_date: 'To'
+
+# USERS AND STAFF
+users:
+  title: 'Staff Management'
+  add_user: 'Add User'
+  edit_user: 'Edit User'
+  full_name: 'Full Name'
+  role: 'Role'
+  active: 'Active'
+  inactive: 'Inactive'
+  last_login: 'Last Login'
+  permissions: 'Permissions'
+  
+# SYSTEM ROLES
+roles:
+  admin: 'Administrator'
+  doctor: 'Doctor'
+  nurse: 'Nurse'
+  receptionist: 'Receptionist'
+  technician: 'Technician'
+
+# GENERAL MESSAGES
+messages:
+  success: 'Operation completed successfully'
+  error: 'An error has occurred'
+  warning: 'Warning'
+  info: 'Information'
+  confirm_delete: 'Are you sure you want to delete this item?'
+  no_data: 'No data available'
+  loading: 'Loading...'
+  save: 'Save'
+  cancel: 'Cancel'
+  edit: 'Edit'
+  delete: 'Delete'
+  view: 'View'
+  search: 'Search'
+  filter: 'Filter'
+  clear: 'Clear'
+  refresh: 'Refresh'
+  print: 'Print'
+  export: 'Export'
+  import: 'Import'
+
+# DAYS OF THE WEEK
+days:
+  monday: 'Monday'
+  tuesday: 'Tuesday'
+  wednesday: 'Wednesday'
+  thursday: 'Thursday'
+  friday: 'Friday'
+  saturday: 'Saturday'
+  sunday: 'Sunday'
+
+# MONTHS
+months:
+  january: 'January'
+  february: 'February'
+  march: 'March'
+  april: 'April'
+  may: 'May'
+  june: 'June'
+  july: 'July'
+  august: 'August'
+  september: 'September'
+  october: 'October'
+  november: 'November'
+  december: 'December'
+
+# SPECIFIC ESTABLISHMENTS
+establishments:
+  hospital: 'Hospital'
+  clinic: 'Clinic'
+  medical_center: 'Medical Center'
+  emergency_room: 'Emergency Room'
+  operating_room: 'Operating Room'
+  consultation_room: 'Consultation Room'
+
+# SETTINGS
+settings:
+  title: 'Settings'
+  general: 'General'
+  language: 'Language'
+  timezone: 'Timezone'
+  theme: 'Theme'
+  notifications: 'Notifications'
+  security: 'Security'
+  backup: 'Backup'
+  system: 'System'
+
+# VALIDATIONS AND ERRORS
+validation:
+  required: 'This field is required'
+  email_invalid: 'Invalid email format'
+  password_weak: 'Password must be at least 8 characters'
+  passwords_not_match: 'Passwords do not match'
+  date_invalid: 'Invalid date'
+  phone_invalid: 'Invalid phone number'
+  field_too_long: 'This field is too long'
+  field_too_short: 'This field is too short'
+  required_fields: 'Please complete all fields'

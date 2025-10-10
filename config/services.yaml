@@ -22,3 +22,25 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    # Servicios específicos de Melisa Tenant
+    App\Service\LocalizationService:
+        autowire: true
+        tags: ['controller.service_arguments']
+
+    App\Service\TenantResolver:
+        autowire: true
+        tags: ['controller.service_arguments']
+
+    App\Service\TenantContext:
+        autowire: true
+        tags: ['controller.service_arguments']
+
+    # Extensiones Twig
+    App\Twig\LocalizationExtension:
+        tags: ['twig.extension']
+
+    # Event Listeners
+    App\EventListener\LocaleListener:
+        tags:
+            - { name: kernel.event_subscriber }

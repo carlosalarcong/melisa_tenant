@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ app.request.locale|default('es') }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Melisa Medical</title>
+    <title>{{ 'auth.login'|trans }} - Melisa Medical</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .login-container {
@@ -133,16 +133,46 @@
 <body>
     <div class="login-container">
         <div class="login-card">
+            <!-- Selector de idiomas en la esquina superior derecha -->
+            <div class="d-flex justify-content-end mb-3">
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" 
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        {% if app.request.locale == 'es' %}
+                            🇪🇸 ES
+                        {% elseif app.request.locale == 'en' %}
+                            🇺🇸 EN
+                        {% else %}
+                            🌐 {{ app.request.locale|upper }}
+                        {% endif %}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item {% if app.request.locale == 'es' %}active{% endif %}" 
+                               href="{{ path('app_locale_change', {'locale': 'es'}) }}">
+                                🇪🇸 Español
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item {% if app.request.locale == 'en' %}active{% endif %}" 
+                               href="{{ path('app_locale_change', {'locale': 'en'}) }}">
+                                🇺🇸 English
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
             <div class="login-header">
                 <h1>🏥 Melisa Medical</h1>
-                <p>Sistema Multi-Tenant de Gestión Médica</p>
+                <p>{{ 'auth.system_description'|trans|default('Multi-Tenant Medical Management System') }}</p>
             </div>
 
             {% if tenant %}
                 <div class="tenant-info">
-                    <h6>🏢 Empresa Seleccionada</h6>
+                    <h6>🏢 {{ 'auth.selected_company'|trans|default('Selected Company') }}</h6>
                     <div class="tenant-name">{{ tenant.name }}</div>
-                    <small class="text-muted">Subdominio: {{ tenant.subdomain }}</small>
+                    <small class="text-muted">{{ 'auth.subdomain'|trans|default('Subdomain') }}: {{ tenant.subdomain }}</small>
                 </div>
             {% else %}
                 <div class="alert alert-warning" role="alert">
@@ -163,11 +193,11 @@
                            class="form-control" 
                            id="username" 
                            name="username" 
-                           placeholder="Nombre de Usuario"
+                           placeholder="{{ 'auth.username'|trans }}"
                            value="{{ username|default('') }}"
                            required
                            autocomplete="username">
-                    <label for="username">Nombre de Usuario</label>
+                    <label for="username">{{ 'auth.username'|trans }}</label>
                 </div>
 
                 <div class="form-floating password-input-group">
@@ -175,15 +205,15 @@
                            class="form-control" 
                            id="password" 
                            name="password" 
-                           placeholder="Contraseña"
+                           placeholder="{{ 'auth.password'|trans }}"
                            required
                            autocomplete="current-password">
-                    <label for="password">Contraseña</label>
+                    <label for="password">{{ 'auth.password'|trans }}</label>
                     <button type="button" 
                             class="password-toggle" 
                             onclick="togglePassword()"
-                            title="Mostrar/Ocultar contraseña"
-                            aria-label="Mostrar contraseña">
+                            title="{{ 'auth.show_hide_password'|trans|default('Show/Hide password') }}"
+                            aria-label="{{ 'auth.show_password'|trans|default('Show password') }}">
                         <svg id="eye-icon" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                             <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
                             <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
@@ -194,12 +224,12 @@
                 <div class="form-check mb-3">
                     <input class="form-check-input" type="checkbox" id="remember_me" name="remember_me" value="1">
                     <label class="form-check-label" for="remember_me">
-                        Recordarme en este dispositivo
+                        {{ 'auth.remember_me'|trans }}
                     </label>
                 </div>
 
                 <button type="submit" class="btn btn-login">
-                    Iniciar Sesión
+                    {{ 'auth.login'|trans }}
                 </button>
             </form>
 

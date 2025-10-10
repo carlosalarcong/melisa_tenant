@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Dashboard - Hospital Central{% endblock %}
+{% block title %}{{ 'dashboard.title'|trans }} - {{ 'establishments.hospital'|trans }}{% endblock %}
 
-{% block dashboard_indicator %}🏥 Hospital Central (Personalizado){% endblock %}
+{% block dashboard_indicator %}🏥 {{ 'establishments.hospital'|trans }} ({{ 'settings.general'|trans|title }}){% endblock %}
 
 {% block body %}
 <div class="container-fluid">
@@ -11,38 +11,38 @@
         <nav class="col-md-3 col-lg-2 d-md-block bg-dark sidebar position-fixed">
             <div class="position-sticky pt-3">
                 <div class="text-center mb-4">
-                    <h5 class="text-white">🏥 Hospital Central</h5>
+                    <h5 class="text-white">🏥 {{ 'establishments.hospital'|trans }}</h5>
                     <small class="text-muted">{{ subdomain }}.melisaupgrade.prod</small>
                 </div>
                 <ul class="nav flex-column">
                     <li class="nav-item">
                         <a class="nav-link active text-white" href="/dashboard">
-                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                            <i class="fas fa-tachometer-alt"></i> {{ 'nav.dashboard'|trans }}
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white" href="/pacientes">
-                            <i class="fas fa-users"></i> Pacientes
+                            <i class="fas fa-users"></i> {{ 'nav.patients'|trans }}
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white" href="/emergencias">
-                            <i class="fas fa-ambulance"></i> Emergencias
+                            <i class="fas fa-ambulance"></i> {{ 'establishments.emergency_room'|trans }}
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white" href="/quirofanos">
-                            <i class="fas fa-procedures"></i> Quirófanos
+                            <i class="fas fa-procedures"></i> {{ 'establishments.operating_room'|trans }}
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white" href="/laboratorio">
-                            <i class="fas fa-vial"></i> Laboratorio
+                            <i class="fas fa-vial"></i> {{ 'medical_records.laboratory'|trans|default('Laboratorio') }}
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white" href="/farmacia">
-                            <i class="fas fa-pills"></i> Farmacia
+                            <i class="fas fa-pills"></i> {{ 'medical_records.pharmacy'|trans|default('Farmacia') }}
                         </a>
                     </li>
                 </ul>
@@ -53,14 +53,14 @@
         <!-- Main content -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2">Dashboard - Hospital Central</h1>
+                <h1 class="h2">{{ 'dashboard.title'|trans }} - {{ 'establishments.hospital'|trans }}</h1>
                 <div class="btn-toolbar mb-2 mb-md-0">
                     <div class="btn-group me-2">
                         <button type="button" class="btn btn-sm btn-danger">
-                            <i class="fas fa-exclamation-triangle"></i> Emergencias
+                            <i class="fas fa-exclamation-triangle"></i> {{ 'establishments.emergency_room'|trans }}
                         </button>
                         <button type="button" class="btn btn-sm btn-outline-secondary">
-                            <i class="fas fa-download"></i> Reportes
+                            <i class="fas fa-download"></i> {{ 'nav.reports'|trans }}
                         </button>
                     </div>
                 </div>
@@ -74,7 +74,7 @@
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                                        Emergencias Activas</div>
+                                        {{ 'hospital.active_emergencies'|trans }}</div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">3</div>
                                 </div>
                                 <div class="col-auto">
@@ -91,7 +91,7 @@
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                        Pacientes Internados</div>
+                                        {{ 'hospital.inpatients'|trans }}</div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">147</div>
                                 </div>
                                 <div class="col-auto">
@@ -108,7 +108,7 @@
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                        Cirugías Programadas</div>
+                                        {{ 'hospital.scheduled_surgeries'|trans }}</div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
                                 </div>
                                 <div class="col-auto">
@@ -125,7 +125,7 @@
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                        Ocupación UCI</div>
+                                        {{ 'hospital.icu_occupancy'|trans }}</div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">85%</div>
                                 </div>
                                 <div class="col-auto">
@@ -142,41 +142,41 @@
                 <div class="col-lg-8">
                     <div class="card shadow mb-4">
                         <div class="card-header py-3 bg-danger text-white">
-                            <h6 class="m-0 font-weight-bold">🚨 Centro de Emergencias</h6>
+                            <h6 class="m-0 font-weight-bold">🚨 {{ 'hospital.emergency_center'|trans }}</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th>Prioridad</th>
-                                            <th>Paciente</th>
-                                            <th>Sintomas</th>
-                                            <th>Tiempo</th>
-                                            <th>Estado</th>
+                                            <th>{{ 'hospital.priority'|trans }}</th>
+                                            <th>{{ 'hospital.patient'|trans }}</th>
+                                            <th>{{ 'hospital.symptoms'|trans }}</th>
+                                            <th>{{ 'hospital.time'|trans }}</th>
+                                            <th>{{ 'hospital.status'|trans }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td><span class="badge bg-danger">CRÍTICO</span></td>
-                                            <td>Paciente Anónimo</td>
-                                            <td>Trauma múltiple</td>
+                                            <td><span class="badge bg-danger">{{ 'hospital.critical'|trans }}</span></td>
+                                            <td>{{ 'hospital.anonymous_patient'|trans }}</td>
+                                            <td>{{ 'hospital.multiple_trauma'|trans }}</td>
                                             <td>5 min</td>
-                                            <td><span class="badge bg-warning">En atención</span></td>
+                                            <td><span class="badge bg-warning">{{ 'hospital.in_care'|trans }}</span></td>
                                         </tr>
                                         <tr>
-                                            <td><span class="badge bg-warning">URGENTE</span></td>
+                                            <td><span class="badge bg-warning">{{ 'hospital.urgent'|trans }}</span></td>
                                             <td>Carlos Méndez</td>
-                                            <td>Dolor torácico</td>
+                                            <td>{{ 'hospital.chest_pain'|trans }}</td>
                                             <td>15 min</td>
-                                            <td><span class="badge bg-info">Esperando</span></td>
+                                            <td><span class="badge bg-info">{{ 'hospital.waiting'|trans }}</span></td>
                                         </tr>
                                         <tr>
-                                            <td><span class="badge bg-success">LEVE</span></td>
+                                            <td><span class="badge bg-success">{{ 'hospital.mild'|trans }}</span></td>
                                             <td>Ana Flores</td>
-                                            <td>Fiebre alta</td>
+                                            <td>{{ 'hospital.high_fever'|trans }}</td>
                                             <td>30 min</td>
-                                            <td><span class="badge bg-info">Esperando</span></td>
+                                            <td><span class="badge bg-info">{{ 'hospital.waiting'|trans }}</span></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -188,36 +188,36 @@
                 <div class="col-lg-4">
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Estado Quirófanos</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">{{ 'hospital.operating_rooms_status'|trans }}</h6>
                         </div>
                         <div class="card-body">
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <span>Quirófano 1</span>
-                                    <span class="badge bg-danger">OCUPADO</span>
+                                    <span>{{ 'establishments.operating_room'|trans }} 1</span>
+                                    <span class="badge bg-danger">{{ 'hospital.occupied'|trans }}</span>
                                 </div>
-                                <small class="text-muted">Cirugía cardiovascular - Dr. Ramírez</small>
+                                <small class="text-muted">{{ 'hospital.cardiovascular_surgery'|trans }} - Dr. Ramírez</small>
                             </div>
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <span>Quirófano 2</span>
-                                    <span class="badge bg-success">DISPONIBLE</span>
+                                    <span>{{ 'establishments.operating_room'|trans }} 2</span>
+                                    <span class="badge bg-success">{{ 'hospital.available'|trans }}</span>
                                 </div>
-                                <small class="text-muted">Listo para usar</small>
+                                <small class="text-muted">{{ 'hospital.ready_to_use'|trans }}</small>
                             </div>
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <span>Quirófano 3</span>
-                                    <span class="badge bg-warning">PREPARACIÓN</span>
+                                    <span>{{ 'establishments.operating_room'|trans }} 3</span>
+                                    <span class="badge bg-warning">{{ 'hospital.preparation'|trans }}</span>
                                 </div>
-                                <small class="text-muted">Cirugía programada 14:00</small>
+                                <small class="text-muted">{{ 'hospital.scheduled_surgery'|trans }} 14:00</small>
                             </div>
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <span>Quirófano 4</span>
-                                    <span class="badge bg-danger">OCUPADO</span>
+                                    <span>{{ 'establishments.operating_room'|trans }} 4</span>
+                                    <span class="badge bg-danger">{{ 'hospital.occupied'|trans }}</span>
                                 </div>
-                                <small class="text-muted">Cirugía ortopédica - Dr. Silva</small>
+                                <small class="text-muted">{{ 'hospital.orthopedic_surgery'|trans }} - Dr. Silva</small>
                             </div>
                         </div>
                     </div>

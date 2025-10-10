@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ app.request.locale|default('es') }}">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{% block title %}Melisa Healthcare System{% endblock %}</title>
+        <title>{% block title %}{{ 'dashboard.title'|trans }} - Melisa Healthcare{% endblock %}</title>
         
         <!-- Bootstrap 5 CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -240,32 +240,63 @@
                 <!-- Indicador del tipo de dashboard -->
                 <div class="d-flex align-items-center">
                     <span class="navbar-text fw-bold">
-                        {% block dashboard_indicator %}Dashboard{% endblock %}
+                        {% block dashboard_indicator %}{{ 'dashboard.title'|trans }}{% endblock %}
                     </span>
                 </div>
                 
-                <!-- Perfil del usuario -->
-                <div class="dropdown">
-                    <button class="btn btn-link d-flex align-items-center text-decoration-none dropdown-toggle" 
-                            type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <div class="user-avatar me-2">
-                            {% set first_letter = logged_user.first_name|default('U')|first|upper %}
-                            {{ first_letter }}
-                        </div>
-                        <div class="d-none d-md-block text-start">
-                            <div class="fw-bold text-dark">{{ logged_user.first_name|default('Usuario') }} {{ logged_user.last_name|default('') }}</div>
-                            <small class="text-muted">{{ logged_user.role|default('user')|title }}</small>
-                        </div>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow">
-                        <li><a class="dropdown-item" href="#" onclick="return false;">
-                            <i class="fas fa-user me-2"></i> Ver Perfil
-                        </a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="/logout">
-                            <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
-                        </a></li>
-                    </ul>
+                <!-- Selector de idiomas y perfil del usuario -->
+                <div class="d-flex align-items-center">
+                    <!-- Selector de idiomas -->
+                    <div class="dropdown me-3">
+                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" 
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                            {% if app.request.locale == 'es' %}
+                                🇪🇸 ES
+                            {% elseif app.request.locale == 'en' %}
+                                🇺🇸 EN
+                            {% else %}
+                                🌐 {{ app.request.locale|upper }}
+                            {% endif %}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item {% if app.request.locale == 'es' %}active{% endif %}" 
+                                   href="{{ path('app_locale_change', {'locale': 'es'}) }}">
+                                    🇪🇸 Español
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item {% if app.request.locale == 'en' %}active{% endif %}" 
+                                   href="{{ path('app_locale_change', {'locale': 'en'}) }}">
+                                    🇺🇸 English
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                
+                    <!-- Perfil del usuario -->
+                    <div class="dropdown">
+                        <button class="btn btn-link d-flex align-items-center text-decoration-none dropdown-toggle" 
+                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="user-avatar me-2">
+                                {% set first_letter = logged_user.first_name|default('U')|first|upper %}
+                                {{ first_letter }}
+                            </div>
+                            <div class="d-none d-md-block text-start">
+                                <div class="fw-bold text-dark">{{ logged_user.first_name|default('Usuario') }} {{ logged_user.last_name|default('') }}</div>
+                                <small class="text-muted">{{ logged_user.role|default('user')|title }}</small>
+                            </div>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow">
+                            <li><a class="dropdown-item" href="#" onclick="return false;">
+                                <i class="fas fa-user me-2"></i> {{ 'nav.profile'|trans }}
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="/logout">
+                                <i class="fas fa-sign-out-alt me-2"></i> {{ 'auth.logout'|trans }}
+                            </a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -275,6 +306,49 @@
         
         <!-- Bootstrap 5 JS Bundle -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        
+        <!-- JavaScript para selector de idiomas -->
+        <script>
+            // Cambio de idioma con AJAX para evitar recarga completa
+            function changeLanguage(locale) {
+                fetch(`/locale/change/${locale}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Recargar la página para aplicar el nuevo idioma
+                        window.location.reload();
+                    } else {
+                        console.error('Error al cambiar idioma:', data.message);
+                        // Fallback: redireccionar normalmente
+                        window.location.href = `/locale/change/${locale}`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Fallback: redireccionar normalmente
+                    window.location.href = `/locale/change/${locale}`;
+                });
+            }
+            
+            // Interceptar clicks en los enlaces de idioma
+            document.addEventListener('DOMContentLoaded', function() {
+                const languageLinks = document.querySelectorAll('a[href*="/locale/change/"]');
+                languageLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const href = this.getAttribute('href');
+                        const locale = href.split('/').pop();
+                        changeLanguage(locale);
+                    });
+                });
+            });
+        </script>
         
         {% block javascripts %}
             {% block importmap %}{{ importmap('app') }}{% endblock %}

@@ -1,48 +1,27 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Dashboard - {{ tenant.name }}{% endblock %}
+{% block title %}{{ 'dashboard.title'|trans }} - {{ tenant.name }}{% endblock %}
+
+{% block dashboard_indicator %}
+    {{ 'dashboard.title'|trans }} - {{ tenant.name }}
+{% endblock %}
 
 {% block body %}
 <div class="container-fluid">
-    <!-- Header del Dashboard -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{{ path('app_dashboard') }}">
-                <i class="fas fa-hospital-alt me-2"></i>
-                {{ tenant.name }}
-            </a>
-            
-            <div class="navbar-nav ms-auto">
-                <div class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                        <i class="fas fa-user me-1"></i>
-                        {{ member.name|default(member.username) }}
-                        <span class="badge bg-secondary ms-1">{{ member.role|default('Usuario') }}</span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Configuración</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="{{ path('app_logout') }}"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Estadísticas del Dashboard -->
+    <!-- Tarjetas de estadísticas -->
     <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card text-white bg-primary">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="card-title">Pacientes</h4>
-                            <h2>142</h2>
-                            <small>Total registrados</small>
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                {{ 'dashboard.total_patients'|trans }}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">152</div>
                         </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-users fa-2x opacity-75"></i>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
                         </div>
                     </div>
                 </div>
