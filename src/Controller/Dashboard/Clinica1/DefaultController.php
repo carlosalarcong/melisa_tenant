@@ -2,7 +2,6 @@
 
 namespace App\Controller\Dashboard\Clinica1;
 
-use App\Entity\Tenant;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

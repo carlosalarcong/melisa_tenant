@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Tenant;
 use App\Service\TenantContext;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
