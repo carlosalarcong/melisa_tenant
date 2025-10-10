@@ -230,13 +230,7 @@ php bin/console doctrine:migrations:migrate
 4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
 5. Crear Pull Request
 
-## 📞 Soporte
-
-- **Repositorio:** https://tfs.rayensalud.com:8080/tfs/RayenSalud/Melisa/_git/MelisaTenant
-- **Documentación:** Ver docs/ folder
-- **Issues:** Reportar en TFS
-
-## 📄 Licencia
+##  Licencia
 
 Este proyecto es propietario de RayenSalud.
 
