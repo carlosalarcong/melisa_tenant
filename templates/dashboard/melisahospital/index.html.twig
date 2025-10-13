@@ -223,6 +223,73 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 📚 SECCIÓN DE APRENDIZAJE STIMULUS -->
+            <div class="row mt-4">
+                <div class="col-lg-12">
+                    <div class="card shadow mb-4 border-success">
+                        <div class="card-header py-3 bg-success text-white">
+                            <h6 class="m-0 font-weight-bold">📚 Aprendiendo Stimulus - Ejemplo de Paciente</h6>
+                        </div>
+                        <!-- 🎯 AQUÍ COMIENZA EL CONTROLADOR STIMULUS -->
+                        <div class="card-body" 
+                             data-controller="patient"
+                             data-patient-patient-id-value="12345"
+                             data-patient-is-active-value="true">
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5>🎮 Controles</h5>
+                                    <p class="text-muted">Estos botones ejecutan acciones del controlador:</p>
+                                    
+                                    <!-- 🔘 ACTIONS - Se conectan con métodos del controlador -->
+                                    <button class="btn btn-primary me-2" 
+                                            data-action="click->patient#showInfo">
+                                        📋 Mostrar Información
+                                    </button>
+                                    
+                                    <button class="btn btn-secondary" 
+                                            data-action="click->patient#clearInfo">
+                                        🧹 Limpiar
+                                    </button>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <h5>📊 Información del Paciente</h5>
+                                    
+                                    <!-- 🎯 TARGETS - Elementos que el controlador controla -->
+                                    <div data-patient-target="info" style="display: none;" class="mt-3">
+                                        <div class="alert alert-info">
+                                            <strong>👤 Nombre:</strong> 
+                                            <span data-patient-target="name"></span><br>
+                                            
+                                            <strong>📊 Estado:</strong> 
+                                            <span data-patient-target="status" class="badge bg-success"></span><br>
+                                            
+                                            <strong>🎂 Edad:</strong> 
+                                            <span data-patient-target="age"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <hr class="my-4">
+                            
+                            <div class="row">
+                                <div class="col-12">
+                                    <h6 class="text-primary">🔍 ¿Cómo funciona esto?</h6>
+                                    <ul class="list-unstyled">
+                                        <li><strong>data-controller="patient"</strong> → Conecta este div con patient_controller.js</li>
+                                        <li><strong>data-patient-target="info"</strong> → Define elementos que el controlador puede manipular</li>
+                                        <li><strong>data-action="click->patient#showInfo"</strong> → Al hacer click, ejecuta el método showInfo()</li>
+                                        <li><strong>data-patient-patient-id-value="12345"</strong> → Pasa el valor 12345 al controlador</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 </div>
