@@ -29,8 +29,28 @@ class DefaultController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        // Redirigir al dashboard del tenant
-        return $this->redirectToRoute('app_dashboard', ['controller' => 'dashboard']);
+        return $this->render('dashboard/default.html.twig', [
+            'tenant_info' => $tenantData,
+            'current_user' => $request->getSession()->get('user'),
+        ]);
+    }
+
+    /**
+     * Método genérico para renderizar templates
+     */
+    public function renderTemplate(Request $request, string $template): Response
+    {
+        // Obtener información del tenant actual
+        $tenantData = $this->tenantContext->getCurrentTenant();
+        
+        if (!$tenantData) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        return $this->render($template, [
+            'tenant_info' => $tenantData,
+            'current_user' => $request->getSession()->get('user'),
+        ]);
     }
 
     public function handleDynamicRequest(Request $request): Response
@@ -54,8 +74,7 @@ class DefaultController extends AbstractController
 
         // Fallback a dashboard por defecto
         return $this->render('dashboard/default.html.twig', [
-            'tenant_name' => $tenantData['name'] ?? 'Sistema Médico',
-            'subdomain' => $tenantData['subdomain'] ?? '',
+            'tenant_info' => $tenantData,
             'controller' => $controller,
             'action' => $action
         ]);

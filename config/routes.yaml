@@ -35,6 +35,27 @@ api_patients_update:
         id: '\d+'
     methods: [PUT, PATCH]
 
+# Página de demostración API Platform + Stimulus
+# Examples - Demos para desarrollo y aprendizaje
+examples_index:
+    path: /examples
+    controller: App\Controller\DefaultController::renderTemplate
+    defaults:
+        template: 'examples/index.html.twig'
+
+examples_api_platform:
+    path: /examples/api-platform
+    controller: App\Controller\DefaultController::renderTemplate
+    defaults:
+        template: 'examples/api_platform_demo.html.twig'
+
+examples_internal_controllers:
+    path: /examples/internal-controllers
+    controller: App\Controller\DefaultController::renderTemplate
+    defaults:
+        template: 'examples/internal_controllers_demo.html.twig'
+    methods: [GET]
+
 # Rutas de recuperación de contraseña
 app_forgot_password:
     path: /forgot-password

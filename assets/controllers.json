@@ -11,5 +11,17 @@
             }
         }
     },
-    "entrypoints": []
+    "entrypoints": [],
+    "comments": {
+        "dynamic_loading": "Controllers are now loaded dynamically using DynamicControllerLoader",
+        "structure": {
+            "internal": "Controllers for internal use (forms, UI interactions)",
+            "apiplatform": "Controllers for API Platform integration",
+            "subdomain_fallback": "Controllers load from subdomain folder, fallback to default"
+        },
+        "usage_examples": {
+            "internal_patient": "data-controller='internal--patient'",
+            "api_patient": "data-controller='apiplatform--api-patient'"
+        }
+    }
 }
