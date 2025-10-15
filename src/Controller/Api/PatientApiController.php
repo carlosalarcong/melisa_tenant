@@ -25,7 +25,7 @@ class PatientApiController extends AbstractController
             return new JsonResponse(['error' => 'Tenant no encontrado'], 404);
         }
 
-        // En un caso real, aquí harías una consulta a la BD específica del tenant
+        // En un caso real, aquí haría una consulta a la BD específica del tenant
         // $patientRepository = $this->getPatientRepository($tenant['database_name']);
         // $patient = $patientRepository->find($id);
         
@@ -121,7 +121,7 @@ class PatientApiController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
         
-        // Aquí normalmente actualizarías la BD
+        // Aquí normalmente actualizaría la BD
         // $patientRepository->update($id, $data);
         
         return new JsonResponse([

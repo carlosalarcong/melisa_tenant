@@ -1,0 +1,44 @@
+api_platform:
+    title: 'Melisa Medical API - Sistema Multi-tenant'
+    description: 'API REST para gestión médica hospitalaria y clínicas'
+    version: 1.0.0
+    
+    # Configuración para multi-tenancy
+    defaults:
+        stateless: true
+        cache_headers:
+            vary: ['Content-Type', 'Authorization', 'Origin', 'X-Tenant-Context']
+    
+    # Documentación mejorada
+    swagger:
+        versions: [3]
+        api_keys:
+            tenant:
+                name: X-Tenant-Context
+                type: header
+    
+    # Formatos soportados para datos médicos
+    formats:
+        jsonld: ['application/ld+json']
+        json: ['application/json']
+        html: ['text/html']
+        xml: ['application/xml', 'text/xml']
+        csv: ['text/csv']
+    
+    # Configuración de error handling
+    exception_to_status:
+        Symfony\Component\Serializer\Exception\ExceptionInterface: 400
+        ApiPlatform\Validator\Exception\ValidationException: 422
+        Doctrine\ORM\OptimisticLockException: 409
+    
+    # Configuración de collection
+    collection:
+        pagination:
+            enabled: true
+            client_enabled: true
+            client_items_per_page: true
+            items_per_page: 20
+            maximum_items_per_page: 100
+            page_parameter_name: page
+            enabled_parameter_name: pagination
+            items_per_page_parameter_name: itemsPerPage

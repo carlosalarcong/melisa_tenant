@@ -45,16 +45,19 @@ class TenantResolver
             $connection = DriverManager::getConnection($this->centralDbConfig);
             
             $query = '
-                SELECT id, name, subdomain, database_name, rut_empresa, 
+                SELECT id, name, subdomain, database_name, rut_empresa,
                        COALESCE(domain, "localhost") as host,
-                       3306 as host_port,
-                       "melisa" as db_user,
-                       "melisamelisa" as db_password,
-                       "mysql" as driver,
-                       is_active, status
+                       host_port,
+                       COALESCE(db_user, "melisa") as db_user,
+                       COALESCE(db_password, "melisamelisa") as db_password,
+                       COALESCE(driver, "mysql") as driver,
+                       is_active, language
                 FROM tenant 
                 WHERE subdomain = ? AND is_active = 1
             ';
+            
+            // Log para debug
+            error_log("TenantResolver: Ejecutando query: " . $query . " con slug: " . $slug);
             
             $result = $connection->executeQuery($query, [$slug]);
             return $result->fetchAssociative() ?: null;
@@ -70,11 +73,11 @@ class TenantResolver
     public function createTenantConnection(array $tenant): \Doctrine\DBAL\Connection
     {
         $tenantDbConfig = [
-            'host' => $tenant['host'],
-            'port' => $tenant['host_port'],
+            'host' => $tenant['host'] ?? 'localhost',
+            'port' => $tenant['host_port'] ?? 3306,
             'dbname' => $tenant['database_name'],
-            'user' => $tenant['db_user'],
-            'password' => $tenant['db_password'],
+            'user' => $tenant['db_user'] ?? 'melisa',
+            'password' => $tenant['db_password'] ?? 'melisamelisa',
             'driver' => 'pdo_mysql',
         ];
 
