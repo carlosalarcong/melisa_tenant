@@ -39,12 +39,24 @@ class LocalizationService
             return $this->defaultLocale;
         }
 
+        // Para rutas API, usar locale simplificado sin sesiones
+        $pathInfo = $request->getPathInfo();
+        if (str_starts_with($pathInfo, '/api/')) {
+            // Para API, usar header Accept-Language o default
+            $preferredLanguage = $request->getPreferredLanguage($this->supportedLocales);
+            return $preferredLanguage ?? $this->defaultLocale;
+        }
+
+        // Para rutas web normales, usar lógica completa con sesiones
+        
         // 1. Prioridad: Parámetro en sesión del usuario
-        $session = $request->getSession();
-        if ($session->has('_locale')) {
-            $locale = $session->get('_locale');
-            if (in_array($locale, $this->supportedLocales)) {
-                return $locale;
+        if ($request->hasSession()) {
+            $session = $request->getSession();
+            if ($session->has('_locale')) {
+                $locale = $session->get('_locale');
+                if (in_array($locale, $this->supportedLocales)) {
+                    return $locale;
+                }
             }
         }
 

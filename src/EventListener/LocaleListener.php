@@ -28,11 +28,20 @@ class LocaleListener implements EventSubscriberInterface
             return;
         }
 
-        // Obtener y establecer el locale apropiado
+        // Para rutas API, no usar sesiones (stateless)
+        $pathInfo = $request->getPathInfo();
+        if (str_starts_with($pathInfo, '/api/')) {
+            // Para API, usar locale por defecto o desde header
+            $locale = $request->headers->get('Accept-Language', 'es');
+            $request->setLocale($locale);
+            return;
+        }
+
+        // Para rutas web normales, usar el servicio de localización
         $locale = $this->localizationService->getCurrentLocale();
         $request->setLocale($locale);
 
-        // Establecer locale en la sesión para persistencia
+        // Establecer locale en la sesión para persistencia (solo rutas web)
         if ($request->hasSession()) {
             $session = $request->getSession();
             

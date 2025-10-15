@@ -9,13 +9,9 @@ api_platform:
         cache_headers:
             vary: ['Content-Type', 'Authorization', 'Origin', 'X-Tenant-Context']
     
-    # Documentación mejorada
+    # Documentación Swagger
     swagger:
         versions: [3]
-        api_keys:
-            tenant:
-                name: X-Tenant-Context
-                type: header
     
     # Formatos soportados para datos médicos
     formats:
@@ -25,20 +21,10 @@ api_platform:
         xml: ['application/xml', 'text/xml']
         csv: ['text/csv']
     
-    # Configuración de error handling
-    exception_to_status:
-        Symfony\Component\Serializer\Exception\ExceptionInterface: 400
-        ApiPlatform\Validator\Exception\ValidationException: 422
-        Doctrine\ORM\OptimisticLockException: 409
-    
-    # Configuración de collection
+    # Configuración de collection y paginación
     collection:
         pagination:
             enabled: true
-            client_enabled: true
-            client_items_per_page: true
-            items_per_page: 20
-            maximum_items_per_page: 100
             page_parameter_name: page
             enabled_parameter_name: pagination
             items_per_page_parameter_name: itemsPerPage
