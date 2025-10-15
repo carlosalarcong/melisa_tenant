@@ -231,12 +231,12 @@
                         <div class="card-header py-3 bg-success text-white">
                             <h6 class="m-0 font-weight-bold">📚 Aprendiendo Stimulus - Ejemplo de Paciente</h6>
                         </div>
-                        <!-- 🎯 AQUÍ COMIENZA EL CONTROLADOR STIMULUS -->
+                        <!-- 🎯 CONTROLADOR STIMULUS ACTUALIZADO - NUEVA ESTRUCTURA -->
                         <div class="card-body" 
-                             data-controller="patient"
-                             data-patient-patient-id-value="12345"
-                             data-patient-is-active-value="true"
-                             data-patient-api-url-value="/api/patients">
+                             data-controller="internal--patient"
+                             data-internal--patient-patient-id-value="12345"
+                             data-internal--patient-is-editing-value="false"
+                             data-internal--patient-validate-on-change-value="true">
                             
                             <div class="row">
                                 <div class="col-md-6">
@@ -249,19 +249,19 @@
                                         <input type="text" 
                                                class="form-control" 
                                                placeholder="Nombre o RUT..."
-                                               data-action="input->patient#searchPatients">
+                                               data-action="data-action="input->internal--patient#internal--internal--patient#searchPatients">
                                     </div>
                                     
                                     <!-- 🔘 SELECCIÓN RÁPIDA DE PACIENTES -->
                                     <div class="mb-3">
                                         <label class="form-label">👥 Pacientes de Ejemplo:</label><br>
                                         <button class="btn btn-outline-primary btn-sm me-1" 
-                                                data-action="click->patient#changePatient"
+                                                data-action="data-action="click->internal--patient#internal--internal--patient#changePatient"
                                                 data-patient-id="12345">
                                             Juan Pérez
                                         </button>
                                         <button class="btn btn-outline-primary btn-sm me-1" 
-                                                data-action="click->patient#changePatient"
+                                                data-action="data-action="click->internal--patient#internal--internal--patient#changePatient"
                                                 data-patient-id="67890">
                                             Ana Rodríguez
                                         </button>
@@ -269,17 +269,17 @@
                                     
                                     <!-- 🔘 ACTIONS PRINCIPALES -->
                                     <button class="btn btn-primary me-2" 
-                                            data-action="click->patient#showInfo">
+                                            data-action="data-action="click->internal--patient#internal--internal--patient#showInfo">
                                         📋 Cargar desde BD
                                     </button>
                                     
                                     <button class="btn btn-secondary" 
-                                            data-action="click->patient#clearInfo">
+                                            data-action="data-action="click->internal--patient#internal--internal--patient#clearInfo">
                                         🧹 Limpiar
                                     </button>
                                     
                                     <!-- 🔄 INDICADORES DE ESTADO -->
-                                    <div data-patient-target="loading" 
+                                    <div data-internal--patient-target="loading" 
                                          style="display: none;" 
                                          class="mt-3">
                                         <div class="alert alert-info">
@@ -287,7 +287,7 @@
                                         </div>
                                     </div>
                                     
-                                    <div data-patient-target="error" 
+                                    <div data-internal--patient-target="error" 
                                          style="display: none;" 
                                          class="mt-3 alert alert-danger">
                                     </div>
@@ -297,45 +297,45 @@
                                     <h5>📊 Información del Paciente</h5>
                                     
                                     <!-- 🎯 TARGETS MEJORADOS - Con más datos de la BD -->
-                                    <div data-patient-target="info" style="display: none;" class="mt-3">
+                                    <div data-internal--patient-target="info" style="display: none;" class="mt-3">
                                         <div class="card border-info">
                                             <div class="card-header bg-info text-white">
-                                                <strong>👤 <span data-patient-target="name"></span></strong>
+                                                <strong>👤 <span data-internal--patient-target="name"></span></strong>
                                             </div>
                                             <div class="card-body">
                                                 <div class="row">
                                                     <div class="col-6">
                                                         <strong>📊 Estado:</strong><br>
-                                                        <span data-patient-target="status" class="badge bg-success"></span>
+                                                        <span data-internal--patient-target="status" class="badge bg-success"></span>
                                                     </div>
                                                     <div class="col-6">
                                                         <strong>🎂 Edad:</strong><br>
-                                                        <span data-patient-target="age"></span>
+                                                        <span data-internal--patient-target="age"></span>
                                                     </div>
                                                 </div>
                                                 <hr>
                                                 <div class="row">
                                                     <div class="col-6">
                                                         <strong>📞 Teléfono:</strong><br>
-                                                        <span data-patient-target="phone" class="text-muted"></span>
+                                                        <span data-internal--patient-target="phone" class="text-muted"></span>
                                                     </div>
                                                     <div class="col-6">
                                                         <strong>🩸 Tipo Sanguíneo:</strong><br>
-                                                        <span data-patient-target="bloodType" class="badge bg-danger"></span>
+                                                        <span data-internal--patient-target="bloodType" class="badge bg-danger"></span>
                                                     </div>
                                                 </div>
                                                 <hr>
                                                 <div class="row">
                                                     <div class="col-12">
                                                         <strong>🏠 Dirección:</strong><br>
-                                                        <span data-patient-target="address" class="text-muted"></span>
+                                                        <span data-internal--patient-target="address" class="text-muted"></span>
                                                     </div>
                                                 </div>
                                                 <hr>
                                                 <div class="row">
                                                     <div class="col-12">
                                                         <strong>⚠️ Alergias:</strong><br>
-                                                        <span data-patient-target="allergies" class="text-warning"></span>
+                                                        <span data-internal--patient-target="allergies" class="text-warning"></span>
                                                     </div>
                                                 </div>
                                             </div>
