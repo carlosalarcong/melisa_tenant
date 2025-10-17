@@ -2,6 +2,22 @@
 # Se resuelven automáticamente según el subdominio
 
 # ==================================
+# MANTENEDORES - PÁGINA PRINCIPAL
+# ==================================
+
+# Ruta principal de mantenedores
+mantenedores_index:
+    path: /mantenedores
+    controller: App\Controller\Mantenedores\MantenedoresController::index
+    methods: [GET]
+
+# Ruta para la sección básicos
+mantenedores_basico_index:
+    path: /mantenedores/basico
+    controller: App\Controller\Mantenedores\MantenedoresController::basico
+    methods: [GET]
+
+# ==================================
 # MANTENEDORES BÁSICOS - PAÍS
 # ==================================
 

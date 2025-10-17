@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mantenedores - {{ tenant.name }}{% endblock %}
+{% block title %}Mantenedores Básicos - {{ tenant.name }}{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -52,19 +52,6 @@
             border-left-color: #0056b3;
         }
 
-        .menu-category {
-            margin-bottom: 1.5rem;
-        }
-
-        .menu-category h6 {
-            color: #6c757d;
-            font-size: 0.875rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-bottom: 0.75rem;
-            padding-left: 1rem;
-        }
-
         .card-mantenedor {
             transition: transform 0.2s, box-shadow 0.2s;
             border: 1px solid #dee2e6;
@@ -97,10 +84,10 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <h2>
-                        <i class="fas fa-cogs text-primary"></i>
-                        Mantenedores
+                        <i class="fas fa-database text-primary"></i>
+                        Mantenedores Básicos
                     </h2>
-                    <p class="text-muted mb-0">Gestión de mantenedores del sistema</p>
+                    <p class="text-muted mb-0">Gestión de datos maestros del sistema</p>
                 </div>
                 <div class="badge bg-info text-dark">
                     {{ tenant.name }}
@@ -118,16 +105,18 @@
                 Categorías
             </h5>
 
-            {% for category, items in menuItems %}
-                <div class="menu-category">
-                    <h6>{{ category }}</h6>
-                    {% for item in items %}
-                        <a href="{{ item.url }}" class="menu-item">
-                            <i class="{{ item.icon }} me-2"></i>
-                            {{ item.name }}
-                        </a>
-                    {% endfor %}
-                </div>
+            <a href="{{ path('mantenedores_index') }}" class="menu-item">
+                <i class="fas fa-arrow-left me-2"></i>
+                Volver al menú principal
+            </a>
+
+            <hr>
+
+            {% for item in basicItems %}
+                <a href="{{ item.url }}" class="menu-item {{ item.active ? 'active' : '' }}">
+                    <i class="{{ item.icon }} me-2"></i>
+                    {{ item.name }}
+                </a>
             {% endfor %}
         </div>
 
@@ -135,8 +124,8 @@
         <div class="content-column">
             <div class="row">
                 <div class="col-12 mb-4">
-                    <h4>Mantenedores Básicos</h4>
-                    <p class="text-muted">Selecciona un mantenedor para gestionar sus datos</p>
+                    <h4>Mantenedores de Datos Básicos</h4>
+                    <p class="text-muted">Gestiona los datos maestros fundamentales del sistema</p>
                 </div>
             </div>
 
@@ -151,9 +140,12 @@
                                 <h5 class="card-title">{{ item.name }}</h5>
                                 <p class="card-text text-muted">{{ item.description }}</p>
                                 <a href="{{ item.url }}" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-arrow-right me-1"></i>
+                                    <i class="fas fa-edit me-1"></i>
                                     Gestionar
                                 </a>
+                            </div>
+                            <div class="card-footer text-muted text-center">
+                                <small>Datos maestros del sistema</small>
                             </div>
                         </div>
                     </div>
@@ -162,11 +154,25 @@
 
             {% if basicItems is empty %}
                 <div class="text-center py-5">
-                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                    <h5 class="text-muted">No hay mantenedores disponibles</h5>
-                    <p class="text-muted">Los mantenedores aparecerán aquí cuando estén configurados.</p>
+                    <i class="fas fa-database fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No hay mantenedores básicos configurados</h5>
+                    <p class="text-muted">Los mantenedores básicos aparecerán aquí cuando estén disponibles.</p>
                 </div>
             {% endif %}
+
+            <!-- Información adicional -->
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle me-2"></i>Acerca de los Mantenedores Básicos</h6>
+                        <p class="mb-0">
+                            Los mantenedores básicos son tablas de datos maestros que contienen información 
+                            fundamental utilizada en todo el sistema. Estos datos son la base para la 
+                            operación correcta de la aplicación.
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
