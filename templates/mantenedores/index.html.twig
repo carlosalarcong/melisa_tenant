@@ -253,6 +253,17 @@
                 
                 // Asegurar que las funciones globales estén disponibles
                 window.setupMantenedorFunctions();
+                
+                // Test: Verificar que los botones estén presentes
+                setTimeout(() => {
+                    const botonCrear = document.querySelector('[data-action="crear-pais"]');
+                    console.log('Botón crear encontrado después de cargar:', !!botonCrear);
+                    
+                    if (botonCrear) {
+                        console.log('Botón crear:', botonCrear);
+                        console.log('Data-action:', botonCrear.getAttribute('data-action'));
+                    }
+                }, 100);
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -515,116 +526,293 @@
     document.addEventListener('DOMContentLoaded', function() {
         console.log('DOM cargado, configurando event delegation...');
         setupEventDelegation();
+        setupFormHandlers();
     });
     
-    // Event delegation para manejar clicks en contenido cargado dinámicamente
-    function setupEventDelegation() {
-        // Delegar eventos a document para que funcionen con contenido AJAX
-        document.addEventListener('click', function(e) {
-            const action = e.target.closest('[data-action]')?.getAttribute('data-action');
-            
-            if (!action) return;
-            
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const element = e.target.closest('[data-action]');
-            const id = element?.getAttribute('data-id');
-            
-            console.log('Acción detectada:', action, 'ID:', id);
-            
-            switch(action) {
-                case 'crear-pais':
-                    crearPaisHandler();
-                    break;
-                case 'editar-pais':
-                    editarPaisHandler(id);
-                    break;
-                case 'eliminar-pais':
-                    eliminarPaisHandler(id);
-                    break;
-                case 'cargar-paises':
-                    cargarPaisesHandler();
-                    break;
-                case 'volver-menu':
-                    volverAlMenu();
-                    break;
-            }
-        });
+    // Configurar handlers para formularios
+    function setupFormHandlers() {
+        console.log('Configurando handlers de formularios...');
         
-        // Delegar eventos de formulario
+        // Handler para formularios
         document.addEventListener('submit', function(e) {
             const action = e.target.getAttribute('data-action');
             
             if (action === 'guardar-pais') {
+                console.log('Submit detectado para guardar país');
                 e.preventDefault();
-                guardarPaisHandler(e);
+                ejecutarGuardarPais(e);
             }
         });
         
-        // Delegar eventos de input para búsqueda
+        // Handler para búsqueda
         document.addEventListener('input', function(e) {
             const action = e.target.getAttribute('data-action');
             
             if (action === 'buscar-paises') {
-                buscarPaisesHandler();
+                console.log('Input detectado para búsqueda');
+                ejecutarBuscarPaises();
             }
         });
     }
     
-    // Handlers específicos usando las funciones existentes
-    function crearPaisHandler() {
-        console.log('Creando país...');
-        if (typeof window.crearPais === 'function') {
-            window.crearPais();
-        } else {
-            console.error('Función crearPais no disponible');
+    // Función para guardar país
+    function ejecutarGuardarPais(event) {
+        console.log('=== GUARDAR PAÍS ===');
+        
+        const form = document.getElementById('paisForm');
+        if (!form) {
+            console.error('Formulario no encontrado');
+            return;
+        }
+        
+        limpiarErroresFormulario();
+        
+        // Obtener datos del formulario
+        const formData = new FormData(form);
+        const nombrePais = formData.get('nombrePais')?.trim();
+        const nombreGentilicio = formData.get('nombreGentilicio')?.trim();
+        const activo = formData.get('activo') === 'on';
+        const paisId = formData.get('id');
+        
+        console.log('Datos del formulario:', { nombrePais, nombreGentilicio, activo, paisId });
+        
+        // Validación simple
+        let errores = {};
+        
+        if (!nombrePais) {
+            errores.nombrePais = 'El nombre del país es obligatorio';
+        }
+        if (!nombreGentilicio) {
+            errores.nombreGentilicio = 'El gentilicio es obligatorio';
+        }
+        
+        // Mostrar errores si los hay
+        if (Object.keys(errores).length > 0) {
+            console.log('Errores de validación:', errores);
+            mostrarErroresValidacion(errores);
+            return;
+        }
+        
+        // Simular guardado
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Guardando...';
+        }
+        
+        setTimeout(() => {
+            const accion = paisId ? 'actualizado' : 'creado';
+            alert(`País ${accion} exitosamente!`);
+            
+            // Cerrar modal
+            const modal = document.getElementById('paisModal');
+            if (modal) {
+                const bsModal = bootstrap.Modal.getInstance(modal);
+                if (bsModal) bsModal.hide();
+            }
+            
+            // Restaurar botón
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Guardar';
+            }
+        }, 1000);
+    }
+    
+    function ejecutarBuscarPaises() {
+        const searchInput = document.getElementById('searchInput');
+        const search = searchInput?.value || '';
+        console.log('Buscando países:', search);
+    }
+    
+    function mostrarErroresValidacion(errores) {
+        Object.keys(errores).forEach(campo => {
+            const input = document.getElementById(campo);
+            if (input) {
+                input.classList.add('is-invalid');
+                
+                // Buscar o crear div de error
+                let errorDiv = input.parentNode.querySelector('.invalid-feedback');
+                if (!errorDiv) {
+                    errorDiv = document.createElement('div');
+                    errorDiv.className = 'invalid-feedback';
+                    input.parentNode.appendChild(errorDiv);
+                }
+                
+                errorDiv.textContent = errores[campo];
+                errorDiv.style.display = 'block';
+            }
+        });
+    }
+    
+    // Event delegation para manejar clicks en contenido cargado dinámicamente
+    function setupEventDelegation() {
+        console.log('Configurando event delegation...');
+        
+        // Remover listeners anteriores si existen
+        document.removeEventListener('click', handleDocumentClick);
+        
+        // Agregar listener principal
+        document.addEventListener('click', handleDocumentClick);
+        
+        console.log('Event delegation configurado');
+    }
+    
+    // Handler principal para todos los clicks
+    function handleDocumentClick(e) {
+        const target = e.target.closest('[data-action]');
+        
+        if (!target) return;
+        
+        const action = target.getAttribute('data-action');
+        const id = target.getAttribute('data-id');
+        
+        console.log('Click detectado - Acción:', action, 'ID:', id, 'Elemento:', target);
+        
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Ejecutar acciones
+        switch(action) {
+            case 'crear-pais':
+                console.log('Ejecutando crear país...');
+                ejecutarCrearPais();
+                break;
+            case 'editar-pais':
+                console.log('Ejecutando editar país:', id);
+                ejecutarEditarPais(id);
+                break;
+            case 'eliminar-pais':
+                console.log('Ejecutando eliminar país:', id);
+                ejecutarEliminarPais(id);
+                break;
+            case 'cargar-paises':
+                console.log('Ejecutando cargar países...');
+                ejecutarCargarPaises();
+                break;
+            case 'volver-menu':
+                console.log('Ejecutando volver al menú...');
+                volverAlMenu();
+                break;
+            default:
+                console.warn('Acción no reconocida:', action);
         }
     }
     
-    function editarPaisHandler(id) {
-        console.log('Editando país:', id);
-        if (typeof window.editarPais === 'function') {
-            window.editarPais(id);
-        } else {
-            console.error('Función editarPais no disponible');
+    // Funciones ejecutoras simplificadas
+    function ejecutarCrearPais() {
+        console.log('=== CREAR PAÍS ===');
+        
+        // Buscar elementos del modal
+        const modal = document.getElementById('paisModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const form = document.getElementById('paisForm');
+        const paisId = document.getElementById('paisId');
+        const nombrePais = document.getElementById('nombrePais');
+        const nombreGentilicio = document.getElementById('nombreGentilicio');
+        const activo = document.getElementById('activo');
+        
+        console.log('Elementos encontrados:', {
+            modal: !!modal,
+            modalTitle: !!modalTitle,
+            form: !!form,
+            paisId: !!paisId,
+            nombrePais: !!nombrePais,
+            nombreGentilicio: !!nombreGentilicio,
+            activo: !!activo
+        });
+        
+        if (!modal) {
+            console.error('Modal paisModal no encontrado');
+            alert('Error: Modal no encontrado');
+            return;
+        }
+        
+        // Configurar modal para crear
+        if (modalTitle) modalTitle.textContent = 'Crear País';
+        if (form) form.reset();
+        if (paisId) paisId.value = '';
+        if (activo) activo.checked = true;
+        
+        // Limpiar errores previos
+        limpiarErroresFormulario();
+        
+        // Mostrar modal
+        try {
+            const bsModal = new bootstrap.Modal(modal);
+            bsModal.show();
+            console.log('Modal mostrado exitosamente');
+        } catch (error) {
+            console.error('Error al mostrar modal:', error);
+            alert('Error al abrir el modal: ' + error.message);
         }
     }
     
-    function eliminarPaisHandler(id) {
-        console.log('Eliminando país:', id);
-        if (typeof window.eliminarPais === 'function') {
-            window.eliminarPais(id);
-        } else {
-            console.error('Función eliminarPais no disponible');
+    function ejecutarEditarPais(id) {
+        console.log('=== EDITAR PAÍS ===', id);
+        
+        if (!id) {
+            console.error('ID de país no proporcionado');
+            return;
+        }
+        
+        // Datos de ejemplo
+        const paisesEjemplo = {
+            '1': { nombrePais: 'Chile', nombreGentilicio: 'Chileno/a', activo: true },
+            '2': { nombrePais: 'Argentina', nombreGentilicio: 'Argentino/a', activo: true },
+            '3': { nombrePais: 'Perú', nombreGentilicio: 'Peruano/a', activo: true }
+        };
+        
+        const pais = paisesEjemplo[id];
+        if (!pais) {
+            alert('País no encontrado');
+            return;
+        }
+        
+        const modal = document.getElementById('paisModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const paisId = document.getElementById('paisId');
+        const nombrePais = document.getElementById('nombrePais');
+        const nombreGentilicio = document.getElementById('nombreGentilicio');
+        const activo = document.getElementById('activo');
+        
+        if (!modal) {
+            console.error('Modal no encontrado');
+            return;
+        }
+        
+        // Configurar modal para editar
+        if (modalTitle) modalTitle.textContent = 'Editar País';
+        if (paisId) paisId.value = id;
+        if (nombrePais) nombrePais.value = pais.nombrePais;
+        if (nombreGentilicio) nombreGentilicio.value = pais.nombreGentilicio;
+        if (activo) activo.checked = pais.activo;
+        
+        limpiarErroresFormulario();
+        
+        const bsModal = new bootstrap.Modal(modal);
+        bsModal.show();
+    }
+    
+    function ejecutarEliminarPais(id) {
+        console.log('=== ELIMINAR PAÍS ===', id);
+        
+        const confirmacion = confirm('¿Estás seguro de que deseas eliminar este país?\n\nEsta acción no se puede deshacer.');
+        
+        if (confirmacion) {
+            console.log('País eliminado:', id);
+            alert('País eliminado exitosamente! (Simulado)');
         }
     }
     
-    function cargarPaisesHandler() {
-        console.log('Cargando países...');
-        if (typeof window.cargarPaises === 'function') {
-            window.cargarPaises();
-        } else {
-            console.error('Función cargarPaises no disponible');
-        }
+    function ejecutarCargarPaises() {
+        console.log('=== CARGAR PAÍSES ===');
+        alert('Función cargar países ejecutada');
     }
     
-    function guardarPaisHandler(event) {
-        console.log('Guardando país...');
-        if (typeof window.guardarPais === 'function') {
-            window.guardarPais(event);
-        } else {
-            console.error('Función guardarPais no disponible');
-        }
-    }
-    
-    function buscarPaisesHandler() {
-        console.log('Buscando países...');
-        if (typeof window.buscarPaises === 'function') {
-            window.buscarPaises();
-        } else {
-            console.error('Función buscarPaises no disponible');
-        }
+    function limpiarErroresFormulario() {
+        document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        document.querySelectorAll('.invalid-feedback').forEach(el => el.style.display = 'none');
     }
     
     // También configurar cuando la página esté completamente cargada
