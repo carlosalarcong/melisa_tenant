@@ -1,0 +1,280 @@
+<!-- Contenido del mantenedor de países sin layout -->
+<div class="mantenedor-container">
+    <!-- Header del mantenedor -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h4>
+                        <i class="fas fa-globe text-primary me-2"></i>
+                        Gestión de Países
+                    </h4>
+                    <p class="text-muted mb-0">Administra los países y nacionalidades del sistema</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <div class="badge bg-info text-dark">
+                        {{ tenant.name }}
+                    </div>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="volverAlMenu()">
+                        <i class="fas fa-arrow-left me-1"></i>
+                        Volver al menú
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card principal del mantenedor -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-list me-2"></i>
+                            Lista de Países
+                        </h5>
+                        <button class="btn btn-primary btn-sm" onclick="crearPais()">
+                            <i class="fas fa-plus me-1"></i>
+                            Nuevo País
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <!-- Filtros y búsqueda -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="searchInput"
+                                       placeholder="Buscar por nombre o gentilicio..."
+                                       onkeyup="buscarPaises()">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-search"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <button class="btn btn-outline-secondary btn-sm" onclick="cargarPaises()">
+                                <i class="fas fa-sync-alt me-1"></i>
+                                Actualizar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Tabla responsive -->
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th width="80">ID</th>
+                                    <th>País</th>
+                                    <th>Gentilicio</th>
+                                    <th width="100">Estado</th>
+                                    <th width="120">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paisesTableBody">
+                                <!-- Datos de ejemplo -->
+                                <tr>
+                                    <td>1</td>
+                                    <td>Chile</td>
+                                    <td>Chileno/a</td>
+                                    <td><span class="badge bg-success">Activo</span></td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm" onclick="editarPais(1)">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-danger btn-sm" onclick="eliminarPais(1)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Argentina</td>
+                                    <td>Argentino/a</td>
+                                    <td><span class="badge bg-success">Activo</span></td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm" onclick="editarPais(2)">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-danger btn-sm" onclick="eliminarPais(2)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Perú</td>
+                                    <td>Peruano/a</td>
+                                    <td><span class="badge bg-success">Activo</span></td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm" onclick="editarPais(3)">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-danger btn-sm" onclick="eliminarPais(3)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Estado vacío -->
+                    <div class="text-center py-4 d-none" id="emptyState">
+                        <i class="fas fa-globe fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No hay países registrados</h5>
+                        <p class="text-muted">Agrega el primer país para comenzar.</p>
+                    </div>
+                </div>
+
+                <!-- Footer con paginación -->
+                <div class="card-footer">
+                    <div class="row align-items-center">
+                        <div class="col-sm-6">
+                            <small class="text-muted">
+                                Mostrando 3 registros de 3 total
+                            </small>
+                        </div>
+                        <div class="col-sm-6">
+                            <nav aria-label="Paginación de países">
+                                <ul class="pagination pagination-sm justify-content-end mb-0">
+                                    <li class="page-item disabled">
+                                        <span class="page-link">Anterior</span>
+                                    </li>
+                                    <li class="page-item active">
+                                        <span class="page-link">1</span>
+                                    </li>
+                                    <li class="page-item disabled">
+                                        <span class="page-link">Siguiente</span>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para crear/editar país -->
+<div class="modal fade" id="paisModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Crear País</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="paisForm" onsubmit="guardarPais(event)">
+                <div class="modal-body">
+                    <input type="hidden" name="_token" value="{{ csrf_token }}">
+                    <input type="hidden" id="paisId" name="id">
+                    
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Nombre del País <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="nombrePais"
+                               name="nombrePais"
+                               required 
+                               maxlength="255"
+                               placeholder="Ej: Chile">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Gentilicio <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="nombreGentilicio"
+                               name="nombreGentilicio"
+                               required 
+                               maxlength="255"
+                               placeholder="Ej: Chileno/a">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" 
+                                   class="form-check-input" 
+                                   id="activo"
+                                   name="activo"
+                                   checked>
+                            <label class="form-check-label">
+                                País activo
+                            </label>
+                        </div>
+                        <small class="form-text text-muted">Los países inactivos no aparecerán en formularios</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Funciones específicas del mantenedor de países
+    function cargarPaises() {
+        console.log('Cargando países...');
+        // Aquí iría la lógica para cargar datos reales via AJAX
+    }
+    
+    function buscarPaises() {
+        const search = document.getElementById('searchInput').value;
+        console.log('Buscando:', search);
+        // Aquí iría la lógica de búsqueda
+    }
+    
+    function crearPais() {
+        document.getElementById('modalTitle').textContent = 'Crear País';
+        document.getElementById('paisForm').reset();
+        document.getElementById('paisId').value = '';
+        document.getElementById('activo').checked = true;
+        
+        const modal = new bootstrap.Modal(document.getElementById('paisModal'));
+        modal.show();
+    }
+    
+    function editarPais(id) {
+        document.getElementById('modalTitle').textContent = 'Editar País';
+        // Aquí cargarías los datos del país con ID específico
+        
+        const modal = new bootstrap.Modal(document.getElementById('paisModal'));
+        modal.show();
+    }
+    
+    function eliminarPais(id) {
+        if (confirm('¿Estás seguro de que deseas eliminar este país?')) {
+            console.log('Eliminando país ID:', id);
+            // Aquí iría la lógica para eliminar
+        }
+    }
+    
+    function guardarPais(event) {
+        event.preventDefault();
+        console.log('Guardando país...');
+        // Aquí iría la lógica para guardar via AJAX
+        
+        // Simular guardado exitoso
+        alert('País guardado exitosamente!');
+        bootstrap.Modal.getInstance(document.getElementById('paisModal')).hide();
+    }
+</script>

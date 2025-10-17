@@ -55,22 +55,22 @@ class MantenedoresController extends AbstractController
                 [
                     'name' => 'Países',
                     'icon' => 'fas fa-globe',
-                    'url' => '/mantenedores/basico/pais'
+                    'url' => '/mantenedores/basico/pais/content'
                 ],
                 [
                     'name' => 'Regiones',
                     'icon' => 'fas fa-map-marked-alt',
-                    'url' => '/mantenedores/basico/region'
+                    'url' => '/mantenedores/basico/region/content'
                 ],
                 [
                     'name' => 'Religiones',
                     'icon' => 'fas fa-pray',
-                    'url' => '/mantenedores/basico/religion'
+                    'url' => '/mantenedores/basico/religion/content'
                 ],
                 [
                     'name' => 'Sexo',
                     'icon' => 'fas fa-venus-mars',
-                    'url' => '/mantenedores/basico/sexo'
+                    'url' => '/mantenedores/basico/sexo/content'
                 ]
             ],
             'Médicos' => [
@@ -110,25 +110,25 @@ class MantenedoresController extends AbstractController
                 'name' => 'Países',
                 'description' => 'Gestión de países y nacionalidades',
                 'icon' => 'fas fa-globe',
-                'url' => '/mantenedores/basico/pais'
+                'url' => '/mantenedores/basico/pais/content'
             ],
             [
                 'name' => 'Regiones',
                 'description' => 'Gestión de regiones por país',
                 'icon' => 'fas fa-map-marked-alt',
-                'url' => '/mantenedores/basico/region'
+                'url' => '/mantenedores/basico/region/content'
             ],
             [
                 'name' => 'Religiones',
                 'description' => 'Gestión de religiones y creencias',
                 'icon' => 'fas fa-pray',
-                'url' => '/mantenedores/basico/religion'
+                'url' => '/mantenedores/basico/religion/content'
             ],
             [
                 'name' => 'Sexo',
                 'description' => 'Gestión de tipos de sexo/género',
                 'icon' => 'fas fa-venus-mars',
-                'url' => '/mantenedores/basico/sexo'
+                'url' => '/mantenedores/basico/sexo/content'
             ]
         ];
     }

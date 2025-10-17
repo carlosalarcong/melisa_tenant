@@ -122,7 +122,9 @@
                 <div class="menu-category">
                     <h6>{{ category }}</h6>
                     {% for item in items %}
-                        <a href="{{ item.url }}" class="menu-item">
+                        <a href="javascript:void(0)" 
+                           class="menu-item" 
+                           onclick="cargarMantenedor('{{ item.url }}', '{{ item.name }}')">
                             <i class="{{ item.icon }} me-2"></i>
                             {{ item.name }}
                         </a>
@@ -133,41 +135,117 @@
 
         <!-- Contenido principal -->
         <div class="content-column">
-            <div class="row">
-                <div class="col-12 mb-4">
-                    <h4>Mantenedores Básicos</h4>
-                    <p class="text-muted">Selecciona un mantenedor para gestionar sus datos</p>
+            <div id="mantenedorContent">
+                <div class="row">
+                    <div class="col-12 mb-4">
+                        <h4>Mantenedores Básicos</h4>
+                        <p class="text-muted">Selecciona un mantenedor para gestionar sus datos</p>
+                    </div>
                 </div>
-            </div>
 
-            <div class="row">
-                {% for item in basicItems %}
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <div class="card card-mantenedor h-100">
-                            <div class="card-body text-center">
-                                <div class="mb-3">
-                                    <i class="{{ item.icon }} fa-2x text-primary"></i>
+                <div class="row">
+                    {% for item in basicItems %}
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card card-mantenedor h-100">
+                                <div class="card-body text-center">
+                                    <div class="mb-3">
+                                        <i class="{{ item.icon }} fa-2x text-primary"></i>
+                                    </div>
+                                    <h5 class="card-title">{{ item.name }}</h5>
+                                    <p class="card-text text-muted">{{ item.description }}</p>
+                                    <button class="btn btn-primary btn-sm" 
+                                            onclick="cargarMantenedor('{{ item.url }}', '{{ item.name }}')">
+                                        <i class="fas fa-arrow-right me-1"></i>
+                                        Gestionar
+                                    </button>
                                 </div>
-                                <h5 class="card-title">{{ item.name }}</h5>
-                                <p class="card-text text-muted">{{ item.description }}</p>
-                                <a href="{{ item.url }}" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-arrow-right me-1"></i>
-                                    Gestionar
-                                </a>
                             </div>
                         </div>
+                    {% endfor %}
+                </div>
+
+                {% if basicItems is empty %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No hay mantenedores disponibles</h5>
+                        <p class="text-muted">Los mantenedores aparecerán aquí cuando estén configurados.</p>
                     </div>
-                {% endfor %}
+                {% endif %}
             </div>
 
-            {% if basicItems is empty %}
-                <div class="text-center py-5">
-                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                    <h5 class="text-muted">No hay mantenedores disponibles</h5>
-                    <p class="text-muted">Los mantenedores aparecerán aquí cuando estén configurados.</p>
+            <!-- Spinner de carga -->
+            <div id="loadingSpinner" class="text-center py-5" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">Cargando...</span>
                 </div>
-            {% endif %}
+                <p class="mt-2 text-muted">Cargando mantenedor...</p>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+    // Función para cargar mantenedor dinámicamente
+    function cargarMantenedor(url, nombre) {
+        const contentDiv = document.getElementById('mantenedorContent');
+        const spinner = document.getElementById('loadingSpinner');
+        
+        // Mostrar spinner y ocultar contenido
+        contentDiv.style.display = 'none';
+        spinner.style.display = 'block';
+        
+        // Hacer petición AJAX
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al cargar el mantenedor');
+                }
+                return response.text();
+            })
+            .then(html => {
+                // Extraer solo el contenido del body del HTML recibido
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const bodyContent = doc.querySelector('.mantenedor-container') || doc.body;
+                
+                // Reemplazar el contenido
+                contentDiv.innerHTML = bodyContent.innerHTML;
+                
+                // Ocultar spinner y mostrar contenido
+                spinner.style.display = 'none';
+                contentDiv.style.display = 'block';
+                
+                // Actualizar título si es necesible
+                updatePageTitle(nombre);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                contentDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <h5><i class="fas fa-exclamation-triangle me-2"></i>Error al cargar</h5>
+                        <p>No se pudo cargar el mantenedor de ${nombre}. Por favor, inténtalo de nuevo.</p>
+                        <button class="btn btn-secondary btn-sm" onclick="location.reload()">
+                            <i class="fas fa-refresh me-1"></i>
+                            Recargar página
+                        </button>
+                    </div>
+                `;
+                spinner.style.display = 'none';
+                contentDiv.style.display = 'block';
+            });
+    }
+    
+    // Función para actualizar el título de la página
+    function updatePageTitle(nombre) {
+        const mainTitle = document.querySelector('.content-column h4');
+        if (mainTitle) {
+            mainTitle.innerHTML = `<i class="fas fa-cog me-2"></i>Mantenedor de ${nombre}`;
+        }
+    }
+    
+    // Función para volver al menú principal
+    function volverAlMenu() {
+        location.reload();
+    }
+</script>
 {% endblock %}

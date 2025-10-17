@@ -6,6 +6,7 @@ use App\Controller\Mantenedores\AbstractMantenedorController;
 use App\Entity\Pais;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class PaisController extends AbstractMantenedorController
 {
@@ -71,6 +72,20 @@ class PaisController extends AbstractMantenedorController
     protected function getTemplateName(): string
     {
         return 'mantenedores/basico/pais/index.html.twig';
+    }
+
+    /**
+     * Vista AJAX para cargar solo el contenido del mantenedor
+     */
+    public function content(): Response
+    {
+        $config = $this->getMantenedorConfig();
+        
+        return $this->render('mantenedores/basico/pais/content.html.twig', [
+            'mantenedor_config' => $config,
+            'tenant' => $this->getCurrentTenant(),
+            'csrf_token' => $this->csrfTokenManager->getToken('mantenedor_form')->getValue()
+        ]);
     }
 
     protected function applySearchFilter($queryBuilder, string $search): void

@@ -27,6 +27,11 @@ mantenedores_pais_index:
     controller: App\Controller\Mantenedores\Basico\PaisController::index
     methods: [GET]
 
+mantenedores_pais_content:
+    path: /mantenedores/basico/pais/content
+    controller: App\Controller\Mantenedores\Basico\PaisController::content
+    methods: [GET]
+
 mantenedores_pais_list:
     path: /mantenedores/basico/pais/list
     controller: App\Controller\Mantenedores\Basico\PaisController::list
