@@ -359,7 +359,9 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
             case 'Version20251017152218':
                 $this->applyVersion20251017152218($connection);
                 break;
-                $this->applyVersion20251017150541($connection);
+            case 'Version20251017165847':
+            case 'Version20251017165926':
+                $this->applyVersion20251017165847($connection, $io);
                 break;
             default:
                 // Para nuevas migraciones, intentar aplicar dinámicamente
@@ -529,10 +531,207 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
         }
     }
 
+    private function applyVersion20251017165847($connection, SymfonyStyle $io): void
+    {
+        // Esta migración incluye la tabla member y todas las entidades
+        
+        // Crear tabla estado si no existe
+        $connection->executeStatement("
+            CREATE TABLE IF NOT EXISTS estado (
+                id INT AUTO_INCREMENT NOT NULL,
+                nombre_estado VARCHAR(45) NOT NULL,
+                activo TINYINT(1) DEFAULT 1 NOT NULL,
+                PRIMARY KEY(id)
+            ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB
+        ");
+
+        // Crear tabla member - ¡LA CLAVE!
+        $connection->executeStatement("
+            CREATE TABLE IF NOT EXISTS member (
+                id INT AUTO_INCREMENT NOT NULL,
+                username VARCHAR(180) NOT NULL,
+                roles JSON NOT NULL,
+                password VARCHAR(255) NOT NULL,
+                email VARCHAR(255) DEFAULT NULL,
+                first_name VARCHAR(255) DEFAULT NULL,
+                last_name VARCHAR(255) DEFAULT NULL,
+                is_active TINYINT(1) DEFAULT NULL,
+                created_at DATETIME DEFAULT NULL COMMENT '(DC2Type:datetime_immutable)',
+                updated_at DATETIME DEFAULT NULL COMMENT '(DC2Type:datetime_immutable)',
+                UNIQUE INDEX UNIQ_IDENTIFIER_USERNAME (username),
+                PRIMARY KEY(id)
+            ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB
+        ");
+
+        // Crear otras tablas si no existen
+        $connection->executeStatement("
+            CREATE TABLE IF NOT EXISTS pais (
+                id INT AUTO_INCREMENT NOT NULL,
+                id_estado INT DEFAULT NULL,
+                nombre_pais VARCHAR(255) DEFAULT NULL,
+                nombre_gentilicio VARCHAR(255) NOT NULL,
+                activo TINYINT(1) DEFAULT 1 NOT NULL,
+                INDEX IDX_7E5D2EFF6A540E (id_estado),
+                PRIMARY KEY(id)
+            ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB
+        ");
+
+        $connection->executeStatement("
+            CREATE TABLE IF NOT EXISTS region (
+                id INT AUTO_INCREMENT NOT NULL,
+                id_pais INT DEFAULT NULL,
+                id_estado INT DEFAULT NULL,
+                codigo_region INT DEFAULT NULL,
+                nombre_region VARCHAR(100) DEFAULT NULL,
+                address_state_hl7 VARCHAR(10) DEFAULT NULL,
+                activo TINYINT(1) DEFAULT 1 NOT NULL,
+                INDEX IDX_F62F176F57D32FD (id_pais),
+                INDEX IDX_F62F1766A540E (id_estado),
+                PRIMARY KEY(id)
+            ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB
+        ");
+
+        $connection->executeStatement("
+            CREATE TABLE IF NOT EXISTS religion (
+                id INT AUTO_INCREMENT NOT NULL,
+                id_estado INT DEFAULT NULL,
+                nombre VARCHAR(100) NOT NULL,
+                codigo VARCHAR(20) NOT NULL,
+                descripcion LONGTEXT DEFAULT NULL,
+                activo TINYINT(1) DEFAULT 1 NOT NULL,
+                INDEX IDX_1055F4F96A540E (id_estado),
+                PRIMARY KEY(id)
+            ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB
+        ");
+
+        $connection->executeStatement("
+            CREATE TABLE IF NOT EXISTS sexo (
+                id INT AUTO_INCREMENT NOT NULL,
+                id_estado INT DEFAULT NULL,
+                nombre VARCHAR(50) NOT NULL,
+                codigo VARCHAR(10) NOT NULL,
+                activo TINYINT(1) DEFAULT 1 NOT NULL,
+                INDEX IDX_2C3956926A540E (id_estado),
+                PRIMARY KEY(id)
+            ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB
+        ");
+
+        // Crear tabla de mensajes de Symfony
+        $connection->executeStatement("
+            CREATE TABLE IF NOT EXISTS messenger_messages (
+                id BIGINT AUTO_INCREMENT NOT NULL,
+                body LONGTEXT NOT NULL,
+                headers LONGTEXT NOT NULL,
+                queue_name VARCHAR(190) NOT NULL,
+                created_at DATETIME NOT NULL COMMENT '(DC2Type:datetime_immutable)',
+                available_at DATETIME NOT NULL COMMENT '(DC2Type:datetime_immutable)',
+                delivered_at DATETIME DEFAULT NULL COMMENT '(DC2Type:datetime_immutable)',
+                INDEX IDX_75EA56E0FB7336F0 (queue_name),
+                INDEX IDX_75EA56E0E3BD61CE (available_at),
+                INDEX IDX_75EA56E016BA31DB (delivered_at),
+                PRIMARY KEY(id)
+            ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB
+        ");
+
+        // Agregar foreign keys
+        try {
+            $connection->executeStatement("ALTER TABLE pais ADD CONSTRAINT FK_7E5D2EFF6A540E FOREIGN KEY (id_estado) REFERENCES estado (id)");
+        } catch (\Exception $e) {}
+        
+        try {
+            $connection->executeStatement("ALTER TABLE region ADD CONSTRAINT FK_F62F176F57D32FD FOREIGN KEY (id_pais) REFERENCES pais (id)");
+        } catch (\Exception $e) {}
+        
+        try {
+            $connection->executeStatement("ALTER TABLE region ADD CONSTRAINT FK_F62F1766A540E FOREIGN KEY (id_estado) REFERENCES estado (id)");
+        } catch (\Exception $e) {}
+        
+        try {
+            $connection->executeStatement("ALTER TABLE religion ADD CONSTRAINT FK_1055F4F96A540E FOREIGN KEY (id_estado) REFERENCES estado (id)");
+        } catch (\Exception $e) {}
+        
+        try {
+            $connection->executeStatement("ALTER TABLE sexo ADD CONSTRAINT FK_2C3956926A540E FOREIGN KEY (id_estado) REFERENCES estado (id)");
+        } catch (\Exception $e) {}
+
+        $io->text("    ✅ Tabla member creada exitosamente");
+    }
+
     private function applyDynamicMigration($connection, string $filename): void
     {
-        // Para futuras migraciones, podrías implementar lógica dinámica aquí
-        // Por ahora, log que se omitió
+        // Aplicar migración de forma dinámica leyendo el archivo PHP
+        $migrationFile = '/var/www/html/melisa_tenant/migrations/' . $filename . '.php';
+        
+        if (!file_exists($migrationFile)) {
+            throw new \Exception("Archivo de migración no encontrado: {$migrationFile}");
+        }
+        
+        // Leer el contenido del archivo de migración
+        $migrationContent = file_get_contents($migrationFile);
+        
+        // Extraer las sentencias SQL del método up()
+        $sqlStatements = $this->extractSqlFromMigration($migrationContent);
+        
+        // Ejecutar cada sentencia SQL
+        foreach ($sqlStatements as $sql) {
+            try {
+                // Limpiar y preparar la sentencia SQL
+                $cleanSql = trim($sql);
+                if (!empty($cleanSql) && $cleanSql !== ';') {
+                    $connection->executeStatement($cleanSql);
+                }
+            } catch (\Exception $e) {
+                // Algunos errores son esperables (tabla ya existe, etc.)
+                if (!$this->isExpectedMigrationError($e->getMessage())) {
+                    throw new \Exception("Error ejecutando SQL: {$cleanSql}. Error: " . $e->getMessage());
+                }
+            }
+        }
+    }
+    
+    private function extractSqlFromMigration(string $content): array
+    {
+        $sqlStatements = [];
+        
+        // Usar regex para extraer todas las llamadas a addSql()
+        preg_match_all('/\$this->addSql\([\'\"](.*?)[\'\"]\);/s', $content, $matches);
+        
+        if (!empty($matches[1])) {
+            foreach ($matches[1] as $sql) {
+                // Limpiar caracteres de escape y normalizar
+                $cleanSql = str_replace(['\\\'', '\\"', '\\\\'], ["'", '"', '\\'], $sql);
+                $cleanSql = trim($cleanSql);
+                
+                if (!empty($cleanSql)) {
+                    $sqlStatements[] = $cleanSql;
+                }
+            }
+        }
+        
+        return $sqlStatements;
+    }
+    
+    private function isExpectedMigrationError(string $errorMessage): bool
+    {
+        // Errores comunes y esperables durante migraciones
+        $expectedErrors = [
+            'Table .* already exists',
+            'Duplicate column name',
+            'Duplicate key name',
+            'Column .* already exists', 
+            'Key .* already exists',
+            'Can\'t DROP .*; check that column/key exists',
+            'Unknown table .*',
+            'Table .* doesn\'t exist'
+        ];
+        
+        foreach ($expectedErrors as $pattern) {
+            if (preg_match('/' . $pattern . '/i', $errorMessage)) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     private function showFinalResults(SymfonyStyle $io, array $results, bool $dryRun): void

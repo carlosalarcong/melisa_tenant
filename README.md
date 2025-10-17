@@ -217,6 +217,236 @@ Visita `/examples` para ver demos funcionando:
 
 ---
 
+## 🛠️ Comandos del Sistema
+
+### 📊 **Comandos Multi-Tenant**
+
+#### 🚀 **Migración Automática Multi-Tenant**
+```bash
+php bin/console app:migrate-tenant [opciones]
+```
+
+**Descripción**: Comando personalizado que aplica migraciones automáticamente a todas las bases de datos de tenants registrados en el sistema.
+
+**Opciones:**
+- `--dry-run` - Simula la ejecución sin aplicar cambios reales
+- `--force` - Ejecuta las migraciones en todas las bases de datos
+- `--generate-only` - Solo genera nuevas migraciones sin aplicarlas
+
+**Funcionalidades:**
+- ✅ **Detección automática** de tenants activos desde `melisa_central`
+- ✅ **Generación automática** de migraciones basadas en entidades
+- ✅ **Aplicación simultánea** a múltiples bases de datos
+- ✅ **Sistema dinámico** que lee archivos de migración automáticamente
+- ✅ **Manejo de errores** esperados (tablas existentes, claves duplicadas)
+- ✅ **Registro de versiones** en `doctrine_migration_versions`
+
+**Ejemplos:**
+
+```bash
+# Simulación (recomendado antes de ejecutar)
+php bin/console app:migrate-tenant --dry-run
+
+# Ejecución real en todas las bases de datos
+php bin/console app:migrate-tenant --force
+
+# Solo generar migraciones nuevas
+php bin/console app:migrate-tenant --generate-only
+```
+
+**Salida del comando:**
+```
+🚀 Migración Automática Multi-Tenant
+====================================
+
+📊 Resumen de Migración Automática
+----------------------------------
+ Modo de ejecución        🔄 EJECUCIÓN REAL  
+ Total tenants activos    3                  
+ Directorio migraciones   ./migrations/      
+ Entidades detectadas     6                  
+
+📋 Tenants que serán procesados:
+   • Clínica La Colina (melisalacolina) → BD: melisalacolina
+   • Clínica Wiclinic (melisawiclinic) → BD: melisawiclinic
+   • Hospital Central (melisahospital) → BD: melisahospital
+
+🚀 Aplicando Migraciones a Todos los Tenants
+--------------------------------------------
+ 📋 Procesando [1/3]: Clínica La Colina (melisalacolina)
+     ✅ Tabla member creada exitosamente
+ 📋 Procesando [2/3]: Clínica Wiclinic (melisawiclinic)
+     ✅ Tabla member creada exitosamente
+ 📋 Procesando [3/3]: Hospital Central (melisahospital)
+     ✅ Tabla member creada exitosamente
+
+📈 Resultados Finales
+---------------------
+  ✅ Exitosos           3     
+  ❌ Fallidos           0     
+  📊 Total procesados   3     
+  🎯 Tasa de éxito      100%  
+
+🎉 Todas las migraciones fueron aplicadas exitosamente a todos los tenants!
+```
+
+**Bases de datos soportadas:**
+- `melisalacolina` - Base de datos Clínica La Colina
+- `melisawiclinic` - Base de datos Wi Clinic
+- `melisahospital` - Base de datos Hospital Central
+
+### 🔧 **Comandos Symfony Estándar**
+
+#### **Base de Datos:**
+```bash
+# Crear base de datos
+php bin/console doctrine:database:create
+
+# Ejecutar migraciones
+php bin/console doctrine:migrations:migrate
+
+# Generar migración
+php bin/console doctrine:migrations:diff
+
+# Ver estado de migraciones
+php bin/console doctrine:migrations:status
+
+# Crear entidad
+php bin/console make:entity
+```
+
+#### **Cache y Desarrollo:**
+```bash
+# Limpiar cache
+php bin/console cache:clear
+
+# Limpiar cache específico
+php bin/console cache:clear --env=prod
+
+# Ver rutas disponibles
+php bin/console debug:router
+
+# Debug configuración
+php bin/console debug:config
+```
+
+#### **Assets y Frontend:**
+```bash
+# Compilar assets
+php bin/console asset-map:compile
+
+# Ver asset mapping
+php bin/console debug:asset-map
+
+# Limpiar assets compilados
+rm -rf public/assets/
+```
+
+#### **API Platform:**
+```bash
+# Debug configuración API Platform
+php bin/console debug:config api_platform
+
+# Ver recursos API
+php bin/console api:debug
+
+# Generar documentación OpenAPI
+php bin/console api:openapi:export
+```
+
+### 🐛 **Comandos de Debug**
+
+#### **Multi-Tenant Debug:**
+```bash
+# Ver configuración tenant actual
+php bin/console debug:container | grep tenant
+
+# Debug tenant context
+php bin/console debug:container tenant.context
+
+# Ver servicios de tenant
+php bin/console debug:container tenant.resolver
+```
+
+#### **Verificación de Sistema:**
+```bash
+# Verificar configuración de base de datos
+php bin/console doctrine:schema:validate
+
+# Ver información del entorno
+php bin/console about
+
+# Debug configuración de seguridad
+php bin/console debug:config security
+```
+
+### 📊 **Comandos de Monitoreo**
+
+#### **Estado del Sistema:**
+```bash
+# Ver estado de las migraciones por tenant
+mysql -u root -p123456 -e "
+SELECT 
+    'melisalacolina' as tenant,
+    COUNT(*) as migraciones_ejecutadas
+FROM melisalacolina.doctrine_migration_versions
+UNION ALL
+SELECT 
+    'melisawiclinic' as tenant,
+    COUNT(*) as migraciones_ejecutadas  
+FROM melisawiclinic.doctrine_migration_versions
+UNION ALL
+SELECT 
+    'melisahospital' as tenant,
+    COUNT(*) as migraciones_ejecutadas
+FROM melisahospital.doctrine_migration_versions;"
+```
+
+#### **Verificación de Tablas:**
+```bash
+# Verificar tabla member en todos los tenants
+mysql -u root -p123456 -e "
+SELECT 'melisalacolina' as tenant, COUNT(*) as member_table_exists
+FROM information_schema.tables 
+WHERE table_schema='melisalacolina' AND table_name='member'
+UNION ALL
+SELECT 'melisawiclinic' as tenant, COUNT(*) as member_table_exists
+FROM information_schema.tables 
+WHERE table_schema='melisawiclinic' AND table_name='member'
+UNION ALL
+SELECT 'melisahospital' as tenant, COUNT(*) as member_table_exists
+FROM information_schema.tables 
+WHERE table_schema='melisahospital' AND table_name='member';"
+```
+
+### 🚀 **Comandos de Deployment**
+
+#### **Preparación para Producción:**
+```bash
+# Optimizar autoloader
+composer dump-autoload --optimize --classmap-authoritative
+
+# Compilar assets para producción
+php bin/console asset-map:compile --env=prod
+
+# Limpiar cache de producción
+php bin/console cache:clear --env=prod
+
+# Optimizar cache
+php bin/console cache:warmup --env=prod
+```
+
+#### **Backup y Restore:**
+```bash
+# Backup de todas las bases de datos de tenants
+mysqldump -u root -p123456 --databases melisalacolina melisawiclinic melisahospital melisa_central > backup_$(date +%Y%m%d_%H%M%S).sql
+
+# Restore de backup
+mysql -u root -p123456 < backup_20251017_120000.sql
+```
+
+---
+
 ## 🛠️ Comandos Útiles
 
 ```bash
