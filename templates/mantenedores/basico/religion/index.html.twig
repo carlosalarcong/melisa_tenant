@@ -1,0 +1,16 @@
+{% extends 'mantenedores/index.html.twig' %}
+
+{% block mantenedor_title %}Religiones{% endblock %}
+
+{% block mantenedor_content %}
+<div data-controller="mantenedor-list" data-mantenedor-list-url="{{ path('mantenedor_basico_religion_list') }}">
+    <table class="table">
+        <thead>
+            <tr><th>ID</th><th>Nombre</th><th>Estado</th><th>Acciones</th></tr>
+        </thead>
+        <tbody data-mantenedor-list-target="body"></tbody>
+    </table>
+</div>
+
+{% include 'mantenedores/partials/modal_form.html.twig' with { form_action: path('mantenedor_basico_religion_create') } %}
+{% endblock %}
