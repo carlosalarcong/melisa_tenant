@@ -8,15 +8,22 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractTenantController extends AbstractController
 {
-    protected function getCurrentTenant(): ?Tenant
+    protected TenantContext $tenantContext;
+
+    public function __construct(TenantContext $tenantContext)
     {
-        return $this->container->get(TenantContext::class)->getCurrentTenant();
+        $this->tenantContext = $tenantContext;
+    }
+
+    protected function getCurrentTenant(): ?array
+    {
+        return $this->tenantContext->getCurrentTenant();
     }
     
     protected function getTenantTemplateDirectory(): string
     {
         $tenant = $this->getCurrentTenant();
-        return $tenant ? strtolower($tenant->getSubdomain()) : 'default';
+        return $tenant ? strtolower($tenant['subdomain']) : 'default';
     }
     
     protected function renderTenantTemplate(string $template, array $parameters = []): Response
@@ -39,8 +46,8 @@ abstract class AbstractTenantController extends AbstractController
         $session = $this->container->get('request_stack')->getCurrentRequest()->getSession();
         
         $parameters['tenant'] = $tenant;
-        $parameters['tenant_name'] = $tenant?->getName();
-        $parameters['subdomain'] = $tenant?->getSubdomain();
+        $parameters['tenant_name'] = $tenant['name'] ?? null;
+        $parameters['subdomain'] = $tenant['subdomain'] ?? null;
         $parameters['logged_user'] = $session->get('member');
         
         return $parameters;
