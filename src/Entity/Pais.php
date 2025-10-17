@@ -27,6 +27,10 @@ class Pais
     #[ORM\OneToMany(mappedBy: 'pais', targetEntity: Region::class)]
     private Collection $regiones;
 
+    #[ORM\ManyToOne(targetEntity: Estado::class, inversedBy: 'paises')]
+    #[ORM\JoinColumn(name: 'id_estado', referencedColumnName: 'id')]
+    private ?Estado $estado = null;
+
     public function __construct()
     {
         $this->regiones = new ArrayCollection();
@@ -97,12 +101,22 @@ class Pais
     public function removeRegion(Region $region): static
     {
         if ($this->regiones->removeElement($region)) {
-            // set the owning side to null (unless already changed)
             if ($region->getPais() === $this) {
                 $region->setPais(null);
             }
         }
 
+        return $this;
+    }
+
+    public function getEstado(): ?Estado
+    {
+        return $this->estado;
+    }
+
+    public function setEstado(?Estado $estado): static
+    {
+        $this->estado = $estado;
         return $this;
     }
 

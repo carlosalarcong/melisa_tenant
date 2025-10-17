@@ -13,17 +13,21 @@ class Religion
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: "string", length: 255)]
+    #[ORM\Column(type: "string", length: 100, nullable: false)]
     private ?string $nombre = null;
 
-    #[ORM\Column(type: "string", length: 255)]
+    #[ORM\Column(type: "string", length: 20, nullable: false)]
     private ?string $codigo = null;
 
-    #[ORM\Column(type: "text")]
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $descripcion = null;
 
-    #[ORM\Column(type: "boolean")]
-    private ?bool $activo = null;
+    #[ORM\Column(type: "boolean", options: ["default" => true])]
+    private ?bool $activo = true;
+
+    #[ORM\ManyToOne(targetEntity: Estado::class, inversedBy: 'religiones')]
+    #[ORM\JoinColumn(name: 'id_estado', referencedColumnName: 'id')]
+    private ?Estado $estado = null;
 
     public function getId(): ?int
     {
@@ -72,5 +76,21 @@ class Religion
     {
         $this->activo = $activo;
         return $this;
+    }
+
+    public function getEstado(): ?Estado
+    {
+        return $this->estado;
+    }
+
+    public function setEstado(?Estado $estado): static
+    {
+        $this->estado = $estado;
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->nombre ?? 'Religión sin nombre';
     }
 }

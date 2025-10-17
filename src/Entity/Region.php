@@ -29,6 +29,10 @@ class Region
     #[ORM\JoinColumn(name: 'id_pais', referencedColumnName: 'id')]
     private ?Pais $pais = null;
 
+    #[ORM\ManyToOne(targetEntity: Estado::class, inversedBy: 'regiones')]
+    #[ORM\JoinColumn(name: 'id_estado', referencedColumnName: 'id')]
+    private ?Estado $estado = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -92,6 +96,17 @@ class Region
     public function setPais(?Pais $pais): static
     {
         $this->pais = $pais;
+        return $this;
+    }
+
+    public function getEstado(): ?Estado
+    {
+        return $this->estado;
+    }
+
+    public function setEstado(?Estado $estado): static
+    {
+        $this->estado = $estado;
         return $this;
     }
 
