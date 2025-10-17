@@ -2,22 +2,32 @@
 
 namespace App\Controller\Mantenedores;
 
-use App\Controller\AbstractTenantController;
+use App\Service\TenantContext;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class MantenedoresController extends AbstractTenantController
+class MantenedoresController extends AbstractController
 {
+    private TenantContext $tenantContext;
+
+    public function __construct(TenantContext $tenantContext)
+    {
+        $this->tenantContext = $tenantContext;
+    }
+
     /**
      * Página principal de mantenedores
      */
     public function index(): Response
     {
-        $tenant = $this->getCurrentTenant();
+        $tenant = $this->tenantContext->getCurrentTenant();
         
-        return $this->renderWithTenant('mantenedores/index.html.twig', [
-            'page_title' => 'Mantenedores - ' . ($tenant?->getName() ?? 'Sistema'),
-            'menu_items' => $this->getMenuItems()
+        return $this->render('mantenedores/index.html.twig', [
+            'tenant' => $tenant,
+            'page_title' => 'Mantenedores - ' . ($tenant['name'] ?? 'Sistema'),
+            'menuItems' => $this->getMenuItems(),
+            'basicItems' => $this->getBasicItems()
         ]);
     }
 
@@ -26,11 +36,12 @@ class MantenedoresController extends AbstractTenantController
      */
     public function basico(): Response
     {
-        $tenant = $this->getCurrentTenant();
+        $tenant = $this->tenantContext->getCurrentTenant();
         
-        return $this->renderWithTenant('mantenedores/basico/index.html.twig', [
-            'page_title' => 'Mantenedores Básicos - ' . ($tenant?->getName() ?? 'Sistema'),
-            'basic_items' => $this->getBasicItems()
+        return $this->render('mantenedores/basico.html.twig', [
+            'tenant' => $tenant,
+            'page_title' => 'Mantenedores Básicos - ' . ($tenant['name'] ?? 'Sistema'),
+            'basicItems' => $this->getBasicItems()
         ]);
     }
 
@@ -40,34 +51,50 @@ class MantenedoresController extends AbstractTenantController
     private function getMenuItems(): array
     {
         return [
-            [
-                'title' => 'Mantenedores Básicos',
-                'description' => 'Gestión de datos básicos del sistema',
-                'icon' => 'fas fa-database',
-                'url' => '/mantenedores/basico',
-                'color' => 'primary',
-                'items' => [
-                    'Países', 'Regiones', 'Religiones', 'Sexo'
+            'Básico' => [
+                [
+                    'name' => 'Países',
+                    'icon' => 'fas fa-globe',
+                    'url' => '/mantenedores/basico/pais'
+                ],
+                [
+                    'name' => 'Regiones',
+                    'icon' => 'fas fa-map-marked-alt',
+                    'url' => '/mantenedores/basico/region'
+                ],
+                [
+                    'name' => 'Religiones',
+                    'icon' => 'fas fa-pray',
+                    'url' => '/mantenedores/basico/religion'
+                ],
+                [
+                    'name' => 'Sexo',
+                    'icon' => 'fas fa-venus-mars',
+                    'url' => '/mantenedores/basico/sexo'
                 ]
             ],
-            [
-                'title' => 'Mantenedores Médicos',
-                'description' => 'Gestión de datos médicos específicos',
-                'icon' => 'fas fa-user-md',
-                'url' => '/mantenedores/medicos',
-                'color' => 'success',
-                'items' => [
-                    'Especialidades', 'Diagnósticos', 'Medicamentos'
+            'Médicos' => [
+                [
+                    'name' => 'Especialidades',
+                    'icon' => 'fas fa-stethoscope',
+                    'url' => '/mantenedores/medicos/especialidades'
+                ],
+                [
+                    'name' => 'Diagnósticos',
+                    'icon' => 'fas fa-notes-medical',
+                    'url' => '/mantenedores/medicos/diagnosticos'
                 ]
             ],
-            [
-                'title' => 'Mantenedores de Sistema',
-                'description' => 'Configuración y parámetros del sistema',
-                'icon' => 'fas fa-cogs',
-                'url' => '/mantenedores/sistema',
-                'color' => 'info',
-                'items' => [
-                    'Usuarios', 'Roles', 'Permisos', 'Configuración'
+            'Sistema' => [
+                [
+                    'name' => 'Usuarios',
+                    'icon' => 'fas fa-users',
+                    'url' => '/mantenedores/sistema/usuarios'
+                ],
+                [
+                    'name' => 'Roles',
+                    'icon' => 'fas fa-user-tag',
+                    'url' => '/mantenedores/sistema/roles'
                 ]
             ]
         ];
@@ -80,36 +107,28 @@ class MantenedoresController extends AbstractTenantController
     {
         return [
             [
-                'title' => 'Países',
+                'name' => 'Países',
                 'description' => 'Gestión de países y nacionalidades',
                 'icon' => 'fas fa-globe',
-                'url' => '/mantenedores/basico/pais',
-                'color' => 'primary',
-                'count' => 0 // TODO: obtener count real
+                'url' => '/mantenedores/basico/pais'
             ],
             [
-                'title' => 'Regiones',
+                'name' => 'Regiones',
                 'description' => 'Gestión de regiones por país',
                 'icon' => 'fas fa-map-marked-alt',
-                'url' => '/mantenedores/basico/region',
-                'color' => 'success',
-                'count' => 0
+                'url' => '/mantenedores/basico/region'
             ],
             [
-                'title' => 'Religiones',
+                'name' => 'Religiones',
                 'description' => 'Gestión de religiones y creencias',
                 'icon' => 'fas fa-pray',
-                'url' => '/mantenedores/basico/religion',
-                'color' => 'warning',
-                'count' => 0
+                'url' => '/mantenedores/basico/religion'
             ],
             [
-                'title' => 'Sexo',
+                'name' => 'Sexo',
                 'description' => 'Gestión de tipos de sexo/género',
                 'icon' => 'fas fa-venus-mars',
-                'url' => '/mantenedores/basico/sexo',
-                'color' => 'info',
-                'count' => 0
+                'url' => '/mantenedores/basico/sexo'
             ]
         ];
     }

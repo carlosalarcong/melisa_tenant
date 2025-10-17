@@ -83,4 +83,19 @@ class PaisController extends AbstractMantenedorController
             )
             ->setParameter('search', '%' . $search . '%');
     }
+
+    protected function entityToArray(object $entity): array
+    {
+        /** @var Pais $entity */
+        return [
+            'id' => $entity->getId(),
+            'nombrePais' => $entity->getNombrePais(),
+            'nombreGentilicio' => $entity->getNombreGentilicio(),
+            'activo' => $entity->getActivo(),
+            'acciones' => [
+                'editar' => true,
+                'eliminar' => true
+            ]
+        ];
+    }
 }

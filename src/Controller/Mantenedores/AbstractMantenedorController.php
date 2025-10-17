@@ -22,12 +22,10 @@ abstract class AbstractMantenedorController extends AbstractTenantController
     protected CsrfTokenManagerInterface $csrfTokenManager;
 
     public function __construct(
-        TenantContext $tenantContext,
         EntityManagerInterface $entityManager,
         ValidatorInterface $validator,
         CsrfTokenManagerInterface $csrfTokenManager
     ) {
-        parent::__construct($tenantContext);
         $this->entityManager = $entityManager;
         $this->validator = $validator;
         $this->csrfTokenManager = $csrfTokenManager;
