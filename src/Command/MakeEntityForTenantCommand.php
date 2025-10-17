@@ -259,7 +259,7 @@ Este comando permite crear entidades Doctrine en bases de datos de tenants espec
             $entityCode = $this->generateEntityCode($entityName, $fields);
             
             // Crear directorio de entidades para el tenant si no existe
-            $entityDir = "/var/www/html/melisa_tenant/src/Entity/Tenant/" . ucfirst($subdomain);
+            $entityDir = "/var/www/html/melisa_tenant/src/Entity";
             if (!is_dir($entityDir)) {
                 mkdir($entityDir, 0755, true);
             }
@@ -310,7 +310,7 @@ Este comando permite crear entidades Doctrine en bases de datos de tenants espec
 
     private function generateEntityCode(string $entityName, array $fields): string
     {
-        $namespace = "App\\Entity\\Tenant";
+        $namespace = "App\\Entity";
         $className = $entityName;
         
         $properties = [];

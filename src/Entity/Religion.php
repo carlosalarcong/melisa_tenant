@@ -5,8 +5,8 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
-#[ORM\Table(name: 'Sexo')]
-class Sexo
+#[ORM\Table(name: 'Religion')]
+class Religion
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -18,6 +18,9 @@ class Sexo
 
     #[ORM\Column(type: "string", length: 255)]
     private ?string $codigo = null;
+
+    #[ORM\Column(type: "text")]
+    private ?string $descripcion = null;
 
     #[ORM\Column(type: "boolean")]
     private ?bool $activo = null;
@@ -46,6 +49,17 @@ class Sexo
     public function setCodigo(?string $codigo): static
     {
         $this->codigo = $codigo;
+        return $this;
+    }
+
+    public function getDescripcion(): ?string
+    {
+        return $this->descripcion;
+    }
+
+    public function setDescripcion(?string $descripcion): static
+    {
+        $this->descripcion = $descripcion;
         return $this;
     }
 
