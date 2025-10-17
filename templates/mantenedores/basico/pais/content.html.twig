@@ -15,7 +15,7 @@
                     <div class="badge bg-info text-dark">
                         {{ tenant.name }}
                     </div>
-                    <button class="btn btn-outline-secondary btn-sm" onclick="volverAlMenu()">
+                    <button class="btn btn-outline-secondary btn-sm" data-action="volver-menu">
                         <i class="fas fa-arrow-left me-1"></i>
                         Volver al menú
                     </button>
@@ -34,7 +34,7 @@
                             <i class="fas fa-list me-2"></i>
                             Lista de Países
                         </h5>
-                        <button class="btn btn-primary btn-sm" onclick="crearPais()">
+                        <button class="btn btn-primary btn-sm" data-action="crear-pais">
                             <i class="fas fa-plus me-1"></i>
                             Nuevo País
                         </button>
@@ -50,7 +50,7 @@
                                        class="form-control" 
                                        id="searchInput"
                                        placeholder="Buscar por nombre o gentilicio..."
-                                       onkeyup="buscarPaises()">
+                                       data-action="buscar-paises">
                                 <div class="input-group-append">
                                     <span class="input-group-text">
                                         <i class="fas fa-search"></i>
@@ -59,7 +59,7 @@
                             </div>
                         </div>
                         <div class="col-md-6 text-end">
-                            <button class="btn btn-outline-secondary btn-sm" onclick="cargarPaises()">
+                            <button class="btn btn-outline-secondary btn-sm" data-action="cargar-paises">
                                 <i class="fas fa-sync-alt me-1"></i>
                                 Actualizar
                             </button>
@@ -86,10 +86,10 @@
                                     <td>Chileno/a</td>
                                     <td><span class="badge bg-success">Activo</span></td>
                                     <td>
-                                        <button class="btn btn-warning btn-sm" onclick="editarPais(1)">
+                                        <button class="btn btn-warning btn-sm" data-action="editar-pais" data-id="1">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        <button class="btn btn-danger btn-sm" onclick="eliminarPais(1)">
+                                        <button class="btn btn-danger btn-sm" data-action="eliminar-pais" data-id="1">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </td>
@@ -100,10 +100,10 @@
                                     <td>Argentino/a</td>
                                     <td><span class="badge bg-success">Activo</span></td>
                                     <td>
-                                        <button class="btn btn-warning btn-sm" onclick="editarPais(2)">
+                                        <button class="btn btn-warning btn-sm" data-action="editar-pais" data-id="2">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        <button class="btn btn-danger btn-sm" onclick="eliminarPais(2)">
+                                        <button class="btn btn-danger btn-sm" data-action="eliminar-pais" data-id="2">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </td>
@@ -114,10 +114,10 @@
                                     <td>Peruano/a</td>
                                     <td><span class="badge bg-success">Activo</span></td>
                                     <td>
-                                        <button class="btn btn-warning btn-sm" onclick="editarPais(3)">
+                                        <button class="btn btn-warning btn-sm" data-action="editar-pais" data-id="3">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        <button class="btn btn-danger btn-sm" onclick="eliminarPais(3)">
+                                        <button class="btn btn-danger btn-sm" data-action="eliminar-pais" data-id="3">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </td>
@@ -172,7 +172,7 @@
                 <h5 class="modal-title" id="modalTitle">Crear País</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form id="paisForm" onsubmit="guardarPais(event)">
+            <form id="paisForm" data-action="guardar-pais">
                 <div class="modal-body">
                     <input type="hidden" name="_token" value="{{ csrf_token }}">
                     <input type="hidden" id="paisId" name="id">

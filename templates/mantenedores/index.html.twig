@@ -247,6 +247,12 @@
                 
                 // Actualizar título si es necesible
                 updatePageTitle(nombre);
+                
+                // Ejecutar scripts que puedan estar en el contenido cargado
+                executeScriptsInContent(contentDiv);
+                
+                // Asegurar que las funciones globales estén disponibles
+                window.setupMantenedorFunctions();
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -263,6 +269,39 @@
                 spinner.style.display = 'none';
                 contentDiv.style.display = 'block';
             });
+    }
+    
+    // Función para ejecutar scripts en contenido cargado dinámicamente
+    function executeScriptsInContent(container) {
+        const scripts = container.querySelectorAll('script');
+        scripts.forEach(script => {
+            const newScript = document.createElement('script');
+            if (script.src) {
+                newScript.src = script.src;
+            } else {
+                newScript.textContent = script.textContent;
+            }
+            document.head.appendChild(newScript);
+        });
+    }
+    
+    // Función para configurar las funciones del mantenedor después de cargar contenido
+    window.setupMantenedorFunctions = function() {
+        console.log('Configurando funciones del mantenedor...');
+        
+        // Verificar que las funciones estén disponibles
+        if (typeof window.crearPais !== 'function') {
+            console.error('Función crearPais no encontrada');
+        } else {
+            console.log('Función crearPais disponible');
+        }
+        
+        // Agregar event listeners adicionales si es necesario
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.removeEventListener('keyup', window.buscarPaises); // Remover listener anterior
+            searchInput.addEventListener('keyup', window.buscarPaises);
+        }
     }
     
     // Función para actualizar el título de la página
@@ -471,5 +510,129 @@
             }
         });
     }
+    
+    // Asegurar que las funciones estén disponibles al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM cargado, configurando event delegation...');
+        setupEventDelegation();
+    });
+    
+    // Event delegation para manejar clicks en contenido cargado dinámicamente
+    function setupEventDelegation() {
+        // Delegar eventos a document para que funcionen con contenido AJAX
+        document.addEventListener('click', function(e) {
+            const action = e.target.closest('[data-action]')?.getAttribute('data-action');
+            
+            if (!action) return;
+            
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const element = e.target.closest('[data-action]');
+            const id = element?.getAttribute('data-id');
+            
+            console.log('Acción detectada:', action, 'ID:', id);
+            
+            switch(action) {
+                case 'crear-pais':
+                    crearPaisHandler();
+                    break;
+                case 'editar-pais':
+                    editarPaisHandler(id);
+                    break;
+                case 'eliminar-pais':
+                    eliminarPaisHandler(id);
+                    break;
+                case 'cargar-paises':
+                    cargarPaisesHandler();
+                    break;
+                case 'volver-menu':
+                    volverAlMenu();
+                    break;
+            }
+        });
+        
+        // Delegar eventos de formulario
+        document.addEventListener('submit', function(e) {
+            const action = e.target.getAttribute('data-action');
+            
+            if (action === 'guardar-pais') {
+                e.preventDefault();
+                guardarPaisHandler(e);
+            }
+        });
+        
+        // Delegar eventos de input para búsqueda
+        document.addEventListener('input', function(e) {
+            const action = e.target.getAttribute('data-action');
+            
+            if (action === 'buscar-paises') {
+                buscarPaisesHandler();
+            }
+        });
+    }
+    
+    // Handlers específicos usando las funciones existentes
+    function crearPaisHandler() {
+        console.log('Creando país...');
+        if (typeof window.crearPais === 'function') {
+            window.crearPais();
+        } else {
+            console.error('Función crearPais no disponible');
+        }
+    }
+    
+    function editarPaisHandler(id) {
+        console.log('Editando país:', id);
+        if (typeof window.editarPais === 'function') {
+            window.editarPais(id);
+        } else {
+            console.error('Función editarPais no disponible');
+        }
+    }
+    
+    function eliminarPaisHandler(id) {
+        console.log('Eliminando país:', id);
+        if (typeof window.eliminarPais === 'function') {
+            window.eliminarPais(id);
+        } else {
+            console.error('Función eliminarPais no disponible');
+        }
+    }
+    
+    function cargarPaisesHandler() {
+        console.log('Cargando países...');
+        if (typeof window.cargarPaises === 'function') {
+            window.cargarPaises();
+        } else {
+            console.error('Función cargarPaises no disponible');
+        }
+    }
+    
+    function guardarPaisHandler(event) {
+        console.log('Guardando país...');
+        if (typeof window.guardarPais === 'function') {
+            window.guardarPais(event);
+        } else {
+            console.error('Función guardarPais no disponible');
+        }
+    }
+    
+    function buscarPaisesHandler() {
+        console.log('Buscando países...');
+        if (typeof window.buscarPaises === 'function') {
+            window.buscarPaises();
+        } else {
+            console.error('Función buscarPaises no disponible');
+        }
+    }
+    
+    // También configurar cuando la página esté completamente cargada
+    window.addEventListener('load', function() {
+        console.log('Página completamente cargada');
+        if (typeof setupEventDelegation === 'function') {
+            setupEventDelegation();
+        }
+    });
 </script>
 {% endblock %}
