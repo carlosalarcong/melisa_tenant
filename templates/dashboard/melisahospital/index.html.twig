@@ -45,6 +45,23 @@
                             <i class="fas fa-pills"></i> {{ 'medical_records.pharmacy'|trans|default('Farmacia') }}
                         </a>
                     </li>
+                    
+                    <!-- Separador -->
+                    <li class="nav-item mt-3">
+                        <hr class="sidebar-divider" style="border-color: #495057;">
+                        <small class="text-muted px-3">ADMINISTRACIÓN</small>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/mantenedores">
+                            <i class="fas fa-cogs"></i> Mantenedores
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/configuracion">
+                            <i class="fas fa-wrench"></i> Configuración
+                        </a>
+                    </li>
                 </ul>
                 
             </div>
@@ -130,6 +147,75 @@
                                 </div>
                                 <div class="col-auto">
                                     <i class="fas fa-heart-pulse fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cards de Acceso Rápido a Administración -->
+            <div class="row mb-4">
+                <div class="col-xl-4 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                        MANTENEDORES</div>
+                                    <div class="h6 mb-0 font-weight-bold text-gray-800">
+                                        <a href="/mantenedores" class="text-decoration-none">
+                                            Gestión de Datos Básicos
+                                        </a>
+                                    </div>
+                                    <small class="text-muted">Países, Regiones, Religiones, Sexo</small>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-cogs fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6 mb-4">
+                    <div class="card border-left-secondary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">
+                                        CONFIGURACIÓN</div>
+                                    <div class="h6 mb-0 font-weight-bold text-gray-800">
+                                        <a href="/configuracion" class="text-decoration-none">
+                                            Ajustes del Sistema
+                                        </a>
+                                    </div>
+                                    <small class="text-muted">Usuarios, Permisos, Preferencias</small>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-wrench fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        REPORTES</div>
+                                    <div class="h6 mb-0 font-weight-bold text-gray-800">
+                                        <a href="/reportes" class="text-decoration-none">
+                                            Informes y Estadísticas
+                                        </a>
+                                    </div>
+                                    <small class="text-muted">Pacientes, Emergencias, Ocupación</small>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-chart-bar fa-2x text-gray-300"></i>
                                 </div>
                             </div>
                         </div>
