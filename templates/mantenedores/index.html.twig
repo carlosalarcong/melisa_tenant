@@ -86,6 +86,36 @@
                 min-width: auto;
             }
         }
+
+        /* Estilos para validación de formularios */
+        .is-invalid {
+            border-color: #dc3545 !important;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+        }
+
+        .invalid-feedback {
+            display: block !important;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 0.875em;
+            color: #dc3545;
+        }
+
+        /* Mejorar apariencia de modales */
+        .modal-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .modal-footer {
+            background-color: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .modal-title {
+            color: #495057;
+            font-weight: 600;
+        }
     </style>
 {% endblock %}
 
@@ -246,6 +276,200 @@
     // Función para volver al menú principal
     function volverAlMenu() {
         location.reload();
+    }
+    
+    // Funciones globales para mantenedores (disponibles después de cargar contenido AJAX)
+    window.crearPais = function() {
+        // Limpiar formulario
+        const form = document.getElementById('paisForm');
+        if (form) {
+            form.reset();
+            limpiarErrores();
+        }
+        
+        // Configurar modal para crear
+        const modalTitle = document.getElementById('modalTitle');
+        const paisId = document.getElementById('paisId');
+        const activo = document.getElementById('activo');
+        
+        if (modalTitle) modalTitle.textContent = 'Crear País';
+        if (paisId) paisId.value = '';
+        if (activo) activo.checked = true;
+        
+        // Mostrar modal
+        const modalElement = document.getElementById('paisModal');
+        if (modalElement) {
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+        }
+    }
+    
+    window.editarPais = function(id) {
+        console.log('Editando país ID:', id);
+        
+        // Aquí cargarías los datos reales del país
+        // Por ahora simulamos datos
+        const paisesEjemplo = {
+            1: { nombrePais: 'Chile', nombreGentilicio: 'Chileno/a', activo: true },
+            2: { nombrePais: 'Argentina', nombreGentilicio: 'Argentino/a', activo: true },
+            3: { nombrePais: 'Perú', nombreGentilicio: 'Peruano/a', activo: true }
+        };
+        
+        const pais = paisesEjemplo[id];
+        if (!pais) {
+            alert('País no encontrado');
+            return;
+        }
+        
+        // Configurar modal para editar
+        const modalTitle = document.getElementById('modalTitle');
+        const paisId = document.getElementById('paisId');
+        const nombrePais = document.getElementById('nombrePais');
+        const nombreGentilicio = document.getElementById('nombreGentilicio');
+        const activo = document.getElementById('activo');
+        
+        if (modalTitle) modalTitle.textContent = 'Editar País';
+        if (paisId) paisId.value = id;
+        if (nombrePais) nombrePais.value = pais.nombrePais;
+        if (nombreGentilicio) nombreGentilicio.value = pais.nombreGentilicio;
+        if (activo) activo.checked = pais.activo;
+        
+        limpiarErrores();
+        
+        // Mostrar modal
+        const modalElement = document.getElementById('paisModal');
+        if (modalElement) {
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+        }
+    }
+    
+    window.eliminarPais = function(id) {
+        const confirmacion = confirm('¿Estás seguro de que deseas eliminar este país?\n\nEsta acción no se puede deshacer.');
+        
+        if (confirmacion) {
+            // Aquí iría la llamada AJAX real para eliminar
+            console.log('Eliminando país ID:', id);
+            
+            // Simular eliminación exitosa
+            setTimeout(() => {
+                alert('País eliminado exitosamente!');
+                // Recargar tabla si existe la función
+                if (typeof cargarPaises === 'function') {
+                    cargarPaises();
+                }
+            }, 500);
+        }
+    }
+    
+    window.guardarPais = function(event) {
+        event.preventDefault();
+        
+        const form = document.getElementById('paisForm');
+        if (!form) return;
+        
+        limpiarErrores();
+        
+        // Validar formulario
+        const formData = new FormData(form);
+        const nombrePais = formData.get('nombrePais')?.trim();
+        const nombreGentilicio = formData.get('nombreGentilicio')?.trim();
+        const activo = formData.get('activo') === 'on';
+        const paisId = formData.get('id');
+        
+        let errores = {};
+        
+        if (!nombrePais) {
+            errores.nombrePais = 'El nombre del país es obligatorio';
+        }
+        if (!nombreGentilicio) {
+            errores.nombreGentilicio = 'El gentilicio es obligatorio';
+        }
+        
+        // Mostrar errores si los hay
+        if (Object.keys(errores).length > 0) {
+            mostrarErroresValidacion(errores);
+            return;
+        }
+        
+        // Datos a enviar
+        const datos = {
+            nombrePais,
+            nombreGentilicio,
+            activo,
+            _token: '{{ csrf_token("mantenedor_form") }}'
+        };
+        
+        console.log('Guardando país:', datos);
+        
+        // Deshabilitar botón de envío
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Guardando...';
+        }
+        
+        // Simular guardado exitoso (aquí iría la llamada AJAX real)
+        setTimeout(() => {
+            alert(`País ${paisId ? 'actualizado' : 'creado'} exitosamente!`);
+            
+            // Cerrar modal
+            const modalElement = document.getElementById('paisModal');
+            if (modalElement) {
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                if (modal) modal.hide();
+            }
+            
+            // Recargar tabla
+            if (typeof cargarPaises === 'function') {
+                cargarPaises();
+            }
+            
+            // Rehabilitar botón
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Guardar';
+            }
+        }, 1000);
+    }
+    
+    window.cargarPaises = function() {
+        console.log('Cargando países...');
+        // Aquí iría la lógica para cargar datos reales via AJAX
+        // Por ahora solo mostramos un mensaje
+    }
+    
+    window.buscarPaises = function() {
+        const searchInput = document.getElementById('searchInput');
+        const search = searchInput?.value || '';
+        console.log('Buscando:', search);
+        // Aquí iría la lógica de búsqueda real
+    }
+    
+    // Funciones auxiliares
+    function limpiarErrores() {
+        document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        document.querySelectorAll('.invalid-feedback').forEach(el => el.style.display = 'none');
+    }
+    
+    function mostrarErroresValidacion(errores) {
+        Object.keys(errores).forEach(campo => {
+            const input = document.getElementById(campo);
+            if (input) {
+                input.classList.add('is-invalid');
+                
+                // Buscar o crear div de error
+                let errorDiv = input.parentNode.querySelector('.invalid-feedback');
+                if (!errorDiv) {
+                    errorDiv = document.createElement('div');
+                    errorDiv.className = 'invalid-feedback';
+                    input.parentNode.appendChild(errorDiv);
+                }
+                
+                errorDiv.textContent = errores[campo];
+                errorDiv.style.display = 'block';
+            }
+        });
     }
 </script>
 {% endblock %}
