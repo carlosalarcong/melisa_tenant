@@ -51,7 +51,7 @@ class TenantResolver
                        "melisa" as db_user,
                        "melisamelisa" as db_password,
                        "mysql" as driver,
-                       is_active, status
+                       is_active
                 FROM tenant 
                 WHERE subdomain = ? AND is_active = 1
             ';

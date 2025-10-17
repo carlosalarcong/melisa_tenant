@@ -9,22 +9,6 @@
                 "enabled": false,
                 "fetch": "eager"
             }
-        },
-        "mantenedores--menu": {
-            "enabled": true,
-            "fetch": "lazy"
-        },
-        "mantenedores--modal": {
-            "enabled": true,
-            "fetch": "lazy"
-        },
-        "mantenedores--list": {
-            "enabled": true,
-            "fetch": "lazy"
-        },
-        "mantenedores--notification": {
-            "enabled": true,
-            "fetch": "lazy"
         }
     },
     "entrypoints": [],
