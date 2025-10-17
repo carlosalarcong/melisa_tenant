@@ -1,4 +1,0 @@
-mantenedores_basico:
-  resource: '../src/Controller/Mantenedores/Basico'
-  type: annotation
-  prefix: /mantenedores/basico

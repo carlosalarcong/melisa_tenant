@@ -1,0 +1,30 @@
+{% extends 'mantenedores/index.html.twig' %}
+
+{% block mantenedor_title %}{{ mantenedor_config.title }}{% endblock %}
+
+{% block mantenedor_content %}
+    {# Contenido específico del mantenedor de regiones #}
+    <div class="mantenedor-basico-region">
+        {{ parent() }}
+    </div>
+{% endblock %}
+
+{% block additional_styles %}
+    {{ parent() }}
+    <style>
+        .mantenedor-basico-region .field-nombreRegion {
+            font-weight: bold;
+        }
+        .mantenedor-basico-region .field-codigoRegion {
+            font-family: monospace;
+            background: #f8f9fa;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .mantenedor-basico-region .field-addressStateHl7 {
+            color: #666;
+            font-size: 0.9em;
+            font-family: monospace;
+        }
+    </style>
+{% endblock %}

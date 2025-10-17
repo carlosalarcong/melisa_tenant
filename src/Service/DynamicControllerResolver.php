@@ -130,27 +130,29 @@ class DynamicControllerResolver
 
     /**
      * Resuelve controladores de mantenedores con estructura jerárquica
+     * NOTA: Los mantenedores básicos (Pais, Religion, Sexo, Region) ahora son centrales/globales
+     * y no requieren resolución dinámica por tenant
      */
     private function resolveMantenedorController(string $subdomain, string $action): string
     {
-        // Para mantenedores, la estructura es más compleja y se maneja por rutas específicas
-        // Este método es principalmente para compatibilidad
+        // Los mantenedores básicos ahora son directos y centrales:
+        // - App\Controller\Mantenedores\Basico\PaisController
+        // - App\Controller\Mantenedores\Basico\ReligionController  
+        // - App\Controller\Mantenedores\Basico\SexoController
+        // - App\Controller\Mantenedores\Basico\RegionController
         
+        // Para mantenedores avanzados específicos por tenant (futuro)
         $tenantKey = ucfirst($subdomain);
         
-        // Intentar resolver controlador específico (ejemplo para sexo)
-        $specificController = "App\\Controller\\Mantenedores\\Basico\\Sexo\\{$tenantKey}\\SexoController";
-        if (class_exists($specificController) && method_exists($specificController, $action)) {
-            return $specificController . '::' . $action;
+        // Solo usar resolución dinámica para mantenedores específicos que lo requieran
+        // Por ejemplo, funcionalidades IoT específicas de Melisawiclinic
+        $specificController = "App\\Controller\\Mantenedores\\Avanzado\\{$tenantKey}\\{$action}Controller";
+        if (class_exists($specificController)) {
+            return $specificController . '::index';
         }
         
-        // Fallback a controlador por defecto
-        $defaultController = "App\\Controller\\Mantenedores\\Basico\\Sexo\\Default\\SexoController";
-        if (class_exists($defaultController) && method_exists($defaultController, $action)) {
-            return $defaultController . '::' . $action;
-        }
-        
-        throw new NotFoundHttpException('Controlador de mantenedor no encontrado');
+        // Fallback: redirigir a mantenedores básicos o dashboard
+        return 'App\\Controller\\Dashboard\\DefaultController::mantenedores';
     }
 
     /**
@@ -213,37 +215,50 @@ class DynamicControllerResolver
 
     /**
      * Obtiene mantenedores disponibles para un tenant
+     * Actualizado para la nueva estructura de mantenedores centrales
      */
     public function getAvailableMantenedores(string $subdomain): array
     {
-        $tenantKey = ucfirst($subdomain);
         $mantenedores = [];
         
-        // Estructura base de mantenedores
-        $basePath = __DIR__ . '/../Controller/Mantenedores/Basico';
+        // Mantenedores básicos centrales (disponibles para todos los tenants)
+        $basicosPath = __DIR__ . '/../Controller/Mantenedores/Basico';
         
-        if (!is_dir($basePath)) {
-            return [];
-        }
-        
-        // Buscar en cada categoría de mantenedor
-        $categories = glob($basePath . '/*', GLOB_ONLYDIR);
-        
-        foreach ($categories as $categoryPath) {
-            $categoryName = basename($categoryPath);
+        if (is_dir($basicosPath)) {
+            $basicControllers = glob($basicosPath . '/*Controller.php');
             
-            // Buscar controlador específico del tenant
-            $tenantPath = $categoryPath . '/' . $tenantKey;
-            $defaultPath = $categoryPath . '/Default';
-            
-            if (is_dir($tenantPath) || is_dir($defaultPath)) {
+            foreach ($basicControllers as $controllerFile) {
+                $controllerName = basename($controllerFile, 'Controller.php');
+                
                 $mantenedores[] = [
                     'category' => 'basico',
-                    'name' => strtolower($categoryName),
-                    'label' => ucfirst($categoryName),
-                    'has_tenant_specific' => is_dir($tenantPath),
-                    'tenant_path' => $tenantPath,
-                    'default_path' => $defaultPath
+                    'name' => strtolower($controllerName),
+                    'label' => ucfirst($controllerName),
+                    'is_central' => true,
+                    'controller_path' => "App\\Controller\\Mantenedores\\Basico\\{$controllerName}Controller",
+                    'route_prefix' => '/mantenedores/basico/' . strtolower($controllerName)
+                ];
+            }
+        }
+        
+        // Mantenedores específicos por tenant (si existen)
+        $tenantKey = ucfirst($subdomain);
+        $tenantPath = __DIR__ . '/../Controller/Mantenedores/' . $tenantKey;
+        
+        if (is_dir($tenantPath)) {
+            $tenantControllers = glob($tenantPath . '/*Controller.php');
+            
+            foreach ($tenantControllers as $controllerFile) {
+                $controllerName = basename($controllerFile, 'Controller.php');
+                
+                $mantenedores[] = [
+                    'category' => 'tenant_specific',
+                    'name' => strtolower($controllerName),
+                    'label' => ucfirst($controllerName),
+                    'is_central' => false,
+                    'tenant' => $subdomain,
+                    'controller_path' => "App\\Controller\\Mantenedores\\{$tenantKey}\\{$controllerName}Controller",
+                    'route_prefix' => '/mantenedores/' . strtolower($subdomain) . '/' . strtolower($controllerName)
                 ];
             }
         }
