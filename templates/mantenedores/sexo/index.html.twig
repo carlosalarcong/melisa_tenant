@@ -1,0 +1,382 @@
+{% extends 'mantenedores/index.html.twig' %}
+
+{% block page_title %}Mantenedor de Sexos{% endblock %}
+{% block entity_title %}Sexos{% endblock %}
+{% block entity_description %}Gestión de tipos de sexo biológico y identidad de género{% endblock %}
+
+{% block menu_items %}
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-basicos">
+                <i class="fas fa-database me-2"></i>
+                Datos Básicos
+            </button>
+        </h2>
+        <div id="collapse-basicos" class="accordion-collapse collapse show">
+            <div class="accordion-body">
+                <a href="{{ path('mantenedores_sexo_index') }}" class="menu-item active">
+                    <i class="fas fa-venus-mars"></i>
+                    <span>Sexo</span>
+                </a>
+                <a href="{{ path('mantenedores_region_index') }}" class="menu-item">
+                    <i class="fas fa-globe-americas"></i>
+                    <span>Regiones</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-demograficos">
+                <i class="fas fa-users me-2"></i>
+                Demográficos
+            </button>
+        </h2>
+        <div id="collapse-demograficos" class="accordion-collapse collapse">
+            <div class="accordion-body">
+                <a href="#" class="menu-item">
+                    <i class="fas fa-birthday-cake"></i>
+                    <span>Grupos Etarios</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Nivel Educacional</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Ocupaciones</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-medicos">
+                <i class="fas fa-heartbeat me-2"></i>
+                Médicos
+            </button>
+        </h2>
+        <div id="collapse-medicos" class="accordion-collapse collapse">
+            <div class="accordion-body">
+                <a href="#" class="menu-item">
+                    <i class="fas fa-user-md"></i>
+                    <span>Especialidades</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-procedures"></i>
+                    <span>Procedimientos</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-pills"></i>
+                    <span>Medicamentos</span>
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block table_headers %}
+    <tr>
+        <th class="sortable" data-sort="id">
+            ID
+            <span class="sort-icon"></span>
+        </th>
+        <th class="sortable" data-sort="nombre">
+            Nombre
+            <span class="sort-icon"></span>
+        </th>
+        <th class="sortable" data-sort="descripcion">
+            Descripción
+            <span class="sort-icon"></span>
+        </th>
+        <th class="sortable" data-sort="activo">
+            Estado
+            <span class="sort-icon"></span>
+        </th>
+        <th class="sortable" data-sort="updated_at">
+            Última Modificación
+            <span class="sort-icon"></span>
+        </th>
+        <th width="120">Acciones</th>
+    </tr>
+{% endblock %}
+
+{% block table_body %}
+    <tbody id="table-body">
+        {% for sexo in sexos|default([]) %}
+            <tr data-id="{{ sexo.id }}" class="table-row">
+                <td>{{ sexo.id }}</td>
+                <td>
+                    <strong>{{ sexo.nombre }}</strong>
+                    {% if sexo.codigoOms %}
+                        <small class="text-muted d-block">OMS: {{ sexo.codigoOms }}</small>
+                    {% endif %}
+                </td>
+                <td>
+                    <span class="text-truncate-multiline">{{ sexo.descripcion|default('Sin descripción') }}</span>
+                </td>
+                <td>
+                    {% if sexo.activo %}
+                        <span class="badge-activo">
+                            <i class="status-indicator active"></i>
+                            Activo
+                        </span>
+                    {% else %}
+                        <span class="badge-inactivo">
+                            <i class="status-indicator inactive"></i>
+                            Inactivo
+                        </span>
+                    {% endif %}
+                </td>
+                <td>
+                    <small>
+                        {{ sexo.updatedAt|date('d/m/Y H:i') }}
+                        {% if sexo.updatedBy %}
+                            <br>por {{ sexo.updatedBy }}
+                        {% endif %}
+                    </small>
+                </td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <button type="button" 
+                                class="btn btn-action btn-edit" 
+                                data-action="edit" 
+                                data-id="{{ sexo.id }}"
+                                title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button type="button" 
+                                class="btn btn-action btn-delete" 
+                                data-action="delete" 
+                                data-id="{{ sexo.id }}"
+                                title="Eliminar">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6" class="text-center">
+                    <div class="empty-state">
+                        <i class="fas fa-venus-mars"></i>
+                        <h5>No hay registros de sexo</h5>
+                        <p>Comienza agregando el primer registro de sexo</p>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+{% endblock %}
+
+{% block modal_form %}
+    <!-- Modal para Crear/Editar Sexo -->
+    <div class="modal fade" id="sexoModal" tabindex="-1" data-controller="mantenedores--modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="sexoForm" data-mantenedores--modal-target="form">
+                    <div class="modal-header">
+                        <h5 class="modal-title" data-mantenedores--modal-target="title">
+                            <i class="fas fa-venus-mars me-2"></i>
+                            <span data-mantenedores--modal-target="titleText">Nuevo Sexo</span>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    
+                    <div class="modal-body">
+                        <!-- ID oculto para edición -->
+                        <input type="hidden" id="sexoId" name="id" data-mantenedores--modal-target="entityId">
+                        
+                        <!-- Token CSRF -->
+                        <input type="hidden" name="_token" value="{{ csrf_token('sexo_form') }}">
+                        
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">
+                                <i class="fas fa-tag me-1"></i>
+                                Nombre *
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="nombre" 
+                                   name="nombre" 
+                                   required 
+                                   maxlength="50"
+                                   placeholder="Ej: Masculino, Femenino, No binario">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">
+                                <i class="fas fa-align-left me-1"></i>
+                                Descripción
+                            </label>
+                            <textarea class="form-control" 
+                                      id="descripcion" 
+                                      name="descripcion" 
+                                      rows="3"
+                                      maxlength="255"
+                                      placeholder="Descripción detallada del tipo de sexo"></textarea>
+                            <div class="form-text">Máximo 255 caracteres</div>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="codigoOms" class="form-label">
+                                <i class="fas fa-barcode me-1"></i>
+                                Código OMS
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="codigoOms" 
+                                   name="codigoOms"
+                                   maxlength="10"
+                                   placeholder="Código según OMS (opcional)">
+                            <div class="form-text">Código estándar de la Organización Mundial de la Salud</div>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" 
+                                       type="checkbox" 
+                                       id="activo" 
+                                       name="activo" 
+                                       checked>
+                                <label class="form-check-label" for="activo">
+                                    <i class="fas fa-toggle-on me-1"></i>
+                                    Estado Activo
+                                </label>
+                            </div>
+                            <div class="form-text">Los registros inactivos no aparecerán en las listas de selección</div>
+                        </div>
+                        
+                        <!-- Campos específicos del tenant -->
+                        {% if tenant == 'melisalacolina' %}
+                            <div class="mb-3">
+                                <label for="estadisticasTratamiento" class="form-label">
+                                    <i class="fas fa-chart-line me-1"></i>
+                                    Estadísticas de Tratamiento
+                                </label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="estadisticasTratamiento" 
+                                       name="estadisticasTratamiento"
+                                       min="0"
+                                       step="0.01"
+                                       placeholder="Porcentaje de efectividad">
+                                <div class="form-text">Estadísticas específicas para Melisa La Colina</div>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="codigoClinica" class="form-label">
+                                    <i class="fas fa-hospital me-1"></i>
+                                    Código Clínica
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="codigoClinica" 
+                                       name="codigoClinica"
+                                       maxlength="20"
+                                       placeholder="Código interno de la clínica">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-1"></i>
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary" data-mantenedores--modal-target="submitBtn">
+                            <i class="fas fa-save me-1"></i>
+                            <span data-mantenedores--modal-target="submitText">Guardar</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Confirmación para Eliminar -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Confirmar Eliminación
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <i class="fas fa-trash-alt text-danger mb-3" style="font-size: 3rem;"></i>
+                    <h6>¿Estás seguro?</h6>
+                    <p class="text-muted mb-0">Esta acción no se puede deshacer</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>
+                        Cancelar
+                    </button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                        <i class="fas fa-trash me-1"></i>
+                        Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block info_panel_content %}
+    <div class="card-body" data-mantenedores--list-target="infoPanel">
+        <div class="text-center text-muted">
+            <i class="fas fa-info-circle mb-3" style="font-size: 3rem; opacity: 0.3;"></i>
+            <h6>Información del Registro</h6>
+            <p>Selecciona un registro de la tabla para ver sus detalles aquí</p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript_config %}
+    <script>
+        // Configuración específica para el mantenedor de Sexo
+        window.MantenedorConfig = {
+            entity: 'sexo',
+            entityName: 'Sexo',
+            entityNamePlural: 'Sexos',
+            urls: {
+                list: '{{ path('mantenedores_sexo_list') }}',
+                create: '{{ path('mantenedores_sexo_create') }}',
+                show: '{{ path('mantenedores_sexo_show', {id: '__ID__'}) }}',
+                update: '{{ path('mantenedores_sexo_update', {id: '__ID__'}) }}',
+                delete: '{{ path('mantenedores_sexo_delete', {id: '__ID__'}) }}'
+            },
+            tenant: '{{ tenant|default('default') }}',
+            csrf: {
+                form: '{{ csrf_token('sexo_form') }}',
+                delete: '{{ csrf_token('sexo_delete') }}'
+            },
+            search: {
+                placeholder: 'Buscar por nombre, descripción o código OMS...',
+                fields: ['nombre', 'descripcion', 'codigoOms']
+            },
+            validation: {
+                nombre: {
+                    required: true,
+                    maxLength: 50
+                },
+                descripcion: {
+                    maxLength: 255
+                },
+                codigoOms: {
+                    maxLength: 10
+                }
+            }
+        };
+    </script>
+{% endblock %}

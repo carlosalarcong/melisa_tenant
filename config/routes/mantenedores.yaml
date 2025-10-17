@@ -1,0 +1,206 @@
+# Rutas dinámicas para mantenedores multi-tenant
+# Se resuelven automáticamente según el subdominio
+
+# ==================================
+# MANTENEDORES BÁSICOS - SEXO
+# ==================================
+
+# Rutas por defecto para Sexo (Default, fallback para otros subdominios)
+mantenedores_sexo_index:
+    path: /mantenedores/basico/sexo
+    controller: App\Service\DynamicControllerResolver::resolve
+    defaults:
+        _controller_pattern: 'App\Controller\Mantenedores\Basico\Sexo\{tenant}\SexoController::index'
+        _fallback_controller: 'App\Controller\Mantenedores\Basico\Sexo\Default\SexoController::index'
+    methods: [GET]
+
+mantenedores_sexo_list:
+    path: /mantenedores/basico/sexo/list
+    controller: App\Service\DynamicControllerResolver::resolve
+    defaults:
+        _controller_pattern: 'App\Controller\Mantenedores\Basico\Sexo\{tenant}\SexoController::list'
+        _fallback_controller: 'App\Controller\Mantenedores\Basico\Sexo\Default\SexoController::list'
+    methods: [GET]
+
+mantenedores_sexo_show:
+    path: /mantenedores/basico/sexo/{id}
+    controller: App\Service\DynamicControllerResolver::resolve
+    defaults:
+        _controller_pattern: 'App\Controller\Mantenedores\Basico\Sexo\{tenant}\SexoController::show'
+        _fallback_controller: 'App\Controller\Mantenedores\Basico\Sexo\Default\SexoController::show'
+    requirements:
+        id: '\d+'
+    methods: [GET]
+
+mantenedores_sexo_create:
+    path: /mantenedores/basico/sexo
+    controller: App\Service\DynamicControllerResolver::resolve
+    defaults:
+        _controller_pattern: 'App\Controller\Mantenedores\Basico\Sexo\{tenant}\SexoController::create'
+        _fallback_controller: 'App\Controller\Mantenedores\Basico\Sexo\Default\SexoController::create'
+    methods: [POST]
+
+mantenedores_sexo_update:
+    path: /mantenedores/basico/sexo/{id}
+    controller: App\Service\DynamicControllerResolver::resolve
+    defaults:
+        _controller_pattern: 'App\Controller\Mantenedores\Basico\Sexo\{tenant}\SexoController::update'
+        _fallback_controller: 'App\Controller\Mantenedores\Basico\Sexo\Default\SexoController::update'
+    requirements:
+        id: '\d+'
+    methods: [PUT, PATCH]
+
+mantenedores_sexo_delete:
+    path: /mantenedores/basico/sexo/{id}
+    controller: App\Service\DynamicControllerResolver::resolve
+    defaults:
+        _controller_pattern: 'App\Controller\Mantenedores\Basico\Sexo\{tenant}\SexoController::delete'
+        _fallback_controller: 'App\Controller\Mantenedores\Basico\Sexo\Default\SexoController::delete'
+    requirements:
+        id: '\d+'
+    methods: [DELETE]
+
+# Rutas específicas para Melisalacolina (Sexo)
+mantenedores_sexo_estadisticas_tratamiento:
+    path: /mantenedores/basico/sexo/estadisticas-tratamiento
+    controller: App\Service\DynamicControllerResolver::resolve
+    defaults:
+        _controller_pattern: 'App\Controller\Mantenedores\Basico\Sexo\{tenant}\SexoController::estadisticasTratamiento'
+        _tenant_specific: ['Melisalacolina']
+    methods: [GET]
+
+mantenedores_sexo_validar_codigo_clinica:
+    path: /mantenedores/basico/sexo/validar-codigo-clinica
+    controller: App\Service\DynamicControllerResolver::resolve
+    defaults:
+        _controller_pattern: 'App\Controller\Mantenedores\Basico\Sexo\{tenant}\SexoController::validarCodigoClinica'
+        _tenant_specific: ['Melisalacolina']
+    methods: [POST]
+
+# ==================================
+# MANTENEDORES BÁSICOS - REGIÓN
+# ==================================
+
+# Rutas por defecto para Región (Default, fallback para otros subdominios)
+mantenedores_region_index:
+    path: /mantenedores/basico/region
+    controller: App\Service\DynamicControllerResolver::resolve
+    defaults:
+        _controller_pattern: 'App\Controller\Mantenedores\Basico\Region\{tenant}\RegionController::index'
+        _fallback_controller: 'App\Controller\Mantenedores\Basico\Region\Default\RegionController::index'
+    methods: [GET]
+
+mantenedores_region_list:
+    path: /mantenedores/basico/region/list
+    controller: App\Service\DynamicControllerResolver::resolve
+    defaults:
+        _controller_pattern: 'App\Controller\Mantenedores\Basico\Region\{tenant}\RegionController::list'
+        _fallback_controller: 'App\Controller\Mantenedores\Basico\Region\Default\RegionController::list'
+    methods: [GET]
+
+mantenedores_region_show:
+    path: /mantenedores/basico/region/{id}
+    controller: App\Service\DynamicControllerResolver::resolve
+    defaults:
+        _controller_pattern: 'App\Controller\Mantenedores\Basico\Region\{tenant}\RegionController::show'
+        _fallback_controller: 'App\Controller\Mantenedores\Basico\Region\Default\RegionController::show'
+    requirements:
+        id: '\d+'
+    methods: [GET]
+
+mantenedores_region_create:
+    path: /mantenedores/basico/region
+    controller: App\Service\DynamicControllerResolver::resolve
+    defaults:
+        _controller_pattern: 'App\Controller\Mantenedores\Basico\Region\{tenant}\RegionController::create'
+        _fallback_controller: 'App\Controller\Mantenedores\Basico\Region\Default\RegionController::create'
+    methods: [POST]
+
+mantenedores_region_update:
+    path: /mantenedores/basico/region/{id}
+    controller: App\Service\DynamicControllerResolver::resolve
+    defaults:
+        _controller_pattern: 'App\Controller\Mantenedores\Basico\Region\{tenant}\RegionController::update'
+        _fallback_controller: 'App\Controller\Mantenedores\Basico\Region\Default\RegionController::update'
+    requirements:
+        id: '\d+'
+    methods: [PUT, PATCH]
+
+mantenedores_region_delete:
+    path: /mantenedores/basico/region/{id}
+    controller: App\Service\DynamicControllerResolver::resolve
+    defaults:
+        _controller_pattern: 'App\Controller\Mantenedores\Basico\Region\{tenant}\RegionController::delete'
+        _fallback_controller: 'App\Controller\Mantenedores\Basico\Region\Default\RegionController::delete'
+    requirements:
+        id: '\d+'
+    methods: [DELETE]
+
+# Rutas adicionales para regiones por país
+mantenedores_region_por_pais:
+    path: /mantenedores/basico/region/por-pais/{pais}
+    controller: App\Service\DynamicControllerResolver::resolve
+    defaults:
+        _controller_pattern: 'App\Controller\Mantenedores\Basico\Region\{tenant}\RegionController::regionesPorPais'
+        _fallback_controller: 'App\Controller\Mantenedores\Basico\Region\Default\RegionController::regionesPorPais'
+    methods: [GET]
+
+# Rutas específicas para Melisawiclinic (Región con IoT)
+mantenedores_region_metricas_iot:
+    path: /mantenedores/basico/region/metricas-iot
+    controller: App\Service\DynamicControllerResolver::resolve
+    defaults:
+        _controller_pattern: 'App\Controller\Mantenedores\Basico\Region\{tenant}\RegionController::metricasIoT'
+        _tenant_specific: ['Melisawiclinic']
+    methods: [GET]
+
+mantenedores_region_configurar_iot:
+    path: /mantenedores/basico/region/{id}/configurar-iot
+    controller: App\Service\DynamicControllerResolver::resolve
+    defaults:
+        _controller_pattern: 'App\Controller\Mantenedores\Basico\Region\{tenant}\RegionController::configurarIoT'
+        _tenant_specific: ['Melisawiclinic']
+    requirements:
+        id: '\d+'
+    methods: [POST]
+
+mantenedores_region_dashboard_tiempo_real:
+    path: /mantenedores/basico/region/dashboard-tiempo-real
+    controller: App\Service\DynamicControllerResolver::resolve
+    defaults:
+        _controller_pattern: 'App\Controller\Mantenedores\Basico\Region\{tenant}\RegionController::dashboardTiempoReal'
+        _tenant_specific: ['Melisawiclinic']
+    methods: [GET]
+
+# ==================================
+# RUTAS FUTURAS PARA EXTENSIÓN
+# ==================================
+
+# Plantilla para futuros mantenedores básicos
+# mantenedores_[entidad]_[accion]:
+#     path: /mantenedores/basico/[entidad]/[accion]
+#     controller: App\Service\DynamicControllerResolver::resolve
+#     defaults:
+#         _controller_pattern: 'App\Controller\Mantenedores\Basico\[Entidad]\{tenant}\[Entidad]Controller::[accion]'
+#         _fallback_controller: 'App\Controller\Mantenedores\Basico\[Entidad]\Default\[Entidad]Controller::[accion]'
+
+# ==================================
+# NOTAS DE CONFIGURACIÓN
+# ==================================
+
+# Patrones de resolución dinámica:
+# - {tenant} se reemplaza automáticamente por el subdominio actual (Melisalacolina, Melisawiclinic, etc.)
+# - _fallback_controller se usa cuando no existe el controller específico del tenant
+# - _tenant_specific define para qué tenants está disponible una ruta específica
+# - Las rutas se evalúan en orden, las más específicas primero
+
+# Ejemplo de resolución:
+# 1. Usuario en melisalacolina.localhost:8081 accede a /mantenedores/basico/sexo
+# 2. Se intenta: App\Controller\Mantenedores\Basico\Sexo\Melisalacolina\SexoController::index
+# 3. Si no existe, fallback: App\Controller\Mantenedores\Basico\Sexo\Default\SexoController::index
+
+# Configuración de subdominios soportados:
+# - Default: Fallback para cualquier subdominio no específico
+# - Melisalacolina: Clínica La Colina (funcionalidades específicas)  
+# - Melisawiclinic: Wi Clinic Technology (funcionalidades IoT)
+# - Melisahospital: Hospital Central (funcionalidades hospitalarias)

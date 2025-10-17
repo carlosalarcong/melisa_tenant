@@ -1,0 +1,650 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ mantenedor_config.title }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        /* Layout de 3 columnas responsivo */
+        .mantenedor-container {
+            display: flex;
+            height: calc(100vh - 120px);
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        /* Columna izquierda - Menú */
+        .menu-column {
+            width: 25%;
+            min-width: 250px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow-y: auto;
+        }
+
+        .menu-header {
+            padding: 1rem;
+            background: #343a40;
+            color: white;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .menu-body {
+            padding: 1rem;
+        }
+
+        .accordion-item {
+            border: none;
+            margin-bottom: 0.5rem;
+        }
+
+        .accordion-button {
+            background: #e9ecef;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+        }
+
+        .accordion-button:not(.collapsed) {
+            background: #007bff;
+            color: white;
+        }
+
+        .menu-item {
+            display: block;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            color: #495057;
+            border-radius: 4px;
+            margin: 0.25rem 0;
+            transition: all 0.2s;
+        }
+
+        .menu-item:hover {
+            background: #e9ecef;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .menu-item.active {
+            background: #007bff;
+            color: white;
+        }
+
+        /* Columna centro - Listado */
+        .list-column {
+            width: 50%;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .list-header {
+            padding: 1rem;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .search-container {
+            padding: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .list-body {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .list-footer {
+            padding: 1rem;
+            border-top: 1px solid #dee2e6;
+            background: #f8f9fa;
+        }
+
+        /* Tabla responsive */
+        .table-responsive {
+            height: 100%;
+        }
+
+        .table th {
+            position: sticky;
+            top: 0;
+            background: #f8f9fa;
+            z-index: 10;
+            border-top: none;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .table th:hover {
+            background: #e9ecef;
+        }
+
+        .table th .sort-icon {
+            margin-left: 0.5rem;
+            opacity: 0.5;
+        }
+
+        .table th.sorting-asc .sort-icon::before {
+            content: "↑";
+            opacity: 1;
+        }
+
+        .table th.sorting-desc .sort-icon::before {
+            content: "↓";
+            opacity: 1;
+        }
+
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* Columna derecha - Info */
+        .info-column {
+            width: 25%;
+            min-width: 250px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem;
+        }
+
+        /* Estados de carga */
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+        }
+
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Badges de estado */
+        .badge-activo {
+            background-color: #28a745;
+        }
+
+        .badge-inactivo {
+            background-color: #dc3545;
+        }
+
+        /* Botones de acción */
+        .btn-action {
+            padding: 0.25rem 0.5rem;
+            margin: 0 0.125rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-edit {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-edit:hover {
+            background: #e0a800;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+
+        /* Responsive para tablet */
+        @media (max-width: 992px) {
+            .mantenedor-container {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .menu-column,
+            .list-column,
+            .info-column {
+                width: 100%;
+                min-width: auto;
+            }
+
+            .menu-column {
+                order: 1;
+                max-height: 300px;
+            }
+
+            .list-column {
+                order: 2;
+                min-height: 500px;
+            }
+
+            .info-column {
+                order: 3;
+                max-height: 400px;
+            }
+        }
+
+        /* Responsive para móvil */
+        @media (max-width: 768px) {
+            .mantenedor-container {
+                padding: 0.5rem;
+                gap: 0.5rem;
+            }
+
+            .list-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+
+            .table-responsive {
+                font-size: 0.875rem;
+            }
+
+            .btn-action {
+                padding: 0.125rem 0.25rem;
+                font-size: 0.75rem;
+            }
+        }
+
+        /* Notificaciones */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1060;
+        }
+
+        .toast {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Animaciones */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-up {
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <!-- Header del mantenedor -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2>
+                        <i class="{{ mantenedor_config.icon }}"></i>
+                        {{ mantenedor_config.title }}
+                    </h2>
+                    <p class="text-muted mb-0">{{ mantenedor_config.description }}</p>
+                </div>
+                <div class="badge badge-info">
+                    Tenant: {{ tenant.name }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Layout de 3 columnas -->
+    <div class="mantenedor-container">
+        <!-- Columna Izquierda - Menú Colapsable -->
+        <div class="menu-column" 
+             data-controller="menu" 
+             data-menu-current-value="{{ mantenedor_config.entity_name | lower }}">
+            
+            <div class="menu-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-cogs"></i>
+                    Mantenedores
+                </h5>
+            </div>
+
+            <div class="menu-body">
+                <div class="accordion" id="menuAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" 
+                                    type="button" 
+                                    data-bs-toggle="collapse" 
+                                    data-bs-target="#basicoCollapse">
+                                <i class="fas fa-database me-2"></i>
+                                Básico
+                            </button>
+                        </h2>
+                        <div id="basicoCollapse" 
+                             class="accordion-collapse collapse show">
+                            <div class="accordion-body">
+                                <a href="{{ path('mantenedores_sexo_index') }}" 
+                                   class="menu-item {{ mantenedor_config.entity_name | lower == 'sexo' ? 'active' : '' }}"
+                                   data-action="click->menu#selectItem">
+                                    <i class="fas fa-venus-mars me-2"></i>
+                                    Sexo
+                                </a>
+                                <a href="{{ path('mantenedores_region_index') }}" 
+                                   class="menu-item {{ mantenedor_config.entity_name | lower == 'región' ? 'active' : '' }}"
+                                   data-action="click->menu#selectItem">
+                                    <i class="fas fa-map-marked-alt me-2"></i>
+                                    Región
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Centro - Listado Inteligente -->
+        <div class="list-column" 
+             data-controller="list modal notification"
+             data-list-api-url-value="{{ path(mantenedor_config.routes.list) }}"
+             data-list-create-url-value="{{ path(mantenedor_config.routes.create) }}"
+             data-list-update-url-value="{{ path(mantenedor_config.routes.update, {id: 'ID_PLACEHOLDER'}) }}"
+             data-list-delete-url-value="{{ path(mantenedor_config.routes.delete, {id: 'ID_PLACEHOLDER'}) }}"
+             data-list-show-url-value="{{ path(mantenedor_config.routes.show, {id: 'ID_PLACEHOLDER'}) }}"
+             data-list-csrf-token-value="{{ csrf_token }}">
+
+            <!-- Header con botón crear -->
+            <div class="list-header">
+                <div>
+                    <h4 class="mb-0">{{ mantenedor_config.entity_name_plural }}</h4>
+                </div>
+                <button class="btn btn-primary btn-sm" 
+                        data-action="click->modal#openCreate">
+                    <i class="fas fa-plus"></i>
+                    Crear {{ mantenedor_config.entity_name }}
+                </button>
+            </div>
+
+            <!-- Búsqueda -->
+            <div class="search-container">
+                <div class="input-group">
+                    <input type="text" 
+                           class="form-control" 
+                           placeholder="{{ mantenedor_config.search_placeholder }}"
+                           data-list-target="searchInput"
+                           data-action="input->list#search">
+                    <div class="input-group-append">
+                        <span class="input-group-text">
+                            <i class="fas fa-search"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de datos -->
+            <div class="list-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                {% for column in mantenedor_config.columns %}
+                                <th style="width: {{ column.width }}"
+                                    {% if column.sortable %}
+                                        class="sortable"
+                                        data-column="{{ column.key }}"
+                                        data-action="click->list#sort"
+                                    {% endif %}>
+                                    {{ column.label }}
+                                    {% if column.sortable %}
+                                        <span class="sort-icon"></span>
+                                    {% endif %}
+                                </th>
+                                {% endfor %}
+                                <th style="width: 100px">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody data-list-target="tableBody">
+                            <!-- Los datos se cargan dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Estado de carga -->
+                <div class="loading-spinner d-none" data-list-target="loadingSpinner">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Cargando...</span>
+                    </div>
+                </div>
+
+                <!-- Estado vacío -->
+                <div class="empty-state d-none" data-list-target="emptyState">
+                    <i class="fas fa-inbox"></i>
+                    <h5>No hay registros</h5>
+                    <p>No se encontraron {{ mantenedor_config.entity_name_plural | lower }} que coincidan con tu búsqueda.</p>
+                </div>
+            </div>
+
+            <!-- Paginación -->
+            <div class="list-footer">
+                <div class="row align-items-center">
+                    <div class="col-sm-4">
+                        <select class="form-control form-control-sm" 
+                                data-list-target="limitSelect"
+                                data-action="change->list#changeLimit">
+                            <option value="10">10 por página</option>
+                            <option value="25" selected>25 por página</option>
+                            <option value="50">50 por página</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4 text-center">
+                        <small class="text-muted" data-list-target="paginationInfo">
+                            Mostrando 0-0 de 0 registros
+                        </small>
+                    </div>
+                    <div class="col-sm-4">
+                        <nav>
+                            <ul class="pagination pagination-sm justify-content-end mb-0"
+                                data-list-target="pagination">
+                                <!-- La paginación se genera dinámicamente -->
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Derecha - Información -->
+        <div class="info-column">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-info-circle"></i>
+                        Información
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <small class="text-muted">Total de registros</small>
+                        <div class="h5 mb-0" data-list-target="totalCount">0</div>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted">Última actualización</small>
+                        <div class="small" data-list-target="lastUpdate">-</div>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <h6>Acciones rápidas</h6>
+                        <button class="btn btn-outline-primary btn-sm btn-block"
+                                data-action="click->list#refresh">
+                            <i class="fas fa-sync"></i>
+                            Actualizar lista
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm btn-block mt-2"
+                                data-action="click->list#exportData">
+                            <i class="fas fa-download"></i>
+                            Exportar datos
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para crear/editar -->
+<div class="modal fade" id="mantenedorModal" tabindex="-1" 
+     data-modal-target="modal"
+     data-modal-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" data-modal-target="title">
+                    Crear {{ mantenedor_config.entity_name }}
+                </h5>
+                <button type="button" class="btn-close" 
+                        data-action="click->modal#close"></button>
+            </div>
+            <form data-modal-target="form" 
+                  data-action="submit->modal#submitForm">
+                <div class="modal-body">
+                    <input type="hidden" name="_token" value="{{ csrf_token }}">
+                    <input type="hidden" data-modal-target="entityId" name="entity_id">
+                    
+                    <div class="row">
+                        {% for field in mantenedor_config.form_fields %}
+                            <div class="col-md-{{ field.type == 'textarea' ? '12' : '6' }} mb-3">
+                                <label class="form-label">
+                                    {{ field.label }}
+                                    {% if field.required %}<span class="text-danger">*</span>{% endif %}
+                                </label>
+                                
+                                {% if field.type == 'text' %}
+                                    <input type="text" 
+                                           class="form-control" 
+                                           name="{{ field.name }}"
+                                           {% if field.required %}required{% endif %}
+                                           {% if field.maxlength %}maxlength="{{ field.maxlength }}"{% endif %}
+                                           {% if field.placeholder %}placeholder="{{ field.placeholder }}"{% endif %}>
+                                
+                                {% elseif field.type == 'textarea' %}
+                                    <textarea class="form-control" 
+                                              name="{{ field.name }}"
+                                              rows="3"
+                                              {% if field.required %}required{% endif %}
+                                              {% if field.maxlength %}maxlength="{{ field.maxlength }}"{% endif %}
+                                              {% if field.placeholder %}placeholder="{{ field.placeholder }}"{% endif %}></textarea>
+                                
+                                {% elseif field.type == 'select' %}
+                                    <select class="form-control" 
+                                            name="{{ field.name }}"
+                                            {% if field.required %}required{% endif %}>
+                                        <option value="">Seleccionar...</option>
+                                        {% for value, label in field.options %}
+                                            <option value="{{ value }}">{{ label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                
+                                {% elseif field.type == 'checkbox' %}
+                                    <div class="form-check">
+                                        <input type="checkbox" 
+                                               class="form-check-input" 
+                                               name="{{ field.name }}"
+                                               value="1"
+                                               {% if field.default %}checked{% endif %}>
+                                        <label class="form-check-label">
+                                            {{ field.help | default('Activar') }}
+                                        </label>
+                                    </div>
+                                {% endif %}
+                                
+                                {% if field.help and field.type != 'checkbox' %}
+                                    <small class="form-text text-muted">{{ field.help }}</small>
+                                {% endif %}
+                                
+                                <div class="invalid-feedback" data-field="{{ field.name }}"></div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" 
+                            data-action="click->modal#close">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary"
+                            data-modal-target="submitButton">
+                        <span class="spinner-border spinner-border-sm d-none me-2" 
+                              data-modal-target="submitSpinner"></span>
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmación para eliminar -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas eliminar este registro?</p>
+                <p class="text-danger"><strong>Esta acción no se puede deshacer.</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-danger" 
+                        data-action="click->list#confirmDelete">
+                    Confirmar eliminación
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Container para notificaciones toast -->
+<div class="toast-container" data-notification-target="container">
+    <!-- Los toasts se agregan dinámicamente aquí -->
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Configuración global para el mantenedor
+        window.MantenedorConfig = {{ mantenedor_config | json_encode | raw }};
+    </script>
+{% endblock %}
