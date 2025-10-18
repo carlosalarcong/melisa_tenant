@@ -2,18 +2,16 @@
 
 namespace App\Controller\Mantenedores;
 
+use App\Controller\AbstractTenantController;
 use App\Service\TenantContext;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class MantenedoresController extends AbstractController
+class MantenedoresController extends AbstractTenantController
 {
-    private TenantContext $tenantContext;
-
     public function __construct(TenantContext $tenantContext)
     {
-        $this->tenantContext = $tenantContext;
+        parent::__construct($tenantContext);
     }
 
     /**
@@ -21,10 +19,19 @@ class MantenedoresController extends AbstractController
      */
     public function index(): Response
     {
-        $tenant = $this->tenantContext->getCurrentTenant();
+        $tenant = $this->getCurrentTenant();
+        
+        // Debug temporal
+        if (!$tenant) {
+            $tenant = [
+                'name' => 'Melisa Hospital',
+                'subdomain' => 'melisahospital'
+            ];
+        }
         
         return $this->render('mantenedores/index.html.twig', [
             'tenant' => $tenant,
+            'subdomain' => $tenant['subdomain'] ?? null,
             'page_title' => 'Mantenedores - ' . ($tenant['name'] ?? 'Sistema'),
             'menuItems' => $this->getMenuItems(),
             'basicItems' => $this->getBasicItems()
@@ -36,10 +43,11 @@ class MantenedoresController extends AbstractController
      */
     public function basico(): Response
     {
-        $tenant = $this->tenantContext->getCurrentTenant();
+        $tenant = $this->getCurrentTenant();
         
         return $this->render('mantenedores/basico.html.twig', [
             'tenant' => $tenant,
+            'subdomain' => $tenant['subdomain'] ?? null,
             'page_title' => 'Mantenedores Básicos - ' . ($tenant['name'] ?? 'Sistema'),
             'basicItems' => $this->getBasicItems()
         ]);

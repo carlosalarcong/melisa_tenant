@@ -2,648 +2,220 @@
 
 {% block title %}Mantenedores - {{ tenant.name }}{% endblock %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    <style>
-        .mantenedor-container {
-            display: flex;
-            gap: 1rem;
-            padding: 1rem;
-        }
-
-        .menu-column {
-            width: 25%;
-            min-width: 250px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 1rem;
-        }
-
-        .content-column {
-            width: 75%;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 2rem;
-        }
-
-        .menu-item {
-            display: block;
-            padding: 0.75rem 1rem;
-            text-decoration: none;
-            color: #495057;
-            border-radius: 6px;
-            margin: 0.5rem 0;
-            transition: all 0.2s;
-            border-left: 3px solid transparent;
-        }
-
-        .menu-item:hover {
-            background: #e9ecef;
-            color: #007bff;
-            text-decoration: none;
-            border-left-color: #007bff;
-        }
-
-        .menu-item.active {
-            background: #007bff;
-            color: white;
-            border-left-color: #0056b3;
-        }
-
-        .menu-category {
-            margin-bottom: 1.5rem;
-        }
-
-        .menu-category h6 {
-            color: #6c757d;
-            font-size: 0.875rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-bottom: 0.75rem;
-            padding-left: 1rem;
-        }
-
-        .card-mantenedor {
-            transition: transform 0.2s, box-shadow 0.2s;
-            border: 1px solid #dee2e6;
-        }
-
-        .card-mantenedor:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        @media (max-width: 992px) {
-            .mantenedor-container {
-                flex-direction: column;
-            }
-
-            .menu-column,
-            .content-column {
-                width: 100%;
-                min-width: auto;
-            }
-        }
-
-        /* Estilos para validación de formularios */
-        .is-invalid {
-            border-color: #dc3545 !important;
-            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
-        }
-
-        .invalid-feedback {
-            display: block !important;
-            width: 100%;
-            margin-top: 0.25rem;
-            font-size: 0.875em;
-            color: #dc3545;
-        }
-
-        /* Mejorar apariencia de modales */
-        .modal-header {
-            background-color: #f8f9fa;
-            border-bottom: 1px solid #dee2e6;
-        }
-
-        .modal-footer {
-            background-color: #f8f9fa;
-            border-top: 1px solid #dee2e6;
-        }
-
-        .modal-title {
-            color: #495057;
-            font-weight: 600;
-        }
-    </style>
+{% block dashboard_indicator %}
+    🏥 Mantenedores - {{ tenant.name }}
 {% endblock %}
 
 {% block body %}
 <div class="container-fluid">
-    <!-- Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h2>
-                        <i class="fas fa-cogs text-primary"></i>
-                        Mantenedores
-                    </h2>
-                    <p class="text-muted mb-0">Gestión de mantenedores del sistema</p>
+    <div class="row">
+        <!-- Sidebar igual al dashboard principal -->
+        <nav class="col-md-3 col-lg-2 d-md-block bg-dark sidebar position-fixed">
+            <div class="position-sticky pt-3">
+                <div class="text-center mb-4">
+                    <h5 class="text-white">🏥 {{ tenant.name }}</h5>
+                    <small class="text-muted">{{ tenant.subdomain }}.melisaupgrade.prod</small>
                 </div>
-                <div class="badge bg-info text-dark">
-                    {{ tenant.name }}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Layout principal -->
-    <div class="mantenedor-container">
-        <!-- Menú lateral -->
-        <div class="menu-column">
-            <h5 class="mb-3">
-                <i class="fas fa-list"></i>
-                Categorías
-            </h5>
-
-            {% for category, items in menuItems %}
-                <div class="menu-category">
-                    <h6>{{ category }}</h6>
-                    {% for item in items %}
-                        <a href="javascript:void(0)" 
-                           class="menu-item" 
-                           onclick="cargarMantenedor('{{ item.url }}', '{{ item.name }}')">
-                            <i class="{{ item.icon }} me-2"></i>
-                            {{ item.name }}
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/dashboard">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
                         </a>
-                    {% endfor %}
-                </div>
-            {% endfor %}
-        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/pacientes">
+                            <i class="fas fa-users"></i> Pacientes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/emergencias">
+                            <i class="fas fa-ambulance"></i> Emergencias
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/quirofanos">
+                            <i class="fas fa-procedures"></i> Quirófanos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/laboratorio">
+                            <i class="fas fa-vial"></i> Laboratorio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/farmacia">
+                            <i class="fas fa-pills"></i> Farmacia
+                        </a>
+                    </li>
+                    
+                    <!-- Separador -->
+                    <li class="nav-item mt-3">
+                        <hr class="sidebar-divider" style="border-color: #495057;">
+                        <small class="text-muted px-3">ADMINISTRACIÓN</small>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link active text-white" href="/mantenedores">
+                            <i class="fas fa-cogs"></i> Mantenedores
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/configuracion">
+                            <i class="fas fa-wrench"></i> Configuración
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
 
-        <!-- Contenido principal -->
-        <div class="content-column">
-            <div id="mantenedorContent">
-                <div class="row">
-                    <div class="col-12 mb-4">
-                        <h4>Mantenedores Básicos</h4>
-                        <p class="text-muted">Selecciona un mantenedor para gestionar sus datos</p>
+        <!-- Main content con offset para sidebar -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">
+                    <i class="fas fa-cogs me-2"></i>
+                    Mantenedores
+                </h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <button type="button" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-download"></i> Exportar
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-cog"></i> Configurar
+                        </button>
                     </div>
                 </div>
+            </div>
 
-                <div class="row">
-                    {% for item in basicItems %}
-                        <div class="col-md-6 col-lg-4 mb-3">
-                            <div class="card card-mantenedor h-100">
-                                <div class="card-body text-center">
-                                    <div class="mb-3">
-                                        <i class="{{ item.icon }} fa-2x text-primary"></i>
+            <div class="row">
+                <!-- Menú lateral de mantenedores -->
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-list me-2"></i>
+                                Categorías
+                            </h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush">
+                                <!-- Básicos -->
+                                <div class="list-group-item">
+                                    <h6 class="mb-2 text-primary">
+                                        <i class="fas fa-database me-2"></i>
+                                        Básicos
+                                    </h6>
+                                    <div class="ms-3">
+                                        <a href="#" 
+                                           class="d-block py-1 text-decoration-none" 
+                                           data-action="cargar-mantenedor"
+                                           data-url="/mantenedores/basico/pais/content">
+                                            <i class="fas fa-globe me-2"></i>Países
+                                        </a>
+                                        <a href="#" 
+                                           class="d-block py-1 text-decoration-none" 
+                                           data-action="cargar-mantenedor"
+                                           data-url="/mantenedores/basico/regiones">
+                                            <i class="fas fa-map me-2"></i>Regiones
+                                        </a>
+                                        <a href="#" 
+                                           class="d-block py-1 text-decoration-none" 
+                                           data-action="cargar-mantenedor"
+                                           data-url="/mantenedores/basico/religiones">
+                                            <i class="fas fa-pray me-2"></i>Religiones
+                                        </a>
+                                        <a href="#" 
+                                           class="d-block py-1 text-decoration-none" 
+                                           data-action="cargar-mantenedor"
+                                           data-url="/mantenedores/basico/sexo">
+                                            <i class="fas fa-venus-mars me-2"></i>Sexo
+                                        </a>
                                     </div>
-                                    <h5 class="card-title">{{ item.name }}</h5>
-                                    <p class="card-text text-muted">{{ item.description }}</p>
-                                    <button class="btn btn-primary btn-sm" 
-                                            onclick="cargarMantenedor('{{ item.url }}', '{{ item.name }}')">
-                                        <i class="fas fa-arrow-right me-1"></i>
-                                        Gestionar
-                                    </button>
+                                </div>
+                                
+                                <!-- Personas -->
+                                <div class="list-group-item">
+                                    <h6 class="mb-2 text-success">
+                                        <i class="fas fa-users me-2"></i>
+                                        Personas
+                                    </h6>
+                                    <div class="ms-3">
+                                        <a href="#" class="d-block py-1 text-decoration-none">
+                                            <i class="fas fa-user-md me-2"></i>Médicos
+                                        </a>
+                                        <a href="#" class="d-block py-1 text-decoration-none">
+                                            <i class="fas fa-user-nurse me-2"></i>Enfermeros
+                                        </a>
+                                        <a href="#" class="d-block py-1 text-decoration-none">
+                                            <i class="fas fa-user-tie me-2"></i>Administrativos
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <!-- Médicos -->
+                                <div class="list-group-item">
+                                    <h6 class="mb-2 text-info">
+                                        <i class="fas fa-stethoscope me-2"></i>
+                                        Médicos
+                                    </h6>
+                                    <div class="ms-3">
+                                        <a href="#" class="d-block py-1 text-decoration-none">
+                                            <i class="fas fa-hospital me-2"></i>Especialidades
+                                        </a>
+                                        <a href="#" class="d-block py-1 text-decoration-none">
+                                            <i class="fas fa-pills me-2"></i>Medicamentos
+                                        </a>
+                                        <a href="#" class="d-block py-1 text-decoration-none">
+                                            <i class="fas fa-file-medical me-2"></i>Diagnósticos
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    {% endfor %}
-                </div>
-
-                {% if basicItems is empty %}
-                    <div class="text-center py-5">
-                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                        <h5 class="text-muted">No hay mantenedores disponibles</h5>
-                        <p class="text-muted">Los mantenedores aparecerán aquí cuando estén configurados.</p>
                     </div>
-                {% endif %}
-            </div>
-
-            <!-- Spinner de carga -->
-            <div id="loadingSpinner" class="text-center py-5" style="display: none;">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="sr-only">Cargando...</span>
                 </div>
-                <p class="mt-2 text-muted">Cargando mantenedor...</p>
+                
+                <!-- Columna de contenido -->
+                <div class="col-md-9">
+                    <div id="content-column" class="card">
+                        <div class="card-header bg-light">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Selecciona un mantenedor
+                            </h5>
+                        </div>
+                        <div class="card-body text-center text-muted">
+                            <i class="fas fa-arrow-left fa-3x mb-3 opacity-50"></i>
+                            <p>Selecciona un elemento del menú lateral para comenzar</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+        </main>
     </div>
 </div>
 
 <script>
-    // Función para cargar mantenedor dinámicamente
-    function cargarMantenedor(url, nombre) {
-        const contentDiv = document.getElementById('mantenedorContent');
-        const spinner = document.getElementById('loadingSpinner');
-        
-        // Mostrar spinner y ocultar contenido
-        contentDiv.style.display = 'none';
-        spinner.style.display = 'block';
-        
-        // Hacer petición AJAX
-        fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al cargar el mantenedor');
-                }
-                return response.text();
-            })
-            .then(html => {
-                // Extraer solo el contenido del body del HTML recibido
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const bodyContent = doc.querySelector('.mantenedor-container') || doc.body;
-                
-                // Reemplazar el contenido
-                contentDiv.innerHTML = bodyContent.innerHTML;
-                
-                // Ocultar spinner y mostrar contenido
-                spinner.style.display = 'none';
-                contentDiv.style.display = 'block';
-                
-                // Actualizar título si es necesible
-                updatePageTitle(nombre);
-                
-                // Ejecutar scripts que puedan estar en el contenido cargado
-                executeScriptsInContent(contentDiv);
-                
-                // Asegurar que las funciones globales estén disponibles
-                window.setupMantenedorFunctions();
-                
-                // Test: Verificar que los botones estén presentes
-                setTimeout(() => {
-                    const botonCrear = document.querySelector('[data-action="crear-pais"]');
-                    console.log('Botón crear encontrado después de cargar:', !!botonCrear);
-                    
-                    if (botonCrear) {
-                        console.log('Botón crear:', botonCrear);
-                        console.log('Data-action:', botonCrear.getAttribute('data-action'));
-                    }
-                }, 100);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                contentDiv.innerHTML = `
-                    <div class="alert alert-danger">
-                        <h5><i class="fas fa-exclamation-triangle me-2"></i>Error al cargar</h5>
-                        <p>No se pudo cargar el mantenedor de ${nombre}. Por favor, inténtalo de nuevo.</p>
-                        <button class="btn btn-secondary btn-sm" onclick="location.reload()">
-                            <i class="fas fa-refresh me-1"></i>
-                            Recargar página
-                        </button>
-                    </div>
-                `;
-                spinner.style.display = 'none';
-                contentDiv.style.display = 'block';
-            });
-    }
+    console.log('=== MANTENEDORES CARGADO ===');
     
-    // Función para ejecutar scripts en contenido cargado dinámicamente
-    function executeScriptsInContent(container) {
-        const scripts = container.querySelectorAll('script');
-        scripts.forEach(script => {
-            const newScript = document.createElement('script');
-            if (script.src) {
-                newScript.src = script.src;
-            } else {
-                newScript.textContent = script.textContent;
-            }
-            document.head.appendChild(newScript);
-        });
-    }
-    
-    // Función para configurar las funciones del mantenedor después de cargar contenido
-    window.setupMantenedorFunctions = function() {
-        console.log('Configurando funciones del mantenedor...');
-        
-        // Verificar que las funciones estén disponibles
-        if (typeof window.crearPais !== 'function') {
-            console.error('Función crearPais no encontrada');
-        } else {
-            console.log('Función crearPais disponible');
-        }
-        
-        // Agregar event listeners adicionales si es necesario
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) {
-            searchInput.removeEventListener('keyup', window.buscarPaises); // Remover listener anterior
-            searchInput.addEventListener('keyup', window.buscarPaises);
-        }
-    }
-    
-    // Función para actualizar el título de la página
-    function updatePageTitle(nombre) {
-        const mainTitle = document.querySelector('.content-column h4');
-        if (mainTitle) {
-            mainTitle.innerHTML = `<i class="fas fa-cog me-2"></i>Mantenedor de ${nombre}`;
-        }
-    }
-    
-    // Función para volver al menú principal
-    function volverAlMenu() {
-        location.reload();
-    }
-    
-    // Funciones globales para mantenedores (disponibles después de cargar contenido AJAX)
-    window.crearPais = function() {
-        // Limpiar formulario
-        const form = document.getElementById('paisForm');
-        if (form) {
-            form.reset();
-            limpiarErrores();
-        }
-        
-        // Configurar modal para crear
-        const modalTitle = document.getElementById('modalTitle');
-        const paisId = document.getElementById('paisId');
-        const activo = document.getElementById('activo');
-        
-        if (modalTitle) modalTitle.textContent = 'Crear País';
-        if (paisId) paisId.value = '';
-        if (activo) activo.checked = true;
-        
-        // Mostrar modal
-        const modalElement = document.getElementById('paisModal');
-        if (modalElement) {
-            const modal = new bootstrap.Modal(modalElement);
-            modal.show();
-        }
-    }
-    
-    window.editarPais = function(id) {
-        console.log('Editando país ID:', id);
-        
-        // Aquí cargarías los datos reales del país
-        // Por ahora simulamos datos
-        const paisesEjemplo = {
-            1: { nombrePais: 'Chile', nombreGentilicio: 'Chileno/a', activo: true },
-            2: { nombrePais: 'Argentina', nombreGentilicio: 'Argentino/a', activo: true },
-            3: { nombrePais: 'Perú', nombreGentilicio: 'Peruano/a', activo: true }
-        };
-        
-        const pais = paisesEjemplo[id];
-        if (!pais) {
-            alert('País no encontrado');
-            return;
-        }
-        
-        // Configurar modal para editar
-        const modalTitle = document.getElementById('modalTitle');
-        const paisId = document.getElementById('paisId');
-        const nombrePais = document.getElementById('nombrePais');
-        const nombreGentilicio = document.getElementById('nombreGentilicio');
-        const activo = document.getElementById('activo');
-        
-        if (modalTitle) modalTitle.textContent = 'Editar País';
-        if (paisId) paisId.value = id;
-        if (nombrePais) nombrePais.value = pais.nombrePais;
-        if (nombreGentilicio) nombreGentilicio.value = pais.nombreGentilicio;
-        if (activo) activo.checked = pais.activo;
-        
-        limpiarErrores();
-        
-        // Mostrar modal
-        const modalElement = document.getElementById('paisModal');
-        if (modalElement) {
-            const modal = new bootstrap.Modal(modalElement);
-            modal.show();
-        }
-    }
-    
-    window.eliminarPais = function(id) {
-        const confirmacion = confirm('¿Estás seguro de que deseas eliminar este país?\n\nEsta acción no se puede deshacer.');
-        
-        if (confirmacion) {
-            // Aquí iría la llamada AJAX real para eliminar
-            console.log('Eliminando país ID:', id);
-            
-            // Simular eliminación exitosa
-            setTimeout(() => {
-                alert('País eliminado exitosamente!');
-                // Recargar tabla si existe la función
-                if (typeof cargarPaises === 'function') {
-                    cargarPaises();
-                }
-            }, 500);
-        }
-    }
-    
-    window.guardarPais = function(event) {
-        event.preventDefault();
-        
-        const form = document.getElementById('paisForm');
-        if (!form) return;
-        
-        limpiarErrores();
-        
-        // Validar formulario
-        const formData = new FormData(form);
-        const nombrePais = formData.get('nombrePais')?.trim();
-        const nombreGentilicio = formData.get('nombreGentilicio')?.trim();
-        const activo = formData.get('activo') === 'on';
-        const paisId = formData.get('id');
-        
-        let errores = {};
-        
-        if (!nombrePais) {
-            errores.nombrePais = 'El nombre del país es obligatorio';
-        }
-        if (!nombreGentilicio) {
-            errores.nombreGentilicio = 'El gentilicio es obligatorio';
-        }
-        
-        // Mostrar errores si los hay
-        if (Object.keys(errores).length > 0) {
-            mostrarErroresValidacion(errores);
-            return;
-        }
-        
-        // Datos a enviar
-        const datos = {
-            nombrePais,
-            nombreGentilicio,
-            activo,
-            _token: '{{ csrf_token("mantenedor_form") }}'
-        };
-        
-        console.log('Guardando país:', datos);
-        
-        // Deshabilitar botón de envío
-        const submitBtn = form.querySelector('button[type="submit"]');
-        if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Guardando...';
-        }
-        
-        // Simular guardado exitoso (aquí iría la llamada AJAX real)
-        setTimeout(() => {
-            alert(`País ${paisId ? 'actualizado' : 'creado'} exitosamente!`);
-            
-            // Cerrar modal
-            const modalElement = document.getElementById('paisModal');
-            if (modalElement) {
-                const modal = bootstrap.Modal.getInstance(modalElement);
-                if (modal) modal.hide();
-            }
-            
-            // Recargar tabla
-            if (typeof cargarPaises === 'function') {
-                cargarPaises();
-            }
-            
-            // Rehabilitar botón
-            if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = 'Guardar';
-            }
-        }, 1000);
-    }
-    
-    window.cargarPaises = function() {
-        console.log('Cargando países...');
-        // Aquí iría la lógica para cargar datos reales via AJAX
-        // Por ahora solo mostramos un mensaje
-    }
-    
-    window.buscarPaises = function() {
-        const searchInput = document.getElementById('searchInput');
-        const search = searchInput?.value || '';
-        console.log('Buscando:', search);
-        // Aquí iría la lógica de búsqueda real
-    }
-    
-    // Funciones auxiliares
-    function limpiarErrores() {
-        document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
-        document.querySelectorAll('.invalid-feedback').forEach(el => el.style.display = 'none');
-    }
-    
-    function mostrarErroresValidacion(errores) {
-        Object.keys(errores).forEach(campo => {
-            const input = document.getElementById(campo);
-            if (input) {
-                input.classList.add('is-invalid');
-                
-                // Buscar o crear div de error
-                let errorDiv = input.parentNode.querySelector('.invalid-feedback');
-                if (!errorDiv) {
-                    errorDiv = document.createElement('div');
-                    errorDiv.className = 'invalid-feedback';
-                    input.parentNode.appendChild(errorDiv);
-                }
-                
-                errorDiv.textContent = errores[campo];
-                errorDiv.style.display = 'block';
-            }
-        });
-    }
-    
-    // Asegurar que las funciones estén disponibles al cargar la página
+    // Configurar event delegation cuando el DOM esté listo
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM cargado, configurando event delegation...');
+        console.log('DOM listo, configurando eventos...');
         setupEventDelegation();
-        setupFormHandlers();
+        
+        // Test manual - verificar que los elementos existan
+        const contentColumn = document.getElementById('content-column');
+        const paisesLink = document.querySelector('[data-action="cargar-mantenedor"]');
+        
+        console.log('Elementos encontrados:', {
+            contentColumn: !!contentColumn,
+            paisesLink: !!paisesLink
+        });
+        
+        if (paisesLink) {
+            console.log('URL del enlace países:', paisesLink.getAttribute('data-url'));
+        }
     });
-    
-    // Configurar handlers para formularios
-    function setupFormHandlers() {
-        console.log('Configurando handlers de formularios...');
-        
-        // Handler para formularios
-        document.addEventListener('submit', function(e) {
-            const action = e.target.getAttribute('data-action');
-            
-            if (action === 'guardar-pais') {
-                console.log('Submit detectado para guardar país');
-                e.preventDefault();
-                ejecutarGuardarPais(e);
-            }
-        });
-        
-        // Handler para búsqueda
-        document.addEventListener('input', function(e) {
-            const action = e.target.getAttribute('data-action');
-            
-            if (action === 'buscar-paises') {
-                console.log('Input detectado para búsqueda');
-                ejecutarBuscarPaises();
-            }
-        });
-    }
-    
-    // Función para guardar país
-    function ejecutarGuardarPais(event) {
-        console.log('=== GUARDAR PAÍS ===');
-        
-        const form = document.getElementById('paisForm');
-        if (!form) {
-            console.error('Formulario no encontrado');
-            return;
-        }
-        
-        limpiarErroresFormulario();
-        
-        // Obtener datos del formulario
-        const formData = new FormData(form);
-        const nombrePais = formData.get('nombrePais')?.trim();
-        const nombreGentilicio = formData.get('nombreGentilicio')?.trim();
-        const activo = formData.get('activo') === 'on';
-        const paisId = formData.get('id');
-        
-        console.log('Datos del formulario:', { nombrePais, nombreGentilicio, activo, paisId });
-        
-        // Validación simple
-        let errores = {};
-        
-        if (!nombrePais) {
-            errores.nombrePais = 'El nombre del país es obligatorio';
-        }
-        if (!nombreGentilicio) {
-            errores.nombreGentilicio = 'El gentilicio es obligatorio';
-        }
-        
-        // Mostrar errores si los hay
-        if (Object.keys(errores).length > 0) {
-            console.log('Errores de validación:', errores);
-            mostrarErroresValidacion(errores);
-            return;
-        }
-        
-        // Simular guardado
-        const submitBtn = form.querySelector('button[type="submit"]');
-        if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Guardando...';
-        }
-        
-        setTimeout(() => {
-            const accion = paisId ? 'actualizado' : 'creado';
-            alert(`País ${accion} exitosamente!`);
-            
-            // Cerrar modal
-            const modal = document.getElementById('paisModal');
-            if (modal) {
-                const bsModal = bootstrap.Modal.getInstance(modal);
-                if (bsModal) bsModal.hide();
-            }
-            
-            // Restaurar botón
-            if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = 'Guardar';
-            }
-        }, 1000);
-    }
-    
-    function ejecutarBuscarPaises() {
-        const searchInput = document.getElementById('searchInput');
-        const search = searchInput?.value || '';
-        console.log('Buscando países:', search);
-    }
-    
-    function mostrarErroresValidacion(errores) {
-        Object.keys(errores).forEach(campo => {
-            const input = document.getElementById(campo);
-            if (input) {
-                input.classList.add('is-invalid');
-                
-                // Buscar o crear div de error
-                let errorDiv = input.parentNode.querySelector('.invalid-feedback');
-                if (!errorDiv) {
-                    errorDiv = document.createElement('div');
-                    errorDiv.className = 'invalid-feedback';
-                    input.parentNode.appendChild(errorDiv);
-                }
-                
-                errorDiv.textContent = errores[campo];
-                errorDiv.style.display = 'block';
-            }
-        });
-    }
     
     // Event delegation para manejar clicks en contenido cargado dinámicamente
     function setupEventDelegation() {
@@ -660,56 +232,135 @@
     
     // Handler principal para todos los clicks
     function handleDocumentClick(e) {
+        console.log('Click detectado en documento, elemento:', e.target);
+        
         const target = e.target.closest('[data-action]');
         
-        if (!target) return;
+        if (!target) {
+            console.log('No se encontró elemento con data-action');
+            return;
+        }
         
         const action = target.getAttribute('data-action');
+        const url = target.getAttribute('data-url');
         const id = target.getAttribute('data-id');
         
-        console.log('Click detectado - Acción:', action, 'ID:', id, 'Elemento:', target);
+        console.log('Click detectado en elemento con data-action:', { action, url, id, target });
         
         e.preventDefault();
         e.stopPropagation();
         
         // Ejecutar acciones
         switch(action) {
+            case 'cargar-mantenedor':
+                console.log('Cargando mantenedor:', url);
+                cargarMantenedor(url);
+                break;
             case 'crear-pais':
-                console.log('Ejecutando crear país...');
+                console.log('Creando país...');
                 ejecutarCrearPais();
                 break;
             case 'editar-pais':
-                console.log('Ejecutando editar país:', id);
+                console.log('Editando país:', id);
                 ejecutarEditarPais(id);
                 break;
             case 'eliminar-pais':
-                console.log('Ejecutando eliminar país:', id);
+                console.log('Eliminando país:', id);
                 ejecutarEliminarPais(id);
                 break;
-            case 'cargar-paises':
-                console.log('Ejecutando cargar países...');
-                ejecutarCargarPaises();
-                break;
-            case 'volver-menu':
-                console.log('Ejecutando volver al menú...');
-                volverAlMenu();
-                break;
             default:
-                console.warn('Acción no reconocida:', action);
+                console.log('Acción no reconocida:', action);
         }
     }
     
-    // Funciones ejecutoras simplificadas
+    // Función para cargar mantenedor dinámicamente
+    function cargarMantenedor(url) {
+        console.log('=== CARGAR MANTENEDOR ===', url);
+        
+        const contentDiv = document.getElementById('content-column');
+        
+        if (!contentDiv) {
+            console.error('Contenedor de contenido no encontrado');
+            return;
+        }
+        
+        // Mostrar loading
+        contentDiv.innerHTML = `
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-spinner fa-spin me-2"></i>
+                    Cargando...
+                </h5>
+            </div>
+            <div class="card-body text-center">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <p class="text-muted">Cargando contenido del mantenedor...</p>
+            </div>
+        `;
+        
+        // Hacer petición AJAX
+        fetch(url)
+            .then(response => {
+                console.log('Respuesta recibida:', response.status, response.statusText);
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+                return response.text();
+            })
+            .then(html => {
+                console.log('HTML recibido, longitud:', html.length);
+                
+                // Reemplazar el contenido completo
+                contentDiv.innerHTML = html;
+                
+                console.log('Contenido actualizado');
+                
+                // Verificar que los elementos se cargaron
+                setTimeout(() => {
+                    const botonCrear = document.querySelector('[data-action="crear-pais"]');
+                    console.log('Botón crear encontrado después de cargar:', !!botonCrear);
+                    
+                    if (botonCrear) {
+                        console.log('Botón crear configurado correctamente');
+                    } else {
+                        console.warn('Botón crear no encontrado en el contenido cargado');
+                    }
+                }, 100);
+            })
+            .catch(error => {
+                console.error('Error al cargar mantenedor:', error);
+                contentDiv.innerHTML = `
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Error al cargar
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-danger">
+                            <strong>Error:</strong> ${error.message}
+                            <br><br>
+                            <button class="btn btn-secondary btn-sm" onclick="location.reload()">
+                                <i class="fas fa-refresh me-1"></i>
+                                Recargar página
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+    }
+    
+    // =================== FUNCIONES PARA PAÍSES ===================
+    
     function ejecutarCrearPais() {
         console.log('=== CREAR PAÍS ===');
         
-        // Buscar elementos del modal
         const modal = document.getElementById('paisModal');
         const modalTitle = document.getElementById('modalTitle');
         const form = document.getElementById('paisForm');
         const paisId = document.getElementById('paisId');
-        const nombrePais = document.getElementById('nombrePais');
-        const nombreGentilicio = document.getElementById('nombreGentilicio');
         const activo = document.getElementById('activo');
         
         console.log('Elementos encontrados:', {
@@ -717,14 +368,12 @@
             modalTitle: !!modalTitle,
             form: !!form,
             paisId: !!paisId,
-            nombrePais: !!nombrePais,
-            nombreGentilicio: !!nombreGentilicio,
             activo: !!activo
         });
         
         if (!modal) {
             console.error('Modal paisModal no encontrado');
-            alert('Error: Modal no encontrado');
+            alert('Error: Modal no encontrado. Asegúrate de que el contenido esté cargado.');
             return;
         }
         
@@ -753,74 +402,212 @@
         
         if (!id) {
             console.error('ID de país no proporcionado');
+            alert('Error: ID de país no válido');
             return;
         }
         
-        // Datos de ejemplo
-        const paisesEjemplo = {
-            '1': { nombrePais: 'Chile', nombreGentilicio: 'Chileno/a', activo: true },
-            '2': { nombrePais: 'Argentina', nombreGentilicio: 'Argentino/a', activo: true },
-            '3': { nombrePais: 'Perú', nombreGentilicio: 'Peruano/a', activo: true }
-        };
-        
-        const pais = paisesEjemplo[id];
-        if (!pais) {
-            alert('País no encontrado');
-            return;
-        }
-        
-        const modal = document.getElementById('paisModal');
-        const modalTitle = document.getElementById('modalTitle');
-        const paisId = document.getElementById('paisId');
-        const nombrePais = document.getElementById('nombrePais');
-        const nombreGentilicio = document.getElementById('nombreGentilicio');
-        const activo = document.getElementById('activo');
-        
-        if (!modal) {
-            console.error('Modal no encontrado');
-            return;
-        }
-        
-        // Configurar modal para editar
-        if (modalTitle) modalTitle.textContent = 'Editar País';
-        if (paisId) paisId.value = id;
-        if (nombrePais) nombrePais.value = pais.nombrePais;
-        if (nombreGentilicio) nombreGentilicio.value = pais.nombreGentilicio;
-        if (activo) activo.checked = pais.activo;
-        
-        limpiarErroresFormulario();
-        
-        const bsModal = new bootstrap.Modal(modal);
-        bsModal.show();
+        // Obtener datos del país desde la API
+        fetch(`/mantenedores/basico/pais/${id}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (!data.success) {
+                    throw new Error(data.error || 'Error desconocido');
+                }
+                
+                const pais = data.data;
+                
+                const modal = document.getElementById('paisModal');
+                const modalTitle = document.getElementById('modalTitle');
+                const paisId = document.getElementById('paisId');
+                const nombrePais = document.getElementById('nombrePais');
+                const nombreGentilicio = document.getElementById('nombreGentilicio');
+                const activo = document.getElementById('activo');
+                
+                if (!modal) {
+                    console.error('Modal no encontrado');
+                    alert('Error: Modal no encontrado');
+                    return;
+                }
+                
+                // Configurar modal para editar
+                if (modalTitle) modalTitle.textContent = 'Editar País';
+                if (paisId) paisId.value = pais.id;
+                if (nombrePais) nombrePais.value = pais.nombrePais;
+                if (nombreGentilicio) nombreGentilicio.value = pais.nombreGentilicio;
+                if (activo) activo.checked = pais.activo;
+                
+                limpiarErroresFormulario();
+                
+                const bsModal = new bootstrap.Modal(modal);
+                bsModal.show();
+                console.log('Modal de edición mostrado con datos:', pais);
+            })
+            .catch(error => {
+                console.error('Error al obtener datos del país:', error);
+                alert('Error al cargar los datos del país: ' + error.message);
+            });
     }
     
     function ejecutarEliminarPais(id) {
         console.log('=== ELIMINAR PAÍS ===', id);
         
-        const confirmacion = confirm('¿Estás seguro de que deseas eliminar este país?\n\nEsta acción no se puede deshacer.');
-        
-        if (confirmacion) {
-            console.log('País eliminado:', id);
-            alert('País eliminado exitosamente! (Simulado)');
+        if (!id) {
+            alert('Error: ID de país no válido');
+            return;
         }
+        
+        // Obtener datos del país primero para mostrar confirmación
+        fetch(`/mantenedores/basico/pais/${id}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (!data.success) {
+                    throw new Error(data.error || 'Error desconocido');
+                }
+                
+                const pais = data.data;
+                const confirmacion = confirm(`¿Estás seguro de que deseas eliminar el país "${pais.nombrePais}"?\n\nEsta acción no se puede deshacer.`);
+                
+                if (confirmacion) {
+                    console.log('Eliminando país:', id);
+                    
+                    // Llamada AJAX para eliminar
+                    fetch(`/mantenedores/basico/pais/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Error ${response.status}: ${response.statusText}`);
+                        }
+                        return response.json();
+                    })
+                    .then(result => {
+                        if (result.success) {
+                            alert('País eliminado exitosamente!');
+                            cargarMantenedor('pais'); // Recargar la lista
+                        } else {
+                            throw new Error(result.error || 'Error al eliminar país');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al eliminar país:', error);
+                        alert('Error al eliminar país: ' + error.message);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error al obtener datos del país:', error);
+                alert('Error al cargar los datos del país: ' + error.message);
+            });
     }
     
-    function ejecutarCargarPaises() {
-        console.log('=== CARGAR PAÍSES ===');
-        alert('Función cargar países ejecutada');
-    }
-    
+    // Función para limpiar errores de formulario
     function limpiarErroresFormulario() {
         document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
         document.querySelectorAll('.invalid-feedback').forEach(el => el.style.display = 'none');
     }
     
+    // Función para manejar el submit del formulario de país
+    function handlePaisFormSubmit(event) {
+        event.preventDefault();
+        
+        const form = event.target;
+        const formData = new FormData(form);
+        const paisId = formData.get('id');
+        
+        // Determinar si es crear o editar
+        const isEdit = paisId && paisId.trim() !== '';
+        const url = isEdit ? `/mantenedores/basico/pais/${paisId}` : '/mantenedores/basico/pais';
+        const method = isEdit ? 'PUT' : 'POST';
+        
+        console.log(`${isEdit ? 'Editando' : 'Creando'} país:`, {
+            url,
+            method,
+            data: Object.fromEntries(formData)
+        });
+        
+        // Limpiar errores previos
+        limpiarErroresFormulario();
+        
+        // Preparar datos para envío
+        const requestData = {
+            nombrePais: formData.get('nombrePais'),
+            nombreGentilicio: formData.get('nombreGentilicio'),
+            activo: formData.has('activo')
+        };
+        
+        // Realizar petición
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(result => {
+            if (result.success) {
+                // Cerrar modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('paisModal'));
+                if (modal) {
+                    modal.hide();
+                }
+                
+                // Mostrar mensaje de éxito
+                alert(`País ${isEdit ? 'actualizado' : 'creado'} exitosamente!`);
+                
+                // Recargar la lista
+                cargarMantenedor('pais');
+            } else {
+                throw new Error(result.error || `Error al ${isEdit ? 'actualizar' : 'crear'} país`);
+            }
+        })
+        .catch(error => {
+            console.error(`Error al ${isEdit ? 'actualizar' : 'crear'} país:`, error);
+            alert(`Error al ${isEdit ? 'actualizar' : 'crear'} país: ` + error.message);
+        });
+    }
+    
+    // Configurar event listener para el formulario
+    function setupFormHandlers() {
+        // Usar delegación de eventos para el formulario
+        document.addEventListener('submit', function(event) {
+            const form = event.target;
+            
+            // Verificar si es el formulario de país
+            if (form.id === 'paisForm' || form.getAttribute('data-action') === 'guardar-pais') {
+                console.log('Submit del formulario de país detectado');
+                handlePaisFormSubmit(event);
+            }
+        });
+    }
+    
     // También configurar cuando la página esté completamente cargada
     window.addEventListener('load', function() {
         console.log('Página completamente cargada');
-        if (typeof setupEventDelegation === 'function') {
-            setupEventDelegation();
-        }
+        setupEventDelegation();
+        setupFormHandlers();
     });
+    
+    console.log('=== SCRIPT MANTENEDORES TERMINADO ===');
 </script>
 {% endblock %}

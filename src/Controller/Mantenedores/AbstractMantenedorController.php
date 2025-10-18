@@ -4,6 +4,7 @@ namespace App\Controller\Mantenedores;
 
 use App\Controller\AbstractTenantController;
 use App\Service\TenantContext;
+use App\Service\TenantResolver;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,17 +21,39 @@ abstract class AbstractMantenedorController extends AbstractTenantController
     protected EntityManagerInterface $entityManager;
     protected ValidatorInterface $validator;
     protected CsrfTokenManagerInterface $csrfTokenManager;
+    protected TenantResolver $tenantResolver;
 
     public function __construct(
         TenantContext $tenantContext,
         EntityManagerInterface $entityManager,
         ValidatorInterface $validator,
-        CsrfTokenManagerInterface $csrfTokenManager
+        CsrfTokenManagerInterface $csrfTokenManager,
+        TenantResolver $tenantResolver
     ) {
         parent::__construct($tenantContext);
         $this->entityManager = $entityManager;
         $this->validator = $validator;
         $this->csrfTokenManager = $csrfTokenManager;
+        $this->tenantResolver = $tenantResolver;
+    }
+
+    /**
+     * Obtiene la conexión de base de datos específica del tenant
+     */
+    protected function getTenantConnection(): ?\Doctrine\DBAL\Connection
+    {
+        $tenant = $this->getCurrentTenant();
+        
+        if (!$tenant) {
+            return null;
+        }
+        
+        try {
+            return $this->tenantResolver->createTenantConnection($tenant);
+        } catch (\Exception $e) {
+            error_log('Error creando conexión tenant: ' . $e->getMessage());
+            return null;
+        }
     }
 
     /**

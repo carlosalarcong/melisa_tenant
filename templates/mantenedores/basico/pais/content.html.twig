@@ -79,49 +79,41 @@
                                 </tr>
                             </thead>
                             <tbody id="paisesTableBody">
-                                <!-- Datos de ejemplo -->
-                                <tr>
-                                    <td>1</td>
-                                    <td>Chile</td>
-                                    <td>Chileno/a</td>
-                                    <td><span class="badge bg-success">Activo</span></td>
-                                    <td>
-                                        <button class="btn btn-warning btn-sm" data-action="editar-pais" data-id="1">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-danger btn-sm" data-action="eliminar-pais" data-id="1">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Argentina</td>
-                                    <td>Argentino/a</td>
-                                    <td><span class="badge bg-success">Activo</span></td>
-                                    <td>
-                                        <button class="btn btn-warning btn-sm" data-action="editar-pais" data-id="2">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-danger btn-sm" data-action="eliminar-pais" data-id="2">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Perú</td>
-                                    <td>Peruano/a</td>
-                                    <td><span class="badge bg-success">Activo</span></td>
-                                    <td>
-                                        <button class="btn btn-warning btn-sm" data-action="editar-pais" data-id="3">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-danger btn-sm" data-action="eliminar-pais" data-id="3">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
+                                {% if paises is defined and paises|length > 0 %}
+                                    {% for pais in paises %}
+                                        <tr>
+                                            <td>{{ pais.id }}</td>
+                                            <td>{{ pais.nombrePais ?? 'Sin nombre' }}</td>
+                                            <td>{{ pais.nombreGentilicio ?? 'Sin gentilicio' }}</td>
+                                            <td>
+                                                <span class="badge {{ pais.estadoClase }}">{{ pais.estadoTexto }}</span>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-warning btn-sm" 
+                                                        data-action="editar-pais" 
+                                                        data-id="{{ pais.id }}"
+                                                        title="Editar país">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-danger btn-sm" 
+                                                        data-action="eliminar-pais" 
+                                                        data-id="{{ pais.id }}"
+                                                        title="Eliminar país">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-4">
+                                            <i class="fas fa-globe fa-2x mb-3 d-block"></i>
+                                            No hay países registrados en la base de datos
+                                            <br>
+                                            <small class="mt-2 d-block">Haz clic en "Nuevo País" para agregar el primero</small>
+                                        </td>
+                                    </tr>
+                                {% endif %}
                             </tbody>
                         </table>
                     </div>
@@ -139,7 +131,8 @@
                     <div class="row align-items-center">
                         <div class="col-sm-6">
                             <small class="text-muted">
-                                Mostrando 3 registros de 3 total
+                                {% set totalPaises = paises is defined ? paises|length : 0 %}
+                                Mostrando {{ totalPaises }} registros de {{ totalPaises }} total
                             </small>
                         </div>
                         <div class="col-sm-6">
