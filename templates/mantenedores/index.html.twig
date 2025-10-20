@@ -107,9 +107,10 @@
                                     </h6>
                                     <div class="ms-3">
                                         <a href="#" 
-                                           class="d-block py-1 text-decoration-none" 
+                                           class="d-block py-1 text-decoration-none mantenedor-link" 
                                            data-action="cargar-mantenedor"
-                                           data-url="/mantenedores/basico/pais/content">
+                                           data-url="/mantenedores/basico/pais/content"
+                                           style="cursor: pointer;">
                                             <i class="fas fa-globe me-2"></i>Países
                                         </a>
                                         <a href="#" 
@@ -227,20 +228,66 @@
         // Agregar listener principal
         document.addEventListener('click', handleDocumentClick);
         
+        // Listener específico para enlaces de mantenedores
+        document.addEventListener('click', function(e) {
+            // Verificar si se hizo clic en un enlace de mantenedor
+            const mantenedorLink = e.target.closest('.mantenedor-link');
+            if (mantenedorLink) {
+                console.log('=== CLICK EN ENLACE MANTENEDOR ===');
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const url = mantenedorLink.getAttribute('data-url');
+                console.log('URL del mantenedor:', url);
+                
+                if (url) {
+                    cargarMantenedor(url);
+                } else {
+                    console.error('URL no encontrada en el enlace');
+                }
+            }
+        });
+        
         console.log('Event delegation configurado');
     }
     
     // Handler principal para todos los clicks
     function handleDocumentClick(e) {
-        console.log('Click detectado en documento, elemento:', e.target);
+        console.log('=== CLICK DETECTADO ===');
+        console.log('Elemento clickeado:', e.target);
+        console.log('Texto del elemento:', e.target.textContent);
+        console.log('Clase del elemento:', e.target.className);
         
-        const target = e.target.closest('[data-action]');
+        // Buscar el elemento con data-action subiendo en el DOM
+        let target = e.target;
+        let attempts = 0;
+        const maxAttempts = 5;
         
-        if (!target) return;
+        while (target && attempts < maxAttempts) {
+            console.log(`Intento ${attempts + 1}: Revisando elemento`, target.tagName, target.className);
+            
+            if (target.hasAttribute && target.hasAttribute('data-action')) {
+                console.log('¡Elemento con data-action encontrado!');
+                break;
+            }
+            
+            target = target.parentElement;
+            attempts++;
+        }
+        
+        if (!target || !target.hasAttribute('data-action')) {
+            console.log('No se encontró elemento con data-action después de', attempts, 'intentos');
+            return;
+        }
         
         const action = target.getAttribute('data-action');
         const url = target.getAttribute('data-url');
         const id = target.getAttribute('data-id');
+        
+        console.log('=== ACCIÓN DETECTADA ===');
+        console.log('Action:', action);
+        console.log('URL:', url);
+        console.log('ID:', id);
         
         // NO prevenir default para botones de submit
         if (action === 'guardar-pais') {
@@ -274,12 +321,22 @@
     
     // Función para cargar mantenedor dinámicamente
     function cargarMantenedor(url) {
+        console.log('=== CARGAR MANTENEDOR ===');
+        console.log('URL recibida:', url);
+        
         const contentDiv = document.getElementById('content-column');
         
         if (!contentDiv) {
             console.error('Contenedor de contenido no encontrado');
             return;
         }
+        
+        // Construir URL completa
+        const baseUrl = window.location.origin;
+        const fullUrl = url.startsWith('http') ? url : baseUrl + url;
+        
+        console.log('URL completa:', fullUrl);
+        console.log('Base URL:', baseUrl);
         
         // Mostrar loading
         contentDiv.innerHTML = `
@@ -294,20 +351,31 @@
                     <span class="visually-hidden">Cargando...</span>
                 </div>
                 <p class="text-muted">Cargando contenido del mantenedor...</p>
+                <small class="text-muted">URL: ${fullUrl}</small>
             </div>
         `;
         
         // Hacer petición AJAX
-        fetch(url)
+        console.log('Iniciando fetch a:', fullUrl);
+        fetch(fullUrl)
             .then(response => {
+                console.log('Respuesta recibida:', response.status, response.statusText);
                 if (!response.ok) {
                     throw new Error(`Error ${response.status}: ${response.statusText}`);
                 }
                 return response.text();
             })
             .then(html => {
+                console.log('HTML recibido, longitud:', html.length);
                 // Reemplazar el contenido completo
                 contentDiv.innerHTML = html;
+                
+                // Actualizar la URL del navegador sin recargar la página
+                const newUrl = determinarNuevaUrl(url);
+                if (newUrl && newUrl !== window.location.pathname) {
+                    console.log('Actualizando URL del navegador a:', newUrl);
+                    window.history.pushState({mantenedor: url}, '', newUrl);
+                }
                 
                 // Ejecutar scripts del contenido cargado
                 executeScriptsInContainer(contentDiv);
@@ -316,6 +384,8 @@
                 if (!formHandlersSetup) {
                     setupFormHandlers();
                 }
+                
+                console.log('Contenido cargado exitosamente');
             })
             .catch(error => {
                 console.error('Error al cargar mantenedor:', error);
@@ -329,6 +399,7 @@
                     <div class="card-body">
                         <div class="alert alert-danger">
                             <strong>Error:</strong> ${error.message}
+                            <br><strong>URL:</strong> ${fullUrl}
                             <br><br>
                             <button class="btn btn-secondary btn-sm" onclick="location.reload()">
                                 <i class="fas fa-refresh me-1"></i>
@@ -670,6 +741,7 @@
     window.addEventListener('load', function() {
         setupEventDelegation();
         setupFormHandlers();
+        setupHistoryHandling();
         
         // Agregar listener global para limpiar modales
         document.addEventListener('hidden.bs.modal', function() {
@@ -684,6 +756,131 @@
             }, 100);
         });
     });
+    
+    // Configurar manejo del historial del navegador
+    function setupHistoryHandling() {
+        console.log('Configurando manejo de historial...');
+        
+        // Manejar botones atrás/adelante del navegador
+        window.addEventListener('popstate', function(event) {
+            console.log('=== POPSTATE EVENT ===');
+            console.log('Estado:', event.state);
+            console.log('URL actual:', window.location.pathname);
+            
+            if (event.state && event.state.mantenedor) {
+                // El usuario navegó a una página con mantenedor
+                console.log('Cargando mantenedor desde historial:', event.state.mantenedor);
+                cargarMantenedorSinHistory(event.state.mantenedor);
+            } else {
+                // El usuario navegó de vuelta a la página principal de mantenedores
+                console.log('Volviendo a página principal de mantenedores');
+                mostrarPaginaPrincipalMantenedores();
+            }
+        });
+        
+        // Verificar si hay contenido para precargar desde el servidor
+        {% if preload_content_url %}
+        console.log('Precargando contenido desde servidor:', '{{ preload_content_url }}');
+        cargarMantenedorSinHistory('{{ preload_content_url }}');
+        {% else %}
+        // Verificar si necesitamos cargar un mantenedor basado en la URL actual
+        const currentPath = window.location.pathname;
+        const mantenedorUrl = obtenerUrlMantenedorDesdePath(currentPath);
+        
+        if (mantenedorUrl) {
+            console.log('Cargando mantenedor basado en URL actual:', mantenedorUrl);
+            cargarMantenedorSinHistory(mantenedorUrl);
+        }
+        {% endif %}
+        
+        console.log('Manejo de historial configurado');
+    }
+    
+    // Función para cargar mantenedor sin agregar entrada al historial
+    function cargarMantenedorSinHistory(url) {
+        const contentDiv = document.getElementById('content-column');
+        if (!contentDiv) return;
+        
+        const baseUrl = window.location.origin;
+        const fullUrl = url.startsWith('http') ? url : baseUrl + url;
+        
+        contentDiv.innerHTML = `
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-spinner fa-spin me-2"></i>
+                    Cargando...
+                </h5>
+            </div>
+            <div class="card-body text-center">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <p class="text-muted">Cargando contenido del mantenedor...</p>
+            </div>
+        `;
+        
+        fetch(fullUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+                return response.text();
+            })
+            .then(html => {
+                contentDiv.innerHTML = html;
+                executeScriptsInContainer(contentDiv);
+                if (!formHandlersSetup) {
+                    setupFormHandlers();
+                }
+            })
+            .catch(error => {
+                console.error('Error al cargar mantenedor:', error);
+                contentDiv.innerHTML = `
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Error al cargar
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-danger">
+                            <strong>Error:</strong> ${error.message}
+                        </div>
+                    </div>
+                `;
+            });
+    }
+    
+    // Función para obtener URL de mantenedor desde el path del navegador
+    function obtenerUrlMantenedorDesdePath(path) {
+        const pathMapping = {
+            '/mantenedores/pais': '/mantenedores/basico/pais/content',
+            '/mantenedores/regiones': '/mantenedores/basico/regiones',
+            '/mantenedores/religiones': '/mantenedores/basico/religiones',
+            '/mantenedores/sexo': '/mantenedores/basico/sexo'
+        };
+        
+        return pathMapping[path];
+    }
+    
+    // Función para mostrar la página principal de mantenedores
+    function mostrarPaginaPrincipalMantenedores() {
+        const contentDiv = document.getElementById('content-column');
+        if (!contentDiv) return;
+        
+        contentDiv.innerHTML = `
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Selecciona un mantenedor
+                </h5>
+            </div>
+            <div class="card-body text-center text-muted">
+                <i class="fas fa-arrow-left fa-3x mb-3 opacity-50"></i>
+                <p>Selecciona un elemento del menú lateral para comenzar</p>
+            </div>
+        `;
+    }
     
     // Función para ejecutar scripts en contenido cargado dinámicamente
     function executeScriptsInContainer(container) {
@@ -714,6 +911,24 @@
         });
         
         console.log('🎯 Ejecución de scripts completada');
+    }
+    
+    // Función para determinar la nueva URL del navegador basada en la URL del contenido
+    function determinarNuevaUrl(contentUrl) {
+        console.log('Determinando nueva URL para:', contentUrl);
+        
+        // Mapeo de URLs de contenido a URLs del navegador
+        const urlMapping = {
+            '/mantenedores/basico/pais/content': '/mantenedores/pais',
+            '/mantenedores/basico/regiones': '/mantenedores/regiones',
+            '/mantenedores/basico/religiones': '/mantenedores/religiones',
+            '/mantenedores/basico/sexo': '/mantenedores/sexo'
+        };
+        
+        const newUrl = urlMapping[contentUrl];
+        console.log('Nueva URL mapeada:', newUrl);
+        
+        return newUrl;
     }
     
     // Función utilitaria para limpiar modales correctamente

@@ -4,6 +4,7 @@ namespace App\Controller\Mantenedores;
 
 use App\Controller\AbstractTenantController;
 use App\Service\TenantContext;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -17,7 +18,7 @@ class MantenedoresController extends AbstractTenantController
     /**
      * Página principal de mantenedores
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
         $tenant = $this->getCurrentTenant();
         
@@ -29,12 +30,30 @@ class MantenedoresController extends AbstractTenantController
             ];
         }
         
+        // Obtener contenido para precargar desde la ruta
+        $preloadContent = $request->attributes->get('preload_content');
+        
+        // Mapeo de contenido a URLs
+        $contentUrlMapping = [
+            'pais' => '/mantenedores/basico/pais/content',
+            'regiones' => '/mantenedores/basico/region/content',
+            'religiones' => '/mantenedores/basico/religion/content',
+            'sexo' => '/mantenedores/basico/sexo/content'
+        ];
+        
+        $preloadUrl = null;
+        if ($preloadContent && isset($contentUrlMapping[$preloadContent])) {
+            $preloadUrl = $contentUrlMapping[$preloadContent];
+        }
+        
         return $this->render('mantenedores/index.html.twig', [
             'tenant' => $tenant,
             'subdomain' => $tenant['subdomain'] ?? null,
             'page_title' => 'Mantenedores - ' . ($tenant['name'] ?? 'Sistema'),
             'menuItems' => $this->getMenuItems(),
-            'basicItems' => $this->getBasicItems()
+            'basicItems' => $this->getBasicItems(),
+            'preload_content_url' => $preloadUrl,
+            'preload_content_name' => $preloadContent
         ]);
     }
 

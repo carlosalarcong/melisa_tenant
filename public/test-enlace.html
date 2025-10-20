@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Enlace Países</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Test de Enlace Países</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Enlace de Prueba:</h3>
+                <a href="#" 
+                   class="d-block py-1 text-decoration-none btn btn-primary" 
+                   data-action="cargar-mantenedor"
+                   data-url="/mantenedores/basico/pais/content">
+                    <i class="fas fa-globe me-2"></i>Países
+                </a>
+            </div>
+            <div class="col-md-6">
+                <h3>Resultado:</h3>
+                <div id="content-column" class="border p-3" style="min-height: 200px;">
+                    <p>Haz clic en el enlace para cargar el contenido...</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <h3>Log de Console:</h3>
+            <div id="console-log" class="border p-3 bg-light" style="min-height: 150px; font-family: monospace; font-size: 12px;"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+    
+    <script>
+        // Interceptar console.log para mostrar en página
+        const originalConsoleLog = console.log;
+        const consoleDiv = document.getElementById('console-log');
+        
+        console.log = function(...args) {
+            originalConsoleLog.apply(console, args);
+            const message = args.join(' ');
+            consoleDiv.innerHTML += `<div>${new Date().toLocaleTimeString()}: ${message}</div>`;
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        };
+        
+        // Funciones copiadas del archivo original
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM listo, configurando eventos...');
+            setupEventDelegation();
+        });
+        
+        function setupEventDelegation() {
+            console.log('Configurando event delegation...');
+            document.removeEventListener('click', handleDocumentClick);
+            document.addEventListener('click', handleDocumentClick);
+            console.log('Event delegation configurado');
+        }
+        
+        function handleDocumentClick(e) {
+            console.log('=== CLICK DETECTADO ===');
+            console.log('Elemento clickeado:', e.target.tagName);
+            console.log('Texto del elemento:', e.target.textContent);
+            
+            const target = e.target.closest('[data-action]');
+            
+            if (!target) {
+                console.log('No se encontró elemento con data-action');
+                return;
+            }
+            
+            const action = target.getAttribute('data-action');
+            const url = target.getAttribute('data-url');
+            
+            console.log('=== ACCIÓN DETECTADA ===');
+            console.log('Action:', action);
+            console.log('URL:', url);
+            
+            e.preventDefault();
+            e.stopPropagation();
+            
+            if (action === 'cargar-mantenedor') {
+                cargarMantenedor(url);
+            }
+        }
+        
+        function cargarMantenedor(url) {
+            console.log('=== CARGAR MANTENEDOR ===');
+            console.log('URL recibida:', url);
+            
+            const contentDiv = document.getElementById('content-column');
+            
+            if (!contentDiv) {
+                console.error('Contenedor de contenido no encontrado');
+                return;
+            }
+            
+            // Construir URL completa
+            const baseUrl = window.location.origin;
+            const fullUrl = url.startsWith('http') ? url : baseUrl + url;
+            
+            console.log('URL completa:', fullUrl);
+            console.log('Base URL:', baseUrl);
+            
+            // Mostrar loading
+            contentDiv.innerHTML = `
+                <div class="text-center">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <p class="text-muted">Cargando contenido...</p>
+                    <small class="text-muted">URL: ${fullUrl}</small>
+                </div>
+            `;
+            
+            // Hacer petición AJAX
+            console.log('Iniciando fetch a:', fullUrl);
+            fetch(fullUrl)
+                .then(response => {
+                    console.log('Respuesta recibida:', response.status, response.statusText);
+                    if (!response.ok) {
+                        throw new Error(`Error ${response.status}: ${response.statusText}`);
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    console.log('HTML recibido, longitud:', html.length);
+                    contentDiv.innerHTML = html;
+                    console.log('Contenido cargado exitosamente');
+                })
+                .catch(error => {
+                    console.error('Error al cargar mantenedor:', error);
+                    contentDiv.innerHTML = `
+                        <div class="alert alert-danger">
+                            <strong>Error:</strong> ${error.message}
+                            <br><strong>URL:</strong> ${fullUrl}
+                        </div>
+                    `;
+                });
+        }
+    </script>
+</body>
+</html>

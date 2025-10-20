@@ -18,6 +18,39 @@ mantenedores_basico_index:
     methods: [GET]
 
 # ==================================
+# RUTAS SIMPLIFICADAS PARA SPA
+# ==================================
+
+# Rutas simplificadas que muestran la página de mantenedores con contenido específico precargado
+mantenedores_pais_spa:
+    path: /mantenedores/pais
+    controller: App\Controller\Mantenedores\MantenedoresController::index
+    defaults:
+        preload_content: 'pais'
+    methods: [GET]
+
+mantenedores_regiones_spa:
+    path: /mantenedores/regiones
+    controller: App\Controller\Mantenedores\MantenedoresController::index
+    defaults:
+        preload_content: 'regiones'
+    methods: [GET]
+
+mantenedores_religiones_spa:
+    path: /mantenedores/religiones
+    controller: App\Controller\Mantenedores\MantenedoresController::index
+    defaults:
+        preload_content: 'religiones'
+    methods: [GET]
+
+mantenedores_sexo_spa:
+    path: /mantenedores/sexo
+    controller: App\Controller\Mantenedores\MantenedoresController::index
+    defaults:
+        preload_content: 'sexo'
+    methods: [GET]
+
+# ==================================
 # MANTENEDORES BÁSICOS - PAÍS
 # ==================================
 
