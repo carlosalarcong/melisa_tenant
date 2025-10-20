@@ -347,11 +347,17 @@ melisa_tenant/
 │   │   └── Region.php ✅ Lazy loading
 │   └── Command/
 │       └── TestPaisRepositoryCommand.php ✅ Tests automatizados
+├── assets/
+│   └── controllers/
+│       └── mantenedores/ ✅ Stimulus Controllers
+│           ├── base_controller.js ✅ Funcionalidad común
+│           └── pais/
+│               └── pais_controller.js ✅ Lógica específica países
 ├── templates/
 │   └── mantenedores/
 │       └── basico/
 │           └── pais/
-│               └── content.html.twig ✅ Sintaxis corregida
+│               └── content.html.twig ✅ Migrado a Stimulus
 ├── config/
 │   ├── doctrine.yaml ✅ ORM configurado
 │   ├── routes.yaml ✅ Rutas mapeadas
@@ -367,7 +373,9 @@ melisa_tenant/
 | **PaisService.php** | ✅ Completo | Business + Multi-tenant |
 | **PaisRepository.php** | ✅ Completo | ORM + QueryBuilder |
 | **Pais.php** | ✅ Completo | Entity + Relaciones |
-| **content.html.twig** | ✅ Completo | UI + JavaScript |
+| **content.html.twig** | ✅ Migrado | UI + Stimulus Controllers |
+| **base_controller.js** | ✅ Nuevo | Funcionalidad común mantenedores |
+| **pais_controller.js** | ✅ Nuevo | Lógica específica países |
 | **Tests** | ✅ Completo | Validación automatizada |
 
 ---
@@ -403,7 +411,87 @@ melisa_tenant/
 - **AJAX Security**: Headers X-Requested-With verificados
 - **Form Validation**: Cliente + servidor sincronizadas
 
-### 🏢 Multi-tenant Architecture
+### � Migración a Stimulus Controllers
+
+#### **Arquitectura Frontend Refactorizada**
+El JavaScript embebido ha sido completamente migrado a **Stimulus Controllers** para mejorar la organización, reutilización y mantenibilidad del código:
+
+```
+assets/controllers/
+├── mantenedores/
+│   ├── base_controller.js     ✅ Funcionalidad común
+│   └── pais/
+│       └── pais_controller.js ✅ Lógica específica países
+```
+
+#### **Controlador Base (base_controller.js)**
+```javascript
+// Funcionalidad común para todos los mantenedores
+export default class extends Controller {
+    static targets = ["modal", "form", "idField", "title", "submitButton"]
+    static values = {
+        entityName: String,
+        apiBase: String,
+        modalId: String
+    }
+    
+    // Métodos comunes: modal, validación, AJAX, confirmaciones
+    handleModalShow(event) { /* ... */ }
+    validateForm() { /* ... */ }
+    createEntity() { /* ... */ }
+    updateEntity(id) { /* ... */ }
+    deleteEntity(id) { /* ... */ }
+}
+```
+
+#### **Controlador Específico (pais_controller.js)**
+```javascript
+// Extiende base_controller con lógica específica de países
+import BaseController from "../base_controller.js"
+
+export default class extends BaseController {
+    static targets = [...BaseController.targets, "nombrePais", "nombreGentilicio", "activo"]
+    
+    // Métodos específicos países
+    validateNombrePais() { /* validación específica */ }
+    validateNombreGentilicio() { /* validación específica */ }
+    generateGentilicio() { /* autocompletado inteligente */ }
+    formatToTitle(event) { /* formateo automático */ }
+}
+```
+
+#### **Configuración Template**
+```twig
+{# Configuración Stimulus en template #}
+<div class="row" 
+     data-controller="mantenedores--pais--pais"
+     data-mantenedores--pais--pais-entity-name-value="País"
+     data-mantenedores--pais--pais-api-base-value="/mantenedores/basico/pais">
+     
+    {# Modal con targets Stimulus #}
+    <div class="modal" data-mantenedores--pais--pais-target="modal">
+        <form data-mantenedores--pais--pais-target="form">
+            <input data-mantenedores--pais--pais-target="nombrePais"
+                   data-action="input->mantenedores--pais--pais#validateField">
+            <button data-action="click->mantenedores--pais--pais#handleDelete">
+```
+
+#### **Beneficios de la Migración**
+- ✅ **Código Limpio**: JavaScript separado del HTML
+- ✅ **Reutilización**: BaseController para futuros mantenedores
+- ✅ **Mantenibilidad**: Lógica organizada en archivos específicos
+- ✅ **Extensibilidad**: Fácil agregar nuevas funcionalidades
+- ✅ **Testing**: Controllers aislados son más fáciles de testear
+- ✅ **Performance**: Carga dinámica de controllers según necesidad
+
+#### **Features Agregadas**
+- 🪄 **Auto-generación gentilicio**: Botón mágico para generar automáticamente
+- 🎨 **Formateo automático**: Convierte a Title Case al salir del campo
+- ✅ **Validación en tiempo real**: Feedback inmediato mientras escribes
+- 🧹 **Botón limpiar**: Reset rápido del formulario
+- 🔄 **Estados de carga**: Indicadores visuales durante operaciones
+
+### �🏢 Multi-tenant Architecture
 
 #### **Tenant Resolution**
 ```php
@@ -594,10 +682,11 @@ php bin/console cache:warmup --env=prod
 - [ ] Respuestas JSON estructuradas
 - [ ] Manejo de excepciones
 
-#### **5. Template Twig**
+#### **5. Template Twig + Stimulus**
 - [ ] Copiar estructura de países
-- [ ] Adaptar campos específicos
-- [ ] Validaciones JavaScript
+- [ ] Adaptar campos específicos en template
+- [ ] Crear controller específico extendiendo base_controller
+- [ ] Configurar data-controller y targets
 - [ ] Testing en navegador
 
 ### 🔧 Configuración Personalizable
@@ -779,6 +868,7 @@ El proyecto del **Mantenedor de Países** ha sido implementado exitosamente con 
 #### **✅ Calidad Técnica**
 - **Doctrine ORM**: Migración completa desde DBAL
 - **TenantContext**: Integración real con sistema multi-tenant
+- **Stimulus Controllers**: JavaScript organizado y reutilizable
 - **Security**: CSRF, SQL injection prevention, input validation
 - **Performance**: Optimizado con cache y lazy loading
 
@@ -786,6 +876,7 @@ El proyecto del **Mantenedor de Países** ha sido implementado exitosamente con 
 - **Documented Code**: Comentarios y documentación completa
 - **Automated Tests**: Comandos de validación y testing
 - **Extensible**: Patrón replicable para otros mantenedores
+- **Clean Architecture**: Frontend modular con Stimulus
 - **Best Practices**: Siguiendo estándares Symfony y PHP
 
 ### 🎯 Impacto en el Proyecto
@@ -808,12 +899,14 @@ El proyecto del **Mantenedor de Países** ha sido implementado exitosamente con 
 
 - ✅ **Error inicial resuelto**: Sintaxis Twig corregida completamente
 - ✅ **Arquitectura robusta**: Multi-tenant + Doctrine ORM integrados
-- ✅ **Interfaz moderna**: Bootstrap 5 + AJAX + SweetAlert2
+- ✅ **Frontend moderno**: Migrado a Stimulus Controllers para mejor organización
+- ✅ **Interfaz avanzada**: Bootstrap 5 + Stimulus + SweetAlert2 + funcionalidades extra
 - ✅ **API completa**: Endpoints REST documentados y funcionales
 - ✅ **Testing validado**: Todas las pruebas pasando exitosamente
-- ✅ **Documentación completa**: Guías y referencias para mantenimiento
+- ✅ **Código limpio**: JavaScript separado, reutilizable y extensible
+- ✅ **Documentación completa**: Guías y referencias actualizadas para Stimulus
 
-**El sistema establece un precedente de calidad y funcionalidad para el resto del proyecto Melisa Healthcare.**
+**El sistema establece un precedente de calidad, organización y funcionalidad para el resto del proyecto Melisa Healthcare, con una arquitectura frontend moderna y mantenible.**
 
 ---
 

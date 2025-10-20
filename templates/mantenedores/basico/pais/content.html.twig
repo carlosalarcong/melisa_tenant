@@ -40,7 +40,12 @@
 {# ============================================= #}
 {# CONTENIDO PRINCIPAL DEL MANTENEDOR #}
 {# ============================================= #}
-<div class="row">
+<div class="row" 
+     data-controller="mantenedores--pais--pais"
+     data-mantenedores--pais--pais-entity-name-value="País"
+     data-mantenedores--pais--pais-entity-name-plural-value="Países"
+     data-mantenedores--pais--pais-api-base-value="/mantenedores/basico/pais"
+     data-mantenedores--pais--pais-modal-id-value="paisModal">
     <div class="col-12">
         {# TARJETA PRINCIPAL #}
         <div class="card shadow-sm">
@@ -172,7 +177,7 @@
                                                 {# BOTÓN ELIMINAR #}
                                                 <button type="button" 
                                                         class="btn btn-outline-danger btn-sm" 
-                                                        data-action="delete" 
+                                                        data-action="click->mantenedores--pais--pais#handleDelete" 
                                                         data-id="{{ pais.idPais }}" 
                                                         data-name="{{ pais.nombrePais }}"
                                                         title="Eliminar {{ pais.nombrePais }}">
@@ -207,12 +212,19 @@
 {# ============================================= #}
 {# MODAL PARA CREAR/EDITAR REGISTROS #}
 {# ============================================= #}
-<div class="modal fade" id="paisModal" tabindex="-1" aria-labelledby="paisModalLabel" aria-hidden="true">
+<div class="modal fade" 
+     id="paisModal" 
+     tabindex="-1" 
+     aria-labelledby="paisModalLabel" 
+     aria-hidden="true"
+     data-mantenedores--pais--pais-target="modal">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             {# ENCABEZADO DEL MODAL #}
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="paisModalLabel">
+                <h5 class="modal-title" 
+                    id="paisModalLabel"
+                    data-mantenedores--pais--pais-target="title">
                     <i class="fas fa-globe me-2"></i>
                     Nuevo {{ mantenedor_config.entity_name|default('País') }}
                 </h5>
@@ -220,10 +232,15 @@
             </div>
             
             {# FORMULARIO PRINCIPAL #}
-            <form id="paisForm" novalidate>
+            <form id="paisForm" 
+                  novalidate
+                  data-mantenedores--pais--pais-target="form">
                 <div class="modal-body">
                     {# CAMPOS OCULTOS #}
-                    <input type="hidden" id="paisId" name="paisId">
+                    <input type="hidden" 
+                           id="paisId" 
+                           name="paisId"
+                           data-mantenedores--pais--pais-target="idField">
                     <input type="hidden" name="_token" value="{{ csrf_token }}">
                     
                     {# CAMPO: NOMBRE DEL PAÍS #}
@@ -233,19 +250,29 @@
                             Nombre del País
                             <span class="text-danger">*</span>
                         </label>
-                        <input type="text" 
-                               class="form-control" 
-                               id="nombrePais" 
-                               name="nombrePais" 
-                               required
-                               placeholder="Ej: Chile, Argentina, Brasil"
-                               maxlength="100">
+                        <div class="input-group">
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="nombrePais" 
+                                   name="nombrePais" 
+                                   required
+                                   placeholder="Ej: Chile, Argentina, Brasil"
+                                   maxlength="100"
+                                   data-mantenedores--pais--pais-target="nombrePais"
+                                   data-action="input->mantenedores--pais--pais#validateField blur->mantenedores--pais--pais#formatToTitle">
+                            <button class="btn btn-outline-secondary" 
+                                    type="button"
+                                    data-action="click->mantenedores--pais--pais#autoGenerateGentilicio"
+                                    title="Generar gentilicio automáticamente">
+                                <i class="fas fa-magic"></i>
+                            </button>
+                        </div>
                         <div class="invalid-feedback">
                             El nombre del país es obligatorio y debe tener máximo 100 caracteres.
                         </div>
                         <div class="form-text">
                             <i class="fas fa-info-circle me-1"></i>
-                            Ingresa el nombre oficial del país.
+                            Ingresa el nombre oficial del país. Usar el botón mágico genera el gentilicio automáticamente.
                         </div>
                     </div>
                     
@@ -262,7 +289,9 @@
                                name="nombreGentilicio" 
                                required
                                placeholder="Ej: Chileno, Argentino, Brasileño"
-                               maxlength="100">
+                               maxlength="100"
+                               data-mantenedores--pais--pais-target="nombreGentilicio"
+                               data-action="input->mantenedores--pais--pais#validateField blur->mantenedores--pais--pais#formatToTitle">
                         <div class="invalid-feedback">
                             El gentilicio es obligatorio y debe tener máximo 100 caracteres.
                         </div>
@@ -279,7 +308,8 @@
                                    type="checkbox" 
                                    id="activo" 
                                    name="activo" 
-                                   checked>
+                                   checked
+                                   data-mantenedores--pais--pais-target="activo">
                             <label class="form-check-label" for="activo">
                                 <i class="fas fa-toggle-on me-1 text-success"></i>
                                 País activo en el sistema
@@ -305,11 +335,21 @@
                 
                 {# PIE DEL MODAL - BOTONES DE ACCIÓN #}
                 <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <button type="button" 
+                            class="btn btn-secondary" 
+                            data-bs-dismiss="modal">
                         <i class="fas fa-times me-1"></i>
                         Cancelar
                     </button>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="button" 
+                            class="btn btn-outline-info me-2"
+                            data-action="click->mantenedores--pais--pais#clearForm">
+                        <i class="fas fa-eraser me-1"></i>
+                        Limpiar
+                    </button>
+                    <button type="submit" 
+                            class="btn btn-primary"
+                            data-mantenedores--pais--pais-target="submitButton">
                         <i class="fas fa-save me-1"></i>
                         Guardar {{ mantenedor_config.entity_name|default('País') }}
                     </button>
@@ -320,524 +360,21 @@
 </div>
 
 {# ============================================= #}
-{# JAVASCRIPT ESPECÍFICO DEL MANTENEDOR #}
+{# JAVASCRIPT MIGRADO A STIMULUS #}
 {# ============================================= #}
-<script>
-/**
- * JAVASCRIPT PARA MANTENEDOR DE PAÍSES
- * ===================================
- * 
- * Este script maneja las interacciones específicas del mantenedor de países.
- * Funciona en conjunto con el sistema AJAX global definido en mantenedores/index.html.twig
- * 
- * FUNCIONALIDADES:
- * - Inicialización del modal para crear/editar
- * - Validación de formularios
- * - Envío de datos via AJAX
- * - Confirmaciones de eliminación
- * - Actualización dinámica de la interfaz
- * 
- * PARA ADAPTAR A OTROS MANTENEDORES:
- * - Cambia 'pais' por el nombre de tu entidad
- * - Ajusta los campos del formulario
- * - Modifica las validaciones según tus reglas de negocio
- * - Actualiza los mensajes y endpoints
- */
-
-document.addEventListener('DOMContentLoaded', function() {
-    // ==========================================
-    // CONFIGURACIÓN BASE
-    // ==========================================
-    const BASE_URL = window.location.origin;
-    const API_BASE = BASE_URL + '/mantenedores/basico/pais';
-    
-    // ==========================================
-    // ELEMENTOS DEL DOM
-    // ==========================================
-    const paisModal = document.getElementById('paisModal');
-    const paisForm = document.getElementById('paisForm');
-    const paisIdField = document.getElementById('paisId');
-    const nombrePaisField = document.getElementById('nombrePais');
-    const nombreGentilicioField = document.getElementById('nombreGentilicio');
-    const activoField = document.getElementById('activo');
-    const modalTitle = document.getElementById('paisModalLabel');
-    
-    // ==========================================
-    // CONFIGURACIÓN DEL MODAL
-    // ==========================================
-    if (paisModal) {
-        paisModal.addEventListener('show.bs.modal', function(event) {
-            const button = event.relatedTarget;
-            const action = button.getAttribute('data-action');
-            const paisId = button.getAttribute('data-id');
-            
-            console.log(`📝 Configurando modal para acción: ${action}`, { paisId });
-            
-            // Resetear formulario
-            resetFormulario();
-            
-            if (action === 'create') {
-                configurarModalCrear();
-            } else if (action === 'edit' && paisId) {
-                configurarModalEditar(paisId);
-            }
-        });
-        
-        // Limpiar formulario al cerrar modal
-        paisModal.addEventListener('hidden.bs.modal', function() {
-            resetFormulario();
-        });
-    }
-    
-    // ==========================================
-    // MANEJO DEL FORMULARIO
-    // ==========================================
-    if (paisForm) {
-        paisForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Validar formulario
-            if (!validarFormulario()) {
-                console.log('❌ Formulario no válido');
-                return;
-            }
-            
-            const paisId = paisIdField.value;
-            const esEdicion = paisId && paisId !== '';
-            
-            console.log(`💾 Enviando formulario...`, { esEdicion, paisId });
-            
-            // Enviar datos
-            if (esEdicion) {
-                actualizarPais(paisId);
-            } else {
-                crearPais();
-            }
-        });
-    }
-    
-    // ==========================================
-    // MANEJO DE ELIMINACIONES
-    // ==========================================
-    document.addEventListener('click', function(e) {
-        if (e.target.matches('[data-action="delete"], [data-action="delete"] *')) {
-            e.preventDefault();
-            
-            const button = e.target.closest('[data-action="delete"]');
-            const paisId = button.getAttribute('data-id');
-            const paisNombre = button.getAttribute('data-name');
-            
-            console.log(`🗑️ Solicitud de eliminación`, { paisId, paisNombre });
-            
-            confirmarEliminacion(paisId, paisNombre);
-        }
-    });
-    
-    // ==========================================
-    // FUNCIONES DE CONFIGURACIÓN
-    // ==========================================
-    
-    /**
-     * Configura el modal para crear nuevo país
-     */
-    function configurarModalCrear() {
-        modalTitle.innerHTML = '<i class="fas fa-plus me-2"></i>Nuevo País';
-        paisIdField.value = '';
-        
-        // Valores por defecto
-        activoField.checked = true;
-    }
-    
-    /**
-     * Configura el modal para editar país existente
-     */
-    function configurarModalEditar(paisId) {
-        modalTitle.innerHTML = '<i class="fas fa-edit me-2"></i>Editar País';
-        paisIdField.value = paisId;
-        
-        // Mostrar indicador de carga
-        const originalHtml = modalTitle.innerHTML;
-        modalTitle.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Cargando datos...';
-        
-        // Cargar datos del país
-        fetch(`${API_BASE}/${paisId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success && data.data) {
-                const pais = data.data;
-                
-                nombrePaisField.value = pais.nombrePais || '';
-                nombreGentilicioField.value = pais.nombreGentilicio || '';
-                activoField.checked = pais.activo || false;
-                
-                // Restaurar título del modal
-                modalTitle.innerHTML = '<i class="fas fa-edit me-2"></i>Editar País';
-            } else {
-                modalTitle.innerHTML = originalHtml;
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: data.error || 'No se pudieron cargar los datos del país'
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Error de conexión:', error);
-            modalTitle.innerHTML = originalHtml;
-            Swal.fire({
-                icon: 'error',
-                title: 'Error de conexión',
-                text: 'No se pudo conectar con el servidor: ' + error.message
-            });
-        });
-    }
-    
-    // ==========================================
-    // FUNCIONES DE VALIDACIÓN
-    // ==========================================
-    
-    /**
-     * Valida el formulario completo
-     */
-    function validarFormulario() {
-        let esValido = true;
-        
-        // Limpiar validaciones anteriores
-        paisForm.classList.remove('was-validated');
-        
-        // Validar nombre del país
-        if (!nombrePaisField.value.trim()) {
-            marcarCampoInvalido(nombrePaisField, 'El nombre del país es obligatorio');
-            esValido = false;
-        } else if (nombrePaisField.value.trim().length < 2) {
-            marcarCampoInvalido(nombrePaisField, 'El nombre debe tener al menos 2 caracteres');
-            esValido = false;
-        } else {
-            marcarCampoValido(nombrePaisField);
-        }
-        
-        // Validar gentilicio
-        if (!nombreGentilicioField.value.trim()) {
-            marcarCampoInvalido(nombreGentilicioField, 'El gentilicio es obligatorio');
-            esValido = false;
-        } else if (nombreGentilicioField.value.trim().length < 2) {
-            marcarCampoInvalido(nombreGentilicioField, 'El gentilicio debe tener al menos 2 caracteres');
-            esValido = false;
-        } else {
-            marcarCampoValido(nombreGentilicioField);
-        }
-        
-        // Activar validación visual de Bootstrap
-        paisForm.classList.add('was-validated');
-        
-        return esValido;
-    }
-    
-    /**
-     * Marca un campo como inválido
-     */
-    function marcarCampoInvalido(campo, mensaje) {
-        campo.classList.add('is-invalid');
-        campo.classList.remove('is-valid');
-        
-        const feedback = campo.parentNode.querySelector('.invalid-feedback');
-        if (feedback) {
-            feedback.textContent = mensaje;
-        }
-    }
-    
-    /**
-     * Marca un campo como válido
-     */
-    function marcarCampoValido(campo) {
-        campo.classList.add('is-valid');
-        campo.classList.remove('is-invalid');
-    }
-    
-    // ==========================================
-    // FUNCIONES DE DATOS
-    // ==========================================
-    
-    /**
-     * Crea un nuevo país
-     */
-    function crearPais() {
-        const datos = recopilarDatosFormulario();
-        
-        fetch(API_BASE, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify(datos)
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Éxito!',
-                    text: data.message || 'País creado exitosamente',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-                
-                cerrarModal();
-                recargarContenido();
-            } else {
-                mostrarErrorFormulario(data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Error de conexión:', error);
-            mostrarErrorConexion();
-        });
-    }
-    
-    /**
-     * Actualiza un país existente
-     */
-    function actualizarPais(paisId) {
-        const datos = recopilarDatosFormulario();
-        
-        console.log(`📤 Enviando datos para actualizar país ${paisId}:`, datos);
-        
-        fetch(`${API_BASE}/${paisId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify(datos)
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('📡 Respuesta del servidor (actualizar):', data);
-            
-            if (data.success) {
-                console.log('✅ País actualizado exitosamente');
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Éxito!',
-                    text: data.message || 'País actualizado exitosamente',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-                
-                cerrarModal();
-                recargarContenido();
-            } else {
-                console.error('❌ Error al actualizar país:', data.error);
-                mostrarErrorFormulario(data.error);
-            }
-        })
-        .catch(error => {
-            console.error('❌ Error de conexión:', error);
-            mostrarErrorConexion();
-        });
-    }
-    
-    /**
-     * Confirma y ejecuta eliminación de país
-     */
-    function confirmarEliminacion(paisId, paisNombre) {
-        Swal.fire({
-            title: '¿Está seguro?',
-            text: `¿Realmente desea eliminar el país "${paisNombre}"? Esta acción no se puede deshacer.`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                eliminarPais(paisId);
-            }
-        });
-    }
-    
-    /**
-     * Elimina un país
-     */
-    function eliminarPais(paisId) {
-        console.log(`🗑️ Eliminando país ID: ${paisId}`);
-        
-        fetch(`${API_BASE}/${paisId}`, {
-            method: 'DELETE',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('📡 Respuesta del servidor (eliminar):', data);
-            
-            if (data.success) {
-                console.log('✅ País eliminado exitosamente');
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Eliminado!',
-                    text: data.message || 'País eliminado exitosamente',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-                
-                recargarContenido();
-            } else {
-                console.error('❌ Error al eliminar país:', data.error);
-                
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: data.error || 'No se pudo eliminar el país'
-                });
-            }
-        })
-        .catch(error => {
-            console.error('❌ Error de conexión:', error);
-            mostrarErrorConexion();
-        });
-    }
-    
-    // ==========================================
-    // FUNCIONES AUXILIARES
-    // ==========================================
-    
-    /**
-     * Recopila datos del formulario
-     */
-    function recopilarDatosFormulario() {
-        return {
-            nombrePais: nombrePaisField.value.trim(),
-            nombreGentilicio: nombreGentilicioField.value.trim(),
-            activo: activoField.checked
-        };
-    }
-    
-    /**
-     * Resetea el formulario a su estado inicial
-     */
-    function resetFormulario() {
-        paisForm.reset();
-        paisForm.classList.remove('was-validated');
-        
-        // Limpiar clases de validación
-        const campos = paisForm.querySelectorAll('.form-control');
-        campos.forEach(campo => {
-            campo.classList.remove('is-valid', 'is-invalid');
-        });
-        
-        console.log('🧹 Formulario reseteado');
-    }
-    
-    /**
-     * Cierra el modal
-     */
-    function cerrarModal() {
-        const modalInstance = bootstrap.Modal.getInstance(paisModal);
-        if (modalInstance) {
-            modalInstance.hide();
-        }
-    }
-    
-    /**
-     * Recarga el contenido del mantenedor
-     */
-    function recargarContenido() {
-        console.log('🔄 Recargando contenido del mantenedor...');
-        
-        // Si existe la función global cargarMantenedor, la usamos
-        if (typeof cargarMantenedor === 'function') {
-            cargarMantenedor('pais');
-        } else {
-            // Fallback: recargar página
-            window.location.reload();
-        }
-    }
-    
-    /**
-     * Muestra error de formulario
-     */
-    function mostrarErrorFormulario(mensaje) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error en el formulario',
-            text: mensaje || 'Por favor, revise los datos ingresados'
-        });
-    }
-    
-    /**
-     * Muestra error de conexión
-     */
-    function mostrarErrorConexion() {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error de conexión',
-            text: 'No se pudo conectar con el servidor. Intente nuevamente.'
-        });
-    }
-});
-
-/**
- * FUNCIONES ADICIONALES PARA EXTENSIÓN
- * ===================================
- * 
- * Aquí puedes agregar funcionalidades adicionales:
- * 
- * // Validación en tiempo real
- * function configurarValidacionTiempoReal() {
- *     nombrePaisField.addEventListener('input', function() {
- *         // Validar mientras el usuario escribe
- *     });
- * }
- * 
- * // Búsqueda/filtrado
- * function configurarBusqueda() {
- *     const busquedaInput = document.getElementById('busqueda');
- *     busquedaInput.addEventListener('input', filtrarTabla);
- * }
- * 
- * // Exportación de datos
- * function exportarDatos(formato) {
- *     // Implementar exportación
- * }
- * 
- * // Importación de datos
- * function importarDatos() {
- *     // Implementar importación
- * }
- */
-</script>
+{# 
+  El JavaScript ha sido migrado a Stimulus controllers:
+  - Funcionalidad común: /assets/controllers/mantenedores/base_controller.js
+  - Lógica específica de países: /assets/controllers/mantenedores/pais/pais_controller.js
+  
+  Los controladores se configuran mediante data-controller y data-target en el HTML.
+  
+  VENTAJAS DE STIMULUS:
+  - Código más limpio y reutilizable
+  - Mejor separación de responsabilidades
+  - Facilita la creación de nuevos mantenedores
+  - Integración nativa con Symfony UX
+#}
 
 {# ============================================= #}
 {# ESTILOS ESPECÍFICOS DEL MANTENEDOR #}
