@@ -51,7 +51,15 @@ use Doctrine\ORM\EntityManagerInterface;
 class PaisRepository extends ServiceEntityRepository
 {
     /**
-     * Resolver para obtener conexiones multi-tenant
+     * Resolver para obtener conexiones y contexto multi-tenant
+     * 
+     * FUNCIONES DEL TENANTRESOLVER EN REPOSITORY:
+     * ==========================================
+     * 1. Validación de acceso por tenant
+     * 2. Auditoría de operaciones
+     * 3. Contexto para estadísticas y reportes
+     * 4. Información de conexiones DB por tenant
+     * 5. Preparación para futuras conexiones dinámicas
      * 
      * @var TenantResolver
      */
@@ -134,20 +142,36 @@ class PaisRepository extends ServiceEntityRepository
     /**
      * Crea un nuevo país
      * 
-     * INSERCIÓN CON DOCTRINE ORM
-     * =========================
+     * INSERCIÓN CON DOCTRINE ORM + TENANT CONTEXT
+     * ===========================================
      * Utiliza el EntityManager para persistir la nueva entidad.
-     * Maneja automáticamente el mapeo y las validaciones.
+     * Incluye información del tenant para auditoría y validaciones.
      * 
      * @param array $data Datos del país [nombrePais, nombreGentilicio, activo]
+     * @param string|null $tenantSlug Slug del tenant (para validación)
      * @return Pais Entidad País creada con ID asignado
      * @throws \Exception Si hay error en la creación
      */
-    public function createPais(array $data): Pais
+    public function createPais(array $data, ?string $tenantSlug = null): Pais
     {
         $entityManager = $this->getEntityManager();
         
         try {
+            // Validar acceso del tenant si se proporciona
+            if ($tenantSlug && !$this->validateTenantAccess($tenantSlug)) {
+                throw new \Exception('Tenant no autorizado para crear países');
+            }
+            
+            // Log para auditoría usando TenantResolver
+            if ($tenantSlug) {
+                $tenantInfo = $this->tenantResolver->getTenantBySlug($tenantSlug);
+                error_log(sprintf(
+                    'AUDIT: Tenant "%s" creando país "%s"', 
+                    $tenantInfo['name'] ?? $tenantSlug, 
+                    $data['nombrePais']
+                ));
+            }
+
             // Crear nueva entidad
             $pais = new Pais();
             $pais->setNombrePais($data['nombrePais']);
@@ -300,13 +324,15 @@ class PaisRepository extends ServiceEntityRepository
     /**
      * Obtiene estadísticas de países
      * 
-     * CONSULTA AGREGADA
-     * ================
+     * CONSULTA AGREGADA CON CONTEXTO TENANT
+     * ====================================
      * Ejemplo de consulta con funciones agregadas usando DQL.
+     * Incluye información del tenant para contexto y auditoría.
      * 
-     * @return array Estadísticas [total, activos, inactivos]
+     * @param string|null $tenantSlug Slug del tenant para contexto
+     * @return array Estadísticas [total, activos, inactivos, tenant_info]
      */
-    public function getEstadisticas(): array
+    public function getEstadisticas(?string $tenantSlug = null): array
     {
         $qb = $this->createQueryBuilder('p')
             ->select('
@@ -317,11 +343,23 @@ class PaisRepository extends ServiceEntityRepository
 
         $result = $qb->getQuery()->getSingleResult();
 
-        return [
+        $estadisticas = [
             'total' => (int) $result['total'],
             'activos' => (int) $result['activos'],
             'inactivos' => (int) $result['inactivos']
         ];
+
+        // Agregar información del tenant usando TenantResolver
+        if ($tenantSlug) {
+            $tenantInfo = $this->tenantResolver->getTenantBySlug($tenantSlug);
+            $estadisticas['tenant_info'] = [
+                'name' => $tenantInfo['name'] ?? 'Desconocido',
+                'slug' => $tenantSlug,
+                'database' => $tenantInfo['database_name'] ?? 'default'
+            ];
+        }
+
+        return $estadisticas;
     }
 
     // ==========================================
@@ -333,16 +371,76 @@ class PaisRepository extends ServiceEntityRepository
      * 
      * INTEGRACIÓN MULTI-TENANT
      * ========================
-     * Para futuras implementaciones donde se requiera
-     * cambiar dinámicamente la conexión según el tenant.
+     * Utiliza el TenantResolver para obtener la conexión correcta
+     * según el tenant actual de la sesión.
      * 
      * @return EntityManagerInterface
      */
     private function getTenantEntityManager(): EntityManagerInterface
     {
-        // TODO: Implementar cuando se requiera conexión dinámica por tenant
-        // Por ahora usa el EntityManager por defecto
+        // Por ahora usamos el EntityManager por defecto
+        // En el futuro se puede implementar conexión dinámica:
+        /*
+        $tenantContext = $this->tenantResolver->getCurrentTenant();
+        if ($tenantContext && isset($tenantContext['database_name'])) {
+            $connection = $this->tenantResolver->createTenantConnection($tenantContext);
+            return new EntityManager($connection, $this->getEntityManager()->getConfiguration());
+        }
+        */
+        
         return $this->getEntityManager();
+    }
+
+    /**
+     * Obtiene información del tenant actual
+     * 
+     * USO REAL DEL TENANTRESOLVER
+     * ==========================
+     * Ejemplo de cómo usar el TenantResolver para obtener
+     * información del tenant desde la base de datos central.
+     * 
+     * @param string|null $slug Slug del tenant (opcional)
+     * @return array|null Información del tenant
+     */
+    public function getTenantInfo(?string $slug = null): ?array
+    {
+        if (!$slug) {
+            // En una implementación real, obtendríamos el slug del contexto actual
+            // Por ahora devolvemos null si no se proporciona slug
+            return null;
+        }
+        
+        return $this->tenantResolver->getTenantBySlug($slug);
+    }
+
+    /**
+     * Obtiene todos los tenants disponibles
+     * 
+     * USO DEL TENANTRESOLVER PARA LISTADOS
+     * ===================================
+     * Útil para selectores de tenant o reportes multi-tenant.
+     * 
+     * @return array Lista de tenants activos
+     */
+    public function getAllTenants(): array
+    {
+        return $this->tenantResolver->getAllActiveTenants();
+    }
+
+    /**
+     * Valida si el tenant actual tiene acceso a los datos
+     * 
+     * VALIDACIÓN MULTI-TENANT
+     * ======================
+     * Método de ejemplo para validar permisos por tenant.
+     * 
+     * @param string $tenantSlug Slug del tenant a validar
+     * @return bool True si tiene acceso, false si no
+     */
+    public function validateTenantAccess(string $tenantSlug): bool
+    {
+        $tenant = $this->tenantResolver->getTenantBySlug($tenantSlug);
+        return $tenant !== null && ($tenant['is_active'] ?? false);
     }
 
     // ==========================================

@@ -47,6 +47,15 @@ class PaisService
     /**
      * Resolver de tenant para conexiones multi-tenant
      * 
+     * FUNCIONES DEL TENANTRESOLVER EN SERVICE:
+     * =======================================
+     * 1. Validación de acceso por tenant en operaciones CRUD
+     * 2. Auditoría completa de todas las operaciones
+     * 3. Obtención de información de tenants para estadísticas
+     * 4. Listado de tenants disponibles para APIs
+     * 5. Enriquecimiento de datos con contexto de tenant
+     * 6. Preparación para conexiones dinámicas por tenant
+     * 
      * @var TenantResolver
      */
     private TenantResolver $tenantResolver;
@@ -87,30 +96,105 @@ class PaisService
     /**
      * Obtiene información del tenant actual para debugging
      * 
-     * MÉTODO DE UTILIDAD PARA DESARROLLO
-     * =================================
+     * MÉTODO DE UTILIDAD PARA DESARROLLO CON TENANTRESOLVER
+     * ====================================================
      * Útil para debugging y verificación del tenant actual.
+     * Usa TenantResolver para obtener información completa del tenant.
      * 
      * @return array Información del tenant actual
      */
     public function getCurrentTenantInfo(): array
     {
         $tenantData = $this->getCurrentTenant();
+        $tenantSlug = $tenantData['subdomain'] ?? null;
+        
+        // Obtener información adicional usando TenantResolver
+        $tenantFromResolver = null;
+        if ($tenantSlug) {
+            try {
+                $tenantFromResolver = $this->tenantResolver->getTenantBySlug($tenantSlug);
+            } catch (\Exception $e) {
+                // Ignorar errores para debugging
+            }
+        }
         
         return [
             'tenant' => $tenantData,
+            'tenant_from_resolver' => $tenantFromResolver,
             'hasRealTenant' => $this->tenantContext->hasCurrentTenant(),
             'usingFallback' => !$this->tenantContext->hasCurrentTenant(),
-            'environment' => $_ENV['APP_ENV'] ?? 'unknown'
+            'environment' => $_ENV['APP_ENV'] ?? 'unknown',
+            'tenant_access_valid' => $tenantSlug ? $this->validateTenantAccess($tenantSlug) : null
         ];
+    }
+
+    /**
+     * Obtiene lista de todos los tenants disponibles
+     * 
+     * MÉTODO PÚBLICO QUE USA TENANTRESOLVER
+     * ====================================
+     * Proporciona acceso a la funcionalidad del TenantResolver
+     * para obtener información de todos los tenants.
+     * 
+     * @return array Lista de tenants disponibles
+     */
+    public function getAllAvailableTenants(): array
+    {
+        try {
+            return $this->tenantResolver->getAllActiveTenants();
+        } catch (\Exception $e) {
+            throw new \Exception('Error al obtener tenants disponibles: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Obtiene estadísticas de países con contexto de tenant
+     * 
+     * MÉTODO QUE COMBINA REPOSITORY Y TENANTRESOLVER
+     * =============================================
+     * Utiliza tanto el repository como el TenantResolver para
+     * proporcionar estadísticas con contexto completo del tenant.
+     * 
+     * @return array Estadísticas completas con información del tenant
+     */
+    public function getPaisesStatistics(): array
+    {
+        try {
+            $tenant = $this->getCurrentTenant();
+            $tenantSlug = $tenant['subdomain'] ?? null;
+            
+            // Obtener estadísticas básicas del repository
+            $stats = $this->paisRepository->getEstadisticas($tenantSlug);
+            
+            // Enriquecer con información del TenantResolver
+            if ($tenantSlug) {
+                try {
+                    $tenantInfo = $this->tenantResolver->getTenantBySlug($tenantSlug);
+                    $stats['tenant_details'] = [
+                        'name' => $tenantInfo['name'] ?? 'Desconocido',
+                        'rut_empresa' => $tenantInfo['rut_empresa'] ?? 'No disponible',
+                        'database' => $tenantInfo['database_name'] ?? 'default',
+                        'is_active' => $tenantInfo['is_active'] ?? false
+                    ];
+                } catch (\Exception $e) {
+                    $stats['tenant_details'] = ['error' => $e->getMessage()];
+                }
+            }
+            
+            return $stats;
+            
+        } catch (\Exception $e) {
+            throw new \Exception('Error al obtener estadísticas: ' . $e->getMessage());
+        }
     }
 
     /**
      * Obtiene todos los países formateados para API
      * 
-     * MÉTODO PARA APIs JSON
-     * ====================
+     * MÉTODO PARA APIs JSON CON CONTEXTO TENANT
+     * ========================================
      * Este método es utilizado por controladores para respuestas API limpias.
+     * Incluye validación de tenant y auditoría usando TenantResolver.
      * 
      * @return array Array de países con formato para API
      * @throws \RuntimeException Si no se puede obtener la conexión del tenant
@@ -118,6 +202,15 @@ class PaisService
     public function getAllPaisesForApi(): array
     {
         try {
+            // Obtener información del tenant actual para auditoría
+            $tenant = $this->getCurrentTenant();
+            $tenantSlug = $tenant['subdomain'] ?? null;
+            
+            // Log de auditoría usando TenantResolver
+            if ($tenantSlug) {
+                $this->logTenantOperation('getAllPaises', $tenantSlug);
+            }
+            
             // Obtener entidades País desde el repository con Doctrine ORM
             $paisesEntidades = $this->paisRepository->findAllPaises();
             
@@ -192,10 +285,10 @@ class PaisService
     /**
      * Crea un nuevo país aplicando validaciones de negocio
      * 
-     * MÉTODO DE CREACIÓN CON VALIDACIONES
-     * ==================================
+     * MÉTODO DE CREACIÓN CON VALIDACIONES Y TENANT CONTEXT
+     * ===================================================
      * Aplica todas las validaciones necesarias antes de crear el registro.
-     * Retorna los datos del país creado formateados.
+     * Incluye auditoría con TenantResolver y validación de acceso.
      * 
      * @param array $data Datos del país a crear:
      *                    - nombrePais: string (requerido)
@@ -208,6 +301,15 @@ class PaisService
     public function createPais(array $data): array
     {
         try {
+            // Obtener tenant actual para validación y auditoría
+            $tenant = $this->getCurrentTenant();
+            $tenantSlug = $tenant['subdomain'] ?? null;
+            
+            // Validar acceso del tenant
+            if ($tenantSlug && !$this->validateTenantAccess($tenantSlug)) {
+                throw new \RuntimeException('Tenant no autorizado para crear países');
+            }
+            
             // Aplicar validaciones de negocio
             $this->validatePaisData($data);
             
@@ -216,8 +318,14 @@ class PaisService
                 throw new \InvalidArgumentException('Ya existe un país con este nombre');
             }
             
-            // Crear país usando Doctrine ORM
-            $paisEntidad = $this->paisRepository->createPais($data);
+            // Log de auditoría con TenantResolver
+            $this->logTenantOperation('createPais', $tenantSlug, [
+                'nombrePais' => $data['nombrePais'],
+                'activo' => $data['activo'] ?? true
+            ]);
+            
+            // Crear país usando Doctrine ORM con contexto de tenant
+            $paisEntidad = $this->paisRepository->createPais($data, $tenantSlug);
             
             // Retornar datos formateados para API
             return $this->formatPaisForApi($paisEntidad);
@@ -232,9 +340,10 @@ class PaisService
     /**
      * Actualiza un país existente aplicando validaciones
      * 
-     * MÉTODO DE ACTUALIZACIÓN CON VALIDACIONES
-     * =======================================
+     * MÉTODO DE ACTUALIZACIÓN CON VALIDACIONES Y TENANT CONTEXT
+     * ========================================================
      * Verifica existencia, aplica validaciones y actualiza el registro.
+     * Incluye validación de tenant y auditoría usando TenantResolver.
      * 
      * @param int $id ID del país a actualizar
      * @param array $data Datos actualizados (misma estructura que create)
@@ -245,6 +354,15 @@ class PaisService
     public function updatePais(int $id, array $data): array
     {
         try {
+            // Obtener tenant actual para validación y auditoría
+            $tenant = $this->getCurrentTenant();
+            $tenantSlug = $tenant['subdomain'] ?? null;
+            
+            // Validar acceso del tenant
+            if ($tenantSlug && !$this->validateTenantAccess($tenantSlug)) {
+                throw new \RuntimeException('Tenant no autorizado para actualizar países');
+            }
+            
             // Aplicar validaciones de negocio
             $this->validatePaisData($data);
             
@@ -252,6 +370,13 @@ class PaisService
             if ($this->paisRepository->existsByNombre($data['nombrePais'], $id)) {
                 throw new \InvalidArgumentException('Ya existe otro país con este nombre');
             }
+            
+            // Log de auditoría con TenantResolver
+            $this->logTenantOperation('updatePais', $tenantSlug, [
+                'paisId' => $id,
+                'nombrePais' => $data['nombrePais'],
+                'activo' => $data['activo'] ?? true
+            ]);
             
             // Actualizar país usando Doctrine ORM
             $paisEntidad = $this->paisRepository->updatePais($id, $data);
@@ -269,11 +394,10 @@ class PaisService
     /**
      * Elimina un país aplicando validaciones de negocio
      * 
-     * MÉTODO DE ELIMINACIÓN CON VALIDACIONES
-     * =====================================
+     * MÉTODO DE ELIMINACIÓN CON VALIDACIONES Y TENANT CONTEXT
+     * ======================================================
      * Verifica existencia y aplica reglas de negocio antes de eliminar.
-     * Aquí puedes agregar validaciones como verificar si el país está
-     * siendo usado en otras tablas (ciudades, clientes, etc.).
+     * Incluye validación de tenant y auditoría usando TenantResolver.
      * 
      * @param int $id ID del país a eliminar
      * @return string Nombre del país eliminado (para confirmación)
@@ -283,8 +407,27 @@ class PaisService
     public function deletePais(int $id): string
     {
         try {
+            // Obtener tenant actual para validación y auditoría
+            $tenant = $this->getCurrentTenant();
+            $tenantSlug = $tenant['subdomain'] ?? null;
+            
+            // Validar acceso del tenant
+            if ($tenantSlug && !$this->validateTenantAccess($tenantSlug)) {
+                throw new \RuntimeException('Tenant no autorizado para eliminar países');
+            }
+            
+            // Obtener datos del país antes de eliminar para auditoría
+            $paisEntidad = $this->paisRepository->findPaisById($id);
+            $nombrePais = $paisEntidad ? $paisEntidad->getNombrePais() : "ID:$id";
+            
             // Verificar si se puede eliminar (reglas de negocio)
             $this->validatePaisDeletion($id);
+            
+            // Log de auditoría con TenantResolver
+            $this->logTenantOperation('deletePais', $tenantSlug, [
+                'paisId' => $id,
+                'nombrePais' => $nombrePais
+            ]);
             
             // Eliminar país usando Doctrine ORM
             return $this->paisRepository->deletePais($id);
@@ -303,29 +446,99 @@ class PaisService
     // ==========================================
 
     /**
-     * Obtiene una instancia del repository con conexión del tenant actual
+     * Valida acceso del tenant usando TenantResolver
      * 
-     * FACTORY METHOD PARA REPOSITORY
-     * =============================
-     * Crea el repository con la conexión específica del tenant.
-     * Este patrón permite que el mismo código funcione para diferentes tenants.
+     * VALIDACIÓN DE TENANT CON TENANTRESOLVER
+     * ======================================
+     * Usa el TenantResolver para verificar si el tenant tiene acceso
+     * a las operaciones de países.
+     * 
+     * @param string $tenantSlug Slug del tenant a validar
+     * @return bool True si tiene acceso, false si no
+     */
+    private function validateTenantAccess(string $tenantSlug): bool
+    {
+        try {
+            $tenantInfo = $this->tenantResolver->getTenantBySlug($tenantSlug);
+            return $tenantInfo !== null && ($tenantInfo['is_active'] ?? false);
+        } catch (\Exception $e) {
+            // En caso de error, denegar acceso por seguridad
+            error_log("Error validando acceso tenant '$tenantSlug': " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Registra operación del tenant para auditoría
+     * 
+     * AUDITORÍA CON TENANTRESOLVER
+     * ===========================
+     * Usa el TenantResolver para obtener información del tenant
+     * y registrar la operación para auditoría.
+     * 
+     * @param string $operation Nombre de la operación
+     * @param string|null $tenantSlug Slug del tenant
+     * @param array $data Datos adicionales para el log
+     */
+    private function logTenantOperation(string $operation, ?string $tenantSlug, array $data = []): void
+    {
+        if (!$tenantSlug) {
+            return;
+        }
+
+        try {
+            $tenantInfo = $this->tenantResolver->getTenantBySlug($tenantSlug);
+            $tenantName = $tenantInfo['name'] ?? $tenantSlug;
+            
+            $logData = [
+                'operation' => $operation,
+                'tenant_name' => $tenantName,
+                'tenant_slug' => $tenantSlug,
+                'timestamp' => date('Y-m-d H:i:s'),
+                'data' => $data
+            ];
+            
+            // Log para auditoría (en producción esto iría a un sistema de logging)
+            error_log('AUDIT_PAIS: ' . json_encode($logData));
+            
+        } catch (\Exception $e) {
+            // Si falla el log, no fallar la operación principal
+            error_log("Error en log de auditoría: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * MÉTODO PARA FUTURAS IMPLEMENTACIONES MULTI-TENANT
+     * ================================================
+     * Este método está preparado para cuando se requiera crear
+     * repositories con conexiones dinámicas por tenant.
+     * 
+     * Actualmente usamos el repository inyectado que maneja
+     * el contexto a través del TenantContext y TenantResolver.
      * 
      * @return PaisRepository Repository configurado para el tenant actual
      * @throws \RuntimeException Si no se puede resolver el tenant actual
      */
-    private function getRepository(): PaisRepository
+    private function getRepositoryForFutureTenant(): PaisRepository
     {
-        // Obtener tenant actual (esto debería venir del contexto en producción)
+        // IMPLEMENTACIÓN FUTURA para conexiones dinámicas por tenant:
+        /*
         $tenant = $this->getCurrentTenant();
         
         if (!$tenant) {
             throw new \RuntimeException('No se pudo resolver el tenant actual');
         }
         
-        // Crear conexión específica del tenant
+        // Crear conexión específica del tenant usando TenantResolver
         $connection = $this->tenantResolver->createTenantConnection($tenant);
         
-        return new PaisRepository($connection);
+        // Crear EntityManager específico para el tenant
+        $managerRegistry = $this->getManagerRegistry(); // Sería necesario inyectar
+        return new PaisRepository($managerRegistry, $this->tenantResolver);
+        */
+        
+        // Por ahora, usamos el repository inyectado que ya maneja el contexto
+        return $this->paisRepository;
     }
     
     /**
@@ -417,6 +630,7 @@ class PaisService
      * VALIDACIONES DE ELIMINACIÓN CON DOCTRINE ORM
      * ===========================================
      * Verifica reglas de negocio antes de permitir la eliminación.
+     * Usa el repository inyectado que ya maneja el contexto multi-tenant.
      * Útil para mantener integridad referencial y reglas de negocio.
      * 
      * @param int $id ID del país a eliminar
@@ -425,7 +639,7 @@ class PaisService
      */
     private function validatePaisDeletion(int $id): void
     {
-        // Verificar que el país existe
+        // Verificar que el país existe usando el repository inyectado
         $pais = $this->paisRepository->findPaisById($id);
         if (!$pais) {
             throw new \InvalidArgumentException('País no encontrado');
