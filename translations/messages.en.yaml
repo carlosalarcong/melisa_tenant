@@ -261,3 +261,110 @@ validation:
   field_too_long: 'This field is too long'
   field_too_short: 'This field is too short'
   required_fields: 'Please complete all fields'
+
+# MAINTAINERS/MANTENEDORES
+mantenedores:
+  title: 'Maintainers'
+  subtitle: 'Master Data Management'
+  basicos: 'Basic'
+  avanzados: 'Advanced'
+  
+  # COUNTRIES
+  pais:
+    title: 'Country Management'
+    entity_name: 'Country'
+    entity_name_plural: 'Countries'
+    nuevo: 'New Country'
+    editar: 'Edit Country'
+    eliminar: 'Delete Country'
+    nombre_pais: 'Country Name'
+    gentilicio: 'Demonym'
+    activo: 'Country active in system'
+    estado: 'Status'
+    acciones: 'Actions'
+    id: 'ID'
+    
+    # PLACEHOLDERS
+    placeholder:
+      nombre_pais: 'E.g: Chile, Argentina, Brazil'
+      gentilicio: 'E.g: Chilean, Argentinian, Brazilian'
+    
+    # VALIDATIONS
+    validation:
+      nombre_required: 'Country name is required'
+      nombre_min_length: 'Name must be at least 2 characters'
+      nombre_max_length: 'Name cannot exceed 100 characters'
+      nombre_invalid_chars: 'Name can only contain letters, spaces and hyphens'
+      gentilicio_required: 'Demonym is required'
+      gentilicio_min_length: 'Demonym must be at least 2 characters'
+      gentilicio_max_length: 'Demonym cannot exceed 100 characters'
+      gentilicio_invalid_chars: 'Demonym can only contain letters and spaces'
+    
+    # MESSAGES
+    messages:
+      created_success: 'Country created successfully'
+      updated_success: 'Country updated successfully'
+      deleted_success: 'Country deleted successfully'
+      load_error: 'Could not load country data'
+      save_error: 'Error saving country'
+      delete_error: 'Could not delete country'
+      connection_error: 'Could not connect to server'
+      not_found: 'Country not found'
+    
+    # CONFIRMATIONS
+    confirm:
+      delete_title: 'Are you sure?'
+      delete_text: 'Do you really want to delete country "%name%"? This action cannot be undone.'
+      delete_confirm: 'Yes, delete'
+      delete_cancel: 'Cancel'
+    
+    # STATES
+    states:
+      active: 'Active'
+      inactive: 'Inactive'
+    
+    # INFORMATION
+    info:
+      nombre_help: 'Enter the official country name. Use the magic button to auto-generate the demonym.'
+      gentilicio_help: 'Demonym used to identify the country inhabitants.'
+      activo_help: 'Only active countries will appear in forms and selection lists.'
+      required_fields: 'Fields marked with * are required.'
+      auto_generate: 'Auto-generate demonym'
+      loading_data: 'Loading data...'
+      saving_data: 'Saving...'
+      no_countries: 'No countries registered'
+      first_country: 'Start by adding your first country using the "New" button above.'
+      create_first: 'Create first country'
+      showing_results: 'Showing %count% countries'
+
+# GLOBAL BUTTONS AND ACTIONS
+actions:
+  new: 'New'
+  create: 'Create'
+  edit: 'Edit'
+  save: 'Save'
+  delete: 'Delete'
+  cancel: 'Cancel'
+  close: 'Close'
+  clear: 'Clear'
+  refresh: 'Refresh'
+  loading: 'Loading...'
+  saving: 'Saving...'
+  processing: 'Processing...'
+
+# GENERAL STATUSES
+status:
+  active: 'Active'
+  inactive: 'Inactive'
+  enabled: 'Enabled'
+  disabled: 'Disabled'
+
+# NOTIFICATIONS
+notifications:
+  success: 'Success!'
+  error: 'Error'
+  warning: 'Warning'
+  info: 'Information'
+  connection_error: 'Connection Error'
+  form_error: 'Form Error'
+  operation_success: 'Operation Successful'

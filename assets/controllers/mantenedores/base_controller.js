@@ -151,7 +151,7 @@ export default class extends Controller {
      */
     configureCreateModal() {
         if (this.hasTitleTarget) {
-            this.titleTarget.innerHTML = `<i class="fas fa-plus me-2"></i>Nuevo ${this.entityNameValue}`;
+            this.titleTarget.innerHTML = `<i class="fas fa-plus me-2"></i>${this.t('mantenedores.pais.nuevo')}`;
         }
         
         if (this.hasIdFieldTarget) {
@@ -167,7 +167,7 @@ export default class extends Controller {
      */
     configureEditModal(entityId) {
         if (this.hasTitleTarget) {
-            this.titleTarget.innerHTML = `<i class="fas fa-edit me-2"></i>Editar ${this.entityNameValue}`;
+            this.titleTarget.innerHTML = `<i class="fas fa-edit me-2"></i>${this.t('mantenedores.pais.editar')}`;
         }
         
         if (this.hasIdFieldTarget) {
@@ -305,7 +305,7 @@ export default class extends Controller {
         
         // Mostrar indicador de carga
         const originalTitle = this.titleTarget.innerHTML;
-        this.titleTarget.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Cargando datos...';
+        this.titleTarget.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i>${this.t('mantenedores.pais.info.loading_data')}`;
         
         try {
             const response = await fetch(`${this.apiBaseValue}/${entityId}`, {
@@ -327,10 +327,10 @@ export default class extends Controller {
                 this.populateForm(data.data);
                 
                 // Restaurar título
-                this.titleTarget.innerHTML = `<i class="fas fa-edit me-2"></i>Editar ${this.entityNameValue}`;
+                this.titleTarget.innerHTML = `<i class="fas fa-edit me-2"></i>${this.t('mantenedores.pais.editar')}`;
             } else {
                 this.titleTarget.innerHTML = originalTitle;
-                this.showError(data.error || 'No se pudieron cargar los datos');
+                this.showError(data.error || this.t('mantenedores.pais.messages.load_error'));
             }
         } catch (error) {
             console.error('Error de conexión:', error);
@@ -362,7 +362,7 @@ export default class extends Controller {
             const result = await response.json();
             
             if (result.success) {
-                this.showSuccess(result.message || `${this.entityNameValue} creado exitosamente`);
+                this.showSuccess(result.message || this.t('mantenedores.pais.messages.created_success'));
                 this.closeModal();
                 this.reloadContent();
             } else {
@@ -405,7 +405,7 @@ export default class extends Controller {
             if (result.success) {
                 console.log('✅ Entidad actualizada exitosamente');
                 
-                this.showSuccess(result.message || `${this.entityNameValue} actualizado exitosamente`);
+                this.showSuccess(result.message || this.t('mantenedores.pais.messages.updated_success'));
                 this.closeModal();
                 this.reloadContent();
             } else {
@@ -444,14 +444,14 @@ export default class extends Controller {
      */
     confirmDelete(entityId, entityName) {
         Swal.fire({
-            title: '¿Está seguro?',
-            text: `¿Realmente desea eliminar ${this.entityNameValue.toLowerCase()} "${entityName}"? Esta acción no se puede deshacer.`,
+            title: this.t('mantenedores.pais.confirm.delete_title'),
+            text: this.t('mantenedores.pais.confirm.delete_text', { name: entityName }),
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar'
+            confirmButtonText: this.t('mantenedores.pais.confirm.delete_confirm'),
+            cancelButtonText: this.t('mantenedores.pais.confirm.delete_cancel')
         }).then((result) => {
             if (result.isConfirmed) {
                 this.deleteEntity(entityId);
@@ -484,11 +484,11 @@ export default class extends Controller {
             if (result.success) {
                 console.log('✅ Entidad eliminada exitosamente');
                 
-                this.showSuccess(result.message || `${this.entityNameValue} eliminado exitosamente`);
+                this.showSuccess(result.message || this.t('mantenedores.pais.messages.deleted_success'));
                 this.reloadContent();
             } else {
                 console.error('❌ Error al eliminar:', result.error);
-                this.showError(result.error || `No se pudo eliminar ${this.entityNameValue.toLowerCase()}`);
+                this.showError(result.error || this.t('mantenedores.pais.messages.delete_error'));
             }
         } catch (error) {
             console.error('❌ Error de conexión:', error);
@@ -560,10 +560,10 @@ export default class extends Controller {
         
         if (loading) {
             this.submitButtonTarget.disabled = true;
-            this.submitButtonTarget.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Guardando...';
+            this.submitButtonTarget.innerHTML = `<i class="fas fa-spinner fa-spin me-1"></i>${this.t('mantenedores.pais.info.saving_data')}`;
         } else {
             this.submitButtonTarget.disabled = false;
-            this.submitButtonTarget.innerHTML = `<i class="fas fa-save me-1"></i>Guardar ${this.entityNameValue}`;
+            this.submitButtonTarget.innerHTML = `<i class="fas fa-save me-1"></i>${this.t('actions.save')} ${this.t('mantenedores.pais.entity_name')}`;
         }
     }
     
@@ -577,7 +577,7 @@ export default class extends Controller {
     showSuccess(message) {
         Swal.fire({
             icon: 'success',
-            title: '¡Éxito!',
+            title: this.t('notifications.success'),
             text: message,
             timer: 2000,
             showConfirmButton: false
@@ -590,8 +590,8 @@ export default class extends Controller {
     showFormError(message) {
         Swal.fire({
             icon: 'error',
-            title: 'Error en el formulario',
-            text: message || 'Por favor, revise los datos ingresados'
+            title: this.t('notifications.form_error'),
+            text: message || this.t('validation.required_fields')
         });
     }
     
@@ -601,7 +601,7 @@ export default class extends Controller {
     showError(message) {
         Swal.fire({
             icon: 'error',
-            title: 'Error',
+            title: this.t('notifications.error'),
             text: message
         });
     }
@@ -612,8 +612,52 @@ export default class extends Controller {
     showConnectionError(details = null) {
         Swal.fire({
             icon: 'error',
-            title: 'Error de conexión',
-            text: details ? `No se pudo conectar con el servidor: ${details}` : 'No se pudo conectar con el servidor. Intente nuevamente.'
+            title: this.t('notifications.connection_error'),
+            text: details ? this.t('mantenedores.pais.messages.connection_error') + ': ' + details : this.t('mantenedores.pais.messages.connection_error')
         });
+    }
+    
+    // ==========================================
+    // SISTEMA DE TRADUCCIONES
+    // ==========================================
+    
+    /**
+     * Función de traducción básica
+     * En una implementación real, esto se conectaría con el sistema i18n de Symfony
+     */
+    t(key, params = {}) {
+        // Mapa básico de traducciones - en producción esto vendría del servidor
+        const translations = {
+            'mantenedores.pais.nuevo': 'Nuevo País',
+            'mantenedores.pais.editar': 'Editar País',
+            'mantenedores.pais.entity_name': 'País',
+            'mantenedores.pais.info.loading_data': 'Cargando datos...',
+            'mantenedores.pais.info.saving_data': 'Guardando...',
+            'mantenedores.pais.messages.created_success': 'País creado exitosamente',
+            'mantenedores.pais.messages.updated_success': 'País actualizado exitosamente',
+            'mantenedores.pais.messages.deleted_success': 'País eliminado exitosamente',
+            'mantenedores.pais.messages.load_error': 'No se pudieron cargar los datos del país',
+            'mantenedores.pais.messages.delete_error': 'No se pudo eliminar el país',
+            'mantenedores.pais.messages.connection_error': 'No se pudo conectar con el servidor. Intente nuevamente.',
+            'mantenedores.pais.confirm.delete_title': '¿Está seguro?',
+            'mantenedores.pais.confirm.delete_text': '¿Realmente desea eliminar el país "{name}"? Esta acción no se puede deshacer.',
+            'mantenedores.pais.confirm.delete_confirm': 'Sí, eliminar',
+            'mantenedores.pais.confirm.delete_cancel': 'Cancelar',
+            'actions.save': 'Guardar',
+            'notifications.success': '¡Éxito!',
+            'notifications.error': 'Error',
+            'notifications.form_error': 'Error en el formulario',
+            'notifications.connection_error': 'Error de conexión',
+            'validation.required_fields': 'Por favor, revise los datos ingresados'
+        };
+        
+        let translation = translations[key] || key;
+        
+        // Reemplazar parámetros
+        Object.keys(params).forEach(param => {
+            translation = translation.replace(`{${param}}`, params[param]);
+        });
+        
+        return translation;
     }
 }

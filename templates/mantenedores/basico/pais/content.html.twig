@@ -53,16 +53,16 @@
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center">
                     <i class="fas fa-globe me-2"></i>
-                    <h5 class="card-title mb-0">{{ mantenedor_config.title|default('Gestión de Países') }}</h5>
+                    <h5 class="card-title mb-0">{{ 'mantenedores.pais.title'|trans }}</h5>
                 </div>
                 {# BOTÓN PARA CREAR NUEVO REGISTRO #}
                 <button type="button" class="btn btn-light btn-sm" 
                         data-bs-toggle="modal" 
                         data-bs-target="#paisModal" 
                         data-action="create"
-                        title="Crear nuevo país">
+                        title="{{ 'mantenedores.pais.nuevo'|trans }}">
                     <i class="fas fa-plus me-1"></i> 
-                    Nuevo {{ mantenedor_config.entity_name|default('País') }}
+                    {{ 'mantenedores.pais.nuevo'|trans }}
                 </button>
             </div>
             
@@ -72,8 +72,8 @@
                 {% if error is defined and error %}
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <i class="fas fa-exclamation-triangle me-2"></i>
-                        <strong>Error:</strong> {{ error }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <strong>{{ 'notifications.error'|trans }}:</strong> {{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ 'actions.close'|trans }}"></button>
                     </div>
                 {% endif %}
 
@@ -82,7 +82,7 @@
                     <div class="alert alert-info alert-dismissible fade show" role="alert">
                         <i class="fas fa-info-circle me-2"></i>
                         <strong>Tenant:</strong> {{ tenant.name }} ({{ tenant.subdomain }})
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ 'actions.close'|trans }}"></button>
                     </div>
                 {% endif %}
 
@@ -92,16 +92,16 @@
                         <div class="mb-4">
                             <i class="fas fa-globe fa-4x text-muted opacity-50"></i>
                         </div>
-                        <h5 class="text-muted mb-2">No hay {{ mantenedor_config.entity_name_plural|lower|default('países') }} registrados</h5>
+                        <h5 class="text-muted mb-2">{{ 'mantenedores.pais.info.no_countries'|trans }}</h5>
                         <p class="text-muted mb-4">
-                            Comienza agregando tu primer {{ mantenedor_config.entity_name|lower|default('país') }} usando el botón "Nuevo" en la parte superior.
+                            {{ 'mantenedores.pais.info.first_country'|trans }}
                         </p>
                         <button type="button" class="btn btn-primary" 
                                 data-bs-toggle="modal" 
                                 data-bs-target="#paisModal" 
                                 data-action="create">
                             <i class="fas fa-plus me-2"></i>
-                            Crear primer {{ mantenedor_config.entity_name|lower|default('país') }}
+                            {{ 'mantenedores.pais.info.create_first'|trans }}
                         </button>
                     </div>
                 {% else %}
@@ -112,19 +112,19 @@
                             <thead class="table-dark">
                                 <tr>
                                     <th scope="col" class="text-center" style="width: 80px;">
-                                        <i class="fas fa-hashtag me-1"></i>ID
+                                        <i class="fas fa-hashtag me-1"></i>{{ 'mantenedores.pais.id'|trans }}
                                     </th>
                                     <th scope="col">
-                                        <i class="fas fa-flag me-1"></i>País
+                                        <i class="fas fa-flag me-1"></i>{{ 'mantenedores.pais.nombre_pais'|trans }}
                                     </th>
                                     <th scope="col">
-                                        <i class="fas fa-users me-1"></i>Gentilicio
+                                        <i class="fas fa-users me-1"></i>{{ 'mantenedores.pais.gentilicio'|trans }}
                                     </th>
                                     <th scope="col" class="text-center" style="width: 100px;">
-                                        <i class="fas fa-toggle-on me-1"></i>Estado
+                                        <i class="fas fa-toggle-on me-1"></i>{{ 'mantenedores.pais.estado'|trans }}
                                     </th>
                                     <th scope="col" class="text-center" style="width: 150px;">
-                                        <i class="fas fa-cogs me-1"></i>Acciones
+                                        <i class="fas fa-cogs me-1"></i>{{ 'mantenedores.pais.acciones'|trans }}
                                     </th>
                                 </tr>
                             </thead>
@@ -151,18 +151,18 @@
                                         <td class="text-center">
                                             {% if pais.activo %}
                                                 <span class="badge bg-success">
-                                                    <i class="fas fa-check me-1"></i>Activo
+                                                    <i class="fas fa-check me-1"></i>{{ 'mantenedores.pais.states.active'|trans }}
                                                 </span>
                                             {% else %}
                                                 <span class="badge bg-secondary">
-                                                    <i class="fas fa-times me-1"></i>Inactivo
+                                                    <i class="fas fa-times me-1"></i>{{ 'mantenedores.pais.states.inactive'|trans }}
                                                 </span>
                                             {% endif %}
                                         </td>
                                         
                                         {# BOTONES DE ACCIÓN #}
                                         <td class="text-center">
-                                            <div class="btn-group" role="group" aria-label="Acciones">
+                                            <div class="btn-group" role="group" aria-label="{{ 'mantenedores.pais.acciones'|trans }}">
                                                 {# BOTÓN EDITAR #}
                                                 <button type="button" 
                                                         class="btn btn-outline-primary btn-sm" 
@@ -170,7 +170,7 @@
                                                         data-bs-target="#paisModal" 
                                                         data-action="edit" 
                                                         data-id="{{ pais.idPais }}"
-                                                        title="Editar {{ pais.nombrePais }}">
+                                                        title="{{ 'mantenedores.pais.editar'|trans }} {{ pais.nombrePais }}">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
                                                 
@@ -180,7 +180,7 @@
                                                         data-action="click->mantenedores--pais--pais#handleDelete" 
                                                         data-id="{{ pais.idPais }}" 
                                                         data-name="{{ pais.nombrePais }}"
-                                                        title="Eliminar {{ pais.nombrePais }}">
+                                                        title="{{ 'mantenedores.pais.eliminar'|trans }} {{ pais.nombrePais }}">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </div>
@@ -195,7 +195,7 @@
                     <div class="d-flex justify-content-between align-items-center mt-3">
                         <small class="text-muted">
                             <i class="fas fa-list me-1"></i>
-                            Mostrando {{ paises|length }} {{ mantenedor_config.entity_name_plural|lower|default('países') }}
+                            {{ 'mantenedores.pais.info.showing_results'|trans({'%count%': paises|length}) }}
                         </small>
                         
                         {# ESPACIO PARA PAGINACIÓN (FUTURO) #}
@@ -226,9 +226,9 @@
                     id="paisModalLabel"
                     data-mantenedores--pais--pais-target="title">
                     <i class="fas fa-globe me-2"></i>
-                    Nuevo {{ mantenedor_config.entity_name|default('País') }}
+                    {{ 'mantenedores.pais.nuevo'|trans }}
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="{{ 'actions.close'|trans }}"></button>
             </div>
             
             {# FORMULARIO PRINCIPAL #}
@@ -247,7 +247,7 @@
                     <div class="mb-3">
                         <label for="nombrePais" class="form-label">
                             <i class="fas fa-flag me-1 text-primary"></i>
-                            Nombre del País
+                            {{ 'mantenedores.pais.nombre_pais'|trans }}
                             <span class="text-danger">*</span>
                         </label>
                         <div class="input-group">
@@ -256,23 +256,23 @@
                                    id="nombrePais" 
                                    name="nombrePais" 
                                    required
-                                   placeholder="Ej: Chile, Argentina, Brasil"
+                                   placeholder="{{ 'mantenedores.pais.placeholder.nombre_pais'|trans }}"
                                    maxlength="100"
                                    data-mantenedores--pais--pais-target="nombrePais"
                                    data-action="input->mantenedores--pais--pais#validateField blur->mantenedores--pais--pais#formatToTitle">
                             <button class="btn btn-outline-secondary" 
                                     type="button"
                                     data-action="click->mantenedores--pais--pais#autoGenerateGentilicio"
-                                    title="Generar gentilicio automáticamente">
+                                    title="{{ 'mantenedores.pais.info.auto_generate'|trans }}">
                                 <i class="fas fa-magic"></i>
                             </button>
                         </div>
                         <div class="invalid-feedback">
-                            El nombre del país es obligatorio y debe tener máximo 100 caracteres.
+                            {{ 'mantenedores.pais.validation.nombre_required'|trans }}
                         </div>
                         <div class="form-text">
                             <i class="fas fa-info-circle me-1"></i>
-                            Ingresa el nombre oficial del país. Usar el botón mágico genera el gentilicio automáticamente.
+                            {{ 'mantenedores.pais.info.nombre_help'|trans }}
                         </div>
                     </div>
                     
@@ -280,7 +280,7 @@
                     <div class="mb-3">
                         <label for="nombreGentilicio" class="form-label">
                             <i class="fas fa-users me-1 text-primary"></i>
-                            Gentilicio
+                            {{ 'mantenedores.pais.gentilicio'|trans }}
                             <span class="text-danger">*</span>
                         </label>
                         <input type="text" 
@@ -288,16 +288,16 @@
                                id="nombreGentilicio" 
                                name="nombreGentilicio" 
                                required
-                               placeholder="Ej: Chileno, Argentino, Brasileño"
+                               placeholder="{{ 'mantenedores.pais.placeholder.gentilicio'|trans }}"
                                maxlength="100"
                                data-mantenedores--pais--pais-target="nombreGentilicio"
                                data-action="input->mantenedores--pais--pais#validateField blur->mantenedores--pais--pais#formatToTitle">
                         <div class="invalid-feedback">
-                            El gentilicio es obligatorio y debe tener máximo 100 caracteres.
+                            {{ 'mantenedores.pais.validation.gentilicio_required'|trans }}
                         </div>
                         <div class="form-text">
                             <i class="fas fa-info-circle me-1"></i>
-                            Gentilicio utilizado para identificar a los habitantes del país.
+                            {{ 'mantenedores.pais.info.gentilicio_help'|trans }}
                         </div>
                     </div>
                     
@@ -312,12 +312,12 @@
                                    data-mantenedores--pais--pais-target="activo">
                             <label class="form-check-label" for="activo">
                                 <i class="fas fa-toggle-on me-1 text-success"></i>
-                                País activo en el sistema
+                                {{ 'mantenedores.pais.activo'|trans }}
                             </label>
                         </div>
                         <div class="form-text">
                             <i class="fas fa-info-circle me-1"></i>
-                            Solo los países activos aparecerán en formularios y listas de selección.
+                            {{ 'mantenedores.pais.info.activo_help'|trans }}
                         </div>
                     </div>
                     
@@ -326,8 +326,7 @@
                         <i class="fas fa-info-circle me-2"></i>
                         <div>
                             <small>
-                                <strong>Nota:</strong> Los campos marcados con 
-                                <span class="text-danger">*</span> son obligatorios.
+                                <strong>{{ 'notifications.info'|trans }}:</strong> {{ 'mantenedores.pais.info.required_fields'|trans }}
                             </small>
                         </div>
                     </div>
@@ -339,19 +338,19 @@
                             class="btn btn-secondary" 
                             data-bs-dismiss="modal">
                         <i class="fas fa-times me-1"></i>
-                        Cancelar
+                        {{ 'actions.cancel'|trans }}
                     </button>
                     <button type="button" 
                             class="btn btn-outline-info me-2"
                             data-action="click->mantenedores--pais--pais#clearForm">
                         <i class="fas fa-eraser me-1"></i>
-                        Limpiar
+                        {{ 'actions.clear'|trans }}
                     </button>
                     <button type="submit" 
                             class="btn btn-primary"
                             data-mantenedores--pais--pais-target="submitButton">
                         <i class="fas fa-save me-1"></i>
-                        Guardar {{ mantenedor_config.entity_name|default('País') }}
+                        {{ 'actions.save'|trans }} {{ 'mantenedores.pais.entity_name'|trans }}
                     </button>
                 </div>
             </form>

@@ -114,24 +114,24 @@ export default class extends BaseController {
         const value = this.nombrePaisTarget.value.trim();
         
         if (!value) {
-            this.markFieldInvalid(this.nombrePaisTarget, 'El nombre del país es obligatorio');
+            this.markFieldInvalid(this.nombrePaisTarget, this.t('mantenedores.pais.validation.nombre_required'));
             return false;
         }
         
         if (value.length < 2) {
-            this.markFieldInvalid(this.nombrePaisTarget, 'El nombre debe tener al menos 2 caracteres');
+            this.markFieldInvalid(this.nombrePaisTarget, this.t('mantenedores.pais.validation.nombre_min_length'));
             return false;
         }
         
         if (value.length > 100) {
-            this.markFieldInvalid(this.nombrePaisTarget, 'El nombre no puede exceder 100 caracteres');
+            this.markFieldInvalid(this.nombrePaisTarget, this.t('mantenedores.pais.validation.nombre_max_length'));
             return false;
         }
         
         // Validar caracteres permitidos (letras, espacios, acentos, guiones)
         const regex = /^[a-zA-ZÀ-ÿ\u00f1\u00d1\s\-\.]+$/;
         if (!regex.test(value)) {
-            this.markFieldInvalid(this.nombrePaisTarget, 'El nombre solo puede contener letras, espacios y guiones');
+            this.markFieldInvalid(this.nombrePaisTarget, this.t('mantenedores.pais.validation.nombre_invalid_chars'));
             return false;
         }
         
@@ -148,24 +148,24 @@ export default class extends BaseController {
         const value = this.nombreGentilicioTarget.value.trim();
         
         if (!value) {
-            this.markFieldInvalid(this.nombreGentilicioTarget, 'El gentilicio es obligatorio');
+            this.markFieldInvalid(this.nombreGentilicioTarget, this.t('mantenedores.pais.validation.gentilicio_required'));
             return false;
         }
         
         if (value.length < 2) {
-            this.markFieldInvalid(this.nombreGentilicioTarget, 'El gentilicio debe tener al menos 2 caracteres');
+            this.markFieldInvalid(this.nombreGentilicioTarget, this.t('mantenedores.pais.validation.gentilicio_min_length'));
             return false;
         }
         
         if (value.length > 100) {
-            this.markFieldInvalid(this.nombreGentilicioTarget, 'El gentilicio no puede exceder 100 caracteres');
+            this.markFieldInvalid(this.nombreGentilicioTarget, this.t('mantenedores.pais.validation.gentilicio_max_length'));
             return false;
         }
         
         // Validar caracteres permitidos (letras, espacios, acentos)
         const regex = /^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$/;
         if (!regex.test(value)) {
-            this.markFieldInvalid(this.nombreGentilicioTarget, 'El gentilicio solo puede contener letras y espacios');
+            this.markFieldInvalid(this.nombreGentilicioTarget, this.t('mantenedores.pais.validation.gentilicio_invalid_chars'));
             return false;
         }
         
@@ -299,5 +299,24 @@ export default class extends BaseController {
      */
     autoGenerateGentilicio() {
         this.generateGentilicio();
+    }
+    
+    // ==========================================
+    // TRADUCCIONES ESPECÍFICAS
+    // ==========================================
+    
+    /**
+     * Hereda el sistema de traducciones del controlador base
+     * y agrega traducciones específicas de países si es necesario
+     */
+    t(key, params = {}) {
+        // Traducciones específicas adicionales para países
+        const specificTranslations = {
+            // Aquí se pueden agregar traducciones específicas del mantenedor de países
+            // que no estén en el controlador base
+        };
+        
+        // Buscar primero en traducciones específicas, luego en el base
+        return specificTranslations[key] || super.t(key, params);
     }
 }

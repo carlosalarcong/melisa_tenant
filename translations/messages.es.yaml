@@ -261,3 +261,110 @@ validation:
   field_too_long: 'Este campo es demasiado largo'
   field_too_short: 'Este campo es demasiado corto'
   required_fields: 'Por favor complete todos los campos'
+
+# MANTENEDORES
+mantenedores:
+  title: 'Mantenedores'
+  subtitle: 'Gestión de Datos Maestros'
+  basicos: 'Básicos'
+  avanzados: 'Avanzados'
+  
+  # PAÍSES
+  pais:
+    title: 'Gestión de Países'
+    entity_name: 'País'
+    entity_name_plural: 'Países'
+    nuevo: 'Nuevo País'
+    editar: 'Editar País'
+    eliminar: 'Eliminar País'
+    nombre_pais: 'Nombre del País'
+    gentilicio: 'Gentilicio'
+    activo: 'País activo en el sistema'
+    estado: 'Estado'
+    acciones: 'Acciones'
+    id: 'ID'
+    
+    # PLACEHOLDERS
+    placeholder:
+      nombre_pais: 'Ej: Chile, Argentina, Brasil'
+      gentilicio: 'Ej: Chileno, Argentino, Brasileño'
+    
+    # VALIDACIONES
+    validation:
+      nombre_required: 'El nombre del país es obligatorio'
+      nombre_min_length: 'El nombre debe tener al menos 2 caracteres'
+      nombre_max_length: 'El nombre no puede exceder 100 caracteres'
+      nombre_invalid_chars: 'El nombre solo puede contener letras, espacios y guiones'
+      gentilicio_required: 'El gentilicio es obligatorio'
+      gentilicio_min_length: 'El gentilicio debe tener al menos 2 caracteres'
+      gentilicio_max_length: 'El gentilicio no puede exceder 100 caracteres'
+      gentilicio_invalid_chars: 'El gentilicio solo puede contener letras y espacios'
+    
+    # MENSAJES
+    messages:
+      created_success: 'País creado exitosamente'
+      updated_success: 'País actualizado exitosamente'
+      deleted_success: 'País eliminado exitosamente'
+      load_error: 'No se pudieron cargar los datos del país'
+      save_error: 'Error al guardar el país'
+      delete_error: 'No se pudo eliminar el país'
+      connection_error: 'No se pudo conectar con el servidor'
+      not_found: 'País no encontrado'
+    
+    # CONFIRMACIONES
+    confirm:
+      delete_title: '¿Está seguro?'
+      delete_text: '¿Realmente desea eliminar el país "%name%"? Esta acción no se puede deshacer.'
+      delete_confirm: 'Sí, eliminar'
+      delete_cancel: 'Cancelar'
+    
+    # ESTADOS
+    states:
+      active: 'Activo'
+      inactive: 'Inactivo'
+    
+    # INFORMACIÓN
+    info:
+      nombre_help: 'Ingresa el nombre oficial del país. Usar el botón mágico genera el gentilicio automáticamente.'
+      gentilicio_help: 'Gentilicio utilizado para identificar a los habitantes del país.'
+      activo_help: 'Solo los países activos aparecerán en formularios y listas de selección.'
+      required_fields: 'Los campos marcados con * son obligatorios.'
+      auto_generate: 'Generar gentilicio automáticamente'
+      loading_data: 'Cargando datos...'
+      saving_data: 'Guardando...'
+      no_countries: 'No hay países registrados'
+      first_country: 'Comienza agregando tu primer país usando el botón "Nuevo" en la parte superior.'
+      create_first: 'Crear primer país'
+      showing_results: 'Mostrando %count% países'
+
+# BOTONES Y ACCIONES GLOBALES
+actions:
+  new: 'Nuevo'
+  create: 'Crear'
+  edit: 'Editar'
+  save: 'Guardar'
+  delete: 'Eliminar'
+  cancel: 'Cancelar'
+  close: 'Cerrar'
+  clear: 'Limpiar'
+  refresh: 'Actualizar'
+  loading: 'Cargando...'
+  saving: 'Guardando...'
+  processing: 'Procesando...'
+
+# ESTADOS GENERALES
+status:
+  active: 'Activo'
+  inactive: 'Inactivo'
+  enabled: 'Habilitado'
+  disabled: 'Deshabilitado'
+
+# NOTIFICACIONES
+notifications:
+  success: '¡Éxito!'
+  error: 'Error'
+  warning: 'Advertencia'
+  info: 'Información'
+  connection_error: 'Error de conexión'
+  form_error: 'Error en el formulario'
+  operation_success: 'Operación exitosa'
