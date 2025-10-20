@@ -114,8 +114,20 @@ class PaisController extends AbstractController
      */
     public function index(): Response
     {
-        // Redirigir al content para mantener consistencia con sistema AJAX
-        return $this->redirectToRoute('mantenedores_pais_content');
+        // Obtener tenant con fallback
+        $tenant = $this->tenantContext->getCurrentTenant();
+        if (!$tenant) {
+            $tenant = [
+                'id' => 1,
+                'name' => 'Hospital Demo',
+                'subdomain' => 'demo'
+            ];
+        }
+        
+        // Renderizar la página completa de mantenedores
+        return $this->render('mantenedores/index.html.twig', [
+            'tenant' => $tenant
+        ]);
     }
 
     /**

@@ -778,10 +778,23 @@
             }
         });
         
-        // Verificar si hay contenido para precargar desde el servidor
-        {% if preload_content_url %}
-        console.log('Precargando contenido desde servidor:', '{{ preload_content_url }}');
-        cargarMantenedorSinHistory('{{ preload_content_url }}');
+        // Verificar si hay contenido precargado desde el servidor
+        {% if preload_data is defined and preload_data.content_html is defined %}
+        console.log('Contenido precargado disponible para: {{ preload_content|default("desconocido") }}');
+        const contentDiv = document.getElementById('content-column');
+        if (contentDiv) {
+            contentDiv.innerHTML = `{{ preload_data.content_html|e('js') }}`;
+            
+            // Ejecutar scripts del contenido precargado
+            executeScriptsInContainer(contentDiv);
+            
+            // Configurar form handlers
+            if (!formHandlersSetup) {
+                setupFormHandlers();
+            }
+            
+            console.log('Contenido precargado inyectado exitosamente');
+        }
         {% else %}
         // Verificar si necesitamos cargar un mantenedor basado en la URL actual
         const currentPath = window.location.pathname;
@@ -854,6 +867,7 @@
     // Función para obtener URL de mantenedor desde el path del navegador
     function obtenerUrlMantenedorDesdePath(path) {
         const pathMapping = {
+            '/mantenedores/basico/pais': '/mantenedores/basico/pais/content',
             '/mantenedores/pais': '/mantenedores/basico/pais/content',
             '/mantenedores/regiones': '/mantenedores/basico/regiones',
             '/mantenedores/religiones': '/mantenedores/basico/religiones',
@@ -919,10 +933,10 @@
         
         // Mapeo de URLs de contenido a URLs del navegador
         const urlMapping = {
-            '/mantenedores/basico/pais/content': '/mantenedores/pais',
-            '/mantenedores/basico/regiones': '/mantenedores/regiones',
-            '/mantenedores/basico/religiones': '/mantenedores/religiones',
-            '/mantenedores/basico/sexo': '/mantenedores/sexo'
+            '/mantenedores/basico/pais/content': '/mantenedores/basico/pais',
+            '/mantenedores/basico/regiones': '/mantenedores/basico/regiones',
+            '/mantenedores/basico/religiones': '/mantenedores/basico/religiones',
+            '/mantenedores/basico/sexo': '/mantenedores/basico/sexo'
         };
         
         const newUrl = urlMapping[contentUrl];

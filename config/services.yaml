@@ -45,6 +45,14 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    App\EventListener\TenantConnectionListener:
+        arguments:
+            $tenantResolver: '@App\Service\TenantResolver'
+            $connection: '@doctrine.dbal.default_connection'
+            $logger: '@monolog.logger'
+        tags:
+            - { name: kernel.event_subscriber }
+
     # API Platform State Providers
     App\State\DynamicPatientStateProvider:
         autowire: true

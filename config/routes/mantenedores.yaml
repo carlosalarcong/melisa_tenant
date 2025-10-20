@@ -23,31 +23,27 @@ mantenedores_basico_index:
 
 # Rutas simplificadas que muestran la página de mantenedores con contenido específico precargado
 mantenedores_pais_spa:
-    path: /mantenedores/pais
-    controller: App\Controller\Mantenedores\MantenedoresController::index
-    defaults:
-        preload_content: 'pais'
+    path: /mantenedores/basico/pais
+    controller: App\Controller\Mantenedores\Basico\PaisController::index
     methods: [GET]
 
 mantenedores_regiones_spa:
-    path: /mantenedores/regiones
+    path: /mantenedores/basico/regiones
     controller: App\Controller\Mantenedores\MantenedoresController::index
     defaults:
         preload_content: 'regiones'
     methods: [GET]
 
 mantenedores_religiones_spa:
-    path: /mantenedores/religiones
+    path: /mantenedores/basico/religiones
     controller: App\Controller\Mantenedores\MantenedoresController::index
     defaults:
         preload_content: 'religiones'
     methods: [GET]
 
 mantenedores_sexo_spa:
-    path: /mantenedores/sexo
-    controller: App\Controller\Mantenedores\MantenedoresController::index
-    defaults:
-        preload_content: 'sexo'
+    path: /mantenedores/basico/sexo
+    controller: App\Controller\Mantenedores\Basico\SexoController::index
     methods: [GET]
 
 # ==================================
@@ -55,11 +51,6 @@ mantenedores_sexo_spa:
 # ==================================
 
 # Rutas por defecto para País (todos los tenants)
-mantenedores_pais_index:
-    path: /mantenedores/basico/pais
-    controller: App\Controller\Mantenedores\Basico\PaisController::index
-    methods: [GET]
-
 mantenedores_pais_content:
     path: /mantenedores/basico/pais/content
     controller: App\Controller\Mantenedores\Basico\PaisController::content

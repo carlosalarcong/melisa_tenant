@@ -15,10 +15,10 @@ class Pais
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[ORM\Column(name: "nombre_pais", type: "string", length: 255, nullable: true)]
     private ?string $nombrePais = null;
 
-    #[ORM\Column(type: "string", length: 255, nullable: false)]
+    #[ORM\Column(name: "nombre_gentilicio", type: "string", length: 255, nullable: false)]
     private ?string $nombreGentilicio = null;
 
     #[ORM\Column(type: "boolean", options: ["default" => true])]
