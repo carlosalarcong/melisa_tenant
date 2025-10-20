@@ -7,6 +7,12 @@ import './bootstrap.js';
  */
 import './styles/app.css';
 
+// Importar SweetAlert2
+import Swal from 'sweetalert2';
+
+// Hacer SweetAlert2 disponible globalmente
+window.Swal = Swal;
+
 // Importar Dynamic Controller Loader
 import DynamicControllerLoader from './controllers/dynamic_loader.js';
 

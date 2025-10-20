@@ -1,224 +1,964 @@
-<!-- Contenido del mantenedor de países sin layout -->
-<div class="mantenedor-container">
-    <!-- Header del mantenedor -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h4>
-                        <i class="fas fa-globe text-primary me-2"></i>
-                        Gestión de Países
-                    </h4>
-                    <p class="text-muted mb-0">Administra los países y nacionalidades del sistema</p>
-                </div>
-                <div class="d-flex gap-2">
-                    <div class="badge bg-info text-dark">
-                        {{ tenant.name }}
-                    </div>
-                    <button class="btn btn-outline-secondary btn-sm" data-action="volver-menu">
-                        <i class="fas fa-arrow-left me-1"></i>
-                        Volver al menú
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+{#
+  TEMPLATE MANTENEDOR - Países
+  ===========================
+  
+  PATRÓN FRONTEND PARA MANTENEDORES
+  ================================
+  Este template implementa la interfaz estándar para mantenedores del sistema Melisa.
+  Diseñado para funcionar con el sistema AJAX de carga dinámica de contenido.
+  
+  ESTRUCTURA DEL TEMPLATE:
+  1. Encabezado con título y botón de acción
+  2. Tabla responsiva con datos
+  3. Modal para formularios (crear/editar)
+  4. JavaScript embebido para interacciones
+  
+  PARA NUEVOS MANTENEDORES:
+  ========================
+  1. Copia este template y ajusta los nombres (reemplaza 'pais' por tu entidad)
+  2. Modifica los campos del formulario según tu modelo
+  3. Actualiza las columnas de la tabla
+  4. Ajusta las validaciones JavaScript
+  5. Personaliza los mensajes y textos
+  
+  CONVENCIONES DE NOMBRES:
+  - Modal ID: {entidad}Modal (ej: paisModal, ciudadModal)
+  - Form ID: {entidad}Form
+  - Campos: usar nombres exactos del modelo de datos
+  - Botones: data-action="create|edit|delete"
+  
+  DEPENDENCIAS:
+  - Bootstrap 5.3 (modal, form, table)
+  - SweetAlert2 (confirmaciones y notificaciones)
+  - Sistema AJAX global (mantenedores/index.html.twig)
+  
+  @author Equipo Melisa - Frontend
+  @version 1.0
+  @since 2025-10-20
+#}
 
-    <!-- Card principal del mantenedor -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">
-                            <i class="fas fa-list me-2"></i>
-                            Lista de Países
-                        </h5>
-                        <button class="btn btn-primary btn-sm" data-action="crear-pais">
-                            <i class="fas fa-plus me-1"></i>
-                            Nuevo País
+{# ============================================= #}
+{# CONTENIDO PRINCIPAL DEL MANTENEDOR #}
+{# ============================================= #}
+<div class="row">
+    <div class="col-12">
+        {# TARJETA PRINCIPAL #}
+        <div class="card shadow-sm">
+            {# ENCABEZADO DE LA TARJETA #}
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-globe me-2"></i>
+                    <h5 class="card-title mb-0">{{ mantenedor_config.title|default('Gestión de Países') }}</h5>
+                </div>
+                {# BOTÓN PARA CREAR NUEVO REGISTRO #}
+                <button type="button" class="btn btn-light btn-sm" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#paisModal" 
+                        data-action="create"
+                        title="Crear nuevo país">
+                    <i class="fas fa-plus me-1"></i> 
+                    Nuevo {{ mantenedor_config.entity_name|default('País') }}
+                </button>
+            </div>
+            
+            {# CUERPO DE LA TARJETA #}
+            <div class="card-body">
+                {# MANEJO DE ERRORES #}
+                {% if error is defined and error %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Error:</strong> {{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endif %}
+
+                {# INFORMACIÓN DEL TENANT (SOLO PARA DEBUG/DESARROLLO) #}
+                {% if tenant is defined and app.environment == 'dev' %}
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Tenant:</strong> {{ tenant.name }} ({{ tenant.subdomain }})
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endif %}
+
+                {# ESTADO VACÍO - NO HAY REGISTROS #}
+                {% if paises is empty %}
+                    <div class="text-center py-5">
+                        <div class="mb-4">
+                            <i class="fas fa-globe fa-4x text-muted opacity-50"></i>
+                        </div>
+                        <h5 class="text-muted mb-2">No hay {{ mantenedor_config.entity_name_plural|lower|default('países') }} registrados</h5>
+                        <p class="text-muted mb-4">
+                            Comienza agregando tu primer {{ mantenedor_config.entity_name|lower|default('país') }} usando el botón "Nuevo" en la parte superior.
+                        </p>
+                        <button type="button" class="btn btn-primary" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#paisModal" 
+                                data-action="create">
+                            <i class="fas fa-plus me-2"></i>
+                            Crear primer {{ mantenedor_config.entity_name|lower|default('país') }}
                         </button>
                     </div>
-                </div>
-
-                <div class="card-body">
-                    <!-- Filtros y búsqueda -->
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <div class="input-group">
-                                <input type="text" 
-                                       class="form-control" 
-                                       id="searchInput"
-                                       placeholder="Buscar por nombre o gentilicio..."
-                                       data-action="buscar-paises">
-                                <div class="input-group-append">
-                                    <span class="input-group-text">
-                                        <i class="fas fa-search"></i>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 text-end">
-                            <button class="btn btn-outline-secondary btn-sm" data-action="cargar-paises">
-                                <i class="fas fa-sync-alt me-1"></i>
-                                Actualizar
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Tabla responsive -->
+                {% else %}
+                    {# TABLA DE DATOS #}
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
+                        <table class="table table-striped table-hover align-middle">
+                            {# ENCABEZADOS DE LA TABLA #}
+                            <thead class="table-dark">
                                 <tr>
-                                    <th width="80">ID</th>
-                                    <th>País</th>
-                                    <th>Gentilicio</th>
-                                    <th width="100">Estado</th>
-                                    <th width="120">Acciones</th>
+                                    <th scope="col" class="text-center" style="width: 80px;">
+                                        <i class="fas fa-hashtag me-1"></i>ID
+                                    </th>
+                                    <th scope="col">
+                                        <i class="fas fa-flag me-1"></i>País
+                                    </th>
+                                    <th scope="col">
+                                        <i class="fas fa-users me-1"></i>Gentilicio
+                                    </th>
+                                    <th scope="col" class="text-center" style="width: 100px;">
+                                        <i class="fas fa-toggle-on me-1"></i>Estado
+                                    </th>
+                                    <th scope="col" class="text-center" style="width: 150px;">
+                                        <i class="fas fa-cogs me-1"></i>Acciones
+                                    </th>
                                 </tr>
                             </thead>
-                            <tbody id="paisesTableBody">
-                                {% if paises is defined and paises|length > 0 %}
-                                    {% for pais in paises %}
-                                        <tr>
-                                            <td>{{ pais.id }}</td>
-                                            <td>{{ pais.nombrePais ?? 'Sin nombre' }}</td>
-                                            <td>{{ pais.nombreGentilicio ?? 'Sin gentilicio' }}</td>
-                                            <td>
-                                                <span class="badge {{ pais.estadoClase }}">{{ pais.estadoTexto }}</span>
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-warning btn-sm" 
-                                                        data-action="editar-pais" 
-                                                        data-id="{{ pais.id }}"
-                                                        title="Editar país">
+                            {# DATOS DE LA TABLA #}
+                            <tbody>
+                                {% for pais in paises %}
+                                    <tr>
+                                        {# ID DEL REGISTRO #}
+                                        <td class="text-center">
+                                            <span class="badge bg-secondary">{{ pais.idPais }}</span>
+                                        </td>
+                                        
+                                        {# NOMBRE DEL PAÍS #}
+                                        <td>
+                                            <strong>{{ pais.nombrePais }}</strong>
+                                        </td>
+                                        
+                                        {# GENTILICIO #}
+                                        <td>
+                                            <span class="text-muted">{{ pais.nombreGentilicio }}</span>
+                                        </td>
+                                        
+                                        {# ESTADO ACTIVO/INACTIVO #}
+                                        <td class="text-center">
+                                            {% if pais.activo %}
+                                                <span class="badge bg-success">
+                                                    <i class="fas fa-check me-1"></i>Activo
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">
+                                                    <i class="fas fa-times me-1"></i>Inactivo
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                        
+                                        {# BOTONES DE ACCIÓN #}
+                                        <td class="text-center">
+                                            <div class="btn-group" role="group" aria-label="Acciones">
+                                                {# BOTÓN EDITAR #}
+                                                <button type="button" 
+                                                        class="btn btn-outline-primary btn-sm" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#paisModal" 
+                                                        data-action="edit" 
+                                                        data-id="{{ pais.idPais }}"
+                                                        title="Editar {{ pais.nombrePais }}">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
-                                                <button class="btn btn-danger btn-sm" 
-                                                        data-action="eliminar-pais" 
-                                                        data-id="{{ pais.id }}"
-                                                        title="Eliminar país">
+                                                
+                                                {# BOTÓN ELIMINAR #}
+                                                <button type="button" 
+                                                        class="btn btn-outline-danger btn-sm" 
+                                                        data-action="delete" 
+                                                        data-id="{{ pais.idPais }}" 
+                                                        data-name="{{ pais.nombrePais }}"
+                                                        title="Eliminar {{ pais.nombrePais }}">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                {% else %}
-                                    <tr>
-                                        <td colspan="5" class="text-center text-muted py-4">
-                                            <i class="fas fa-globe fa-2x mb-3 d-block"></i>
-                                            No hay países registrados en la base de datos
-                                            <br>
-                                            <small class="mt-2 d-block">Haz clic en "Nuevo País" para agregar el primero</small>
+                                            </div>
                                         </td>
                                     </tr>
-                                {% endif %}
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
-
-                    <!-- Estado vacío -->
-                    <div class="text-center py-4 d-none" id="emptyState">
-                        <i class="fas fa-globe fa-3x text-muted mb-3"></i>
-                        <h5 class="text-muted">No hay países registrados</h5>
-                        <p class="text-muted">Agrega el primer país para comenzar.</p>
-                    </div>
-                </div>
-
-                <!-- Footer con paginación -->
-                <div class="card-footer">
-                    <div class="row align-items-center">
-                        <div class="col-sm-6">
-                            <small class="text-muted">
-                                {% set totalPaises = paises is defined ? paises|length : 0 %}
-                                Mostrando {{ totalPaises }} registros de {{ totalPaises }} total
-                            </small>
-                        </div>
-                        <div class="col-sm-6">
-                            <nav aria-label="Paginación de países">
-                                <ul class="pagination pagination-sm justify-content-end mb-0">
-                                    <li class="page-item disabled">
-                                        <span class="page-link">Anterior</span>
-                                    </li>
-                                    <li class="page-item active">
-                                        <span class="page-link">1</span>
-                                    </li>
-                                    <li class="page-item disabled">
-                                        <span class="page-link">Siguiente</span>
-                                    </li>
-                                </ul>
-                            </nav>
+                    
+                    {# INFORMACIÓN ADICIONAL DE LA TABLA #}
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <small class="text-muted">
+                            <i class="fas fa-list me-1"></i>
+                            Mostrando {{ paises|length }} {{ mantenedor_config.entity_name_plural|lower|default('países') }}
+                        </small>
+                        
+                        {# ESPACIO PARA PAGINACIÓN (FUTURO) #}
+                        <div class="d-flex">
+                            {# Aquí se puede agregar paginación en el futuro #}
                         </div>
                     </div>
-                </div>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal para crear/editar país -->
-<div class="modal fade" id="paisModal" tabindex="-1">
-    <div class="modal-dialog">
+{# ============================================= #}
+{# MODAL PARA CREAR/EDITAR REGISTROS #}
+{# ============================================= #}
+<div class="modal fade" id="paisModal" tabindex="-1" aria-labelledby="paisModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalTitle">Crear País</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            {# ENCABEZADO DEL MODAL #}
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="paisModalLabel">
+                    <i class="fas fa-globe me-2"></i>
+                    Nuevo {{ mantenedor_config.entity_name|default('País') }}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
-            <form id="paisForm" data-action="guardar-pais">
+            
+            {# FORMULARIO PRINCIPAL #}
+            <form id="paisForm" novalidate>
                 <div class="modal-body">
+                    {# CAMPOS OCULTOS #}
+                    <input type="hidden" id="paisId" name="paisId">
                     <input type="hidden" name="_token" value="{{ csrf_token }}">
-                    <input type="hidden" id="paisId" name="id">
                     
+                    {# CAMPO: NOMBRE DEL PAÍS #}
                     <div class="mb-3">
-                        <label class="form-label">
-                            Nombre del País <span class="text-danger">*</span>
+                        <label for="nombrePais" class="form-label">
+                            <i class="fas fa-flag me-1 text-primary"></i>
+                            Nombre del País
+                            <span class="text-danger">*</span>
                         </label>
                         <input type="text" 
                                class="form-control" 
-                               id="nombrePais"
-                               name="nombrePais"
-                               required 
-                               maxlength="255"
-                               placeholder="Ej: Chile">
+                               id="nombrePais" 
+                               name="nombrePais" 
+                               required
+                               placeholder="Ej: Chile, Argentina, Brasil"
+                               maxlength="100">
+                        <div class="invalid-feedback">
+                            El nombre del país es obligatorio y debe tener máximo 100 caracteres.
+                        </div>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Ingresa el nombre oficial del país.
+                        </div>
                     </div>
                     
+                    {# CAMPO: GENTILICIO #}
                     <div class="mb-3">
-                        <label class="form-label">
-                            Gentilicio <span class="text-danger">*</span>
+                        <label for="nombreGentilicio" class="form-label">
+                            <i class="fas fa-users me-1 text-primary"></i>
+                            Gentilicio
+                            <span class="text-danger">*</span>
                         </label>
                         <input type="text" 
                                class="form-control" 
-                               id="nombreGentilicio"
-                               name="nombreGentilicio"
-                               required 
-                               maxlength="255"
-                               placeholder="Ej: Chileno/a">
+                               id="nombreGentilicio" 
+                               name="nombreGentilicio" 
+                               required
+                               placeholder="Ej: Chileno, Argentino, Brasileño"
+                               maxlength="100">
+                        <div class="invalid-feedback">
+                            El gentilicio es obligatorio y debe tener máximo 100 caracteres.
+                        </div>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Gentilicio utilizado para identificar a los habitantes del país.
+                        </div>
                     </div>
                     
+                    {# CAMPO: ESTADO ACTIVO #}
                     <div class="mb-3">
-                        <div class="form-check">
-                            <input type="checkbox" 
-                                   class="form-check-input" 
-                                   id="activo"
-                                   name="activo"
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" 
+                                   type="checkbox" 
+                                   id="activo" 
+                                   name="activo" 
                                    checked>
-                            <label class="form-check-label">
-                                País activo
+                            <label class="form-check-label" for="activo">
+                                <i class="fas fa-toggle-on me-1 text-success"></i>
+                                País activo en el sistema
                             </label>
                         </div>
-                        <small class="form-text text-muted">Los países inactivos no aparecerán en formularios</small>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Solo los países activos aparecerán en formularios y listas de selección.
+                        </div>
+                    </div>
+                    
+                    {# CAMPOS OBLIGATORIOS - NOTA #}
+                    <div class="alert alert-info d-flex align-items-center" role="alert">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <div>
+                            <small>
+                                <strong>Nota:</strong> Los campos marcados con 
+                                <span class="text-danger">*</span> son obligatorios.
+                            </small>
+                        </div>
                     </div>
                 </div>
-                <div class="modal-footer">
+                
+                {# PIE DEL MODAL - BOTONES DE ACCIÓN #}
+                <div class="modal-footer bg-light">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>
                         Cancelar
                     </button>
                     <button type="submit" class="btn btn-primary">
-                        Guardar
+                        <i class="fas fa-save me-1"></i>
+                        Guardar {{ mantenedor_config.entity_name|default('País') }}
                     </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+{# ============================================= #}
+{# JAVASCRIPT ESPECÍFICO DEL MANTENEDOR #}
+{# ============================================= #}
+<script>
+/**
+ * JAVASCRIPT PARA MANTENEDOR DE PAÍSES
+ * ===================================
+ * 
+ * Este script maneja las interacciones específicas del mantenedor de países.
+ * Funciona en conjunto con el sistema AJAX global definido en mantenedores/index.html.twig
+ * 
+ * FUNCIONALIDADES:
+ * - Inicialización del modal para crear/editar
+ * - Validación de formularios
+ * - Envío de datos via AJAX
+ * - Confirmaciones de eliminación
+ * - Actualización dinámica de la interfaz
+ * 
+ * PARA ADAPTAR A OTROS MANTENEDORES:
+ * - Cambia 'pais' por el nombre de tu entidad
+ * - Ajusta los campos del formulario
+ * - Modifica las validaciones según tus reglas de negocio
+ * - Actualiza los mensajes y endpoints
+ */
+
+document.addEventListener('DOMContentLoaded', function() {
+    // ==========================================
+    // CONFIGURACIÓN BASE
+    // ==========================================
+    const BASE_URL = window.location.origin;
+    const API_BASE = BASE_URL + '/mantenedores/basico/pais';
+    
+    // ==========================================
+    // ELEMENTOS DEL DOM
+    // ==========================================
+    const paisModal = document.getElementById('paisModal');
+    const paisForm = document.getElementById('paisForm');
+    const paisIdField = document.getElementById('paisId');
+    const nombrePaisField = document.getElementById('nombrePais');
+    const nombreGentilicioField = document.getElementById('nombreGentilicio');
+    const activoField = document.getElementById('activo');
+    const modalTitle = document.getElementById('paisModalLabel');
+    
+    // ==========================================
+    // CONFIGURACIÓN DEL MODAL
+    // ==========================================
+    if (paisModal) {
+        paisModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const action = button.getAttribute('data-action');
+            const paisId = button.getAttribute('data-id');
+            
+            console.log(`📝 Configurando modal para acción: ${action}`, { paisId });
+            
+            // Resetear formulario
+            resetFormulario();
+            
+            if (action === 'create') {
+                configurarModalCrear();
+            } else if (action === 'edit' && paisId) {
+                configurarModalEditar(paisId);
+            }
+        });
+        
+        // Limpiar formulario al cerrar modal
+        paisModal.addEventListener('hidden.bs.modal', function() {
+            resetFormulario();
+        });
+    }
+    
+    // ==========================================
+    // MANEJO DEL FORMULARIO
+    // ==========================================
+    if (paisForm) {
+        paisForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validar formulario
+            if (!validarFormulario()) {
+                console.log('❌ Formulario no válido');
+                return;
+            }
+            
+            const paisId = paisIdField.value;
+            const esEdicion = paisId && paisId !== '';
+            
+            console.log(`💾 Enviando formulario...`, { esEdicion, paisId });
+            
+            // Enviar datos
+            if (esEdicion) {
+                actualizarPais(paisId);
+            } else {
+                crearPais();
+            }
+        });
+    }
+    
+    // ==========================================
+    // MANEJO DE ELIMINACIONES
+    // ==========================================
+    document.addEventListener('click', function(e) {
+        if (e.target.matches('[data-action="delete"], [data-action="delete"] *')) {
+            e.preventDefault();
+            
+            const button = e.target.closest('[data-action="delete"]');
+            const paisId = button.getAttribute('data-id');
+            const paisNombre = button.getAttribute('data-name');
+            
+            console.log(`🗑️ Solicitud de eliminación`, { paisId, paisNombre });
+            
+            confirmarEliminacion(paisId, paisNombre);
+        }
+    });
+    
+    // ==========================================
+    // FUNCIONES DE CONFIGURACIÓN
+    // ==========================================
+    
+    /**
+     * Configura el modal para crear nuevo país
+     */
+    function configurarModalCrear() {
+        modalTitle.innerHTML = '<i class="fas fa-plus me-2"></i>Nuevo País';
+        paisIdField.value = '';
+        
+        // Valores por defecto
+        activoField.checked = true;
+    }
+    
+    /**
+     * Configura el modal para editar país existente
+     */
+    function configurarModalEditar(paisId) {
+        modalTitle.innerHTML = '<i class="fas fa-edit me-2"></i>Editar País';
+        paisIdField.value = paisId;
+        
+        // Mostrar indicador de carga
+        const originalHtml = modalTitle.innerHTML;
+        modalTitle.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Cargando datos...';
+        
+        // Cargar datos del país
+        fetch(`${API_BASE}/${paisId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success && data.data) {
+                const pais = data.data;
+                
+                nombrePaisField.value = pais.nombrePais || '';
+                nombreGentilicioField.value = pais.nombreGentilicio || '';
+                activoField.checked = pais.activo || false;
+                
+                // Restaurar título del modal
+                modalTitle.innerHTML = '<i class="fas fa-edit me-2"></i>Editar País';
+            } else {
+                modalTitle.innerHTML = originalHtml;
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error || 'No se pudieron cargar los datos del país'
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error de conexión:', error);
+            modalTitle.innerHTML = originalHtml;
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de conexión',
+                text: 'No se pudo conectar con el servidor: ' + error.message
+            });
+        });
+    }
+    
+    // ==========================================
+    // FUNCIONES DE VALIDACIÓN
+    // ==========================================
+    
+    /**
+     * Valida el formulario completo
+     */
+    function validarFormulario() {
+        let esValido = true;
+        
+        // Limpiar validaciones anteriores
+        paisForm.classList.remove('was-validated');
+        
+        // Validar nombre del país
+        if (!nombrePaisField.value.trim()) {
+            marcarCampoInvalido(nombrePaisField, 'El nombre del país es obligatorio');
+            esValido = false;
+        } else if (nombrePaisField.value.trim().length < 2) {
+            marcarCampoInvalido(nombrePaisField, 'El nombre debe tener al menos 2 caracteres');
+            esValido = false;
+        } else {
+            marcarCampoValido(nombrePaisField);
+        }
+        
+        // Validar gentilicio
+        if (!nombreGentilicioField.value.trim()) {
+            marcarCampoInvalido(nombreGentilicioField, 'El gentilicio es obligatorio');
+            esValido = false;
+        } else if (nombreGentilicioField.value.trim().length < 2) {
+            marcarCampoInvalido(nombreGentilicioField, 'El gentilicio debe tener al menos 2 caracteres');
+            esValido = false;
+        } else {
+            marcarCampoValido(nombreGentilicioField);
+        }
+        
+        // Activar validación visual de Bootstrap
+        paisForm.classList.add('was-validated');
+        
+        return esValido;
+    }
+    
+    /**
+     * Marca un campo como inválido
+     */
+    function marcarCampoInvalido(campo, mensaje) {
+        campo.classList.add('is-invalid');
+        campo.classList.remove('is-valid');
+        
+        const feedback = campo.parentNode.querySelector('.invalid-feedback');
+        if (feedback) {
+            feedback.textContent = mensaje;
+        }
+    }
+    
+    /**
+     * Marca un campo como válido
+     */
+    function marcarCampoValido(campo) {
+        campo.classList.add('is-valid');
+        campo.classList.remove('is-invalid');
+    }
+    
+    // ==========================================
+    // FUNCIONES DE DATOS
+    // ==========================================
+    
+    /**
+     * Crea un nuevo país
+     */
+    function crearPais() {
+        const datos = recopilarDatosFormulario();
+        
+        fetch(API_BASE, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(datos)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: data.message || 'País creado exitosamente',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                
+                cerrarModal();
+                recargarContenido();
+            } else {
+                mostrarErrorFormulario(data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error de conexión:', error);
+            mostrarErrorConexion();
+        });
+    }
+    
+    /**
+     * Actualiza un país existente
+     */
+    function actualizarPais(paisId) {
+        const datos = recopilarDatosFormulario();
+        
+        console.log(`📤 Enviando datos para actualizar país ${paisId}:`, datos);
+        
+        fetch(`${API_BASE}/${paisId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(datos)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('📡 Respuesta del servidor (actualizar):', data);
+            
+            if (data.success) {
+                console.log('✅ País actualizado exitosamente');
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: data.message || 'País actualizado exitosamente',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                
+                cerrarModal();
+                recargarContenido();
+            } else {
+                console.error('❌ Error al actualizar país:', data.error);
+                mostrarErrorFormulario(data.error);
+            }
+        })
+        .catch(error => {
+            console.error('❌ Error de conexión:', error);
+            mostrarErrorConexion();
+        });
+    }
+    
+    /**
+     * Confirma y ejecuta eliminación de país
+     */
+    function confirmarEliminacion(paisId, paisNombre) {
+        Swal.fire({
+            title: '¿Está seguro?',
+            text: `¿Realmente desea eliminar el país "${paisNombre}"? Esta acción no se puede deshacer.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                eliminarPais(paisId);
+            }
+        });
+    }
+    
+    /**
+     * Elimina un país
+     */
+    function eliminarPais(paisId) {
+        console.log(`🗑️ Eliminando país ID: ${paisId}`);
+        
+        fetch(`${API_BASE}/${paisId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('📡 Respuesta del servidor (eliminar):', data);
+            
+            if (data.success) {
+                console.log('✅ País eliminado exitosamente');
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Eliminado!',
+                    text: data.message || 'País eliminado exitosamente',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                
+                recargarContenido();
+            } else {
+                console.error('❌ Error al eliminar país:', data.error);
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error || 'No se pudo eliminar el país'
+                });
+            }
+        })
+        .catch(error => {
+            console.error('❌ Error de conexión:', error);
+            mostrarErrorConexion();
+        });
+    }
+    
+    // ==========================================
+    // FUNCIONES AUXILIARES
+    // ==========================================
+    
+    /**
+     * Recopila datos del formulario
+     */
+    function recopilarDatosFormulario() {
+        return {
+            nombrePais: nombrePaisField.value.trim(),
+            nombreGentilicio: nombreGentilicioField.value.trim(),
+            activo: activoField.checked
+        };
+    }
+    
+    /**
+     * Resetea el formulario a su estado inicial
+     */
+    function resetFormulario() {
+        paisForm.reset();
+        paisForm.classList.remove('was-validated');
+        
+        // Limpiar clases de validación
+        const campos = paisForm.querySelectorAll('.form-control');
+        campos.forEach(campo => {
+            campo.classList.remove('is-valid', 'is-invalid');
+        });
+        
+        console.log('🧹 Formulario reseteado');
+    }
+    
+    /**
+     * Cierra el modal
+     */
+    function cerrarModal() {
+        const modalInstance = bootstrap.Modal.getInstance(paisModal);
+        if (modalInstance) {
+            modalInstance.hide();
+        }
+    }
+    
+    /**
+     * Recarga el contenido del mantenedor
+     */
+    function recargarContenido() {
+        console.log('🔄 Recargando contenido del mantenedor...');
+        
+        // Si existe la función global cargarMantenedor, la usamos
+        if (typeof cargarMantenedor === 'function') {
+            cargarMantenedor('pais');
+        } else {
+            // Fallback: recargar página
+            window.location.reload();
+        }
+    }
+    
+    /**
+     * Muestra error de formulario
+     */
+    function mostrarErrorFormulario(mensaje) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error en el formulario',
+            text: mensaje || 'Por favor, revise los datos ingresados'
+        });
+    }
+    
+    /**
+     * Muestra error de conexión
+     */
+    function mostrarErrorConexion() {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error de conexión',
+            text: 'No se pudo conectar con el servidor. Intente nuevamente.'
+        });
+    }
+});
+
+/**
+ * FUNCIONES ADICIONALES PARA EXTENSIÓN
+ * ===================================
+ * 
+ * Aquí puedes agregar funcionalidades adicionales:
+ * 
+ * // Validación en tiempo real
+ * function configurarValidacionTiempoReal() {
+ *     nombrePaisField.addEventListener('input', function() {
+ *         // Validar mientras el usuario escribe
+ *     });
+ * }
+ * 
+ * // Búsqueda/filtrado
+ * function configurarBusqueda() {
+ *     const busquedaInput = document.getElementById('busqueda');
+ *     busquedaInput.addEventListener('input', filtrarTabla);
+ * }
+ * 
+ * // Exportación de datos
+ * function exportarDatos(formato) {
+ *     // Implementar exportación
+ * }
+ * 
+ * // Importación de datos
+ * function importarDatos() {
+ *     // Implementar importación
+ * }
+ */
+</script>
+
+{# ============================================= #}
+{# ESTILOS ESPECÍFICOS DEL MANTENEDOR #}
+{# ============================================= #}
+<style>
+/**
+ * ESTILOS PERSONALIZADOS PARA MANTENEDOR
+ * =====================================
+ * 
+ * Estilos específicos que complementan Bootstrap para mejorar
+ * la experiencia de usuario en el mantenedor de países.
+ */
+
+/* Mejoras visuales para la tabla */
+.table-responsive .table th {
+    border-top: none;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.table-responsive .table td {
+    vertical-align: middle;
+}
+
+/* Hover mejorado para filas */
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+}
+
+/* Botones de acción */
+.btn-group .btn {
+    transition: all 0.2s ease;
+}
+
+.btn-group .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Estados de validación mejorados */
+.was-validated .form-control:valid {
+    border-color: #28a745;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='m2.3 6.73.03-.03L5.05 4 2.33 1.27c-.2-.2-.54-.2-.74 0-.2.2-.2.54 0 .74L3.66 4 1.59 6.07c-.2.2-.2.54 0 .74.1.1.23.15.37.15s.27-.05.37-.15z'/%3e%3c/svg%3e");
+}
+
+.was-validated .form-control:invalid {
+    border-color: #dc3545;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+}
+
+/* Modal mejorado */
+.modal-content {
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Badges mejorados */
+.badge {
+    font-size: 0.75em;
+    padding: 0.35em 0.65em;
+}
+
+/* Estado vacío */
+.text-center .fa-4x {
+    font-size: 3.5rem !important;
+}
+
+/* Responsive mejoras */
+@media (max-width: 768px) {
+    .btn-group {
+        flex-direction: column;
+    }
+    
+    .btn-group .btn {
+        margin-bottom: 0.25rem;
+    }
+    
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+}
+
+/* Animaciones suaves */
+.card {
+    transition: all 0.3s ease;
+}
+
+.alert {
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Loading states */
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Focus mejorado */
+.form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    border-color: #80bdff;
+}
+</style>

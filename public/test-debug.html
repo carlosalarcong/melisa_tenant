@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Test de Debug - Países</h2>
+        
+        <!-- Botón de prueba para editar -->
+        <button type="button" 
+                class="btn btn-primary me-2" 
+                data-bs-toggle="modal" 
+                data-bs-target="#paisModal" 
+                data-action="edit" 
+                data-id="9">
+            Editar País ID 9
+        </button>
+        
+        <!-- Botón de prueba para eliminar -->
+        <button type="button" 
+                class="btn btn-danger" 
+                data-action="delete" 
+                data-id="9" 
+                data-name="Test País">
+            Eliminar País ID 9
+        </button>
+        
+        <!-- Modal -->
+        <div class="modal fade" id="paisModal" tabindex="-1" aria-labelledby="paisModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="paisModalLabel">Modal Test</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="paisForm">
+                            <input type="hidden" id="paisId" name="paisId" value="">
+                            
+                            <div class="mb-3">
+                                <label for="nombrePais" class="form-label">Nombre del País</label>
+                                <input type="text" class="form-control" id="nombrePais" name="nombrePais">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="nombreGentilicio" class="form-label">Gentilicio</label>
+                                <input type="text" class="form-control" id="nombreGentilicio" name="nombreGentilicio">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="activo" name="activo" checked>
+                                    <label class="form-check-label" for="activo">Activo</label>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🚀 Debug test iniciado');
+        
+        const BASE_URL = window.location.origin;
+        const API_BASE = BASE_URL + '/mantenedores/basico/pais';
+        
+        console.log('🔧 BASE_URL:', BASE_URL);
+        console.log('🔧 API_BASE:', API_BASE);
+        
+        // Elementos del DOM
+        const paisModal = document.getElementById('paisModal');
+        const paisForm = document.getElementById('paisForm');
+        const paisIdField = document.getElementById('paisId');
+        const nombrePaisField = document.getElementById('nombrePais');
+        const nombreGentilicioField = document.getElementById('nombreGentilicio');
+        const activoField = document.getElementById('activo');
+        const modalTitle = document.getElementById('paisModalLabel');
+        
+        // Configurar modal
+        if (paisModal) {
+            paisModal.addEventListener('show.bs.modal', function(event) {
+                console.log('🎯 Modal show event triggered');
+                
+                const button = event.relatedTarget;
+                const action = button.getAttribute('data-action');
+                const paisId = button.getAttribute('data-id');
+                
+                console.log(`📝 Action: ${action}, ID: ${paisId}`);
+                
+                if (action === 'edit' && paisId) {
+                    configurarModalEditar(paisId);
+                }
+            });
+        }
+        
+        // Manejar eliminaciones
+        document.addEventListener('click', function(e) {
+            if (e.target.matches('[data-action="delete"], [data-action="delete"] *')) {
+                console.log('🗑️ Delete button clicked');
+                
+                e.preventDefault();
+                
+                const button = e.target.closest('[data-action="delete"]');
+                const paisId = button.getAttribute('data-id');
+                const paisNombre = button.getAttribute('data-name');
+                
+                console.log(`🗑️ Delete ID: ${paisId}, Name: ${paisNombre}`);
+                
+                confirmarEliminacion(paisId, paisNombre);
+            }
+        });
+        
+        function configurarModalEditar(paisId) {
+            console.log(`🔧 Configurando modal para editar ID: ${paisId}`);
+            
+            modalTitle.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Cargando datos...';
+            paisIdField.value = paisId;
+            
+            const url = `${API_BASE}/${paisId}`;
+            console.log(`📡 Fetching: ${url}`);
+            
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                console.log('📡 Response status:', response.status);
+                console.log('📡 Response headers:', [...response.headers.entries()]);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('📡 Data received:', data);
+                
+                if (data.success && data.data) {
+                    const pais = data.data;
+                    
+                    nombrePaisField.value = pais.nombrePais || '';
+                    nombreGentilicioField.value = pais.nombreGentilicio || '';
+                    activoField.checked = pais.activo || false;
+                    
+                    modalTitle.innerHTML = '<i class="fas fa-edit me-2"></i>Editar País';
+                    
+                    console.log('✅ Datos cargados correctamente', pais);
+                } else {
+                    console.error('❌ Error en la respuesta:', data);
+                    modalTitle.innerHTML = '<i class="fas fa-edit me-2"></i>Editar País';
+                    alert('Error: ' + (data.error || 'No se pudieron cargar los datos'));
+                }
+            })
+            .catch(error => {
+                console.error('❌ Error de fetch:', error);
+                modalTitle.innerHTML = '<i class="fas fa-edit me-2"></i>Editar País';
+                alert('Error de conexión: ' + error.message);
+            });
+        }
+        
+        function confirmarEliminacion(paisId, paisNombre) {
+            console.log(`🗑️ Confirmando eliminación de ${paisNombre} (ID: ${paisId})`);
+            
+            Swal.fire({
+                title: '¿Está seguro?',
+                text: `¿Realmente desea eliminar el país "${paisNombre}"?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                console.log('🗑️ SweetAlert result:', result);
+                
+                if (result.isConfirmed) {
+                    eliminarPais(paisId);
+                }
+            });
+        }
+        
+        function eliminarPais(paisId) {
+            console.log(`🗑️ Eliminando país ID: ${paisId}`);
+            
+            const url = `${API_BASE}/${paisId}`;
+            console.log(`📡 DELETE request to: ${url}`);
+            
+            fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                console.log('📡 DELETE response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('📡 DELETE data received:', data);
+                
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Eliminado!',
+                        text: data.message || 'País eliminado exitosamente'
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.error || 'No se pudo eliminar el país'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('❌ Error de DELETE:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de conexión',
+                    text: error.message
+                });
+            });
+        }
+        
+        console.log('✅ Debug test inicializado');
+    });
+    </script>
+</body>
+</html>

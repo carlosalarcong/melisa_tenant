@@ -236,16 +236,16 @@
         
         const target = e.target.closest('[data-action]');
         
-        if (!target) {
-            console.log('No se encontró elemento con data-action');
-            return;
-        }
+        if (!target) return;
         
         const action = target.getAttribute('data-action');
         const url = target.getAttribute('data-url');
         const id = target.getAttribute('data-id');
         
-        console.log('Click detectado en elemento con data-action:', { action, url, id, target });
+        // NO prevenir default para botones de submit
+        if (action === 'guardar-pais') {
+            return; // Permitir que el evento submit se dispare normalmente
+        }
         
         e.preventDefault();
         e.stopPropagation();
@@ -253,20 +253,19 @@
         // Ejecutar acciones
         switch(action) {
             case 'cargar-mantenedor':
-                console.log('Cargando mantenedor:', url);
                 cargarMantenedor(url);
                 break;
             case 'crear-pais':
-                console.log('Creando país...');
                 ejecutarCrearPais();
                 break;
             case 'editar-pais':
-                console.log('Editando país:', id);
+            case 'edit':
                 ejecutarEditarPais(id);
                 break;
             case 'eliminar-pais':
-                console.log('Eliminando país:', id);
-                ejecutarEliminarPais(id);
+            case 'delete':
+                const paisNombre = target.getAttribute('data-name');
+                ejecutarEliminarPais(id, paisNombre);
                 break;
             default:
                 console.log('Acción no reconocida:', action);
@@ -275,8 +274,6 @@
     
     // Función para cargar mantenedor dinámicamente
     function cargarMantenedor(url) {
-        console.log('=== CARGAR MANTENEDOR ===', url);
-        
         const contentDiv = document.getElementById('content-column');
         
         if (!contentDiv) {
@@ -303,31 +300,22 @@
         // Hacer petición AJAX
         fetch(url)
             .then(response => {
-                console.log('Respuesta recibida:', response.status, response.statusText);
                 if (!response.ok) {
                     throw new Error(`Error ${response.status}: ${response.statusText}`);
                 }
                 return response.text();
             })
             .then(html => {
-                console.log('HTML recibido, longitud:', html.length);
-                
                 // Reemplazar el contenido completo
                 contentDiv.innerHTML = html;
                 
-                console.log('Contenido actualizado');
+                // Ejecutar scripts del contenido cargado
+                executeScriptsInContainer(contentDiv);
                 
-                // Verificar que los elementos se cargaron
-                setTimeout(() => {
-                    const botonCrear = document.querySelector('[data-action="crear-pais"]');
-                    console.log('Botón crear encontrado después de cargar:', !!botonCrear);
-                    
-                    if (botonCrear) {
-                        console.log('Botón crear configurado correctamente');
-                    } else {
-                        console.warn('Botón crear no encontrado en el contenido cargado');
-                    }
-                }, 100);
+                // Configurar form handlers para el nuevo contenido
+                if (!formHandlersSetup) {
+                    setupFormHandlers();
+                }
             })
             .catch(error => {
                 console.error('Error al cargar mantenedor:', error);
@@ -398,70 +386,84 @@
     }
     
     function ejecutarEditarPais(id) {
-        console.log('=== EDITAR PAÍS ===', id);
-        
         if (!id) {
-            console.error('ID de país no proporcionado');
-            alert('Error: ID de país no válido');
+            mostrarMensajeError('Error', 'ID de país no válido');
             return;
         }
         
         // Obtener datos del país desde la API
-        fetch(`/mantenedores/basico/pais/${id}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Error ${response.status}: ${response.statusText}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (!data.success) {
-                    throw new Error(data.error || 'Error desconocido');
-                }
-                
-                const pais = data.data;
-                
-                const modal = document.getElementById('paisModal');
-                const modalTitle = document.getElementById('modalTitle');
-                const paisId = document.getElementById('paisId');
-                const nombrePais = document.getElementById('nombrePais');
-                const nombreGentilicio = document.getElementById('nombreGentilicio');
-                const activo = document.getElementById('activo');
-                
-                if (!modal) {
-                    console.error('Modal no encontrado');
-                    alert('Error: Modal no encontrado');
-                    return;
-                }
-                
-                // Configurar modal para editar
-                if (modalTitle) modalTitle.textContent = 'Editar País';
-                if (paisId) paisId.value = pais.id;
-                if (nombrePais) nombrePais.value = pais.nombrePais;
-                if (nombreGentilicio) nombreGentilicio.value = pais.nombreGentilicio;
-                if (activo) activo.checked = pais.activo;
-                
-                limpiarErroresFormulario();
-                
-                const bsModal = new bootstrap.Modal(modal);
-                bsModal.show();
-                console.log('Modal de edición mostrado con datos:', pais);
-            })
-            .catch(error => {
-                console.error('Error al obtener datos del país:', error);
-                alert('Error al cargar los datos del país: ' + error.message);
-            });
+        const BASE_URL = window.location.origin;
+        const url = `${BASE_URL}/mantenedores/basico/pais/${id}`;
+        
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (!data.success) {
+                throw new Error(data.error || 'Error desconocido');
+            }
+            
+            const pais = data.data;
+            
+            // Buscar elementos del modal
+            const modal = document.getElementById('paisModal');
+            const modalTitle = document.getElementById('paisModalLabel');
+            const paisId = document.getElementById('paisId');
+            const nombrePais = document.getElementById('nombrePais');
+            const nombreGentilicio = document.getElementById('nombreGentilicio');
+            const activo = document.getElementById('activo');
+            
+            if (!modal) {
+                mostrarMensajeError('Error', 'Modal no encontrado');
+                return;
+            }
+            
+            // Configurar modal para editar
+            if (modalTitle) {
+                modalTitle.innerHTML = '<i class="fas fa-edit me-2"></i>Editar País';
+            }
+            if (paisId) paisId.value = pais.idPais;
+            if (nombrePais) nombrePais.value = pais.nombrePais || '';
+            if (nombreGentilicio) nombreGentilicio.value = pais.nombreGentilicio || '';
+            if (activo) activo.checked = pais.activo || false;
+            
+            limpiarErroresFormulario();
+            
+            // Mostrar modal
+            const bsModal = new bootstrap.Modal(modal);
+            bsModal.show();
+        })
+        .catch(error => {
+            console.error('Error al obtener datos del país:', error);
+            mostrarMensajeError('Error', 'Error al cargar los datos del país: ' + error.message);
+        });
     }
     
-    function ejecutarEliminarPais(id) {
-        console.log('=== ELIMINAR PAÍS ===', id);
+    function ejecutarEliminarPais(id, paisNombre = null) {
+        console.log('=== ELIMINAR PAÍS ===', { id, paisNombre });
         
         if (!id) {
-            alert('Error: ID de país no válido');
+            mostrarMensajeError('Error', 'ID de país no válido');
             return;
         }
         
-        // Obtener datos del país primero para mostrar confirmación
+        // Si ya tenemos el nombre, usarlo directamente
+        if (paisNombre) {
+            confirmarYEliminarPais(id, paisNombre);
+            return;
+        }
+        
+        // Si no tenemos el nombre, obtener datos del país primero
         fetch(`/mantenedores/basico/pais/${id}`)
             .then(response => {
                 if (!response.ok) {
@@ -475,43 +477,51 @@
                 }
                 
                 const pais = data.data;
-                const confirmacion = confirm(`¿Estás seguro de que deseas eliminar el país "${pais.nombrePais}"?\n\nEsta acción no se puede deshacer.`);
-                
-                if (confirmacion) {
-                    console.log('Eliminando país:', id);
-                    
-                    // Llamada AJAX para eliminar
-                    fetch(`/mantenedores/basico/pais/${id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`Error ${response.status}: ${response.statusText}`);
-                        }
-                        return response.json();
-                    })
-                    .then(result => {
-                        if (result.success) {
-                            alert('País eliminado exitosamente!');
-                            cargarMantenedor('pais'); // Recargar la lista
-                        } else {
-                            throw new Error(result.error || 'Error al eliminar país');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error al eliminar país:', error);
-                        alert('Error al eliminar país: ' + error.message);
-                    });
-                }
+                confirmarYEliminarPais(id, pais.nombrePais);
             })
             .catch(error => {
                 console.error('Error al obtener datos del país:', error);
-                alert('Error al cargar los datos del país: ' + error.message);
+                mostrarMensajeError('Error', 'Error al obtener datos del país: ' + error.message);
             });
+    }
+    
+    function confirmarYEliminarPais(id, paisNombre) {
+        // Mostrar confirmación con SweetAlert2
+        mostrarConfirmacion(
+            '¿Eliminar país?',
+            `¿Estás seguro de que deseas eliminar el país "${paisNombre}"? Esta acción no se puede deshacer.`
+        ).then((result) => {
+            if (result.isConfirmed) {
+                console.log('Eliminando país:', id);
+                
+                // Llamada AJAX para eliminar
+                fetch(`/mantenedores/basico/pais/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Error ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(result => {
+                    if (result.success) {
+                        mostrarMensajeExito('¡Eliminado!', 'País eliminado exitosamente');
+                        cargarMantenedor('/mantenedores/basico/pais/content'); // Recargar la lista
+                    } else {
+                        throw new Error(result.error || 'Error al eliminar país');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al eliminar país:', error);
+                    mostrarMensajeError('Error', 'Error al eliminar país: ' + error.message);
+                });
+            }
+        });
     }
     
     // Función para limpiar errores de formulario
@@ -520,24 +530,58 @@
         document.querySelectorAll('.invalid-feedback').forEach(el => el.style.display = 'none');
     }
     
+    // Funciones para mostrar mensajes con SweetAlert2
+    function mostrarMensajeExito(titulo, mensaje) {
+        Swal.fire({
+            icon: 'success',
+            title: titulo,
+            text: mensaje,
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#28a745',
+            timer: 3000,
+            timerProgressBar: true
+        });
+    }
+    
+    function mostrarMensajeError(titulo, mensaje) {
+        Swal.fire({
+            icon: 'error',
+            title: titulo,
+            text: mensaje,
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#dc3545'
+        });
+    }
+    
+    function mostrarConfirmacion(titulo, mensaje) {
+        return Swal.fire({
+            icon: 'question',
+            title: titulo,
+            text: mensaje,
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            reverseButtons: true
+        });
+    }
+    
     // Función para manejar el submit del formulario de país
     function handlePaisFormSubmit(event) {
         event.preventDefault();
         
         const form = event.target;
         const formData = new FormData(form);
-        const paisId = formData.get('id');
+        const paisId = formData.get('paisId');
         
         // Determinar si es crear o editar
         const isEdit = paisId && paisId.trim() !== '';
-        const url = isEdit ? `/mantenedores/basico/pais/${paisId}` : '/mantenedores/basico/pais';
-        const method = isEdit ? 'PUT' : 'POST';
         
-        console.log(`${isEdit ? 'Editando' : 'Creando'} país:`, {
-            url,
-            method,
-            data: Object.fromEntries(formData)
-        });
+        // Usar URL base correcta
+        const BASE_URL = window.location.origin;
+        const url = isEdit ? `${BASE_URL}/mantenedores/basico/pais/${paisId}` : `${BASE_URL}/mantenedores/basico/pais`;
+        const method = isEdit ? 'PUT' : 'POST';
         
         // Limpiar errores previos
         limpiarErroresFormulario();
@@ -566,47 +610,132 @@
         })
         .then(result => {
             if (result.success) {
-                // Cerrar modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById('paisModal'));
-                if (modal) {
-                    modal.hide();
-                }
+                // Cerrar modal correctamente
+                limpiarModal('paisModal');
                 
                 // Mostrar mensaje de éxito
-                alert(`País ${isEdit ? 'actualizado' : 'creado'} exitosamente!`);
+                mostrarMensajeExito(
+                    '¡Éxito!', 
+                    `País ${isEdit ? 'actualizado' : 'creado'} exitosamente`
+                );
                 
-                // Recargar la lista
-                cargarMantenedor('pais');
+                // Recargar la lista de países
+                cargarMantenedor('/mantenedores/basico/pais/content');
             } else {
                 throw new Error(result.error || `Error al ${isEdit ? 'actualizar' : 'crear'} país`);
             }
         })
         .catch(error => {
             console.error(`Error al ${isEdit ? 'actualizar' : 'crear'} país:`, error);
-            alert(`Error al ${isEdit ? 'actualizar' : 'crear'} país: ` + error.message);
+            mostrarMensajeError(
+                'Error',
+                `Error al ${isEdit ? 'actualizar' : 'crear'} país: ${error.message}`
+            );
         });
-    }
+    }    // Variable para evitar múltiples event listeners
+    let formHandlersSetup = false;
     
     // Configurar event listener para el formulario
     function setupFormHandlers() {
+        console.log('=== CONFIGURANDO FORM HANDLERS ===');
+        
+        // Solo configurar una vez para evitar duplicados
+        if (formHandlersSetup) {
+            console.log('Form handlers ya configurados, saltando...');
+            return;
+        }
+        
         // Usar delegación de eventos para el formulario
         document.addEventListener('submit', function(event) {
+            console.log('=== SUBMIT EVENT DETECTADO ===', event.target);
             const form = event.target;
+            
+            console.log('Form ID:', form.id);
+            console.log('Form data-action:', form.getAttribute('data-action'));
             
             // Verificar si es el formulario de país
             if (form.id === 'paisForm' || form.getAttribute('data-action') === 'guardar-pais') {
                 console.log('Submit del formulario de país detectado');
                 handlePaisFormSubmit(event);
+            } else {
+                console.log('Form no reconocido, no se maneja');
             }
         });
+        
+        formHandlersSetup = true;
+        console.log('Form handlers configurados');
     }
     
     // También configurar cuando la página esté completamente cargada
     window.addEventListener('load', function() {
-        console.log('Página completamente cargada');
         setupEventDelegation();
         setupFormHandlers();
+        
+        // Agregar listener global para limpiar modales
+        document.addEventListener('hidden.bs.modal', function() {
+            setTimeout(() => {
+                const backdrops = document.querySelectorAll('.modal-backdrop');
+                if (backdrops.length > 0) {
+                    backdrops.forEach(backdrop => backdrop.remove());
+                    document.body.classList.remove('modal-open');
+                    document.body.style.overflow = '';
+                    document.body.style.paddingRight = '';
+                }
+            }, 100);
+        });
     });
+    
+    // Función para ejecutar scripts en contenido cargado dinámicamente
+    function executeScriptsInContainer(container) {
+        console.log('🔧 Ejecutando scripts en contenedor...');
+        
+        const scripts = container.querySelectorAll('script');
+        console.log(`📜 Scripts encontrados: ${scripts.length}`);
+        
+        scripts.forEach((script, index) => {
+            console.log(`📜 Ejecutando script ${index + 1}/${scripts.length}`);
+            
+            try {
+                if (script.src) {
+                    // Script externo - crear nuevo elemento script
+                    const newScript = document.createElement('script');
+                    newScript.src = script.src;
+                    document.head.appendChild(newScript);
+                    console.log(`✅ Script externo cargado: ${script.src}`);
+                } else {
+                    // Script inline - ejecutar directamente
+                    const scriptFunction = new Function(script.innerHTML);
+                    scriptFunction();
+                    console.log(`✅ Script inline ejecutado`);
+                }
+            } catch (error) {
+                console.error(`❌ Error ejecutando script ${index + 1}:`, error);
+            }
+        });
+        
+        console.log('🎯 Ejecución de scripts completada');
+    }
+    
+    // Función utilitaria para limpiar modales correctamente
+    function limpiarModal(modalId) {
+        const modalElement = document.getElementById(modalId);
+        if (modalElement) {
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) {
+                modal.hide();
+            }
+        }
+        
+        // Limpiar backdrop y clases del body
+        setTimeout(() => {
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(backdrop => backdrop.remove());
+            
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+        }, 300);
+    }
     
     console.log('=== SCRIPT MANTENEDORES TERMINADO ===');
 </script>

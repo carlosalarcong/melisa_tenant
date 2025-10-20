@@ -19,4 +19,14 @@
     array (
     ),
   ),
+  'sweetalert2' => 
+  array (
+    'version' => '11.26.3',
+    'dependencies' => 
+    array (
+    ),
+    'extraFiles' => 
+    array (
+    ),
+  ),
 );
