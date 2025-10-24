@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Service\TenantResolver;
 use App\Service\LocalizationService;
+use App\Service\RouteResolver;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,7 +17,8 @@ class LoginController extends AbstractController
 {
     public function __construct(
         private TenantResolver $tenantResolver,
-        private LocalizationService $localizationService
+        private LocalizationService $localizationService,
+        private RouteResolver $routeResolver
     ) {}
 
     #[Route('/login', name: 'app_login', methods: ['GET', 'POST'])]
@@ -124,8 +126,8 @@ class LoginController extends AbstractController
                 'name' => $user['first_name'] . ' ' . $user['last_name']
             ]);
 
-            // 6. Redirección al dashboard específico del tenant
-            $dashboardRoute = $this->getDashboardRouteForTenant($tenant['subdomain']);
+            // 6. Redirección al dashboard usando resolveRoute directamente
+            $dashboardRoute = $this->routeResolver->resolveRoute($tenant['subdomain'], 'app_dashboard');
             $response = $this->redirectToRoute($dashboardRoute);
             
             if ($rememberMe) {
@@ -184,26 +186,6 @@ class LoginController extends AbstractController
         $response->headers->setCookie(new Cookie('remember_tenant', $tenantData, $expiry));
         $response->headers->setCookie(new Cookie('remember_user', $userData, $expiry));
         $response->headers->setCookie(new Cookie('remember_token', $token, $expiry));
-    }
-
-    /**
-     * Determina la ruta de dashboard específica para el tenant de forma dinámica
-     */
-    private function getDashboardRouteForTenant(string $tenantSubdomain): string
-    {
-        // Capitalizar el nombre del tenant para el namespace
-        $tenantName = ucfirst($tenantSubdomain);
-        
-        // Verificar si existe un controlador específico para este tenant
-        $tenantControllerClass = "App\\Controller\\Dashboard\\{$tenantName}\\DefaultController";
-        
-        if (class_exists($tenantControllerClass)) {
-            // Si existe el controlador específico, usar su ruta
-            return "app_dashboard_{$tenantSubdomain}";
-        }
-        
-        // Si no existe controlador específico, usar el default
-        return 'app_dashboard_default';
     }
 
     #[Route('/api/tenants', name: 'app_tenants_list', methods: ['GET'])]

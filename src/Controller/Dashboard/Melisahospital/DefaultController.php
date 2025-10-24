@@ -2,27 +2,30 @@
 
 namespace App\Controller\Dashboard\Melisahospital;
 
+use App\Controller\Dashboard\AbstractDashboardController;
 use App\Service\LocalizationService;
 use App\Service\TenantContext;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Service\RouteResolver;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class DefaultController extends AbstractController
+class DefaultController extends AbstractDashboardController
 {
     private LocalizationService $localizationService;
     private TenantContext $tenantContext;
 
     public function __construct(
         LocalizationService $localizationService,
-        TenantContext $tenantContext
+        TenantContext $tenantContext,
+        RouteResolver $routeResolver
     ) {
+        parent::__construct($routeResolver);
         $this->localizationService = $localizationService;
         $this->tenantContext = $tenantContext;
     }
 
-        #[Route('/dashboard', name: 'app_dashboard_melisahospital')]
+    #[Route('/dashboard', name: 'app_dashboard_melisahospital')]
     public function index(Request $request): Response
     {
         // Establecer idioma actual
@@ -50,7 +53,10 @@ class DefaultController extends AbstractController
             $loggedUser['last_name'] = $nameParts[1] ?? '';
         }
         
-        return $this->render('dashboard/melisahospital/index.html.twig', [
+        $tenantSubdomain = $tenant['subdomain'] ?? 'melisahospital';
+        
+        // Usar el método helper de la clase base
+        return $this->renderDashboard($tenantSubdomain, [
             'tenant' => $tenant,
             'tenant_name' => $tenant['name'] ?? 'Hospital',
             'subdomain' => $tenant['subdomain'] ?? 'melisahospital',
@@ -58,5 +64,24 @@ class DefaultController extends AbstractController
             'page_title' => $this->localizationService->trans('dashboard.title') . ' - ' . $this->localizationService->trans('establishments.hospital'),
             'current_locale' => $locale
         ]);
+    }
+
+    /**
+     * Construye el menú dinámico específico para Melisahospital
+     * Extiende el menú base con funcionalidades hospitalarias
+     */
+    protected function buildDynamicMenu(string $tenantSubdomain): array
+    {
+        $baseMenu = $this->buildBaseMenu($tenantSubdomain);
+
+        // Funcionalidades específicas del hospital
+        $hospitalSpecific = [
+            'quirofanos' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_quirofanos', 'app_mantenedores'),
+            'hospitalizacion' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_hospitalizacion', 'app_pacientes'),
+            'laboratorio' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_laboratorio', 'app_mantenedores'),
+            'farmacia' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_farmacia', 'app_mantenedores'),
+        ];
+
+        return array_merge($baseMenu, $hospitalSpecific);
     }
 }
