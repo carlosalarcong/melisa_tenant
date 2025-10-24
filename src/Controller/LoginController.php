@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Service\TenantResolver;
 use App\Service\LocalizationService;
-use App\Service\RouteResolver;
+use App\Service\DynamicControllerResolver;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,7 +18,7 @@ class LoginController extends AbstractController
     public function __construct(
         private TenantResolver $tenantResolver,
         private LocalizationService $localizationService,
-        private RouteResolver $routeResolver
+        private DynamicControllerResolver $controllerResolver // Para resolver rutas dinámicamente según el tenant
     ) {}
 
     #[Route('/login', name: 'app_login', methods: ['GET', 'POST'])]
@@ -126,8 +126,8 @@ class LoginController extends AbstractController
                 'name' => $user['first_name'] . ' ' . $user['last_name']
             ]);
 
-            // 6. Redirección al dashboard usando resolveRoute directamente
-            $dashboardRoute = $this->routeResolver->resolveRoute($tenant['subdomain'], 'app_dashboard');
+            // 6. Redirección al dashboard específico del tenant
+            $dashboardRoute = 'app_dashboard_' . $tenant['subdomain'];
             $response = $this->redirectToRoute($dashboardRoute);
             
             if ($rememberMe) {

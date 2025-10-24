@@ -2,45 +2,80 @@
 
 namespace App\Controller\Dashboard\Melisalacolina;
 
-use App\Service\RouteResolver;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Controller\Dashboard\AbstractDashboardController;
+use App\Service\DynamicControllerResolver;
+use App\Service\TenantContext;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Twig\Environment;
 
-class DefaultController extends AbstractController
+class DefaultController extends AbstractDashboardController
 {
+    private TenantContext $tenantContext;
+
     public function __construct(
-        private RouteResolver $routeResolver
-    ) {}
+        TenantContext $tenantContext, // Proporciona contexto actual del tenant logueado
+        DynamicControllerResolver $controllerResolver, // Resuelve controladores específicos por tenant
+        Environment $twig // Verifica existencia de plantillas antes de renderizar
+    ) {
+        parent::__construct($controllerResolver, $twig);
+        $this->tenantContext = $tenantContext;
+    }
 
     #[Route('/dashboard', name: 'app_dashboard_melisalacolina')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $session = $this->container->get('request_stack')->getCurrentRequest()->getSession();
-        $tenantData = $session->get('tenant_data', []);
-        $userData = $session->get('user_data', []);
+        // Obtener datos del tenant y usuario desde el contexto
+        $tenant = $this->tenantContext->getCurrentTenant();
+        $session = $request->getSession();
         
-        // Generar menú dinámico usando RouteResolver
-        $tenantSubdomain = $tenantData['subdomain'] ?? 'melisalacolina';
-        $menuRoutes = [
-            'dashboard' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_dashboard'),
-            'pacientes' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_pacientes'),
-            'citas' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_citas'),
-            'mantenedores' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_mantenedores'),
-            'reportes' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_reportes'),
-            'configuracion' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_configuracion'),
+        // Obtener datos del usuario logueado
+        $loggedUser = [
+            'id' => $session->get('user_id'),
+            'username' => $session->get('username'),
+            'first_name' => $session->get('user_name', ''),
+            'last_name' => '',
+            'role' => 'Usuario'
         ];
         
-        // Resolver plantilla dinámicamente usando RouteResolver
-        $template = $this->routeResolver->resolveTemplate($tenantSubdomain, 'dashboard');
+        // Si user_name tiene nombre completo, separarlo
+        $fullName = $session->get('user_name', '');
+        if ($fullName) {
+            $nameParts = explode(' ', $fullName, 2);
+            $loggedUser['first_name'] = $nameParts[0] ?? '';
+            $loggedUser['last_name'] = $nameParts[1] ?? '';
+        }
         
-        return $this->render($template, [
-            'tenant' => $tenantData,
-            'tenant_name' => $tenantData['name'] ?? 'Clínica La Colina',
-            'subdomain' => $tenantData['subdomain'] ?? 'melisalacolina',
-            'logged_user' => $userData,
-            'menu_routes' => $menuRoutes,
-            'page_title' => 'Dashboard - Clínica La Colina'
+        $tenantSubdomain = $tenant['subdomain'] ?? 'melisalacolina';
+        
+        // Usar el método helper de la clase base
+        return $this->renderDashboard($tenantSubdomain, [
+            'tenant' => $tenant,
+            'tenant_name' => $tenant['name'] ?? 'Clínica La Colina',
+            'subdomain' => $tenant['subdomain'] ?? 'melisalacolina',
+            'logged_user' => $loggedUser,
+            'page_title' => 'Dashboard - Clínica La Colina',
+            'current_locale' => $request->getLocale()
         ]);
+    }
+
+    /**
+     * Construye el menú dinámico específico para Melisalacolina
+     * Extiende el menú base con funcionalidades de clínica
+     */
+    protected function buildDynamicMenu(string $tenantSubdomain): array
+    {
+        $baseMenu = parent::buildDynamicMenu($tenantSubdomain);
+
+        // Funcionalidades específicas de la clínica
+        $clinicSpecific = [
+            'consultas' => ['url' => '/consultas', 'label' => 'Consultas'],
+            'procedimientos' => ['url' => '/procedimientos', 'label' => 'Procedimientos'],
+            'laboratorio' => ['url' => '/laboratorio', 'label' => 'Laboratorio'],
+            'imagenologia' => ['url' => '/imagenologia', 'label' => 'Imagenología'],
+        ];
+
+        return array_merge($baseMenu, $clinicSpecific);
     }
 }

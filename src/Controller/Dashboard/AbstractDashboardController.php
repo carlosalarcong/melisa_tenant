@@ -2,21 +2,26 @@
 
 namespace App\Controller\Dashboard;
 
-use App\Service\RouteResolver;
+use App\Service\DynamicControllerResolver;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Twig\Environment;
 
 /**
  * Controlador base para todos los dashboards
- * Proporciona funcionalidad común para resolución dinámica de rutas y plantillas
+ * Proporciona funcionalidad común para resolución dinámica de controladores y plantillas
  */
 abstract class AbstractDashboardController extends AbstractController
 {
-    protected RouteResolver $routeResolver;
+    protected DynamicControllerResolver $controllerResolver;
+    protected Environment $twig;
 
-    public function __construct(
-        RouteResolver $routeResolver
-    ) {
-        $this->routeResolver = $routeResolver;
+    public function __construct(DynamicControllerResolver $controllerResolver, Environment $twig)
+    {
+        // DynamicControllerResolver: Resuelve controladores específicos por tenant con fallbacks automáticos
+        // Environment $twig: Verifica existencia de plantillas antes de renderizar para evitar errores
+        $this->controllerResolver = $controllerResolver;
+        $this->twig = $twig;
     }
 
     /**
@@ -24,45 +29,57 @@ abstract class AbstractDashboardController extends AbstractController
      */
     protected function resolveDashboardTemplate(string $tenantSubdomain): string
     {
-        return $this->routeResolver->getDashboardTemplate($tenantSubdomain);
+        $tenantSpecificTemplate = "dashboard/{$tenantSubdomain}/default.html.twig";
+        $defaultTemplate = "dashboard/default.html.twig";
+        
+        if ($this->twig->getLoader()->exists($tenantSpecificTemplate)) {
+            return $tenantSpecificTemplate;
+        }
+        
+        return $defaultTemplate;
     }
 
     /**
-     * Construye el menú básico común para todos los dashboards
+     * Construye menú dinámico básico
      */
-    protected function buildBaseMenu(string $tenantSubdomain): array
+    protected function buildDynamicMenu(string $tenantSubdomain): array
     {
         return [
-            'dashboard' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_dashboard'),
-            'pacientes' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_pacientes'),
-            'citas' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_citas'),
-            'mantenedores' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_mantenedores'),
-            'reportes' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_reportes'),
-            'configuracion' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_configuracion'),
+            'dashboard' => ['url' => '/dashboard', 'label' => 'Dashboard'],
+            'pacientes' => ['url' => '/pacientes', 'label' => 'Pacientes'],
+            'citas' => ['url' => '/citas', 'label' => 'Citas'],
+            'mantenedores' => ['url' => '/mantenedores', 'label' => 'Mantenedores'],
+            'reportes' => ['url' => '/reportes', 'label' => 'Reportes'],
+            'configuracion' => ['url' => '/configuracion', 'label' => 'Configuración'],
         ];
     }
 
     /**
-     * Resuelve el template y menú dinámicamente y renderiza la vista
+     * Renderiza dashboard con plantilla y menú dinámicos
      */
     protected function renderDashboard(string $tenantSubdomain, array $data): \Symfony\Component\HttpFoundation\Response
     {
-        // Resolver plantilla y menú dinámicamente usando RouteResolver
-        $template = $this->routeResolver->resolveTemplate($tenantSubdomain, 'dashboard');
+        $template = $this->resolveDashboardTemplate($tenantSubdomain);
         $menuRoutes = $this->buildDynamicMenu($tenantSubdomain);
         
-        // Agregar menú a los datos
         $data['menu_routes'] = $menuRoutes;
         
         return $this->render($template, $data);
     }
 
     /**
-     * Método abstracto que cada dashboard debe implementar para su menú específico
-     * Por defecto puede retornar solo el menú base
+     * Verifica si existe controlador específico para el tenant
      */
-    protected function buildDynamicMenu(string $tenantSubdomain): array
+    protected function hasSpecificController(string $tenantSubdomain, string $controller): bool
     {
-        return $this->buildBaseMenu($tenantSubdomain);
+        return $this->controllerResolver->controllerExistsForTenant($tenantSubdomain, $controller);
+    }
+
+    /**
+     * Obtiene información de debug del tenant
+     */
+    protected function getTenantDebugInfo(string $tenantSubdomain): array
+    {
+        return $this->controllerResolver->getDebugInfo($tenantSubdomain);
     }
 }

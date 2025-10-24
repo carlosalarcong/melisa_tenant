@@ -5,10 +5,11 @@ namespace App\Controller\Dashboard\Melisahospital;
 use App\Controller\Dashboard\AbstractDashboardController;
 use App\Service\LocalizationService;
 use App\Service\TenantContext;
-use App\Service\RouteResolver;
+use App\Service\DynamicControllerResolver;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Twig\Environment;
 
 class DefaultController extends AbstractDashboardController
 {
@@ -16,11 +17,12 @@ class DefaultController extends AbstractDashboardController
     private TenantContext $tenantContext;
 
     public function __construct(
-        LocalizationService $localizationService,
-        TenantContext $tenantContext,
-        RouteResolver $routeResolver
+        LocalizationService $localizationService, // Maneja traducciones y configuración de idioma
+        TenantContext $tenantContext, // Proporciona contexto actual del tenant logueado
+        DynamicControllerResolver $controllerResolver, // Resuelve controladores específicos por tenant
+        Environment $twig // Verifica existencia de plantillas antes de renderizar
     ) {
-        parent::__construct($routeResolver);
+        parent::__construct($controllerResolver, $twig);
         $this->localizationService = $localizationService;
         $this->tenantContext = $tenantContext;
     }
@@ -28,10 +30,6 @@ class DefaultController extends AbstractDashboardController
     #[Route('/dashboard', name: 'app_dashboard_melisahospital')]
     public function index(Request $request): Response
     {
-        // Establecer idioma actual
-        $locale = $this->localizationService->getCurrentLocale();
-        $request->setLocale($locale);
-        
         // Obtener datos del tenant y usuario desde el contexto
         $tenant = $this->tenantContext->getCurrentTenant();
         $session = $request->getSession();
@@ -62,7 +60,7 @@ class DefaultController extends AbstractDashboardController
             'subdomain' => $tenant['subdomain'] ?? 'melisahospital',
             'logged_user' => $loggedUser,
             'page_title' => $this->localizationService->trans('dashboard.title') . ' - ' . $this->localizationService->trans('establishments.hospital'),
-            'current_locale' => $locale
+            'current_locale' => $request->getLocale()
         ]);
     }
 
@@ -72,14 +70,14 @@ class DefaultController extends AbstractDashboardController
      */
     protected function buildDynamicMenu(string $tenantSubdomain): array
     {
-        $baseMenu = $this->buildBaseMenu($tenantSubdomain);
+        $baseMenu = parent::buildDynamicMenu($tenantSubdomain);
 
         // Funcionalidades específicas del hospital
         $hospitalSpecific = [
-            'quirofanos' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_quirofanos', 'app_mantenedores'),
-            'hospitalizacion' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_hospitalizacion', 'app_pacientes'),
-            'laboratorio' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_laboratorio', 'app_mantenedores'),
-            'farmacia' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_farmacia', 'app_mantenedores'),
+            'quirofanos' => ['url' => '/quirofanos', 'label' => 'Quirófanos'],
+            'hospitalizacion' => ['url' => '/hospitalizacion', 'label' => 'Hospitalización'],
+            'laboratorio' => ['url' => '/laboratorio', 'label' => 'Laboratorio'],
+            'farmacia' => ['url' => '/farmacia', 'label' => 'Farmacia'],
         ];
 
         return array_merge($baseMenu, $hospitalSpecific);

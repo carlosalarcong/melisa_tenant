@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Tenant;
+use App\Service\TenantContext;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Psr\Log\LoggerInterface;

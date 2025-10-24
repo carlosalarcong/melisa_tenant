@@ -2,46 +2,61 @@
 
 namespace App\Controller\Dashboard\Default;
 
-use App\Service\RouteResolver;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Controller\Dashboard\AbstractDashboardController;
+use App\Service\DynamicControllerResolver;
+use App\Service\TenantContext;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Twig\Environment;
 
-class DefaultController extends AbstractController
+class DefaultController extends AbstractDashboardController
 {
-    public function __construct(
-        private RouteResolver $routeResolver
-    ) {}
+    private TenantContext $tenantContext;
 
-        #[Route('/dashboard', name: 'app_dashboard_default')]
+    public function __construct(
+        TenantContext $tenantContext, // Proporciona contexto actual del tenant logueado
+        DynamicControllerResolver $controllerResolver, // Resuelve controladores específicos por tenant
+        Environment $twig // Verifica existencia de plantillas antes de renderizar
+    ) {
+        parent::__construct($controllerResolver, $twig);
+        $this->tenantContext = $tenantContext;
+    }
+
+    #[Route('/dashboard', name: 'app_dashboard_default')]
     public function index(Request $request): Response
     {
+        // Obtener datos del tenant y usuario desde el contexto
+        $tenant = $this->tenantContext->getCurrentTenant();
         $session = $request->getSession();
-        $tenantData = $session->get('tenant_data', []);
-        $userData = $session->get('user_data', []);
         
-        // Generar menú dinámico usando RouteResolver
-        $tenantSubdomain = $tenantData['subdomain'] ?? 'default';
-        $menuRoutes = [
-            'dashboard' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_dashboard'),
-            'pacientes' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_pacientes'),
-            'citas' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_citas'),
-            'mantenedores' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_mantenedores'),
-            'reportes' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_reportes'),
-            'configuracion' => $this->routeResolver->resolveRoute($tenantSubdomain, 'app_configuracion'),
+        // Obtener datos del usuario logueado
+        $loggedUser = [
+            'id' => $session->get('user_id'),
+            'username' => $session->get('username'),
+            'first_name' => $session->get('user_name', ''),
+            'last_name' => '',
+            'role' => 'Usuario'
         ];
         
-        // Resolver plantilla dinámicamente usando RouteResolver
-        $template = $this->routeResolver->resolveTemplate($tenantSubdomain, 'dashboard');
+        // Si user_name tiene nombre completo, separarlo
+        $fullName = $session->get('user_name', '');
+        if ($fullName) {
+            $nameParts = explode(' ', $fullName, 2);
+            $loggedUser['first_name'] = $nameParts[0] ?? '';
+            $loggedUser['last_name'] = $nameParts[1] ?? '';
+        }
         
-        return $this->render($template, [
-            'tenant' => $tenantData,
-            'tenant_name' => $tenantData['name'] ?? 'Melisa Clinic',
-            'subdomain' => $tenantData['subdomain'] ?? 'melisawiclinic',
-            'logged_user' => $userData,
-            'menu_routes' => $menuRoutes,
-            'page_title' => 'Dashboard - Melisa Clinic'
+        $tenantSubdomain = $tenant['subdomain'] ?? 'default';
+        
+        // Usar el método helper de la clase base
+        return $this->renderDashboard($tenantSubdomain, [
+            'tenant' => $tenant,
+            'tenant_name' => $tenant['name'] ?? 'Melisa Clinic',
+            'subdomain' => $tenant['subdomain'] ?? 'default',
+            'logged_user' => $loggedUser,
+            'page_title' => 'Dashboard - Melisa Clinic',
+            'current_locale' => $request->getLocale()
         ]);
     }
 }
