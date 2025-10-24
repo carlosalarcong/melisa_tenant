@@ -1,4 +1,4 @@
-# Rutas de mantenedores dinámicos
-mantenedores:
-    resource: routes/mantenedores.yaml
-    prefix: /
+# Rutas principales del sistema
+
+# NOTA: Las rutas de mantenedores han sido migradas a anotaciones en sus respectivos controladores
+# Archivo eliminado: routes/mantenedores.yaml (migrado a anotaciones @Route)

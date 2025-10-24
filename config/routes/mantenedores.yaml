@@ -2,37 +2,6 @@
 # Se resuelven automáticamente según el subdominio
 
 # ==================================
-# RUTAS ESPECIALES TENANT-ESPECÍFICAS
-# ==================================
-
-# Rutas específicas para Melisawiclinic (Región con IoT)
-mantenedores_region_metricas_iot:
-    path: /mantenedores/basico/region/metricas-iot
-    controller: App\Service\DynamicControllerResolver::resolve
-    defaults:
-        _controller_pattern: 'App\Controller\Mantenedores\Basico\Region\{tenant}\RegionController::metricasIoT'
-        _tenant_specific: ['Melisawiclinic']
-    methods: [GET]
-
-mantenedores_region_configurar_iot:
-    path: /mantenedores/basico/region/{id}/configurar-iot
-    controller: App\Service\DynamicControllerResolver::resolve
-    defaults:
-        _controller_pattern: 'App\Controller\Mantenedores\Basico\Region\{tenant}\RegionController::configurarIoT'
-        _tenant_specific: ['Melisawiclinic']
-    requirements:
-        id: '\d+'
-    methods: [POST]
-
-mantenedores_region_dashboard_tiempo_real:
-    path: /mantenedores/basico/region/dashboard-tiempo-real
-    controller: App\Service\DynamicControllerResolver::resolve
-    defaults:
-        _controller_pattern: 'App\Controller\Mantenedores\Basico\Region\{tenant}\RegionController::dashboardTiempoReal'
-        _tenant_specific: ['Melisawiclinic']
-    methods: [GET]
-
-# ==================================
 # NOTAS DE CONFIGURACIÓN
 # ==================================
 
@@ -79,6 +48,29 @@ mantenedores_region_dashboard_tiempo_real:
 # - mantenedores_region_update: /mantenedores/basico/region/{id} [PUT, PATCH]
 # - mantenedores_region_delete: /mantenedores/basico/region/{id} [DELETE]
 # - mantenedores_region_por_pais: /mantenedores/basico/region/por-pais/{pais}
+
+# RUTAS ELIMINADAS (sin implementación):
+# =====================================
+# - mantenedores_region_metricas_iot: /mantenedores/basico/region/metricas-iot
+# - mantenedores_region_configurar_iot: /mantenedores/basico/region/{id}/configurar-iot  
+# - mantenedores_region_dashboard_tiempo_real: /mantenedores/basico/region/dashboard-tiempo-real
+# 
+# Estas rutas IoT específicas para Melisawiclinic fueron eliminadas porque:
+# - No tienen controladores implementados
+# - No hay código funcional para App\Controller\Mantenedores\Basico\Region\{tenant}\RegionController
+# - Eran solo plantillas sin usar en el sistema
+
+# PATRONES PARA FUTURAS RUTAS TENANT-ESPECÍFICAS:
+# ===============================================
+# Si necesitas agregar rutas específicas por tenant con DynamicControllerResolver:
+#
+# nombre_ruta_tenant:
+#     path: /ruta/especifica
+#     controller: App\Service\DynamicControllerResolver::resolve
+#     defaults:
+#         _controller_pattern: 'App\Controller\Namespace\{tenant}\ControllerName::method'
+#         _tenant_specific: ['TenantName']
+#     methods: [GET]
 
 # Patrones de resolución dinámica para rutas tenant-específicas:
 # - {tenant} se reemplaza automáticamente por el subdominio actual (Melisalacolina, Melisawiclinic, etc.)
