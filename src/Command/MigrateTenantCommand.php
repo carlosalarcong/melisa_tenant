@@ -6,6 +6,7 @@ use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -14,7 +15,7 @@ use Symfony\Component\Process\Process;
 
 #[AsCommand(
     name: 'app:migrate-tenant',
-    description: 'Generar migraciones y aplicarlas automáticamente a todos los tenants activos'
+    description: 'Generar migraciones y aplicarlas automáticamente a todos los tenants activos o a un tenant específico'
 )]
 class MigrateTenantCommand extends Command
 {
@@ -30,6 +31,7 @@ class MigrateTenantCommand extends Command
     protected function configure(): void
     {
         $this
+            ->addArgument('tenant', InputArgument::OPTIONAL, 'Subdomain del tenant específico a migrar (ej: melisalacolina)')
             ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Solo mostrar qué se ejecutaría sin hacer cambios')
             ->addOption('force', null, InputOption::VALUE_NONE, 'Forzar ejecución sin confirmación')
             ->addOption('generate-only', null, InputOption::VALUE_NONE, 'Solo generar migraciones sin aplicarlas')
@@ -38,26 +40,31 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
 
 1. 🔍 Busca automáticamente todos los tenants activos en melisa_central
 2. 📦 Genera migraciones basadas en las entidades existentes 
-3. 🚀 Aplica las migraciones a todos los tenants activos automáticamente
+3. 🚀 Aplica las migraciones a todos los tenants activos o a uno específico
 
 <info>Ejemplos de uso:</info>
 
-  <comment># Migración completa automática</comment>
+  <comment># Migración completa automática (todos los tenants)</comment>
   php bin/console app:migrate-tenant
 
-  <comment># Solo verificar qué se haría</comment>
-  php bin/console app:migrate-tenant --dry-run
+  <comment># Migrar solo un tenant específico</comment>
+  php bin/console app:migrate-tenant melisalacolina
+  php bin/console app:migrate-tenant melisahospital
+  php bin/console app:migrate-tenant melisawiclinic
+
+  <comment># Solo verificar qué se haría en un tenant específico</comment>
+  php bin/console app:migrate-tenant melisalacolina --dry-run
 
   <comment># Solo generar migraciones sin aplicar</comment>  
   php bin/console app:migrate-tenant --generate-only
 
-  <comment># Forzar sin confirmación</comment>
-  php bin/console app:migrate-tenant --force
+  <comment># Forzar migración sin confirmación</comment>
+  php bin/console app:migrate-tenant melisalacolina --force
 
 <info>Proceso automático:</info>
 ✅ Detecta tenants activos en melisa_central
 ✅ Genera migraciones desde entidades existentes
-✅ Aplica migraciones a cada tenant automáticamente
+✅ Aplica migraciones a tenant específico o todos los tenants
 ✅ Reporte completo de resultados
             ');
     }
@@ -68,23 +75,32 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
         $dryRun = $input->getOption('dry-run');
         $force = $input->getOption('force');
         $generateOnly = $input->getOption('generate-only');
+        $tenantSubdomain = $input->getArgument('tenant');
 
-        $io->title('🚀 Migración Automática Multi-Tenant');
+        if ($tenantSubdomain) {
+            $io->title("🚀 Migración Multi-Tenant: {$tenantSubdomain}");
+        } else {
+            $io->title('🚀 Migración Automática Multi-Tenant (Todos los tenants)');
+        }
         
         try {
-            // 1. Obtener tenants activos
-            $tenants = $this->getActiveTenants($io);
+            // 1. Obtener tenants activos (todos o uno específico)
+            $tenants = $this->getActiveTenants($io, $tenantSubdomain);
             
             if (empty($tenants)) {
-                $io->warning('No se encontraron tenants activos en el sistema');
-                return Command::SUCCESS;
+                if ($tenantSubdomain) {
+                    $io->error("❌ No se encontró el tenant '{$tenantSubdomain}' o no está activo");
+                } else {
+                    $io->warning('No se encontraron tenants activos en el sistema');
+                }
+                return Command::FAILURE;
             }
 
             // 2. Mostrar resumen
-            $this->showMigrationSummary($io, $tenants, $dryRun, $generateOnly);
+            $this->showMigrationSummary($io, $tenants, $dryRun, $generateOnly, $tenantSubdomain);
 
             // 3. Confirmación si no es dry-run ni force
-            if (!$dryRun && !$force && !$this->confirmExecution($tenants, $io)) {
+            if (!$dryRun && !$force && !$this->confirmExecution($tenants, $io, $tenantSubdomain)) {
                 $io->note('Operación cancelada por el usuario');
                 return Command::SUCCESS;
             }
@@ -101,11 +117,11 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
                 $io->note('No hay cambios para migrar. Aplicando migraciones existentes...');
             }
 
-            // 5. Aplicar migraciones a todos los tenants
+            // 5. Aplicar migraciones a los tenants seleccionados
             $results = $this->applyMigrationsToAllTenants($tenants, $dryRun, $io);
 
             // 6. Mostrar resultados finales
-            $this->showFinalResults($io, $results, $dryRun);
+            $this->showFinalResults($io, $results, $dryRun, $tenantSubdomain);
 
             return $results['failures'] > 0 ? Command::FAILURE : Command::SUCCESS;
             
@@ -115,26 +131,38 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
         }
     }
 
-    private function getActiveTenants(SymfonyStyle $io): array
+    private function getActiveTenants(SymfonyStyle $io, ?string $tenantSubdomain = null): array
     {
         try {
             $connection = DriverManager::getConnection($this->centralDbConfig);
             
-            $query = '
-                SELECT id, name, subdomain, database_name, rut_empresa,
-                       COALESCE(host, \'localhost\') as host,
-                       COALESCE(host_port, 3306) as host_port,
-                       COALESCE(db_user, \'melisa\') as db_user,
-                       COALESCE(db_password, \'melisamelisa\') as db_password
-                FROM tenant 
-                WHERE is_active = 1
-                ORDER BY name
-            ';
+            $whereClause = 'WHERE is_active = 1';
+            $params = [];
             
-            $result = $connection->executeQuery($query);
+            if ($tenantSubdomain) {
+                $whereClause .= ' AND subdomain = ?';
+                $params[] = $tenantSubdomain;
+            }
+            
+            $query = "
+                SELECT id, name, subdomain, database_name, rut_empresa,
+                       COALESCE(host, 'localhost') as host,
+                       COALESCE(host_port, 3306) as host_port,
+                       COALESCE(db_user, 'melisa') as db_user,
+                       COALESCE(db_password, 'melisamelisa') as db_password
+                FROM tenant 
+                $whereClause
+                ORDER BY name
+            ";
+            
+            $result = $connection->executeQuery($query, $params);
             $tenants = $result->fetchAllAssociative();
             
-            $io->text("�� Encontrados " . count($tenants) . " tenant(s) activos en melisa_central");
+            if ($tenantSubdomain) {
+                $io->text("🔍 Encontrado tenant específico: " . $tenantSubdomain);
+            } else {
+                $io->text("🔍 Encontrados " . count($tenants) . " tenant(s) activos en melisa_central");
+            }
             
             return $tenants;
             
@@ -143,18 +171,21 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
         }
     }
 
-    private function showMigrationSummary(SymfonyStyle $io, array $tenants, bool $dryRun, bool $generateOnly): void
+    private function showMigrationSummary(SymfonyStyle $io, array $tenants, bool $dryRun, bool $generateOnly, ?string $tenantSubdomain = null): void
     {
-        $io->section('📊 Resumen de Migración Automática');
+        $title = $tenantSubdomain ? "📊 Resumen de Migración: {$tenantSubdomain}" : '📊 Resumen de Migración Automática';
+        $io->section($title);
         
         $mode = $dryRun ? '🔍 DRY-RUN (simulación)' : '🔄 EJECUCIÓN REAL';
         if ($generateOnly) {
             $mode = '📦 GENERAR MIGRACIONES ÚNICAMENTE';
         }
         
+        $tenantLabel = $tenantSubdomain ? "Tenant seleccionado" : "Total tenants activos";
+        
         $io->definitionList(
             ['Modo de ejecución' => $mode],
-            ['Total tenants activos' => count($tenants)],
+            [$tenantLabel => count($tenants)],
             ['Directorio migraciones' => './migrations/'],
             ['Entidades detectadas' => $this->countEntities()]
         );
@@ -176,8 +207,11 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
         return count($entities);
     }
 
-    private function confirmExecution(array $tenants, SymfonyStyle $io): bool
+    private function confirmExecution(array $tenants, SymfonyStyle $io, ?string $tenantSubdomain = null): bool
     {
+        if ($tenantSubdomain) {
+            return $io->confirm("¿Confirmas generar y aplicar migraciones en el tenant '{$tenantSubdomain}'?", false);
+        }
         return $io->confirm('¿Confirmas generar y aplicar migraciones en ' . count($tenants) . ' tenant(s)?', false);
     }
 
@@ -734,9 +768,10 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
         return false;
     }
 
-    private function showFinalResults(SymfonyStyle $io, array $results, bool $dryRun): void
+    private function showFinalResults(SymfonyStyle $io, array $results, bool $dryRun, ?string $tenantSubdomain = null): void
     {
-        $io->section('📈 Resultados Finales');
+        $title = $tenantSubdomain ? "📈 Resultados Finales: {$tenantSubdomain}" : '📈 Resultados Finales';
+        $io->section($title);
         
         $io->definitionList(
             ['✅ Exitosos' => $results['success']],
