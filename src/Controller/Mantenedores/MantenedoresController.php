@@ -18,6 +18,7 @@ class MantenedoresController extends AbstractTenantController
     /**
      * Página principal de mantenedores
      */
+    #[Route('/mantenedores', name: 'mantenedores_index', methods: ['GET'])]
     public function index(Request $request): Response
     {
         $tenant = $this->getCurrentTenant();
@@ -60,6 +61,7 @@ class MantenedoresController extends AbstractTenantController
     /**
      * Página de mantenedores básicos
      */
+    #[Route('/mantenedores/basico', name: 'mantenedores_basico_index', methods: ['GET'])]
     public function basico(): Response
     {
         $tenant = $this->getCurrentTenant();
@@ -70,6 +72,26 @@ class MantenedoresController extends AbstractTenantController
             'page_title' => 'Mantenedores Básicos - ' . ($tenant['name'] ?? 'Sistema'),
             'basicItems' => $this->getBasicItems()
         ]);
+    }
+
+    /**
+     * Ruta SPA para regiones con contenido precargado
+     */
+    #[Route('/mantenedores/basico/regiones', name: 'mantenedores_regiones_spa', methods: ['GET'])]
+    public function regionesSpa(Request $request): Response
+    {
+        $request->attributes->set('preload_content', 'regiones');
+        return $this->index($request);
+    }
+
+    /**
+     * Ruta SPA para religiones con contenido precargado
+     */
+    #[Route('/mantenedores/basico/religiones', name: 'mantenedores_religiones_spa', methods: ['GET'])]
+    public function religionesSpa(Request $request): Response
+    {
+        $request->attributes->set('preload_content', 'religiones');
+        return $this->index($request);
     }
 
     /**

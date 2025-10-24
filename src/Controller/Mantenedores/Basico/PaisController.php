@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 /**
@@ -112,6 +113,7 @@ class PaisController extends AbstractController
      * 
      * @return Response Respuesta de redirección
      */
+    #[Route('/mantenedores/basico/pais', name: 'mantenedores_pais_spa', methods: ['GET'])]
     public function index(): Response
     {
         // Obtener tenant con fallback
@@ -143,6 +145,7 @@ class PaisController extends AbstractController
      * 
      * @return Response Respuesta HTML con el contenido del mantenedor
      */
+    #[Route('/mantenedores/basico/pais/content', name: 'mantenedores_pais_content', methods: ['GET'])]
     public function content(): Response
     {
         try {
@@ -186,6 +189,7 @@ class PaisController extends AbstractController
      * 
      * @return JsonResponse Lista de países en formato JSON
      */
+    #[Route('/mantenedores/basico/pais/list', name: 'mantenedores_pais_list', methods: ['GET'])]
     public function list(): JsonResponse
     {
         try {
@@ -217,6 +221,7 @@ class PaisController extends AbstractController
      * @param Request $request Petición HTTP con datos del país
      * @return JsonResponse Respuesta JSON con resultado de la operación
      */
+    #[Route('/mantenedores/basico/pais', name: 'mantenedores_pais_create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
         try {
@@ -270,6 +275,7 @@ class PaisController extends AbstractController
      * @param int $id ID del país a obtener
      * @return JsonResponse Datos del país o error si no existe
      */
+    #[Route('/mantenedores/basico/pais/{id}', name: 'mantenedores_pais_show', methods: ['GET'], requirements: ['id' => '\d+'])]
     public function show(int $id): JsonResponse
     {
         try {
@@ -311,6 +317,7 @@ class PaisController extends AbstractController
      * @param int $id ID del país a actualizar
      * @return JsonResponse Resultado de la operación
      */
+    #[Route('/mantenedores/basico/pais/{id}', name: 'mantenedores_pais_update', methods: ['PUT', 'PATCH'], requirements: ['id' => '\d+'])]
     public function update(Request $request, int $id): JsonResponse
     {
         try {
@@ -360,6 +367,7 @@ class PaisController extends AbstractController
      * @param int $id ID del país a eliminar
      * @return JsonResponse Resultado de la operación
      */
+    #[Route('/mantenedores/basico/pais/{id}', name: 'mantenedores_pais_delete', methods: ['DELETE'], requirements: ['id' => '\d+'])]
     public function delete(Request $request, int $id): JsonResponse
     {
         try {
