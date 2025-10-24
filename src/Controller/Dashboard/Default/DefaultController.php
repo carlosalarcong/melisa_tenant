@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends AbstractController
 {
-    #[Route('/dashboard', name: 'app_dashboard_default')]
+        #[Route('/dashboard', name: 'app_dashboard_default')]
     public function index(Request $request): Response
     {
         $session = $request->getSession();

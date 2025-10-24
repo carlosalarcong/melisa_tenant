@@ -22,7 +22,7 @@ class DefaultController extends AbstractController
         $this->tenantContext = $tenantContext;
     }
 
-    #[Route('/dashboard', name: 'app_dashboard_melisahospital')]
+        #[Route('/dashboard', name: 'app_dashboard_melisahospital')]
     public function index(Request $request): Response
     {
         // Establecer idioma actual

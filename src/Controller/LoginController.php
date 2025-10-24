@@ -113,8 +113,20 @@ class LoginController extends AbstractController
             $session->set('database_name', $tenant['database_name']);
             $session->set('tenant', $tenant); // Array completo del tenant para TenantController
 
-            // 6. Redirección al dashboard en el mismo servicio
-            $response = $this->redirectToRoute('app_dashboard', ['controller' => 'dashboard']);
+            // Compatibilidad con controladores de dashboard existentes
+            $session->set('tenant_data', $tenant);
+            $session->set('user_data', [
+                'id' => $user['id'],
+                'username' => $user['username'],
+                'first_name' => $user['first_name'],
+                'last_name' => $user['last_name'],
+                'email' => $user['email'],
+                'name' => $user['first_name'] . ' ' . $user['last_name']
+            ]);
+
+            // 6. Redirección al dashboard específico del tenant
+            $dashboardRoute = $this->getDashboardRouteForTenant($tenant['subdomain']);
+            $response = $this->redirectToRoute($dashboardRoute);
             
             if ($rememberMe) {
                 $this->setRememberMeCookies($response, $tenant, $user);
@@ -172,6 +184,26 @@ class LoginController extends AbstractController
         $response->headers->setCookie(new Cookie('remember_tenant', $tenantData, $expiry));
         $response->headers->setCookie(new Cookie('remember_user', $userData, $expiry));
         $response->headers->setCookie(new Cookie('remember_token', $token, $expiry));
+    }
+
+    /**
+     * Determina la ruta de dashboard específica para el tenant de forma dinámica
+     */
+    private function getDashboardRouteForTenant(string $tenantSubdomain): string
+    {
+        // Capitalizar el nombre del tenant para el namespace
+        $tenantName = ucfirst($tenantSubdomain);
+        
+        // Verificar si existe un controlador específico para este tenant
+        $tenantControllerClass = "App\\Controller\\Dashboard\\{$tenantName}\\DefaultController";
+        
+        if (class_exists($tenantControllerClass)) {
+            // Si existe el controlador específico, usar su ruta
+            return "app_dashboard_{$tenantSubdomain}";
+        }
+        
+        // Si no existe controlador específico, usar el default
+        return 'app_dashboard_default';
     }
 
     #[Route('/api/tenants', name: 'app_tenants_list', methods: ['GET'])]
