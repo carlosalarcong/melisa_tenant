@@ -199,6 +199,9 @@
 <script>
     console.log('=== MANTENEDORES CARGADO ===');
     
+    // Variable para evitar múltiples configuraciones de event delegation
+    let eventDelegationSetup = false;
+    
     // Configurar event delegation cuando el DOM esté listo
     document.addEventListener('DOMContentLoaded', function() {
         console.log('DOM listo, configurando eventos...');
@@ -220,74 +223,42 @@
     
     // Event delegation para manejar clicks en contenido cargado dinámicamente
     function setupEventDelegation() {
-        console.log('Configurando event delegation...');
+        if (eventDelegationSetup) {
+            console.log('Event delegation ya configurado, saltando...');
+            return;
+        }
         
-        // Remover listeners anteriores si existen
-        document.removeEventListener('click', handleDocumentClick);
+        console.log('Configurando event delegation...');
         
         // Agregar listener principal
         document.addEventListener('click', handleDocumentClick);
         
-        // Listener específico para enlaces de mantenedores
-        document.addEventListener('click', function(e) {
-            // Verificar si se hizo clic en un enlace de mantenedor
-            const mantenedorLink = e.target.closest('.mantenedor-link');
-            if (mantenedorLink) {
-                console.log('=== CLICK EN ENLACE MANTENEDOR ===');
-                e.preventDefault();
-                e.stopPropagation();
-                
-                const url = mantenedorLink.getAttribute('data-url');
-                console.log('URL del mantenedor:', url);
-                
-                if (url) {
-                    cargarMantenedor(url);
-                } else {
-                    console.error('URL no encontrada en el enlace');
-                }
-            }
-        });
-        
+        eventDelegationSetup = true;
         console.log('Event delegation configurado');
     }
     
     // Handler principal para todos los clicks
     function handleDocumentClick(e) {
-        console.log('=== CLICK DETECTADO ===');
-        console.log('Elemento clickeado:', e.target);
-        console.log('Texto del elemento:', e.target.textContent);
-        console.log('Clase del elemento:', e.target.className);
-        
         // Buscar el elemento con data-action subiendo en el DOM
         let target = e.target;
         let attempts = 0;
         const maxAttempts = 5;
         
         while (target && attempts < maxAttempts) {
-            console.log(`Intento ${attempts + 1}: Revisando elemento`, target.tagName, target.className);
-            
             if (target.hasAttribute && target.hasAttribute('data-action')) {
-                console.log('¡Elemento con data-action encontrado!');
                 break;
             }
-            
             target = target.parentElement;
             attempts++;
         }
         
         if (!target || !target.hasAttribute('data-action')) {
-            console.log('No se encontró elemento con data-action después de', attempts, 'intentos');
             return;
         }
         
         const action = target.getAttribute('data-action');
         const url = target.getAttribute('data-url');
         const id = target.getAttribute('data-id');
-        
-        console.log('=== ACCIÓN DETECTADA ===');
-        console.log('Action:', action);
-        console.log('URL:', url);
-        console.log('ID:', id);
         
         // NO prevenir default para botones de submit
         if (action === 'guardar-pais') {
@@ -303,6 +274,7 @@
                 cargarMantenedor(url);
                 break;
             case 'crear-pais':
+            case 'create':
                 ejecutarCrearPais();
                 break;
             case 'editar-pais':
@@ -414,21 +386,11 @@
     // =================== FUNCIONES PARA PAÍSES ===================
     
     function ejecutarCrearPais() {
-        console.log('=== CREAR PAÍS ===');
-        
         const modal = document.getElementById('paisModal');
-        const modalTitle = document.getElementById('modalTitle');
+        const modalTitle = document.getElementById('paisModalLabel');
         const form = document.getElementById('paisForm');
         const paisId = document.getElementById('paisId');
         const activo = document.getElementById('activo');
-        
-        console.log('Elementos encontrados:', {
-            modal: !!modal,
-            modalTitle: !!modalTitle,
-            form: !!form,
-            paisId: !!paisId,
-            activo: !!activo
-        });
         
         if (!modal) {
             console.error('Modal paisModal no encontrado');
@@ -739,7 +701,6 @@
     
     // También configurar cuando la página esté completamente cargada
     window.addEventListener('load', function() {
-        setupEventDelegation();
         setupFormHandlers();
         setupHistoryHandling();
         

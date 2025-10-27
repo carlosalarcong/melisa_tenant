@@ -59,7 +59,7 @@
                 <button type="button" class="btn btn-light btn-sm" 
                         data-bs-toggle="modal" 
                         data-bs-target="#paisModal" 
-                        data-action="create"
+                        data-action="click->mantenedores--pais--pais#handleCreate"
                         title="{{ 'mantenedores.pais.nuevo'|trans }}">
                     <i class="fas fa-plus me-1"></i> 
                     {{ 'mantenedores.pais.nuevo'|trans }}
@@ -99,7 +99,7 @@
                         <button type="button" class="btn btn-primary" 
                                 data-bs-toggle="modal" 
                                 data-bs-target="#paisModal" 
-                                data-action="create">
+                                data-action="click->mantenedores--pais--pais#handleCreate">
                             <i class="fas fa-plus me-2"></i>
                             {{ 'mantenedores.pais.info.create_first'|trans }}
                         </button>
@@ -168,7 +168,7 @@
                                                         class="btn btn-outline-primary btn-sm" 
                                                         data-bs-toggle="modal" 
                                                         data-bs-target="#paisModal" 
-                                                        data-action="edit" 
+                                                        data-action="click->mantenedores--pais--pais#handleEdit" 
                                                         data-id="{{ pais.idPais }}"
                                                         title="{{ 'mantenedores.pais.editar'|trans }} {{ pais.nombrePais }}">
                                                     <i class="fas fa-edit"></i>
