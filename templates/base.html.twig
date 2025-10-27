@@ -229,6 +229,168 @@
             }
         </style>
         
+        <!-- Estilos mejorados para el dashboard -->
+        <style>
+            /* Mejoras adicionales para el dashboard */
+            .card {
+                border: none;
+                border-radius: 0.75rem;
+                transition: all 0.3s ease;
+            }
+
+            .card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+            }
+
+            .user-avatar {
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+                color: white;
+                text-align: center;
+                line-height: 1;
+            }
+
+            /* Gradientes modernos */
+            .bg-gradient-primary {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+
+            /* Estilos para botones mejorados */
+            .btn {
+                border-radius: 0.5rem;
+                transition: all 0.3s ease;
+                font-weight: 500;
+            }
+
+            .btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            }
+
+            /* Mejoras para la tabla */
+            .table th {
+                border-top: none;
+                font-weight: 600;
+                color: #495057;
+                background-color: #f8f9fa;
+                font-size: 0.875rem;
+            }
+
+            .table-hover tbody tr:hover {
+                background-color: rgba(0,123,255,0.05);
+            }
+
+            /* Animaciones personalizadas */
+            @keyframes fadeIn {
+                from { 
+                    opacity: 0; 
+                    transform: translateY(20px); 
+                }
+                to { 
+                    opacity: 1; 
+                    transform: translateY(0); 
+                }
+            }
+
+            .fade-in {
+                animation: fadeIn 0.5s ease-out forwards;
+            }
+
+            /* Badges modernos */
+            .badge {
+                font-size: 0.75rem;
+                font-weight: 500;
+                padding: 0.375rem 0.75rem;
+            }
+
+            /* Mejoras para los iconos circulares */
+            .icon-circle {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.2rem;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            /* Sidebar moderno para light theme */
+            .sidebar.bg-light {
+                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                border-right: 1px solid #dee2e6;
+                box-shadow: 2px 0 5px rgba(0,0,0,0.08);
+            }
+
+            .sidebar.bg-light .nav-link {
+                color: #495057;
+                margin: 0.1rem 0.5rem;
+                border-radius: 0.5rem;
+                transition: all 0.3s ease;
+            }
+
+            .sidebar.bg-light .nav-link:hover {
+                background-color: rgba(0,123,255,0.1);
+                color: #007bff;
+                transform: translateX(3px);
+            }
+
+            .sidebar.bg-light .nav-link.active {
+                background-color: #007bff;
+                color: white;
+                box-shadow: 0 2px 4px rgba(0,123,255,0.3);
+            }
+
+            /* Mejoras visuales adicionales */
+            .text-gray-800 {
+                color: #5a5c69 !important;
+            }
+
+            .border-start {
+                border-left: 4px solid !important;
+            }
+
+            .shadow-sm {
+                box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+            }
+
+            .card-header {
+                border-bottom: 1px solid rgba(0,0,0,.125);
+                border-radius: calc(0.75rem - 1px) calc(0.75rem - 1px) 0 0;
+                font-weight: 600;
+            }
+
+            .card-footer {
+                border-top: 1px solid rgba(0,0,0,.125);
+                border-radius: 0 0 calc(0.75rem - 1px) calc(0.75rem - 1px);
+                background-color: #f8f9fa;
+            }
+
+            /* Tooltips mejorados */
+            .tooltip {
+                font-size: 0.875rem;
+            }
+
+            /* Responsive improvements */
+            @media (max-width: 768px) {
+                .card {
+                    margin-bottom: 1rem;
+                }
+                
+                .btn-group {
+                    flex-direction: column;
+                }
+                
+                .table-responsive {
+                    border: none;
+                }
+            }
+        </style>
+        
         {% block stylesheets %}
         {% endblock %}
     </head>
@@ -354,7 +516,31 @@
         </script>
         
         {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
+            {% block importmap %}
+                <div data-turbo-permanent id="importmap-container">
+                    {{ importmap('app') }}
+                </div>
+            {% endblock %}
+            
+            <!-- Configuración para evitar warnings de import map duplicados -->
+            <script data-turbo-permanent>
+                // Configuración específica para evitar conflictos de import map
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Silenciar warnings específicos de import map en desarrollo
+                    if (console.warn) {
+                        const originalWarn = console.warn;
+                        console.warn = function(message) {
+                            if (typeof message === 'string' && 
+                                (message.includes('import map rule for specifier') && 
+                                 message.includes('was removed, as it conflicted'))) {
+                                // Silenciar estos warnings específicos
+                                return;
+                            }
+                            originalWarn.apply(console, arguments);
+                        };
+                    }
+                });
+            </script>
         {% endblock %}
     </body>
 </html>

@@ -1,233 +1,424 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Dashboard - Melisa Clinic{% endblock %}
+{% block title %}{{ 'dashboard.title'|trans }} - {{ tenant.name }}{% endblock %}
 
-{% block dashboard_indicator %}💙 Melisa Clinic (Default){% endblock %}
+{% block dashboard_indicator %}
+    <i class="fas fa-tachometer-alt me-2"></i>{{ 'dashboard.title'|trans }} - {{ tenant.name }}
+{% endblock %}
 
 {% block body %}
+<!-- IDENTIFICADOR VISUAL: Template Default Universal -->
+<div class="alert alert-warning border-start border-warning border-4 mb-0" role="alert">
+    <div class="d-flex align-items-center">
+        <i class="fas fa-cog fa-2x text-warning me-3"></i>
+        <div>
+            <h5 class="alert-heading mb-1">⚡ Dashboard Universal (Default)</h5>
+            <p class="mb-0 small">Template genérico para <strong>{{ tenant.subdomain }}</strong> - Sin personalización específica</p>
+        </div>
+    </div>
+</div>
+
 <div class="container-fluid">
     <div class="row">
-        <!-- Sidebar -->
-        <nav class="col-md-3 col-lg-2 d-md-block bg-gradient-primary sidebar position-fixed">
+        <!-- Sidebar Moderno -->
+        <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar position-fixed">
             <div class="position-sticky pt-3">
-                <div class="text-center mb-4">
-                    <h5 class="text-white">🏥 Melisa Clinic</h5>
-                    <small class="text-light">{{ subdomain }}.melisaupgrade.prod</small>
+                <!-- Encabezado del Tenant -->
+                <div class="text-center mb-4 px-3">
+                    <div class="bg-primary rounded-circle mx-auto mb-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-clinic-medical fa-2x text-white"></i>
+                    </div>
+                    <h6 class="fw-bold text-primary">{{ tenant.name }}</h6>
+                    <small class="text-muted">{{ tenant.subdomain }}.melisaupgrade.prod</small>
                 </div>
+                
+                <!-- Navegación Principal -->
                 <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active text-white" href="/dashboard">
-                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                    <li class="nav-item mb-1">
+                        <a class="nav-link active rounded" href="/dashboard">
+                            <i class="fas fa-tachometer-alt me-2"></i>
+                            {{ 'nav.dashboard'|trans }}
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="/pacientes">
-                            <i class="fas fa-users"></i> Pacientes
+                    <li class="nav-item mb-1">
+                        <a class="nav-link rounded" href="/pacientes">
+                            <i class="fas fa-users me-2"></i>
+                            {{ 'nav.patients'|trans }}
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="/consultas">
-                            <i class="fas fa-stethoscope"></i> Consultas
+                    <li class="nav-item mb-1">
+                        <a class="nav-link rounded" href="/citas">
+                            <i class="fas fa-calendar-alt me-2"></i>
+                            {{ 'nav.appointments'|trans }}
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="/medicos">
-                            <i class="fas fa-user-md"></i> Médicos
+                    <li class="nav-item mb-1">
+                        <a class="nav-link rounded" href="/consultas">
+                            <i class="fas fa-stethoscope me-2"></i>
+                            {{ 'nav.consultations'|trans }}
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="/inventario">
-                            <i class="fas fa-boxes"></i> Inventario
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="/finanzas">
-                            <i class="fas fa-chart-line"></i> Finanzas
+                    <li class="nav-item mb-1">
+                        <a class="nav-link rounded" href="/reportes">
+                            <i class="fas fa-chart-bar me-2"></i>
+                            {{ 'nav.reports'|trans }}
                         </a>
                     </li>
                 </ul>
                 
-                <hr class="my-3 bg-light">
+                <!-- Separador -->
+                <hr class="my-4">
                 
-                <div class="dropdown">
-                    <a href="#" class="d-flex align-items-center link-light text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-user-circle me-2"></i>
-                        <strong>{{ logged_user.first_name ?? 'Usuario' }}</strong>
-                    </a>
-                    <ul class="dropdown-menu shadow">
-                        <li><a class="dropdown-item" href="/perfil">
-                            <i class="fas fa-user"></i> Mi Perfil
-                        </a></li>
-                        <li><a class="dropdown-item" href="/configuracion">
-                            <i class="fas fa-cog"></i> Configuración
-                        </a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="/logout">
-                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                        </a></li>
-                    </ul>
-                </div>
+                <!-- Sección de Administración -->
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
+                    <span>{{ 'nav.administration'|trans }}</span>
+                </h6>
+                <ul class="nav flex-column mb-2">
+                    <li class="nav-item mb-1">
+                        <a class="nav-link rounded" href="/mantenedores">
+                            <i class="fas fa-cogs me-2"></i>
+                            {{ 'nav.maintenance'|trans }}
+                        </a>
+                    </li>
+                    <li class="nav-item mb-1">
+                        <a class="nav-link rounded" href="/configuracion">
+                            <i class="fas fa-sliders-h me-2"></i>
+                            {{ 'nav.settings'|trans }}
+                        </a>
+                    </li>
+                </ul>
             </div>
         </nav>
 
-        <!-- Main content -->
+        <!-- Contenido Principal -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <!-- Encabezado de Página -->
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2">Dashboard - {{ tenant_name ?? 'Melisa Clinic' }}</h1>
+                <h1 class="h2 fw-bold">
+                    <i class="fas fa-home me-2 text-primary"></i>
+                    {{ 'dashboard.welcome'|trans }}
+                </h1>
                 <div class="btn-toolbar mb-2 mb-md-0">
                     <div class="btn-group me-2">
                         <button type="button" class="btn btn-sm btn-outline-primary">
-                            <i class="fas fa-calendar"></i> Agenda
+                            <i class="fas fa-plus me-1"></i>{{ 'dashboard.new_appointment'|trans }}
                         </button>
                         <button type="button" class="btn btn-sm btn-outline-secondary">
-                            <i class="fas fa-download"></i> Reportes
+                            <i class="fas fa-download me-1"></i>{{ 'dashboard.export'|trans }}
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Welcome Message -->
-            <div class="alert alert-info" role="alert">
-                <h4 class="alert-heading">¡Bienvenido a Melisa Clinic! 🎉</h4>
-                <p>Este es el dashboard por defecto para clínicas que no tienen configuración personalizada.</p>
-                <hr>
-                <p class="mb-0">Subdominio: <code>{{ subdomain }}</code> | Tenant: <strong>{{ tenant_name }}</strong></p>
+            <!-- Tarjetas de Estadísticas Mejoradas -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card shadow-sm border-start border-primary border-4">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs fw-bold text-primary text-uppercase mb-1">
+                                        {{ 'dashboard.total_patients'|trans }}
+                                    </div>
+                                    <div class="h4 mb-0 fw-bold text-gray-800">1,247</div>
+                                    <small class="text-success">
+                                        <i class="fas fa-arrow-up me-1"></i>12% más que el mes pasado
+                                    </small>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon-circle bg-primary text-white">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card shadow-sm border-start border-success border-4">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs fw-bold text-success text-uppercase mb-1">
+                                        {{ 'dashboard.appointments_today'|trans }}
+                                    </div>
+                                    <div class="h4 mb-0 fw-bold text-gray-800">28</div>
+                                    <small class="text-info">
+                                        <i class="fas fa-clock me-1"></i>5 en curso
+                                    </small>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon-circle bg-success text-white">
+                                        <i class="fas fa-calendar-check"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card shadow-sm border-start border-warning border-4">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs fw-bold text-warning text-uppercase mb-1">
+                                        {{ 'dashboard.pending_reviews'|trans }}
+                                    </div>
+                                    <div class="h4 mb-0 fw-bold text-gray-800">8</div>
+                                    <small class="text-warning">
+                                        <i class="fas fa-exclamation-triangle me-1"></i>Requieren atención
+                                    </small>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon-circle bg-warning text-white">
+                                        <i class="fas fa-file-medical"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card shadow-sm border-start border-info border-4">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs fw-bold text-info text-uppercase mb-1">
+                                        {{ 'dashboard.monthly_revenue'|trans }}
+                                    </div>
+                                    <div class="h4 mb-0 fw-bold text-gray-800">$2.8M</div>
+                                    <small class="text-success">
+                                        <i class="fas fa-arrow-up me-1"></i>8.5% vs mes anterior
+                                    </small>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon-circle bg-info text-white">
+                                        <i class="fas fa-dollar-sign"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Dashboard Cards -->
+            <!-- Contenido Principal en dos columnas -->
             <div class="row">
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-primary shadow h-100 py-2">
+                <!-- Panel de Acciones Rápidas -->
+                <div class="col-lg-4 mb-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-gradient-primary text-white">
+                            <h5 class="card-title mb-0 fw-bold">
+                                <i class="fas fa-bolt me-2"></i>
+                                {{ 'dashboard.quick_actions'|trans }}
+                            </h5>
+                        </div>
                         <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                        Pacientes Registrados</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">124</div>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-primary btn-lg">
+                                    <i class="fas fa-user-plus me-2"></i>{{ 'dashboard.new_patient'|trans }}
+                                </button>
+                                <button class="btn btn-outline-success btn-lg">
+                                    <i class="fas fa-calendar-plus me-2"></i>{{ 'dashboard.schedule_appointment'|trans }}
+                                </button>
+                                <button class="btn btn-outline-info btn-lg">
+                                    <i class="fas fa-search me-2"></i>{{ 'dashboard.search_patient'|trans }}
+                                </button>
+                                <button class="btn btn-outline-warning btn-lg">
+                                    <i class="fas fa-prescription-bottle-alt me-2"></i>{{ 'dashboard.prescriptions'|trans }}
+                                </button>
+                            </div>
+                            
+                            <!-- Mini estadísticas -->
+                            <hr class="my-4">
+                            <div class="row text-center">
+                                <div class="col-6">
+                                    <div class="border-end">
+                                        <h4 class="text-primary fw-bold">15</h4>
+                                        <small class="text-muted">Hoy</small>
+                                    </div>
                                 </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-users fa-2x text-gray-300"></i>
+                                <div class="col-6">
+                                    <h4 class="text-success fw-bold">142</h4>
+                                    <small class="text-muted">Esta semana</small>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-success shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                        Consultas del Mes</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">89</div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-stethoscope fa-2x text-gray-300"></i>
-                                </div>
+                <!-- Agenda de Hoy -->
+                <div class="col-lg-8 mb-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0 fw-bold text-gray-800">
+                                <i class="fas fa-calendar-day me-2 text-success"></i>
+                                {{ 'dashboard.todays_schedule'|trans }} - {{ "now"|date("d/m/Y") }}
+                            </h5>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-secondary">
+                                    <i class="fas fa-list"></i>
+                                </button>
+                                <button class="btn btn-outline-secondary">
+                                    <i class="fas fa-calendar"></i>
+                                </button>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-info shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                        Médicos Activos</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">5</div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-user-md fa-2x text-gray-300"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-warning shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                        Ingresos Mensuales</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">$1,850,000</div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Content Area -->
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Próximas Citas</h6>
-                        </div>
-                        <div class="card-body">
+                        <div class="card-body p-0">
                             <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
+                                <table class="table table-hover mb-0">
+                                    <thead class="table-light">
                                         <tr>
-                                            <th>Fecha</th>
-                                            <th>Paciente</th>
-                                            <th>Médico</th>
+                                            <th>{{ 'dashboard.time'|trans }}</th>
+                                            <th>{{ 'dashboard.patient'|trans }}</th>
+                                            <th>{{ 'dashboard.reason'|trans }}</th>
+                                            <th>{{ 'dashboard.status'|trans }}</th>
+                                            <th class="text-center">{{ 'dashboard.actions'|trans }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>Hoy 14:00</td>
-                                            <td>María Rodríguez</td>
-                                            <td>Dr. García</td>
+                                            <td class="fw-bold text-primary">09:00</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="user-avatar bg-primary me-2" style="width: 32px; height: 32px; font-size: 12px;">
+                                                        MG
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-bold">María González</div>
+                                                        <small class="text-muted">ID: 12345</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>Control general</td>
+                                            <td><span class="badge bg-success">{{ 'dashboard.confirmed'|trans }}</span></td>
+                                            <td class="text-center">
+                                                <div class="btn-group btn-group-sm">
+                                                    <button class="btn btn-outline-primary" title="Ver detalles">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-success" title="Atender">
+                                                        <i class="fas fa-stethoscope"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
                                         </tr>
                                         <tr>
-                                            <td>Hoy 16:30</td>
-                                            <td>Juan Pérez</td>
-                                            <td>Dr. López</td>
+                                            <td class="fw-bold text-primary">10:30</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="user-avatar bg-info me-2" style="width: 32px; height: 32px; font-size: 12px;">
+                                                        CR
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-bold">Carlos Ruiz</div>
+                                                        <small class="text-muted">ID: 67890</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>Consulta cardiología</td>
+                                            <td><span class="badge bg-warning">{{ 'dashboard.pending'|trans }}</span></td>
+                                            <td class="text-center">
+                                                <div class="btn-group btn-group-sm">
+                                                    <button class="btn btn-outline-primary" title="Ver detalles">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-success" title="Atender">
+                                                        <i class="fas fa-stethoscope"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
                                         </tr>
                                         <tr>
-                                            <td>Mañana 09:00</td>
-                                            <td>Ana Martínez</td>
-                                            <td>Dr. Silva</td>
+                                            <td class="fw-bold text-primary">11:15</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="user-avatar bg-success me-2" style="width: 32px; height: 32px; font-size: 12px;">
+                                                        AM
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-bold">Ana Morales</div>
+                                                        <small class="text-muted">ID: 11223</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>Seguimiento tratamiento</td>
+                                            <td><span class="badge bg-info">{{ 'dashboard.in_progress'|trans }}</span></td>
+                                            <td class="text-center">
+                                                <div class="btn-group btn-group-sm">
+                                                    <button class="btn btn-outline-primary" title="Ver detalles">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-success" title="Atender">
+                                                        <i class="fas fa-stethoscope"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
+                        <div class="card-footer bg-light text-center">
+                            <a href="/citas" class="btn btn-primary btn-sm">
+                                <i class="fas fa-calendar-alt me-1"></i>{{ 'dashboard.view_all_appointments'|trans }}
+                            </a>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="col-lg-6">
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Información del Sistema</h6>
+            <!-- Información del Sistema Mejorada -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-light">
+                            <h5 class="card-title mb-0 fw-bold text-gray-800">
+                                <i class="fas fa-info-circle me-2 text-info"></i>
+                                {{ 'dashboard.system_information'|trans }}
+                            </h5>
                         </div>
                         <div class="card-body">
-                            <p><strong>Tenant:</strong> {{ tenant_name }}</p>
-                            <p><strong>Subdominio:</strong> {{ subdomain }}</p>
-                            <p><strong>Usuario Logueado:</strong> {{ logged_user.username ?? 'N/A' }}</p>
-                            <p><strong>Nombre:</strong> {{ logged_user.first_name ?? 'N/A' }} {{ logged_user.last_name ?? '' }}</p>
-                            
-                            <hr>
-                            
-                            <h6>Configuración Multi-Tenant</h6>
-                            <p class="text-muted">Este es el dashboard por defecto. Las clínicas personalizadas tienen dashboards específicos.</p>
-                            
-                            <div class="mt-3">
-                                <a href="/configuracion" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-cog"></i> Configurar
-                                </a>
-                                <a href="/ayuda" class="btn btn-outline-secondary btn-sm">
-                                    <i class="fas fa-question-circle"></i> Ayuda
-                                </a>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <div class="icon-circle bg-primary text-white mx-auto mb-2">
+                                            <i class="fas fa-building"></i>
+                                        </div>
+                                        <h6 class="fw-bold">{{ 'dashboard.medical_center'|trans }}</h6>
+                                        <p class="text-muted mb-0">{{ tenant.name }}</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <div class="icon-circle bg-success text-white mx-auto mb-2">
+                                            <i class="fas fa-globe"></i>
+                                        </div>
+                                        <h6 class="fw-bold">{{ 'dashboard.subdomain'|trans }}</h6>
+                                        <p class="text-muted mb-0">{{ tenant.subdomain }}.melisaupgrade.prod</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <div class="icon-circle bg-info text-white mx-auto mb-2">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <h6 class="fw-bold">{{ 'dashboard.active_user'|trans }}</h6>
+                                        <p class="text-muted mb-0">{{ logged_user.username }} ({{ logged_user.role|default('Usuario') }})</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <div class="icon-circle bg-warning text-white mx-auto mb-2">
+                                            <i class="fas fa-clock"></i>
+                                        </div>
+                                        <h6 class="fw-bold">{{ 'dashboard.last_connection'|trans }}</h6>
+                                        <p class="text-muted mb-0">{{ "now"|date("d/m/Y H:i") }}</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -237,4 +428,33 @@
     </div>
 </div>
 
+<!-- Scripts específicos del dashboard -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animaciones suaves para las tarjetas
+    const cards = document.querySelectorAll('.card');
+    cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+        card.classList.add('fade-in');
+    });
+    
+    // Actualizar la hora cada minuto
+    setInterval(function() {
+        const now = new Date();
+        const timeElements = document.querySelectorAll('.current-time');
+        timeElements.forEach(el => {
+            el.textContent = now.toLocaleTimeString('es-CL');
+        });
+    }, 60000);
+    
+    // Tooltip para botones
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    console.log('Dashboard cargado para:', '{{ tenant.name }}');
+    console.log('Usuario:', '{{ logged_user.username }}');
+});
+</script>
 {% endblock %}
