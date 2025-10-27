@@ -76,6 +76,15 @@ abstract class AbstractDashboardController extends AbstractController
     }
 
     /**
+     * Obtiene datos del tenant con fallbacks robustos usando DynamicControllerResolver
+     * Centraliza la lógica para evitar repetición en cada controlador
+     */
+    protected function getTenantData(): array
+    {
+        return $this->controllerResolver->getGuaranteedTenant();
+    }
+
+    /**
      * Obtiene información de debug del tenant
      */
     protected function getTenantDebugInfo(string $tenantSubdomain): array

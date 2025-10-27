@@ -26,9 +26,10 @@ class DefaultController extends AbstractDashboardController
     #[Route('/dashboard', name: 'app_dashboard_melisalacolina')]
     public function index(Request $request): Response
     {
-        // Obtener datos del tenant y usuario desde el contexto
-        $tenant = $this->tenantContext->getCurrentTenant();
         $session = $request->getSession();
+        
+        // Obtener datos del tenant usando método centralizado
+        $tenant = $this->getTenantData();
         
         // Obtener datos del usuario logueado
         $loggedUser = [
@@ -52,10 +53,10 @@ class DefaultController extends AbstractDashboardController
         // Usar el método helper de la clase base
         return $this->renderDashboard($tenantSubdomain, [
             'tenant' => $tenant,
-            'tenant_name' => $tenant['name'] ?? 'Clínica La Colina',
-            'subdomain' => $tenant['subdomain'] ?? 'melisalacolina',
+            'tenant_name' => $tenant['name'],
+            'subdomain' => $tenant['subdomain'],
             'logged_user' => $loggedUser,
-            'page_title' => 'Dashboard - Clínica La Colina',
+            'page_title' => 'Dashboard - ' . $tenant['name'],
             'current_locale' => $request->getLocale()
         ]);
     }

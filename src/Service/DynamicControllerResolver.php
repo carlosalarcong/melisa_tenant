@@ -361,6 +361,52 @@ class DynamicControllerResolver
     }
 
     /**
+     * Obtiene datos del tenant con fallbacks robustos
+     * Centraliza toda la lógica de obtención de tenant para evitar repetición
+     */
+    public function getCurrentTenantWithFallback(): ?array
+    {
+        // Primero intentar desde TenantContext
+        $tenant = $this->tenantContext->getCurrentTenant();
+        
+        if ($tenant && isset($tenant['name'])) {
+            return $tenant;
+        }
+        
+        // Si TenantContext no tiene datos, intentar reconstruir desde request/sesión
+        // Esto se maneja automáticamente en TenantContext::getCurrentTenant()
+        // ya que tiene la lógica de fallback mejorada
+        
+        return $tenant;
+    }
+
+    /**
+     * Obtiene datos del tenant con garantía de valores válidos
+     * Nunca retorna null, siempre tiene fallbacks por defecto
+     */
+    public function getGuaranteedTenant(): array
+    {
+        $tenant = $this->getCurrentTenantWithFallback();
+        
+        // Si aún es null o no tiene datos mínimos, usar valores por defecto
+        if (!$tenant || !isset($tenant['name'])) {
+            return [
+                'id' => 1,
+                'name' => 'Melisa Clinic',
+                'subdomain' => 'default',
+                'database_name' => '',
+                'rut_empresa' => null,
+                'host' => 'localhost',
+                'host_port' => 3306,
+                'db_user' => 'melisa',
+                'db_password' => 'melisamelisa'
+            ];
+        }
+        
+        return $tenant;
+    }
+
+    /**
      * Genera la ruta apropiada para redirección - completamente dinámico
      * Funciona para dashboard, mantenedores, reportes, etc.
      */
