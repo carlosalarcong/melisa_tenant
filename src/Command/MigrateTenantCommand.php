@@ -38,6 +38,7 @@ class MigrateTenantCommand extends Command
             ->addOption('force', null, InputOption::VALUE_NONE, 'Forzar ejecución sin confirmación')
             ->addOption('generate-only', null, InputOption::VALUE_NONE, 'Solo generar migraciones sin aplicarlas')
             ->addOption('cleanup-duplicates', null, InputOption::VALUE_NONE, 'Limpiar tablas duplicadas (CamelCase vs lowercase)')
+            ->addOption('cleanup-orphaned', null, InputOption::VALUE_NONE, 'Limpiar referencias huérfanas de migraciones en BD')
             ->setHelp('
 Este comando automatiza completamente el proceso de migraciones multi-tenant:
 
@@ -70,6 +71,9 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
   <comment># Limpiar tablas duplicadas en un tenant específico (dry-run)</comment>
   php bin/console app:migrate-tenant melisahospital --cleanup-duplicates --dry-run
 
+  <comment># Limpiar referencias huérfanas de migraciones eliminadas</comment>
+  php bin/console app:migrate-tenant --cleanup-orphaned
+
 <info>Proceso automático:</info>
 ✅ Detecta tenants activos en melisa_central
 ✅ Genera migraciones desde entidades existentes
@@ -86,10 +90,15 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
         $force = $input->getOption('force');
         $generateOnly = $input->getOption('generate-only');
         $cleanupDuplicates = $input->getOption('cleanup-duplicates');
+        $cleanupOrphaned = $input->getOption('cleanup-orphaned');
         $tenantSubdomain = $input->getArgument('tenant');
 
         if ($cleanupDuplicates) {
             return $this->cleanupDuplicateTables($input, $output, $io, $tenantSubdomain, $dryRun);
+        }
+
+        if ($cleanupOrphaned) {
+            return $this->cleanupOrphanedMigrations($input, $output, $io, $tenantSubdomain, $dryRun);
         }
 
         if ($tenantSubdomain) {
@@ -198,16 +207,66 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
         
         $tenantLabel = $tenantSubdomain ? "Tenant seleccionado" : "Total tenants activos";
         
+        // Obtener información de migraciones disponibles
+        $migrationInfo = $this->getMigrationSummaryInfo();
+        
         $io->definitionList(
             ['Modo de ejecución' => $mode],
             [$tenantLabel => count($tenants)],
             ['Directorio migraciones' => './migrations/'],
-            ['Entidades detectadas' => $this->countEntities()]
+            ['Entidades detectadas' => $this->countEntities()],
+            ['Migraciones disponibles' => $migrationInfo['available']],
+            ['Estado del esquema' => $migrationInfo['schema_status']]
         );
         
         $io->text('📋 Tenants que serán procesados:');
         foreach ($tenants as $tenant) {
             $io->text("  • {$tenant['name']} ({$tenant['subdomain']}) → BD: {$tenant['database_name']}");
+        }
+    }
+
+    /**
+     * Obtiene información resumida sobre migraciones y estado del esquema
+     */
+    private function getMigrationSummaryInfo(): array
+    {
+        try {
+            // Contar archivos de migración disponibles
+            $migrationsDir = '/var/www/html/melisa_tenant/migrations';
+            $migrationFiles = glob($migrationsDir . '/Version*.php');
+            $availableCount = count($migrationFiles);
+            
+            // Verificar estado del esquema
+            $process = new Process([
+                'php', 'bin/console', 'doctrine:schema:validate', '--skip-sync'
+            ]);
+            
+            $process->setWorkingDirectory('/var/www/html/melisa_tenant');
+            $process->run();
+            
+            $output = $process->getOutput();
+            $schemaStatus = '❓ Desconocido';
+            
+            if (strpos($output, 'mapping files are valid') !== false) {
+                if (strpos($output, 'database schema is in sync') !== false) {
+                    $schemaStatus = '✅ Sincronizado';
+                } else {
+                    $schemaStatus = '⚠️  Requiere sincronización';
+                }
+            } else {
+                $schemaStatus = '❌ Errores en mapping';
+            }
+            
+            return [
+                'available' => $availableCount,
+                'schema_status' => $schemaStatus
+            ];
+            
+        } catch (\Exception $e) {
+            return [
+                'available' => 'Error al verificar',
+                'schema_status' => '❓ No se pudo verificar'
+            ];
         }
     }
 
@@ -235,11 +294,19 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
         $io->section('📦 Generación Automática de Migraciones');
         
         if ($dryRun) {
-            $io->text('🔍 DRY-RUN: Se generarían migraciones basadas en entidades existentes');
+            $io->text('🔍 DRY-RUN: Se verificaría si se requieren nuevas migraciones');
             return true;
         }
 
         try {
+            // Primero verificar si realmente necesitamos generar una nueva migración
+            $needsNewMigration = $this->checkIfNewMigrationNeeded($io);
+            
+            if (!$needsNewMigration) {
+                $io->success('ℹ️  No se requieren nuevas migraciones - esquema está sincronizado');
+                return true; // Devolver true porque no hay error, simplemente no hay trabajo que hacer
+            }
+
             $io->text('🔄 Ejecutando: doctrine:migrations:diff');
             
             // Ejecutar doctrine:migrations:diff para generar migraciones automáticamente
@@ -272,6 +339,191 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
         } catch (\Exception $e) {
             $io->warning('Advertencia generando migraciones: ' . $e->getMessage());
             return false;
+        }
+    }
+
+    /**
+     * Verifica si realmente se necesita una nueva migración comparando el esquema actual
+     */
+    private function checkIfNewMigrationNeeded(SymfonyStyle $io): bool
+    {
+        $io->text('🔍 Iniciando verificación de necesidad de nuevas migraciones...');
+        
+        try {
+            // Primero verificar si hay migraciones pendientes sin aplicar
+            $process = new Process([
+                'php', 'bin/console', 'doctrine:migrations:status'
+            ]);
+            
+            $process->setWorkingDirectory('/var/www/html/melisa_tenant');
+            $process->run();
+            
+            if ($process->isSuccessful()) {
+                $output = $process->getOutput();
+                $io->text('📊 Estado de migraciones obtenido exitosamente');
+                
+                // Extraer información de migraciones del output
+                if (preg_match('/Available\s*\|\s*(\d+)/', $output, $matches)) {
+                    $availableMigrations = (int)$matches[1];
+                } else {
+                    $availableMigrations = 0;
+                }
+                
+                if (preg_match('/Executed\s*\|\s*(\d+)/', $output, $matches)) {
+                    $executedMigrations = (int)$matches[1];
+                } else {
+                    $executedMigrations = 0;
+                }
+                
+                $pendingMigrations = $availableMigrations - $executedMigrations;
+                
+                $io->text("📈 Migraciones disponibles: {$availableMigrations}, ejecutadas: {$executedMigrations}, pendientes: {$pendingMigrations}");
+                
+                if ($pendingMigrations > 0) {
+                    $io->text("📋 Hay {$pendingMigrations} migración(es) pendiente(s) por aplicar");
+                    return false; // No generar nuevas si hay pendientes
+                }
+                
+                // Verificar si todas las migraciones están aplicadas en los tenants
+                $io->text('🔍 Verificando estado de todos los tenants...');
+                $allTenantsUpToDate = $this->checkAllTenantsUpToDate($io);
+                
+                if ($allTenantsUpToDate) {
+                    $io->text('✅ Todos los tenants tienen migraciones al día');
+                    
+                    // Verificación adicional: comparar esquema contra un tenant específico
+                    $io->text('🔍 Verificando consistencia del esquema...');
+                    if ($this->verifySchemaConsistency($io)) {
+                        $io->text('🎉 Todos los tenants están actualizados y el esquema es consistente - NO SE REQUIEREN nuevas migraciones');
+                        return false; // ¡No generar migraciones!
+                    } else {
+                        $io->text('⚠️ Esquema inconsistente detectado - se requieren migraciones');
+                    }
+                } else {
+                    $io->text('⚠️ Algunos tenants no están al día con las migraciones');
+                }
+                
+                $io->text('🔍 Se detectaron cambios - se requiere nueva migración');
+                return true;
+                
+            } else {
+                $io->text('⚠️ Error al ejecutar doctrine:migrations:status: ' . $process->getErrorOutput());
+                return true;
+            }
+            
+        } catch (\Exception $e) {
+            $io->text("⚠️  No se pudo verificar estado del esquema: " . $e->getMessage());
+            // En caso de error, ser conservador y verificar
+            return true;
+        }
+    }
+
+    /**
+     * Verifica la consistencia del esquema comparando con un tenant específico
+     */
+    private function verifySchemaConsistency(SymfonyStyle $io): bool
+    {
+        try {
+            // Obtener un tenant activo para verificar
+            $tenants = $this->getActiveTenants($io);
+            if (empty($tenants)) {
+                return true; // Si no hay tenants, no hay inconsistencias
+            }
+
+            $testTenant = $tenants[0]; // Usar el primer tenant como referencia
+            
+            // Conectar temporalmente a la base de datos del tenant para verificar esquema
+            $tenantConnection = DriverManager::getConnection([
+                'driver' => 'pdo_mysql',
+                'host' => $testTenant['host'],
+                'port' => $testTenant['host_port'],
+                'dbname' => $testTenant['database_name'],
+                'user' => $testTenant['db_user'],
+                'password' => $testTenant['db_password'],
+                'charset' => 'utf8mb4'
+            ]);
+
+            // Verificar si las tablas principales existen en el tenant
+            $schemaManager = $tenantConnection->createSchemaManager();
+            $tables = $schemaManager->listTableNames();
+            
+            // Tablas que esperamos encontrar en el tenant
+            $expectedTenantTables = ['member', 'estado', 'pais', 'region', 'religion', 'sexo'];
+            $tablesFound = 0;
+            
+            foreach ($expectedTenantTables as $expectedTable) {
+                if (in_array($expectedTable, $tables)) {
+                    $tablesFound++;
+                }
+            }
+            
+            // También verificar que NO tiene las tablas que solo deben estar en central
+            $centralOnlyTables = ['tenant', 'system_config'];
+            $centralTablesInTenant = 0;
+            
+            foreach ($centralOnlyTables as $centralTable) {
+                if (in_array($centralTable, $tables)) {
+                    $centralTablesInTenant++;
+                }
+            }
+            
+            // El esquema es consistente si:
+            // 1. Encuentra la mayoría de tablas esperadas del tenant
+            // 2. NO encuentra tablas que solo deben estar en central
+            $consistency = ($tablesFound >= (count($expectedTenantTables) * 0.8)) && 
+                          ($centralTablesInTenant === 0);
+            
+            $tenantConnection->close();
+            
+            if ($consistency) {
+                $io->text("✅ Esquema consistente verificado en tenant '{$testTenant['subdomain']}' ({$tablesFound}/" . count($expectedTenantTables) . " tablas de tenant, {$centralTablesInTenant}/" . count($centralOnlyTables) . " tablas de central)");
+            } else {
+                $io->text("⚠️ Inconsistencia de esquema detectada en tenant '{$testTenant['subdomain']}' - Tablas de tenant: {$tablesFound}/" . count($expectedTenantTables) . ", Tablas de central: {$centralTablesInTenant}/" . count($centralOnlyTables));
+            }
+            
+            return $consistency;
+            
+        } catch (\Exception $e) {
+            $io->text("⚠️ Error al verificar consistencia del esquema: " . $e->getMessage());
+            return false; // En caso de error, asumir que hay inconsistencias
+        }
+    }
+
+    /**
+     * Verifica si todos los tenants están actualizados con las migraciones disponibles
+     */
+    private function checkAllTenantsUpToDate(SymfonyStyle $io): bool
+    {
+        try {
+            $tenants = $this->getActiveTenants($io);
+            $migrationsDir = '/var/www/html/melisa_tenant/migrations';
+            $availableMigrations = $this->getAvailableMigrationVersions($migrationsDir);
+            
+            foreach ($tenants as $tenant) {
+                $tenantDbConfig = [
+                    'host' => $tenant['host'],
+                    'port' => $tenant['host_port'],
+                    'dbname' => $tenant['database_name'],
+                    'user' => $tenant['db_user'],
+                    'password' => $tenant['db_password'],
+                    'driver' => 'pdo_mysql',
+                ];
+                
+                $connection = DriverManager::getConnection($tenantDbConfig);
+                $executedMigrations = $this->getExecutedMigrations($connection);
+                
+                // Contar migraciones disponibles vs ejecutadas
+                $pendingMigrations = array_diff($availableMigrations, $executedMigrations);
+                
+                if (!empty($pendingMigrations)) {
+                    return false; // Al menos un tenant tiene migraciones pendientes
+                }
+            }
+            
+            return true; // Todos los tenants están actualizados
+            
+        } catch (\Exception $e) {
+            return false; // En caso de error, asumir que no están actualizados
         }
     }
 
@@ -939,6 +1191,134 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
         }
         
         return true;
+    }
+
+    /**
+     * Limpia referencias huérfanas de migraciones en las bases de datos de los tenants
+     */
+    private function cleanupOrphanedMigrations(InputInterface $input, OutputInterface $output, SymfonyStyle $io, ?string $tenantSubdomain, bool $dryRun): int
+    {
+        $io->title('🧹 Limpieza de Referencias Huérfanas de Migraciones');
+        
+        try {
+            // Obtener tenants
+            $tenants = $this->getActiveTenants($io, $tenantSubdomain);
+            
+            if (empty($tenants)) {
+                $io->error('No se encontraron tenants para limpiar');
+                return Command::FAILURE;
+            }
+
+            // Obtener migraciones disponibles en el directorio
+            $migrationsDir = '/var/www/html/melisa_tenant/migrations';
+            $availableMigrations = $this->getAvailableMigrationVersions($migrationsDir);
+            
+            $io->text('🔍 Migraciones disponibles en directorio: ' . count($availableMigrations));
+            $io->text('🔍 Verificando referencias huérfanas en ' . count($tenants) . ' tenant(s)...');
+            
+            $totalCleaned = 0;
+            $totalErrors = 0;
+            
+            foreach ($tenants as $tenant) {
+                $io->text("📋 Procesando: {$tenant['name']} ({$tenant['subdomain']})");
+                
+                try {
+                    $cleaned = $this->cleanupSingleTenantOrphanedMigrations($tenant, $availableMigrations, $io, $dryRun);
+                    $totalCleaned += $cleaned;
+                    
+                    if ($cleaned > 0) {
+                        $action = $dryRun ? 'Se limpiarían' : 'Limpiadas';
+                        $io->text("  ✅ {$action} {$cleaned} referencia(s) huérfana(s)");
+                    } else {
+                        $io->text("  ℹ️  No se encontraron referencias huérfanas");
+                    }
+                    
+                } catch (\Exception $e) {
+                    $totalErrors++;
+                    $io->text("  ❌ Error: " . $e->getMessage());
+                }
+            }
+            
+            // Resumen final
+            $io->section('📊 Resumen de Limpieza de Referencias Huérfanas');
+            $io->definitionList(
+                ['Tenants procesados' => count($tenants)],
+                ['Referencias limpiadas' => $totalCleaned],
+                ['Errores' => $totalErrors]
+            );
+            
+            if ($totalErrors === 0) {
+                $message = $dryRun ? 
+                    '🔍 DRY-RUN: Todas las referencias huérfanas serían limpiadas correctamente' :
+                    '🎉 Limpieza de referencias huérfanas completada exitosamente';
+                $io->success($message);
+            } else {
+                $io->warning("⚠️ Limpieza completada con {$totalErrors} error(es)");
+            }
+            
+            return $totalErrors > 0 ? Command::FAILURE : Command::SUCCESS;
+            
+        } catch (\Exception $e) {
+            $io->error('Error en la limpieza de referencias huérfanas: ' . $e->getMessage());
+            return Command::FAILURE;
+        }
+    }
+
+    /**
+     * Obtiene todas las versiones de migración disponibles en el directorio
+     */
+    private function getAvailableMigrationVersions(string $migrationsDir): array
+    {
+        $files = glob($migrationsDir . '/Version*.php');
+        $versions = [];
+
+        foreach ($files as $file) {
+            $filename = basename($file, '.php');
+            $version = 'DoctrineMigrations\\' . $filename;
+            $versions[] = $version;
+        }
+
+        return $versions;
+    }
+
+    /**
+     * Limpia referencias huérfanas de migraciones en un tenant específico
+     */
+    private function cleanupSingleTenantOrphanedMigrations(array $tenant, array $availableMigrations, SymfonyStyle $io, bool $dryRun): int
+    {
+        $tenantDbConfig = [
+            'host' => $tenant['host'],
+            'port' => $tenant['host_port'],
+            'dbname' => $tenant['database_name'],
+            'user' => $tenant['db_user'],
+            'password' => $tenant['db_password'],
+            'driver' => 'pdo_mysql',
+        ];
+        
+        $connection = DriverManager::getConnection($tenantDbConfig);
+        
+        // Obtener migraciones registradas en la base de datos
+        $executedMigrations = $this->getExecutedMigrations($connection);
+        
+        $orphanedCount = 0;
+        
+        foreach ($executedMigrations as $executedMigration) {
+            // Si la migración está registrada en BD pero no existe el archivo
+            if (!in_array($executedMigration, $availableMigrations)) {
+                $orphanedCount++;
+                
+                $io->text("    🗑️  Referencia huérfana encontrada: " . str_replace('DoctrineMigrations\\', '', $executedMigration));
+                
+                if (!$dryRun) {
+                    // Eliminar la referencia huérfana de la base de datos
+                    $deleteSql = "DELETE FROM doctrine_migration_versions WHERE version = ?";
+                    $connection->executeStatement($deleteSql, [$executedMigration]);
+                    $io->text("    ✅ Referencia huérfana eliminada de la base de datos");
+                }
+            }
+        }
+        
+        return $orphanedCount;
     }
 
     private function showFinalResults(SymfonyStyle $io, array $results, bool $dryRun, ?string $tenantSubdomain = null): void
