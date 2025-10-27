@@ -4,6 +4,7 @@ namespace App\Command;
 
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Schema\Schema;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -19,6 +20,7 @@ use Symfony\Component\Process\Process;
 )]
 class MigrateTenantCommand extends Command
 {
+    private int $verbosity = OutputInterface::VERBOSITY_NORMAL;
     private $centralDbConfig = [
         'host' => 'localhost',
         'port' => 3306,
@@ -35,6 +37,7 @@ class MigrateTenantCommand extends Command
             ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Solo mostrar qué se ejecutaría sin hacer cambios')
             ->addOption('force', null, InputOption::VALUE_NONE, 'Forzar ejecución sin confirmación')
             ->addOption('generate-only', null, InputOption::VALUE_NONE, 'Solo generar migraciones sin aplicarlas')
+            ->addOption('cleanup-duplicates', null, InputOption::VALUE_NONE, 'Limpiar tablas duplicadas (CamelCase vs lowercase)')
             ->setHelp('
 Este comando automatiza completamente el proceso de migraciones multi-tenant:
 
@@ -61,6 +64,12 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
   <comment># Forzar migración sin confirmación</comment>
   php bin/console app:migrate-tenant melisalacolina --force
 
+  <comment># Limpiar tablas duplicadas en todos los tenants</comment>
+  php bin/console app:migrate-tenant --cleanup-duplicates
+
+  <comment># Limpiar tablas duplicadas en un tenant específico (dry-run)</comment>
+  php bin/console app:migrate-tenant melisahospital --cleanup-duplicates --dry-run
+
 <info>Proceso automático:</info>
 ✅ Detecta tenants activos en melisa_central
 ✅ Genera migraciones desde entidades existentes
@@ -71,11 +80,17 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->verbosity = $output->getVerbosity();
         $io = new SymfonyStyle($input, $output);
         $dryRun = $input->getOption('dry-run');
         $force = $input->getOption('force');
         $generateOnly = $input->getOption('generate-only');
+        $cleanupDuplicates = $input->getOption('cleanup-duplicates');
         $tenantSubdomain = $input->getArgument('tenant');
+
+        if ($cleanupDuplicates) {
+            return $this->cleanupDuplicateTables($input, $output, $io, $tenantSubdomain, $dryRun);
+        }
 
         if ($tenantSubdomain) {
             $io->title("🚀 Migración Multi-Tenant: {$tenantSubdomain}");
@@ -343,406 +358,388 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
     {
         $migrationsDir = '/var/www/html/melisa_tenant/migrations';
         if (!is_dir($migrationsDir)) {
+            $io->text("    ⚠️  Directorio de migraciones no encontrado: {$migrationsDir}");
             return;
         }
 
-        $migrationFiles = glob($migrationsDir . '/Version*.php');
+        // Obtener todos los archivos de migración ordenados por fecha
+        $migrationFiles = $this->getMigrationFiles($migrationsDir);
+        
         if (empty($migrationFiles)) {
+            $io->text("    ℹ️  No se encontraron archivos de migración");
             return;
         }
 
         // Obtener migraciones ya ejecutadas
-        $executedQuery = "SELECT version FROM doctrine_migration_versions";
-        $result = $connection->executeQuery($executedQuery);
-        $executed = array_column($result->fetchAllAssociative(), 'version');
+        $executedMigrations = $this->getExecutedMigrations($connection);
+        $io->text("    📊 Migraciones ejecutadas anteriormente: " . count($executedMigrations));
 
-        foreach ($migrationFiles as $migrationFile) {
-            $filename = basename($migrationFile, '.php');
-            $version = 'DoctrineMigrations\\' . $filename;
+        $newMigrations = 0;
+        $skippedMigrations = 0;
+        $failedMigrations = 0;
 
-            if (in_array($version, $executed)) {
-                continue; // Ya ejecutada
+        foreach ($migrationFiles as $migrationInfo) {
+            $filename = $migrationInfo['filename'];
+            $version = $migrationInfo['version'];
+            $filePath = $migrationInfo['path'];
+
+            if (in_array($version, $executedMigrations)) {
+                $skippedMigrations++;
+                if ($this->isVerbose()) {
+                    $io->text("    ⏭️  Saltando migración ya ejecutada: {$filename}");
+                }
+                continue;
             }
 
+            $io->text("    🔄 Aplicando migración: {$filename}");
+            
             try {
-                // Aplicar migración específica basada en el archivo
-                $this->applySpecificMigration($connection, $filename, $io);
+                $startTime = microtime(true);
+                
+                // Aplicar la migración dinámicamente
+                $this->applyDynamicMigration($connection, $filename, $io);
+                
+                $executionTime = (int)((microtime(true) - $startTime) * 1000); // en ms
                 
                 // Registrar como ejecutada
-                $insertSql = "INSERT IGNORE INTO doctrine_migration_versions (version, executed_at, execution_time) VALUES (?, NOW(), ?)";
-                $connection->executeStatement($insertSql, [$version, 100]);
+                $this->markMigrationAsExecuted($connection, $version, $executionTime);
+                
+                $newMigrations++;
+                $io->text("    ✅ Migración completada en {$executionTime}ms");
                 
             } catch (\Exception $e) {
-                // Log del error pero continuar con las siguientes
-                $io->text("    ⚠️  Error en migración {$filename}: " . $e->getMessage());
+                $failedMigrations++;
+                $io->text("    ❌ Error en migración {$filename}: " . $e->getMessage());
+                
+                // Decidir si continuar o detener
+                if ($this->shouldStopOnMigrationError($e)) {
+                    throw new \Exception("Migración crítica falló: {$filename}. Error: " . $e->getMessage());
+                }
             }
         }
+
+        // Resumen de la aplicación de migraciones
+        $io->text("    📈 Resumen: {$newMigrations} nuevas, {$skippedMigrations} saltadas, {$failedMigrations} fallidas");
     }
 
-    private function applySpecificMigration($connection, string $filename, SymfonyStyle $io): void
+    /**
+     * Obtiene archivos de migración ordenados por versión
+     */
+    private function getMigrationFiles(string $migrationsDir): array
     {
-        // Aplicar migraciones específicas basadas en los archivos que tenemos
-        switch ($filename) {
-            case 'Version20251017145349':
-                $this->applyVersion20251017145349($connection);
-                break;
-            case 'Version20251017150139':
-                $this->applyVersion20251017150139($connection);
-                break;
-            case 'Version20251017150541':
-            case 'Version20251017152218':
-                $this->applyVersion20251017152218($connection);
-                break;
-            case 'Version20251017165847':
-            case 'Version20251017165926':
-                $this->applyVersion20251017165847($connection, $io);
-                break;
-            default:
-                // Para nuevas migraciones, intentar aplicar dinámicamente
-                $this->applyDynamicMigration($connection, $filename);
-        }
-    }
+        $files = glob($migrationsDir . '/Version*.php');
+        $migrationFiles = [];
 
-    private function applyVersion20251017145349($connection): void
-    {
-        // Crear tablas sexo y religion
-        $connection->executeStatement("
-            CREATE TABLE IF NOT EXISTS sexo (
-                id INT AUTO_INCREMENT NOT NULL,
-                nombre VARCHAR(50) NOT NULL,
-                codigo VARCHAR(10) NOT NULL,
-                activo TINYINT(1) DEFAULT 1 NOT NULL,
-                PRIMARY KEY(id),
-                INDEX idx_sexo_activo (activo),
-                INDEX idx_sexo_codigo (codigo)
-            ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB
-        ");
-
-        $connection->executeStatement("
-            CREATE TABLE IF NOT EXISTS religion (
-                id INT AUTO_INCREMENT NOT NULL,
-                nombre VARCHAR(100) NOT NULL,
-                codigo VARCHAR(20) NOT NULL,
-                descripcion TEXT DEFAULT NULL,
-                activo TINYINT(1) DEFAULT 1 NOT NULL,
-                PRIMARY KEY(id),
-                INDEX idx_religion_activo (activo),
-                INDEX idx_religion_codigo (codigo)
-            ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB
-        ");
-    }
-
-    private function applyVersion20251017150139($connection): void
-    {
-        // Crear tablas Pais y Region con relaciones
-        $connection->executeStatement("
-            CREATE TABLE IF NOT EXISTS pais (
-                id INT AUTO_INCREMENT NOT NULL,
-                nombre_pais VARCHAR(255) DEFAULT NULL,
-                nombre_gentilicio VARCHAR(255) NOT NULL,
-                activo TINYINT(1) DEFAULT 1 NOT NULL,
-                PRIMARY KEY(id),
-                INDEX idx_pais_activo (activo)
-            ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB
-        ");
-
-        $connection->executeStatement("
-            CREATE TABLE IF NOT EXISTS region (
-                id INT AUTO_INCREMENT NOT NULL,
-                id_pais INT DEFAULT NULL,
-                codigo_region INT DEFAULT NULL,
-                nombre_region VARCHAR(100) DEFAULT NULL,
-                address_state_hl7 VARCHAR(10) DEFAULT NULL,
-                activo TINYINT(1) DEFAULT 1 NOT NULL,
-                PRIMARY KEY(id),
-                INDEX idx_region_activo (activo),
-                INDEX idx_region_codigo (codigo_region),
-                INDEX IDX_F62F176F85E0677 (id_pais)
-            ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB
-        ");
-
-        // Agregar foreign key solo si no existe
-        try {
-            $connection->executeStatement("
-                ALTER TABLE region 
-                ADD CONSTRAINT FK_F62F176F85E0677 
-                FOREIGN KEY (id_pais) REFERENCES pais (id)
-            ");
-        } catch (\Exception $e) {
-            // FK ya existe, continuar
-        }
-    }
-
-    private function applyVersion20251017150541($connection): void
-    {
-        // Crear tabla Estado
-        $connection->executeStatement("
-            CREATE TABLE IF NOT EXISTS estado (
-                id INT AUTO_INCREMENT NOT NULL,
-                nombre_estado VARCHAR(45) NOT NULL,
-                activo TINYINT(1) DEFAULT 1 NOT NULL,
-                PRIMARY KEY(id),
-                INDEX idx_estado_activo (activo)
-            ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB
-        ");
-
-        // Agregar columnas id_estado si no existen
-        $tables = ['pais', 'region', 'religion', 'sexo'];
-        foreach ($tables as $table) {
-            try {
-                $connection->executeStatement("ALTER TABLE {$table} ADD COLUMN id_estado INT DEFAULT NULL");
-                $connection->executeStatement("CREATE INDEX IDX_{$table}_estado ON {$table} (id_estado)");
-                $connection->executeStatement("ALTER TABLE {$table} ADD CONSTRAINT FK_{$table}_estado FOREIGN KEY (id_estado) REFERENCES estado (id)");
-            } catch (\Exception $e) {
-                // Columna o constraint ya existe, continuar
-            }
-        }
-    }
-
-    private function applyVersion20251017152218($connection): void
-    {
-        // Crear todas las tablas con nombres en minúsculas
-        $connection->executeStatement("
-            CREATE TABLE IF NOT EXISTS religion (
-                id INT AUTO_INCREMENT NOT NULL,
-                id_estado INT DEFAULT NULL,
-                nombre VARCHAR(100) NOT NULL,
-                codigo VARCHAR(20) NOT NULL,
-                descripcion LONGTEXT DEFAULT NULL,
-                activo TINYINT(1) DEFAULT 1 NOT NULL,
-                INDEX IDX_religion_estado (id_estado),
-                INDEX idx_religion_activo (activo),
-                INDEX idx_religion_codigo (codigo),
-                PRIMARY KEY(id)
-            ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB
-        ");
-
-        $connection->executeStatement("
-            CREATE TABLE IF NOT EXISTS sexo (
-                id INT AUTO_INCREMENT NOT NULL,
-                id_estado INT DEFAULT NULL,
-                nombre VARCHAR(50) NOT NULL,
-                codigo VARCHAR(10) NOT NULL,
-                activo TINYINT(1) DEFAULT 1 NOT NULL,
-                INDEX IDX_sexo_estado (id_estado),
-                INDEX idx_sexo_activo (activo),
-                INDEX idx_sexo_codigo (codigo),
-                PRIMARY KEY(id)
-            ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB
-        ");
-
-        // Agregar foreign keys para religion y sexo si no existen
-        try {
-            $connection->executeStatement("
-                ALTER TABLE religion 
-                ADD CONSTRAINT FK_religion_estado 
-                FOREIGN KEY (id_estado) REFERENCES estado (id)
-            ");
-        } catch (\Exception $e) {
-            // FK ya existe, continuar
-        }
-
-        try {
-            $connection->executeStatement("
-                ALTER TABLE sexo 
-                ADD CONSTRAINT FK_sexo_estado 
-                FOREIGN KEY (id_estado) REFERENCES estado (id)
-            ");
-        } catch (\Exception $e) {
-            // FK ya existe, continuar
-        }
-
-        // Migrar datos de tablas en CamelCase a minúsculas si existen
-        try {
-            $connection->executeStatement("INSERT IGNORE INTO religion SELECT * FROM Religion");
-            $connection->executeStatement("INSERT IGNORE INTO sexo SELECT * FROM Sexo");
+        foreach ($files as $file) {
+            $filename = basename($file, '.php');
+            $version = 'DoctrineMigrations\\' . $filename;
             
-            // Eliminar tablas en CamelCase
-            $connection->executeStatement("DROP TABLE IF EXISTS Religion");
-            $connection->executeStatement("DROP TABLE IF EXISTS Sexo");
+            // Extraer timestamp de la versión para ordenar
+            preg_match('/Version(\d{14})/', $filename, $matches);
+            $timestamp = $matches[1] ?? '00000000000000';
+
+            $migrationFiles[] = [
+                'filename' => $filename,
+                'version' => $version,
+                'path' => $file,
+                'timestamp' => $timestamp
+            ];
+        }
+
+        // Ordenar por timestamp (fecha de creación)
+        usort($migrationFiles, function($a, $b) {
+            return strcmp($a['timestamp'], $b['timestamp']);
+        });
+
+        return $migrationFiles;
+    }
+
+    /**
+     * Obtiene lista de migraciones ya ejecutadas
+     */
+    private function getExecutedMigrations($connection): array
+    {
+        try {
+            $result = $connection->executeQuery("SELECT version FROM doctrine_migration_versions ORDER BY version");
+            return array_column($result->fetchAllAssociative(), 'version');
         } catch (\Exception $e) {
-            // Las tablas CamelCase no existen, continuar
+            // Si la tabla no existe, no hay migraciones ejecutadas
+            return [];
         }
     }
 
-    private function applyVersion20251017165847($connection, SymfonyStyle $io): void
+    /**
+     * Marca una migración como ejecutada
+     */
+    private function markMigrationAsExecuted($connection, string $version, int $executionTime): void
     {
-        // Esta migración incluye la tabla member y todas las entidades
-        
-        // Crear tabla estado si no existe
-        $connection->executeStatement("
-            CREATE TABLE IF NOT EXISTS estado (
-                id INT AUTO_INCREMENT NOT NULL,
-                nombre_estado VARCHAR(45) NOT NULL,
-                activo TINYINT(1) DEFAULT 1 NOT NULL,
-                PRIMARY KEY(id)
-            ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB
-        ");
-
-        // Crear tabla member - ¡LA CLAVE!
-        $connection->executeStatement("
-            CREATE TABLE IF NOT EXISTS member (
-                id INT AUTO_INCREMENT NOT NULL,
-                username VARCHAR(180) NOT NULL,
-                roles JSON NOT NULL,
-                password VARCHAR(255) NOT NULL,
-                email VARCHAR(255) DEFAULT NULL,
-                first_name VARCHAR(255) DEFAULT NULL,
-                last_name VARCHAR(255) DEFAULT NULL,
-                is_active TINYINT(1) DEFAULT NULL,
-                created_at DATETIME DEFAULT NULL COMMENT '(DC2Type:datetime_immutable)',
-                updated_at DATETIME DEFAULT NULL COMMENT '(DC2Type:datetime_immutable)',
-                UNIQUE INDEX UNIQ_IDENTIFIER_USERNAME (username),
-                PRIMARY KEY(id)
-            ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB
-        ");
-
-        // Crear otras tablas si no existen
-        $connection->executeStatement("
-            CREATE TABLE IF NOT EXISTS pais (
-                id INT AUTO_INCREMENT NOT NULL,
-                id_estado INT DEFAULT NULL,
-                nombre_pais VARCHAR(255) DEFAULT NULL,
-                nombre_gentilicio VARCHAR(255) NOT NULL,
-                activo TINYINT(1) DEFAULT 1 NOT NULL,
-                INDEX IDX_7E5D2EFF6A540E (id_estado),
-                PRIMARY KEY(id)
-            ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB
-        ");
-
-        $connection->executeStatement("
-            CREATE TABLE IF NOT EXISTS region (
-                id INT AUTO_INCREMENT NOT NULL,
-                id_pais INT DEFAULT NULL,
-                id_estado INT DEFAULT NULL,
-                codigo_region INT DEFAULT NULL,
-                nombre_region VARCHAR(100) DEFAULT NULL,
-                address_state_hl7 VARCHAR(10) DEFAULT NULL,
-                activo TINYINT(1) DEFAULT 1 NOT NULL,
-                INDEX IDX_F62F176F57D32FD (id_pais),
-                INDEX IDX_F62F1766A540E (id_estado),
-                PRIMARY KEY(id)
-            ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB
-        ");
-
-        $connection->executeStatement("
-            CREATE TABLE IF NOT EXISTS religion (
-                id INT AUTO_INCREMENT NOT NULL,
-                id_estado INT DEFAULT NULL,
-                nombre VARCHAR(100) NOT NULL,
-                codigo VARCHAR(20) NOT NULL,
-                descripcion LONGTEXT DEFAULT NULL,
-                activo TINYINT(1) DEFAULT 1 NOT NULL,
-                INDEX IDX_1055F4F96A540E (id_estado),
-                PRIMARY KEY(id)
-            ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB
-        ");
-
-        $connection->executeStatement("
-            CREATE TABLE IF NOT EXISTS sexo (
-                id INT AUTO_INCREMENT NOT NULL,
-                id_estado INT DEFAULT NULL,
-                nombre VARCHAR(50) NOT NULL,
-                codigo VARCHAR(10) NOT NULL,
-                activo TINYINT(1) DEFAULT 1 NOT NULL,
-                INDEX IDX_2C3956926A540E (id_estado),
-                PRIMARY KEY(id)
-            ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB
-        ");
-
-        // Crear tabla de mensajes de Symfony
-        $connection->executeStatement("
-            CREATE TABLE IF NOT EXISTS messenger_messages (
-                id BIGINT AUTO_INCREMENT NOT NULL,
-                body LONGTEXT NOT NULL,
-                headers LONGTEXT NOT NULL,
-                queue_name VARCHAR(190) NOT NULL,
-                created_at DATETIME NOT NULL COMMENT '(DC2Type:datetime_immutable)',
-                available_at DATETIME NOT NULL COMMENT '(DC2Type:datetime_immutable)',
-                delivered_at DATETIME DEFAULT NULL COMMENT '(DC2Type:datetime_immutable)',
-                INDEX IDX_75EA56E0FB7336F0 (queue_name),
-                INDEX IDX_75EA56E0E3BD61CE (available_at),
-                INDEX IDX_75EA56E016BA31DB (delivered_at),
-                PRIMARY KEY(id)
-            ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB
-        ");
-
-        // Agregar foreign keys
-        try {
-            $connection->executeStatement("ALTER TABLE pais ADD CONSTRAINT FK_7E5D2EFF6A540E FOREIGN KEY (id_estado) REFERENCES estado (id)");
-        } catch (\Exception $e) {}
-        
-        try {
-            $connection->executeStatement("ALTER TABLE region ADD CONSTRAINT FK_F62F176F57D32FD FOREIGN KEY (id_pais) REFERENCES pais (id)");
-        } catch (\Exception $e) {}
-        
-        try {
-            $connection->executeStatement("ALTER TABLE region ADD CONSTRAINT FK_F62F1766A540E FOREIGN KEY (id_estado) REFERENCES estado (id)");
-        } catch (\Exception $e) {}
-        
-        try {
-            $connection->executeStatement("ALTER TABLE religion ADD CONSTRAINT FK_1055F4F96A540E FOREIGN KEY (id_estado) REFERENCES estado (id)");
-        } catch (\Exception $e) {}
-        
-        try {
-            $connection->executeStatement("ALTER TABLE sexo ADD CONSTRAINT FK_2C3956926A540E FOREIGN KEY (id_estado) REFERENCES estado (id)");
-        } catch (\Exception $e) {}
-
-        $io->text("    ✅ Tabla member creada exitosamente");
+        $insertSql = "INSERT IGNORE INTO doctrine_migration_versions (version, executed_at, execution_time) VALUES (?, NOW(), ?)";
+        $connection->executeStatement($insertSql, [$version, $executionTime]);
     }
 
-    private function applyDynamicMigration($connection, string $filename): void
+    /**
+     * Determina si se debe detener la ejecución en caso de error de migración
+     */
+    private function shouldStopOnMigrationError(\Exception $e): bool
     {
-        // Aplicar migración de forma dinámica leyendo el archivo PHP
+        $message = $e->getMessage();
+        
+        // Errores que deben detener todo el proceso
+        $criticalErrorPatterns = [
+            'Connection refused',
+            'Access denied',
+            'Database .* doesn\'t exist',
+            'Syntax error.*near',
+            'Foreign key constraint fails.*REFERENCES'
+        ];
+
+        foreach ($criticalErrorPatterns as $pattern) {
+            if (preg_match('/' . $pattern . '/i', $message)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Aplica migración dinámicamente detectando su tipo y contenido
+     */
+    private function applyDynamicMigration($connection, string $filename, SymfonyStyle $io = null): void
+    {
         $migrationFile = '/var/www/html/melisa_tenant/migrations/' . $filename . '.php';
         
         if (!file_exists($migrationFile)) {
-            throw new \Exception("Archivo de migración no encontrado: {$migrationFile}");
+            if ($io) {
+                $io->text("    ⚠️  Archivo de migración no encontrado: {$filename}");
+            }
+            return;
         }
         
+        try {
+            // Intentar cargar y ejecutar la migración usando Doctrine
+            $this->executeDoctrineMigration($connection, $filename, $migrationFile, $io);
+            
+        } catch (\Exception $e) {
+            // Si falla Doctrine, intentar método de parsing manual
+            if ($io) {
+                $io->text("    🔄 Intentando método de parsing manual para {$filename}");
+            }
+            $this->executeManualMigration($connection, $migrationFile, $io);
+        }
+    }
+
+    /**
+     * Ejecuta migración usando instanciación directa de la clase Doctrine
+     */
+    private function executeDoctrineMigration($connection, string $filename, string $migrationFile, SymfonyStyle $io = null): void
+    {
+        // Incluir el archivo de migración
+        require_once $migrationFile;
+        
+        // Construir el nombre completo de la clase
+        $className = 'DoctrineMigrations\\' . $filename;
+        
+        if (!class_exists($className)) {
+            throw new \Exception("Clase de migración no encontrada: {$className}");
+        }
+        
+        // Crear una instancia de la migración
+        $migration = new $className($connection, $this->createMockLogger());
+        
+        // Crear un Schema mock (Doctrine lo necesita pero no lo usamos directamente)
+        $schema = new \Doctrine\DBAL\Schema\Schema();
+        
+        // Ejecutar el método up() de la migración
+        $migration->up($schema);
+        
+        if ($io) {
+            $io->text("    ✅ Migración aplicada exitosamente: {$filename}");
+        }
+    }
+
+    /**
+     * Ejecuta migración parseando manualmente el archivo PHP
+     */
+    private function executeManualMigration($connection, string $migrationFile, SymfonyStyle $io = null): void
+    {
         // Leer el contenido del archivo de migración
         $migrationContent = file_get_contents($migrationFile);
         
         // Extraer las sentencias SQL del método up()
         $sqlStatements = $this->extractSqlFromMigration($migrationContent);
         
+        if (empty($sqlStatements)) {
+            if ($io) {
+                $io->text("    ℹ️  No se encontraron sentencias SQL en la migración");
+            }
+            return;
+        }
+        
+        $successCount = 0;
+        $errorCount = 0;
+        
         // Ejecutar cada sentencia SQL
-        foreach ($sqlStatements as $sql) {
+        foreach ($sqlStatements as $index => $sql) {
             try {
-                // Limpiar y preparar la sentencia SQL
-                $cleanSql = trim($sql);
+                $cleanSql = $this->cleanSqlStatement($sql);
+                
                 if (!empty($cleanSql) && $cleanSql !== ';') {
                     $connection->executeStatement($cleanSql);
+                    $successCount++;
+                    
+                    if ($io && $this->isVerbose()) {
+                        $io->text("      📝 SQL ejecutado: " . substr($cleanSql, 0, 60) . '...');
+                    }
                 }
             } catch (\Exception $e) {
+                $errorCount++;
+                
                 // Algunos errores son esperables (tabla ya existe, etc.)
-                if (!$this->isExpectedMigrationError($e->getMessage())) {
-                    throw new \Exception("Error ejecutando SQL: {$cleanSql}. Error: " . $e->getMessage());
+                if ($this->isExpectedMigrationError($e->getMessage())) {
+                    if ($io && $this->isVerbose()) {
+                        $io->text("      ⚠️  Error esperado (ignorado): " . substr($e->getMessage(), 0, 60) . '...');
+                    }
+                } else {
+                    if ($io) {
+                        $io->text("      ❌ Error SQL: " . $e->getMessage());
+                    }
+                    // Decidir si continuar o fallar
+                    if (!$this->shouldContinueOnError($e->getMessage())) {
+                        throw new \Exception("Error crítico ejecutando SQL: {$cleanSql}. Error: " . $e->getMessage());
+                    }
                 }
             }
         }
+        
+        if ($io) {
+            $io->text("    ✅ Migración procesada: {$successCount} SQL exitosos, {$errorCount} errores manejados");
+        }
+    }
+
+    /**
+     * Crea un logger mock para Doctrine
+     */
+    private function createMockLogger()
+    {
+        return new class implements \Psr\Log\LoggerInterface {
+            public function emergency($message, array $context = []): void {}
+            public function alert($message, array $context = []): void {}
+            public function critical($message, array $context = []): void {}
+            public function error($message, array $context = []): void {}
+            public function warning($message, array $context = []): void {}
+            public function notice($message, array $context = []): void {}
+            public function info($message, array $context = []): void {}
+            public function debug($message, array $context = []): void {}
+            public function log($level, $message, array $context = []): void {}
+        };
+    }
+
+    /**
+     * Limpia y normaliza una sentencia SQL
+     */
+    private function cleanSqlStatement(string $sql): string
+    {
+        // Limpiar caracteres de escape y normalizar
+        $cleanSql = str_replace(['\\\'', '\\"', '\\\\'], ["'", '"', '\\'], $sql);
+        $cleanSql = trim($cleanSql);
+        
+        // Eliminar comentarios SQL de línea
+        $cleanSql = preg_replace('/--.*$/m', '', $cleanSql);
+        
+        // Eliminar comentarios SQL de bloque
+        $cleanSql = preg_replace('/\/\*.*?\*\//s', '', $cleanSql);
+        
+        // Normalizar espacios en blanco
+        $cleanSql = preg_replace('/\s+/', ' ', $cleanSql);
+        
+        return trim($cleanSql);
+    }
+
+    /**
+     * Determina si el comando está en modo verbose
+     */
+    private function isVerbose(): bool
+    {
+        return $this->verbosity >= OutputInterface::VERBOSITY_VERBOSE;
+    }
+
+    /**
+     * Determina si se debe continuar después de un error
+     */
+    private function shouldContinueOnError(string $errorMessage): bool
+    {
+        // Errores que deben detener la ejecución
+        $criticalErrors = [
+            'Syntax error',
+            'Access denied',
+            'Connection lost',
+            'Server has gone away',
+            'Disk full',
+            'Out of memory'
+        ];
+        
+        foreach ($criticalErrors as $criticalError) {
+            if (stripos($errorMessage, $criticalError) !== false) {
+                return false;
+            }
+        }
+        
+        return true;
     }
     
+    /**
+     * Extrae sentencias SQL del archivo de migración de forma inteligente
+     */
     private function extractSqlFromMigration(string $content): array
     {
         $sqlStatements = [];
         
-        // Usar regex para extraer todas las llamadas a addSql()
-        preg_match_all('/\$this->addSql\([\'\"](.*?)[\'\"]\);/s', $content, $matches);
+        // Método 1: Buscar llamadas a $this->addSql() con diferentes formatos de comillas
+        $patterns = [
+            '/\$this->addSql\s*\(\s*[\'\"](.*?)[\'\"]\s*\)\s*;/s',           // Comillas simples/dobles básicas
+            '/\$this->addSql\s*\(\s*<<<[\'\"]*(\w+)[\'\"]*\s*(.*?)\s*\1\s*\)\s*;/s', // Heredoc/Nowdoc
+            '/\$this->addSql\s*\(\s*([\'\"]).+?\1\s*\.\s*\$\w+\s*\.\s*([\'\"]).+?\2\s*\)\s*;/s' // Concatenación
+        ];
         
-        if (!empty($matches[1])) {
-            foreach ($matches[1] as $sql) {
-                // Limpiar caracteres de escape y normalizar
-                $cleanSql = str_replace(['\\\'', '\\"', '\\\\'], ["'", '"', '\\'], $sql);
-                $cleanSql = trim($cleanSql);
-                
-                if (!empty($cleanSql)) {
-                    $sqlStatements[] = $cleanSql;
+        foreach ($patterns as $pattern) {
+            preg_match_all($pattern, $content, $matches);
+            if (!empty($matches[1])) {
+                foreach ($matches[1] as $sql) {
+                    $sqlStatements[] = $sql;
                 }
             }
         }
         
-        return $sqlStatements;
+        // Método 2: Si no encuentra con addSql(), buscar directamente sentencias SQL comunes
+        if (empty($sqlStatements)) {
+            $sqlPatterns = [
+                '/CREATE\s+TABLE\s+[^;]+;/i',
+                '/ALTER\s+TABLE\s+[^;]+;/i',
+                '/INSERT\s+INTO\s+[^;]+;/i',
+                '/UPDATE\s+[^;]+;/i',
+                '/DELETE\s+FROM\s+[^;]+;/i',
+                '/DROP\s+TABLE\s+[^;]+;/i'
+            ];
+            
+            foreach ($sqlPatterns as $pattern) {
+                preg_match_all($pattern, $content, $matches);
+                if (!empty($matches[0])) {
+                    $sqlStatements = array_merge($sqlStatements, $matches[0]);
+                }
+            }
+        }
+        
+        // Limpiar y filtrar sentencias
+        $cleanStatements = [];
+        foreach ($sqlStatements as $sql) {
+            $cleanSql = $this->cleanSqlStatement($sql);
+            if (!empty($cleanSql) && strlen($cleanSql) > 5) { // Filtrar sentencias muy cortas
+                $cleanStatements[] = $cleanSql;
+            }
+        }
+        
+        return array_unique($cleanStatements); // Eliminar duplicados
     }
     
     private function isExpectedMigrationError(string $errorMessage): bool
@@ -766,6 +763,182 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
         }
         
         return false;
+    }
+
+    /**
+     * Limpia tablas duplicadas (CamelCase vs lowercase) en las bases de datos de los tenants
+     */
+    private function cleanupDuplicateTables(InputInterface $input, OutputInterface $output, SymfonyStyle $io, ?string $tenantSubdomain, bool $dryRun): int
+    {
+        $io->title('🧹 Limpieza de Tablas Duplicadas (CamelCase vs lowercase)');
+        
+        try {
+            // Obtener tenants
+            $tenants = $this->getActiveTenants($io, $tenantSubdomain);
+            
+            if (empty($tenants)) {
+                $io->error('No se encontraron tenants para limpiar');
+                return Command::FAILURE;
+            }
+
+            $io->text('🔍 Verificando tablas duplicadas en ' . count($tenants) . ' tenant(s)...');
+            
+            $totalCleaned = 0;
+            $totalErrors = 0;
+            
+            foreach ($tenants as $tenant) {
+                $io->text("📋 Procesando: {$tenant['name']} ({$tenant['subdomain']})");
+                
+                try {
+                    $cleaned = $this->cleanupSingleTenantDuplicates($tenant, $io, $dryRun);
+                    $totalCleaned += $cleaned;
+                    
+                    if ($cleaned > 0) {
+                        $action = $dryRun ? 'Se limpiarían' : 'Limpiadas';
+                        $io->text("  ✅ {$action} {$cleaned} tabla(s) duplicada(s)");
+                    } else {
+                        $io->text("  ℹ️  No se encontraron tablas duplicadas");
+                    }
+                    
+                } catch (\Exception $e) {
+                    $totalErrors++;
+                    $io->text("  ❌ Error: " . $e->getMessage());
+                }
+            }
+            
+            // Resumen final
+            $io->section('📊 Resumen de Limpieza');
+            $io->definitionList(
+                ['Tenants procesados' => count($tenants)],
+                ['Tablas limpiadas' => $totalCleaned],
+                ['Errores' => $totalErrors]
+            );
+            
+            if ($totalErrors === 0) {
+                $message = $dryRun ? 
+                    '🔍 DRY-RUN: Todas las tablas duplicadas serían limpiadas correctamente' :
+                    '🎉 Limpieza completada exitosamente';
+                $io->success($message);
+            } else {
+                $io->warning("⚠️ Limpieza completada con {$totalErrors} error(es)");
+            }
+            
+            return $totalErrors > 0 ? Command::FAILURE : Command::SUCCESS;
+            
+        } catch (\Exception $e) {
+            $io->error('Error en la limpieza: ' . $e->getMessage());
+            return Command::FAILURE;
+        }
+    }
+
+    private function cleanupSingleTenantDuplicates(array $tenant, SymfonyStyle $io, bool $dryRun): int
+    {
+        $tenantDbConfig = [
+            'host' => $tenant['host'],
+            'port' => $tenant['host_port'],
+            'dbname' => $tenant['database_name'],
+            'user' => $tenant['db_user'],
+            'password' => $tenant['db_password'],
+            'driver' => 'pdo_mysql',
+        ];
+        
+        $connection = DriverManager::getConnection($tenantDbConfig);
+        
+        // Tablas problemáticas conocidas
+        $duplicatedTables = [
+            'Religion' => 'religion',
+            'Sexo' => 'sexo'
+        ];
+        
+        $cleanedCount = 0;
+        
+        foreach ($duplicatedTables as $camelCase => $lowercase) {
+            // Verificar si ambas tablas existen
+            $camelCaseExists = $this->tableExists($connection, $camelCase);
+            $lowercaseExists = $this->tableExists($connection, $lowercase);
+            
+            if ($camelCaseExists && $lowercaseExists) {
+                $io->text("    🔄 Encontradas tablas duplicadas: {$camelCase} y {$lowercase}");
+                
+                if (!$dryRun) {
+                    // Verificar estructura de ambas tablas antes de migrar datos
+                    $camelCaseColumns = $this->getTableColumns($connection, $camelCase);
+                    $lowercaseColumns = $this->getTableColumns($connection, $lowercase);
+                    
+                    $io->text("    📊 {$camelCase}: " . implode(', ', $camelCaseColumns));
+                    $io->text("    📊 {$lowercase}: " . implode(', ', $lowercaseColumns));
+                    
+                    // Solo migrar si las tablas tienen estructuras compatibles
+                    if ($this->areTableStructuresCompatible($camelCaseColumns, $lowercaseColumns)) {
+                        $count = $connection->fetchOne("SELECT COUNT(*) FROM {$lowercase}");
+                        if ($count == 0) {
+                            // Construir query de inserción con columnas específicas
+                            $commonColumns = array_intersect($camelCaseColumns, $lowercaseColumns);
+                            $columnsList = implode(', ', $commonColumns);
+                            
+                            $insertQuery = "INSERT INTO {$lowercase} ({$columnsList}) SELECT {$columnsList} FROM {$camelCase}";
+                            $connection->executeStatement($insertQuery);
+                            $io->text("    📦 Datos migrados de {$camelCase} a {$lowercase}");
+                        }
+                    } else {
+                        $io->text("    ⚠️  Estructuras incompatibles, solo eliminando tabla {$camelCase}");
+                    }
+                    
+                    // Eliminar tabla CamelCase
+                    $connection->executeStatement("DROP TABLE {$camelCase}");
+                    $io->text("    🗑️  Tabla {$camelCase} eliminada");
+                }
+                
+                $cleanedCount++;
+                
+            } elseif ($camelCaseExists && !$lowercaseExists) {
+                $io->text("    🔄 Renombrando tabla {$camelCase} a {$lowercase}");
+                
+                if (!$dryRun) {
+                    $connection->executeStatement("RENAME TABLE {$camelCase} TO {$lowercase}");
+                    $io->text("    ✅ Tabla renombrada exitosamente");
+                }
+                
+                $cleanedCount++;
+            }
+        }
+        
+        return $cleanedCount;
+    }
+
+    private function tableExists($connection, string $tableName): bool
+    {
+        try {
+            $result = $connection->fetchOne("SHOW TABLES LIKE ?", [$tableName]);
+            return $result !== false;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    private function getTableColumns($connection, string $tableName): array
+    {
+        try {
+            $result = $connection->fetchAllAssociative("SHOW COLUMNS FROM {$tableName}");
+            return array_column($result, 'Field');
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    private function areTableStructuresCompatible(array $columns1, array $columns2): bool
+    {
+        // Verificar que al menos tengan columnas básicas en común
+        $commonColumns = array_intersect($columns1, $columns2);
+        $basicColumns = ['id', 'nombre', 'codigo', 'activo'];
+        
+        foreach ($basicColumns as $basicColumn) {
+            if (!in_array($basicColumn, $commonColumns)) {
+                return false;
+            }
+        }
+        
+        return true;
     }
 
     private function showFinalResults(SymfonyStyle $io, array $results, bool $dryRun, ?string $tenantSubdomain = null): void
