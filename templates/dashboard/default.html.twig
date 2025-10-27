@@ -1,23 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'dashboard.title'|trans }} - {{ tenant.name }}{% endblock %}
+{% block title %}{{ 'dashboard.title'|trans }} - {{ tenant.name|default('Sistema') }}{% endblock %}
 
 {% block dashboard_indicator %}
-    <i class="fas fa-tachometer-alt me-2"></i>{{ 'dashboard.title'|trans }} - {{ tenant.name }}
+    <i class="fas fa-tachometer-alt me-2"></i>{{ 'dashboard.title'|trans }} - {{ tenant.name|default('Sistema') }}
 {% endblock %}
 
 {% block body %}
-<!-- IDENTIFICADOR VISUAL: Template Default Universal -->
-<div class="alert alert-warning border-start border-warning border-4 mb-0" role="alert">
-    <div class="d-flex align-items-center">
-        <i class="fas fa-cog fa-2x text-warning me-3"></i>
-        <div>
-            <h5 class="alert-heading mb-1">⚡ Dashboard Universal (Default)</h5>
-            <p class="mb-0 small">Template genérico para <strong>{{ tenant.subdomain }}</strong> - Sin personalización específica</p>
-        </div>
-    </div>
-</div>
-
 <div class="container-fluid">
     <div class="row">
         <!-- Sidebar Moderno -->
@@ -28,8 +17,8 @@
                     <div class="bg-primary rounded-circle mx-auto mb-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
                         <i class="fas fa-clinic-medical fa-2x text-white"></i>
                     </div>
-                    <h6 class="fw-bold text-primary">{{ tenant.name }}</h6>
-                    <small class="text-muted">{{ tenant.subdomain }}.melisaupgrade.prod</small>
+                    <h6 class="fw-bold text-primary">{{ tenant.name|default('Sistema Médico') }}</h6>
+                    <small class="text-muted">{{ tenant.subdomain|default('sistema') }}.melisaupgrade.prod</small>
                 </div>
                 
                 <!-- Navegación Principal -->
@@ -92,6 +81,17 @@
 
         <!-- Contenido Principal -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <!-- IDENTIFICADOR VISUAL: Template Default Universal -->
+            <div class="alert alert-warning border-start border-warning border-4 mb-3 mt-3" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-cog fa-2x text-warning me-3"></i>
+                    <div>
+                        <h5 class="alert-heading mb-1">⚡ Dashboard Universal (Default)</h5>
+                        <p class="mb-0 small">Template genérico para <strong>{{ tenant.subdomain|default('subdomain') }}</strong> - Sin personalización específica</p>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Encabezado de Página -->
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2 fw-bold">
@@ -389,7 +389,7 @@
                                             <i class="fas fa-building"></i>
                                         </div>
                                         <h6 class="fw-bold">{{ 'dashboard.medical_center'|trans }}</h6>
-                                        <p class="text-muted mb-0">{{ tenant.name }}</p>
+                                        <p class="text-muted mb-0">{{ tenant.name|default('Sistema Médico') }}</p>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -398,7 +398,7 @@
                                             <i class="fas fa-globe"></i>
                                         </div>
                                         <h6 class="fw-bold">{{ 'dashboard.subdomain'|trans }}</h6>
-                                        <p class="text-muted mb-0">{{ tenant.subdomain }}.melisaupgrade.prod</p>
+                                        <p class="text-muted mb-0">{{ tenant.subdomain|default('sistema') }}.melisaupgrade.prod</p>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -407,7 +407,7 @@
                                             <i class="fas fa-user"></i>
                                         </div>
                                         <h6 class="fw-bold">{{ 'dashboard.active_user'|trans }}</h6>
-                                        <p class="text-muted mb-0">{{ logged_user.username }} ({{ logged_user.role|default('Usuario') }})</p>
+                                        <p class="text-muted mb-0">{{ logged_user.username|default('Usuario') }} ({{ logged_user.role|default('Usuario') }})</p>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -453,8 +453,8 @@ document.addEventListener('DOMContentLoaded', function() {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
     
-    console.log('Dashboard cargado para:', '{{ tenant.name }}');
-    console.log('Usuario:', '{{ logged_user.username }}');
+    console.log('Dashboard cargado para:', '{{ tenant.name|default("Clínica") }}');
+    console.log('Usuario:', '{{ logged_user.username|default("Usuario") }}');
 });
 </script>
 {% endblock %}
