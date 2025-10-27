@@ -26,9 +26,30 @@ class DefaultController extends AbstractDashboardController
     #[Route('/dashboard', name: 'app_dashboard_default')]
     public function index(Request $request): Response
     {
-        // Obtener datos del tenant y usuario desde el contexto
-        $tenant = $this->tenantContext->getCurrentTenant();
         $session = $request->getSession();
+        
+        // Obtener datos del tenant desde el contexto o sesión como fallback
+        $tenant = $this->tenantContext->getCurrentTenant();
+        
+        // Si el tenant no está en el contexto, obtenerlo desde la sesión
+        if (!$tenant) {
+            $tenant = [
+                'id' => $session->get('tenant_id'),
+                'name' => $session->get('tenant_name', 'Melisa Clinic'),
+                'subdomain' => $session->get('tenant_slug', 'default'),
+                'database_name' => $session->get('database_name', '')
+            ];
+        }
+        
+        // Validar que tengamos los datos mínimos del tenant
+        if (!$tenant || !isset($tenant['name'])) {
+            $tenant = [
+                'id' => 1,
+                'name' => 'Melisa Clinic',
+                'subdomain' => 'default',
+                'database_name' => ''
+            ];
+        }
         
         // Obtener datos del usuario logueado
         $loggedUser = [
@@ -52,10 +73,10 @@ class DefaultController extends AbstractDashboardController
         // Usar el método helper de la clase base
         return $this->renderDashboard($tenantSubdomain, [
             'tenant' => $tenant,
-            'tenant_name' => $tenant['name'] ?? 'Melisa Clinic',
-            'subdomain' => $tenant['subdomain'] ?? 'default',
+            'tenant_name' => $tenant['name'],
+            'subdomain' => $tenant['subdomain'],
             'logged_user' => $loggedUser,
-            'page_title' => 'Dashboard - Melisa Clinic',
+            'page_title' => 'Dashboard - ' . $tenant['name'],
             'current_locale' => $request->getLocale()
         ]);
     }

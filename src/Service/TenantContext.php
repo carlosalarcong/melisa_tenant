@@ -32,10 +32,30 @@ class TenantContext
         $request = $this->requestStack->getCurrentRequest();
         if ($request && $request->hasSession()) {
             $session = $request->getSession();
+            
+            // Primero intentar obtener el array completo del tenant
             $tenantData = $session->get('tenant');
             
             if ($tenantData && is_array($tenantData)) {
                 $this->setCurrentTenant($tenantData);
+                return $this->currentTenant;
+            }
+            
+            // Si no existe como array, intentar reconstruir desde claves individuales
+            if ($session->has('tenant_id') || $session->has('tenant_name') || $session->has('tenant_slug')) {
+                $reconstructedTenant = [
+                    'id' => $session->get('tenant_id'),
+                    'name' => $session->get('tenant_name', 'Melisa Clinic'),
+                    'subdomain' => $session->get('tenant_slug', 'default'),
+                    'database_name' => $session->get('database_name', ''),
+                    'rut_empresa' => null, // Datos adicionales pueden ser null
+                    'host' => 'localhost',
+                    'host_port' => 3306,
+                    'db_user' => 'melisa',
+                    'db_password' => 'melisamelisa'
+                ];
+                
+                $this->setCurrentTenant($reconstructedTenant);
                 return $this->currentTenant;
             }
         }

@@ -126,8 +126,8 @@ class LoginController extends AbstractController
                 'name' => $user['first_name'] . ' ' . $user['last_name']
             ]);
 
-            // 6. Redirección al dashboard específico del tenant
-            $dashboardRoute = 'app_dashboard_' . $tenant['subdomain'];
+            // 6. Redirección al dashboard usando resolución dinámica
+            $dashboardRoute = $this->controllerResolver->generateRedirectRoute($tenant['subdomain']);
             $response = $this->redirectToRoute($dashboardRoute);
             
             if ($rememberMe) {

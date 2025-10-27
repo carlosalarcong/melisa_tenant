@@ -73,57 +73,122 @@ class DynamicControllerResolver
 
     /**
      * Resuelve dinámicamente cualquier controlador basado en tenant y estructura
-     * Inspirado en el patrón de ControllerSubscriber pero con más control
+     * Maneja todos los casos: Dashboard, Mantenedores, etc. de forma unificada
      */
     public function resolveController(string $subdomain, string $controller, string $action = 'index'): string
     {
         $tenantKey = ucfirst($subdomain);
-        $controllerClass = ucfirst($controller) . 'Controller';
+        $controllerType = ucfirst($controller); // Dashboard, Mantenedores, etc.
         
-        // Definir patrones de búsqueda en orden de prioridad
-        $searchPatterns = [
-            // 1. Controlador específico del tenant en estructura jerárquica
-            "App\\Controller\\{$controller}\\{$tenantKey}\\{$controllerClass}",
-            
-            // 2. Controlador específico del tenant en carpeta del tenant
-            "App\\Controller\\{$tenantKey}\\{$controllerClass}",
-            
-            // 3. Controlador específico en subcarpeta temática (Dashboard/, Mantenedores/, etc.)
-            "App\\Controller\\{$controllerClass}\\{$tenantKey}\\DefaultController",
-            
-            // 4. Controlador default en estructura jerárquica
-            "App\\Controller\\{$controller}\\Default\\{$controllerClass}",
-            
-            // 5. Controlador base universal
-            "App\\Controller\\{$controllerClass}",
-            
-            // 6. Controlador default genérico
-            "App\\Controller\\DefaultController"
-        ];
+        $this->logger->debug('Iniciando resolución dinámica de controlador', [
+            'subdomain' => $subdomain,
+            'tenant_key' => $tenantKey,
+            'controller_type' => $controllerType,
+            'action' => $action
+        ]);
         
-        // Buscar el primer controlador que exista
-        foreach ($searchPatterns as $controllerPath) {
-            if (class_exists($controllerPath) && method_exists($controllerPath, $action)) {
-                $this->logger->debug('Controlador dinámico resuelto', [
+        // Patrones de búsqueda en orden de prioridad específico para cada tipo
+        $searchPatterns = $this->buildSearchPatterns($tenantKey, $controllerType, $action);
+        
+        // Buscar el primer controlador que exista y tenga el método
+        foreach ($searchPatterns as $index => $controllerPath) {
+            if ($this->validateController($controllerPath, $action)) {
+                $this->logger->info('✅ Controlador dinámico resuelto exitosamente', [
                     'tenant' => $subdomain,
-                    'controller' => $controller,
+                    'controller_type' => $controllerType,
                     'action' => $action,
                     'resolved_path' => $controllerPath,
-                    'pattern_used' => $controllerPath
+                    'pattern_index' => $index + 1,
+                    'total_patterns' => count($searchPatterns)
                 ]);
                 
                 return $controllerPath . '::' . $action;
             }
         }
         
-        // Si no encuentra nada, log de error y usar fallback absoluto
-        $this->logger->error('No se pudo resolver controlador dinámico', [
+        // Si no encuentra nada, usar el fallback más apropiado
+        $fallbackController = $this->getFallbackController($controllerType, $action);
+        
+        $this->logger->error('❌ No se pudo resolver controlador dinámico - usando fallback', [
             'tenant' => $subdomain,
-            'controller' => $controller,
+            'controller_type' => $controllerType,
             'action' => $action,
-            'patterns_tried' => $searchPatterns
+            'patterns_tried' => count($searchPatterns),
+            'fallback_used' => $fallbackController
         ]);
         
+        return $fallbackController;
+    }
+
+    /**
+     * Construye los patrones de búsqueda universales para cualquier tipo de controlador
+     */
+    private function buildSearchPatterns(string $tenantKey, string $controllerType, string $action): array
+    {
+        $controllerName = $controllerType . 'Controller';
+        
+        // Patrones universales que funcionan para cualquier tipo de controlador
+        return [
+            // 1. Controlador específico del tenant en estructura jerárquica tipo-específica
+            "App\\Controller\\{$controllerType}\\{$tenantKey}\\DefaultController",
+            
+            // 2. Controlador específico del tenant en estructura jerárquica con nombre específico
+            "App\\Controller\\{$controllerType}\\{$tenantKey}\\{$controllerName}",
+            
+            // 3. Controlador específico del tenant en carpeta propia
+            "App\\Controller\\{$tenantKey}\\{$controllerName}",
+            
+            // 4. DefaultController del tenant (puede manejar cualquier tipo)
+            "App\\Controller\\{$tenantKey}\\DefaultController",
+            
+            // 5. Controlador default en estructura jerárquica tipo-específica
+            "App\\Controller\\{$controllerType}\\Default\\DefaultController",
+            
+            // 6. Controlador default en estructura jerárquica con nombre específico
+            "App\\Controller\\{$controllerType}\\Default\\{$controllerName}",
+            
+            // 7. Controlador base específico del tipo
+            "App\\Controller\\{$controllerName}",
+            
+            // 8. DefaultController universal (fallback absoluto)
+            "App\\Controller\\DefaultController"
+        ];
+    }
+
+    /**
+     * Valida si un controlador existe y tiene el método requerido
+     */
+    private function validateController(string $controllerPath, string $action): bool
+    {
+        return class_exists($controllerPath) && method_exists($controllerPath, $action);
+    }
+
+    /**
+     * Obtiene el controlador fallback más apropiado según el tipo - completamente dinámico
+     */
+    private function getFallbackController(string $controllerType, string $action): string
+    {
+        // Intentar fallbacks universales en orden de prioridad
+        $universalFallbacks = [
+            // 1. DefaultController en estructura jerárquica del tipo
+            "App\\Controller\\{$controllerType}\\Default\\DefaultController::{$action}",
+            
+            // 2. Controlador específico del tipo base
+            "App\\Controller\\{$controllerType}Controller::{$action}",
+            
+            // 3. DefaultController universal
+            "App\\Controller\\DefaultController::index"
+        ];
+        
+        foreach ($universalFallbacks as $fallback) {
+            [$class, $method] = explode('::', $fallback);
+            
+            if ($this->validateController($class, $method)) {
+                return $fallback;
+            }
+        }
+        
+        // Fallback absoluto si nada más funciona
         return 'App\\Controller\\DefaultController::index';
     }
 
@@ -294,4 +359,69 @@ class DynamicControllerResolver
             'dashboard_controller_exists' => $this->controllerExistsForTenant($subdomain, 'dashboard'),
         ];
     }
+
+    /**
+     * Genera la ruta apropiada para redirección - completamente dinámico
+     * Funciona para dashboard, mantenedores, reportes, etc.
+     */
+    public function generateRedirectRoute(string $subdomain, string $controllerType = 'dashboard'): string
+    {
+        $tenantKey = ucfirst($subdomain);
+        $controllerPath = $this->resolveController($subdomain, $controllerType, 'index');
+        
+        // Extraer solo la clase sin el método
+        [$class] = explode('::', $controllerPath);
+        
+        $this->logger->debug('Generando ruta de redirección universal', [
+            'subdomain' => $subdomain,
+            'controller_type' => $controllerType,
+            'resolved_class' => $class,
+            'full_controller' => $controllerPath
+        ]);
+        
+        // Generar nombre de ruta dinámicamente basado en la estructura del controlador
+        $routeName = $this->generateRouteNameFromController($class, $subdomain, $controllerType);
+        
+        $this->logger->debug('Ruta generada dinámicamente', [
+            'route_name' => $routeName,
+            'controller_class' => $class
+        ]);
+        
+        return $routeName;
+    }
+
+    /**
+     * Genera nombre de ruta dinámicamente basado en el controlador resuelto
+     */
+    private function generateRouteNameFromController(string $controllerClass, string $subdomain, string $controllerType): string
+    {
+        $controllerTypeLower = strtolower($controllerType);
+        $subdomainLower = strtolower($subdomain);
+        
+        // Analizar la estructura del controlador para determinar la ruta apropiada
+        $classParts = explode('\\', $controllerClass);
+        
+        // Si es un controlador Default en estructura jerárquica del tipo
+        if (in_array('Default', $classParts) && in_array(ucfirst($controllerType), $classParts)) {
+            return "app_{$controllerTypeLower}_default";
+        }
+        
+        // Si contiene el tenant en la estructura jerárquica
+        if (in_array(ucfirst($subdomain), $classParts)) {
+            return "app_{$controllerTypeLower}_{$subdomainLower}";
+        }
+        
+        // Si es un controlador específico del tenant
+        if (str_contains($controllerClass, ucfirst($subdomain))) {
+            return "app_{$controllerTypeLower}_{$subdomainLower}";
+        }
+        
+        // Fallback: intentar ruta específica del tenant
+        $specificRoute = "app_{$controllerTypeLower}_{$subdomainLower}";
+        
+        // Si no existe, usar ruta default del tipo
+        return "app_{$controllerTypeLower}_default";
+    }
+
+
 }
