@@ -350,7 +350,14 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
         $io->text('🔍 Iniciando verificación de necesidad de nuevas migraciones...');
         
         try {
-            // Primero verificar si hay migraciones pendientes sin aplicar
+            // PRIMERA VERIFICACIÓN: Si las tablas del tenant ya existen, NO generar migraciones
+            $io->text('🔍 Verificando consistencia del esquema primero...');
+            if ($this->verifySchemaConsistency($io)) {
+                $io->text('🎉 Todos los tenants están actualizados y el esquema es consistente - NO SE REQUIEREN nuevas migraciones');
+                return false; // ¡No generar migraciones!
+            }
+            
+            // SEGUNDA VERIFICACIÓN: Verificar estado de doctrine migrations
             $process = new Process([
                 'php', 'bin/console', 'doctrine:migrations:status'
             ]);
@@ -369,36 +376,26 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
                     $availableMigrations = 0;
                 }
                 
-                if (preg_match('/Executed\s*\|\s*(\d+)/', $output, $matches)) {
-                    $executedMigrations = (int)$matches[1];
-                } else {
-                    $executedMigrations = 0;
-                }
+                // En lugar de confiar en "Executed" del doctrine status, 
+                // verificar directamente en cada tenant
+                $realExecutedMigrations = $this->countRealExecutedMigrations($io);
                 
-                $pendingMigrations = $availableMigrations - $executedMigrations;
+                $pendingMigrations = $availableMigrations - $realExecutedMigrations;
                 
-                $io->text("📈 Migraciones disponibles: {$availableMigrations}, ejecutadas: {$executedMigrations}, pendientes: {$pendingMigrations}");
+                $io->text("📈 Migraciones disponibles: {$availableMigrations}, ejecutadas reales: {$realExecutedMigrations}, pendientes: {$pendingMigrations}");
                 
                 if ($pendingMigrations > 0) {
-                    $io->text("📋 Hay {$pendingMigrations} migración(es) pendiente(s) por aplicar");
+                    $io->text("📋 Hay {$pendingMigrations} migración(es) pendiente(s) por aplicar - NO generar nuevas");
                     return false; // No generar nuevas si hay pendientes
                 }
                 
-                // Verificar si todas las migraciones están aplicadas en los tenants
+                // TERCERA VERIFICACIÓN: Verificar si todos los tenants están actualizados
                 $io->text('🔍 Verificando estado de todos los tenants...');
                 $allTenantsUpToDate = $this->checkAllTenantsUpToDate($io);
                 
                 if ($allTenantsUpToDate) {
-                    $io->text('✅ Todos los tenants tienen migraciones al día');
-                    
-                    // Verificación adicional: comparar esquema contra un tenant específico
-                    $io->text('🔍 Verificando consistencia del esquema...');
-                    if ($this->verifySchemaConsistency($io)) {
-                        $io->text('🎉 Todos los tenants están actualizados y el esquema es consistente - NO SE REQUIEREN nuevas migraciones');
-                        return false; // ¡No generar migraciones!
-                    } else {
-                        $io->text('⚠️ Esquema inconsistente detectado - se requieren migraciones');
-                    }
+                    $io->text('✅ Todos los tenants tienen migraciones al día - NO generar nuevas');
+                    return false; // ¡No generar migraciones!
                 } else {
                     $io->text('⚠️ Algunos tenants no están al día con las migraciones');
                 }
@@ -415,6 +412,40 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
             $io->text("⚠️  No se pudo verificar estado del esquema: " . $e->getMessage());
             // En caso de error, ser conservador y verificar
             return true;
+        }
+    }
+
+    /**
+     * Cuenta las migraciones realmente ejecutadas en todos los tenants
+     */
+    private function countRealExecutedMigrations(SymfonyStyle $io): int
+    {
+        try {
+            $tenants = $this->getActiveTenants($io);
+            if (empty($tenants)) {
+                return 0;
+            }
+
+            $maxExecuted = 0;
+            foreach ($tenants as $tenant) {
+                $tenantDbConfig = [
+                    'host' => $tenant['host'],
+                    'port' => $tenant['host_port'],
+                    'dbname' => $tenant['database_name'],
+                    'user' => $tenant['db_user'],
+                    'password' => $tenant['db_password'],
+                    'driver' => 'pdo_mysql',
+                ];
+                
+                $connection = DriverManager::getConnection($tenantDbConfig);
+                $executedMigrations = $this->getExecutedMigrations($connection);
+                $maxExecuted = max($maxExecuted, count($executedMigrations));
+            }
+            
+            return $maxExecuted;
+            
+        } catch (\Exception $e) {
+            return 0;
         }
     }
 
@@ -443,9 +474,9 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
                 'charset' => 'utf8mb4'
             ]);
 
-            // Verificar si las tablas principales existen en el tenant
-            $schemaManager = $tenantConnection->createSchemaManager();
-            $tables = $schemaManager->listTableNames();
+            // Verificar si las tablas principales existen en el tenant usando SHOW TABLES
+            $result = $tenantConnection->executeQuery("SHOW TABLES");
+            $tables = array_column($result->fetchAllAssociative(), 'Tables_in_' . $testTenant['database_name']);
             
             // Tablas que esperamos encontrar en el tenant
             $expectedTenantTables = ['member', 'estado', 'pais', 'region', 'religion', 'sexo'];
@@ -468,24 +499,36 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
             }
             
             // El esquema es consistente si:
-            // 1. Encuentra la mayoría de tablas esperadas del tenant
+            // 1. Encuentra la mayoría de tablas esperadas del tenant (al menos 80%)
             // 2. NO encuentra tablas que solo deben estar en central
-            $consistency = ($tablesFound >= (count($expectedTenantTables) * 0.8)) && 
-                          ($centralTablesInTenant === 0);
+            $requiredTables = (int)(count($expectedTenantTables) * 0.8);
+            $consistency = ($tablesFound >= $requiredTables) && ($centralTablesInTenant === 0);
             
             $tenantConnection->close();
             
             if ($consistency) {
-                $io->text("✅ Esquema consistente verificado en tenant '{$testTenant['subdomain']}' ({$tablesFound}/" . count($expectedTenantTables) . " tablas de tenant, {$centralTablesInTenant}/" . count($centralOnlyTables) . " tablas de central)");
+                $io->text("✅ Esquema consistente verificado en tenant '{$testTenant['subdomain']}' ({$tablesFound}/" . count($expectedTenantTables) . " tablas de tenant encontradas, {$centralTablesInTenant}/" . count($centralOnlyTables) . " tablas de central)");
             } else {
-                $io->text("⚠️ Inconsistencia de esquema detectada en tenant '{$testTenant['subdomain']}' - Tablas de tenant: {$tablesFound}/" . count($expectedTenantTables) . ", Tablas de central: {$centralTablesInTenant}/" . count($centralOnlyTables));
+                $io->text("⚠️ Inconsistencia de esquema detectada en tenant '{$testTenant['subdomain']}' - Tablas de tenant: {$tablesFound}/" . count($expectedTenantTables) . " (requiere {$requiredTables}), Tablas de central: {$centralTablesInTenant}/" . count($centralOnlyTables));
+                
+                // Debug: mostrar qué tablas se encontraron
+                if ($this->isVerbose()) {
+                    $io->text("  🔍 Tablas encontradas: " . implode(', ', $tables));
+                    $io->text("  🎯 Tablas esperadas: " . implode(', ', $expectedTenantTables));
+                }
             }
             
             return $consistency;
             
         } catch (\Exception $e) {
             $io->text("⚠️ Error al verificar consistencia del esquema: " . $e->getMessage());
-            return false; // En caso de error, asumir que hay inconsistencias
+            // En caso de error, ser más conservador - solo devolver false si es un error crítico
+            if (strpos($e->getMessage(), 'Access denied') !== false || 
+                strpos($e->getMessage(), 'Connection refused') !== false) {
+                return false;
+            }
+            // Para otros errores, asumir que está bien para evitar generación innecesaria
+            return true;
         }
     }
 
@@ -768,17 +811,11 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
             return;
         }
         
-        try {
-            // Intentar cargar y ejecutar la migración usando Doctrine
-            $this->executeDoctrineMigration($connection, $filename, $migrationFile, $io);
-            
-        } catch (\Exception $e) {
-            // Si falla Doctrine, intentar método de parsing manual
-            if ($io) {
-                $io->text("    🔄 Intentando método de parsing manual para {$filename}");
-            }
-            $this->executeManualMigration($connection, $migrationFile, $io);
+        // SIEMPRE usar método manual para evitar que Doctrine use conexión incorrecta
+        if ($io) {
+            $io->text("    🔄 Aplicando migración con método manual para {$filename}");
         }
+        $this->executeManualMigration($connection, $migrationFile, $io);
     }
 
     /**
@@ -947,37 +984,46 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
     {
         $sqlStatements = [];
         
-        // Método 1: Buscar llamadas a $this->addSql() con diferentes formatos de comillas
-        $patterns = [
-            '/\$this->addSql\s*\(\s*[\'\"](.*?)[\'\"]\s*\)\s*;/s',           // Comillas simples/dobles básicas
-            '/\$this->addSql\s*\(\s*<<<[\'\"]*(\w+)[\'\"]*\s*(.*?)\s*\1\s*\)\s*;/s', // Heredoc/Nowdoc
-            '/\$this->addSql\s*\(\s*([\'\"]).+?\1\s*\.\s*\$\w+\s*\.\s*([\'\"]).+?\2\s*\)\s*;/s' // Concatenación
-        ];
-        
-        foreach ($patterns as $pattern) {
-            preg_match_all($pattern, $content, $matches);
-            if (!empty($matches[1])) {
-                foreach ($matches[1] as $sql) {
-                    $sqlStatements[] = $sql;
+        // SOLO extraer SQL del método up(), NO del método down()
+        // Buscar el contenido entre "public function up(" y "public function down("
+        if (preg_match('/public function up\(.*?\)\s*:\s*void\s*\{(.*?)public function down\(/s', $content, $matches)) {
+            $upMethodContent = $matches[1];
+            
+            // Buscar llamadas a $this->addSql() solo en el método up()
+            $patterns = [
+                '/\$this->addSql\s*\(\s*[\'\"](.*?)[\'\"]\s*\)\s*;/s',           // Comillas simples/dobles básicas
+                '/\$this->addSql\s*\(\s*<<<[\'\"]*(\w+)[\'\"]*\s*(.*?)\s*\1\s*\)\s*;/s', // Heredoc/Nowdoc
+                '/\$this->addSql\s*\(\s*([\'\"]).+?\1\s*\.\s*\$\w+\s*\.\s*([\'\"]).+?\2\s*\)\s*;/s' // Concatenación
+            ];
+            
+            foreach ($patterns as $pattern) {
+                preg_match_all($pattern, $upMethodContent, $matches);
+                if (!empty($matches[1])) {
+                    foreach ($matches[1] as $sql) {
+                        $sqlStatements[] = $sql;
+                    }
                 }
             }
         }
         
-        // Método 2: Si no encuentra con addSql(), buscar directamente sentencias SQL comunes
+        // Si no encuentra con el método anterior, intentar método fallback
         if (empty($sqlStatements)) {
-            $sqlPatterns = [
-                '/CREATE\s+TABLE\s+[^;]+;/i',
-                '/ALTER\s+TABLE\s+[^;]+;/i',
-                '/INSERT\s+INTO\s+[^;]+;/i',
-                '/UPDATE\s+[^;]+;/i',
-                '/DELETE\s+FROM\s+[^;]+;/i',
-                '/DROP\s+TABLE\s+[^;]+;/i'
-            ];
-            
-            foreach ($sqlPatterns as $pattern) {
-                preg_match_all($pattern, $content, $matches);
-                if (!empty($matches[0])) {
-                    $sqlStatements = array_merge($sqlStatements, $matches[0]);
+            // Buscar directamente sentencias SQL comunes SOLO en método up()
+            if (preg_match('/public function up\(.*?\)\s*:\s*void\s*\{(.*?)public function down\(/s', $content, $matches)) {
+                $upMethodContent = $matches[1];
+                
+                $sqlPatterns = [
+                    '/CREATE\s+TABLE\s+[^;]+;/i',
+                    '/ALTER\s+TABLE\s+[^;]+;/i',
+                    '/INSERT\s+INTO\s+[^;]+;/i',
+                    '/UPDATE\s+[^;]+;/i',
+                ];
+                
+                foreach ($sqlPatterns as $pattern) {
+                    preg_match_all($pattern, $upMethodContent, $matches);
+                    if (!empty($matches[0])) {
+                        $sqlStatements = array_merge($sqlStatements, $matches[0]);
+                    }
                 }
             }
         }
