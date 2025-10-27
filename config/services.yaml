@@ -53,6 +53,11 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    # Event Subscribers
+    App\EventSubscriber\DynamicControllerSubscriber:
+        tags:
+            - { name: kernel.event_subscriber }
+
     # API Platform State Providers
     App\State\DynamicPatientStateProvider:
         autowire: true

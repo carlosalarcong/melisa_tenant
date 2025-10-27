@@ -72,88 +72,128 @@ class DynamicControllerResolver
     }
 
     /**
-     * Método legacy para compatibilidad con código existente
+     * Resuelve dinámicamente cualquier controlador basado en tenant y estructura
+     * Inspirado en el patrón de ControllerSubscriber pero con más control
      */
     public function resolveController(string $subdomain, string $controller, string $action = 'index'): string
     {
-        // Para el dashboard, usar la estructura especial Dashboard/
-        if ($controller === 'dashboard') {
-            return $this->resolveDashboardController($subdomain, $action);
-        }
-        
-        // Para mantenedores, usar la nueva estructura
-        if ($controller === 'mantenedores') {
-            return $this->resolveMantenedorController($subdomain, $action);
-        }
-        
-        // Para otros controladores, usar la lógica original
-        $tenantNamespace = ucfirst($subdomain);
+        $tenantKey = ucfirst($subdomain);
         $controllerClass = ucfirst($controller) . 'Controller';
         
-        // Ruta del controlador personalizado: App\Controller\Clinica1\PacientesController
-        $customControllerPath = sprintf(
-            'App\\Controller\\%s\\%s',
-            $tenantNamespace,
-            $controllerClass
-        );
+        // Definir patrones de búsqueda en orden de prioridad
+        $searchPatterns = [
+            // 1. Controlador específico del tenant en estructura jerárquica
+            "App\\Controller\\{$controller}\\{$tenantKey}\\{$controllerClass}",
+            
+            // 2. Controlador específico del tenant en carpeta del tenant
+            "App\\Controller\\{$tenantKey}\\{$controllerClass}",
+            
+            // 3. Controlador específico en subcarpeta temática (Dashboard/, Mantenedores/, etc.)
+            "App\\Controller\\{$controllerClass}\\{$tenantKey}\\DefaultController",
+            
+            // 4. Controlador default en estructura jerárquica
+            "App\\Controller\\{$controller}\\Default\\{$controllerClass}",
+            
+            // 5. Controlador base universal
+            "App\\Controller\\{$controllerClass}",
+            
+            // 6. Controlador default genérico
+            "App\\Controller\\DefaultController"
+        ];
         
-        // Si existe controlador personalizado en subcarpeta
-        if (class_exists($customControllerPath)) {
-            return $customControllerPath . '::' . $action;
+        // Buscar el primer controlador que exista
+        foreach ($searchPatterns as $controllerPath) {
+            if (class_exists($controllerPath) && method_exists($controllerPath, $action)) {
+                $this->logger->debug('Controlador dinámico resuelto', [
+                    'tenant' => $subdomain,
+                    'controller' => $controller,
+                    'action' => $action,
+                    'resolved_path' => $controllerPath,
+                    'pattern_used' => $controllerPath
+                ]);
+                
+                return $controllerPath . '::' . $action;
+            }
         }
         
-        // Fallback a DefaultController genérico
-        return 'App\\Controller\\DefaultController::' . $action;
-    }
-    
-    /**
-     * Resuelve controladores de dashboard
-     */
-    private function resolveDashboardController(string $subdomain, string $action): string
-    {
-        // Intentar cargar controlador específico del tenant en Dashboard/
-        $specificNamespace = 'App\\Controller\\Dashboard\\' . ucfirst($subdomain);
-        $specificController = $specificNamespace . '\\DefaultController';
+        // Si no encuentra nada, log de error y usar fallback absoluto
+        $this->logger->error('No se pudo resolver controlador dinámico', [
+            'tenant' => $subdomain,
+            'controller' => $controller,
+            'action' => $action,
+            'patterns_tried' => $searchPatterns
+        ]);
         
-        if (class_exists($specificController) && method_exists($specificController, $action)) {
-            return $specificController . '::' . $action;
-        }
-        
-        // Fallback al controlador Dashboard por defecto
-        $defaultController = 'App\\Controller\\Dashboard\\Default\\DefaultController';
-        if (class_exists($defaultController) && method_exists($defaultController, $action)) {
-            return $defaultController . '::' . $action;
-        }
-        
-        // Último fallback
-        return 'App\\Controller\\DefaultController::' . $action;
+        return 'App\\Controller\\DefaultController::index';
     }
 
     /**
-     * Resuelve controladores de mantenedores con estructura jerárquica
-     * NOTA: Los mantenedores básicos (Pais, Religion, Sexo, Region) ahora son centrales/globales
-     * y no requieren resolución dinámica por tenant
+     * Resuelve controlador dinámicamente como lo haría un ControllerSubscriber
+     * Permite resolución automática basada en el tenant sin configuración manual
      */
-    private function resolveMantenedorController(string $subdomain, string $action): string
+    public function resolveControllerFromRoute(string $originalController, string $tenantSubdomain): string
     {
-        // Los mantenedores básicos ahora son directos y centrales:
-        // - App\Controller\Mantenedores\Basico\PaisController
-        // - App\Controller\Mantenedores\Basico\ReligionController  
-        // - App\Controller\Mantenedores\Basico\SexoController
-        // - App\Controller\Mantenedores\Basico\RegionController
-        
-        // Para mantenedores avanzados específicos por tenant (futuro)
-        $tenantKey = ucfirst($subdomain);
-        
-        // Solo usar resolución dinámica para mantenedores específicos que lo requieran
-        // Por ejemplo, funcionalidades IoT específicas de Melisawiclinic
-        $specificController = "App\\Controller\\Mantenedores\\Avanzado\\{$tenantKey}\\{$action}Controller";
-        if (class_exists($specificController)) {
-            return $specificController . '::index';
+        // Analizar el controlador original
+        if (strpos($originalController, '::') === false) {
+            return $originalController; // No es un controlador válido
         }
         
-        // Fallback: redirigir a mantenedores básicos o dashboard
-        return 'App\\Controller\\Dashboard\\DefaultController::mantenedores';
+        [$originalClass, $method] = explode('::', $originalController, 2);
+        
+        // Descomponer el namespace del controlador original
+        $classParts = explode('\\', $originalClass);
+        
+        if (count($classParts) < 3) {
+            return $originalController; // Estructura no válida
+        }
+        
+        // Extraer información base
+        $baseNamespace = $classParts[0] . '\\' . $classParts[1]; // App\Controller
+        $controllerType = $classParts[2] ?? 'Default'; // Dashboard, Mantenedores, etc.
+        $controllerName = end($classParts); // DefaultController, PacientesController, etc.
+        
+        $tenantKey = ucfirst($tenantSubdomain);
+        
+        // Generar patrones de búsqueda dinámicos
+        $dynamicPatterns = [
+            // 1. Inyectar tenant en la posición 3 (después de Controller)
+            // App\Controller\Dashboard\Melisahospital\DefaultController
+            "{$baseNamespace}\\{$controllerType}\\{$tenantKey}\\{$controllerName}",
+            
+            // 2. Reemplazar la posición 3 completamente por el tenant
+            // App\Controller\Melisahospital\DefaultController
+            "{$baseNamespace}\\{$tenantKey}\\{$controllerName}",
+            
+            // 3. Mantener estructura pero cambiar a Default si el tenant no existe
+            // App\Controller\Dashboard\Default\DefaultController
+            "{$baseNamespace}\\{$controllerType}\\Default\\{$controllerName}",
+            
+            // 4. Controlador original sin modificar
+            $originalClass
+        ];
+        
+        // Buscar el primer patrón que funcione
+        foreach ($dynamicPatterns as $pattern) {
+            if (class_exists($pattern) && method_exists($pattern, $method)) {
+                $this->logger->debug('Controlador resuelto dinámicamente desde ruta', [
+                    'original' => $originalController,
+                    'tenant' => $tenantSubdomain,
+                    'resolved' => $pattern . '::' . $method,
+                    'pattern' => $pattern
+                ]);
+                
+                return $pattern . '::' . $method;
+            }
+        }
+        
+        $this->logger->warning('No se pudo resolver controlador dinámico desde ruta', [
+            'original' => $originalController,
+            'tenant' => $tenantSubdomain,
+            'patterns_tried' => $dynamicPatterns
+        ]);
+        
+        // Fallback al controlador original
+        return $originalController;
     }
 
     /**
@@ -215,59 +255,6 @@ class DynamicControllerResolver
     }
 
     /**
-     * Obtiene mantenedores disponibles para un tenant
-     * Actualizado para la nueva estructura de mantenedores centrales
-     */
-    public function getAvailableMantenedores(string $subdomain): array
-    {
-        $mantenedores = [];
-        
-        // Mantenedores básicos centrales (disponibles para todos los tenants)
-        $basicosPath = __DIR__ . '/../Controller/Mantenedores/Basico';
-        
-        if (is_dir($basicosPath)) {
-            $basicControllers = glob($basicosPath . '/*Controller.php');
-            
-            foreach ($basicControllers as $controllerFile) {
-                $controllerName = basename($controllerFile, 'Controller.php');
-                
-                $mantenedores[] = [
-                    'category' => 'basico',
-                    'name' => strtolower($controllerName),
-                    'label' => ucfirst($controllerName),
-                    'is_central' => true,
-                    'controller_path' => "App\\Controller\\Mantenedores\\Basico\\{$controllerName}Controller",
-                    'route_prefix' => '/mantenedores/basico/' . strtolower($controllerName)
-                ];
-            }
-        }
-        
-        // Mantenedores específicos por tenant (si existen)
-        $tenantKey = ucfirst($subdomain);
-        $tenantPath = __DIR__ . '/../Controller/Mantenedores/' . $tenantKey;
-        
-        if (is_dir($tenantPath)) {
-            $tenantControllers = glob($tenantPath . '/*Controller.php');
-            
-            foreach ($tenantControllers as $controllerFile) {
-                $controllerName = basename($controllerFile, 'Controller.php');
-                
-                $mantenedores[] = [
-                    'category' => 'tenant_specific',
-                    'name' => strtolower($controllerName),
-                    'label' => ucfirst($controllerName),
-                    'is_central' => false,
-                    'tenant' => $subdomain,
-                    'controller_path' => "App\\Controller\\Mantenedores\\{$tenantKey}\\{$controllerName}Controller",
-                    'route_prefix' => '/mantenedores/' . strtolower($subdomain) . '/' . strtolower($controllerName)
-                ];
-            }
-        }
-        
-        return $mantenedores;
-    }
-    
-    /**
      * Verifica si un controlador específico existe para un tenant
      */
     public function controllerExistsForTenant(string $subdomain, string $controller): bool
@@ -304,9 +291,7 @@ class DynamicControllerResolver
             'tenant' => $subdomain,
             'tenant_key' => ucfirst($subdomain),
             'available_controllers' => $this->getAvailableControllers($subdomain),
-            'available_mantenedores' => $this->getAvailableMantenedores($subdomain),
             'dashboard_controller_exists' => $this->controllerExistsForTenant($subdomain, 'dashboard'),
-            'mantenedores_path' => __DIR__ . '/../Controller/Mantenedores/Basico',
         ];
     }
 }
