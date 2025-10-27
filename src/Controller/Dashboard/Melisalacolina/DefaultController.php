@@ -50,33 +50,29 @@ class DefaultController extends AbstractDashboardController
         
         $tenantSubdomain = $tenant['subdomain'] ?? 'melisalacolina';
         
-        // Usar el método helper de la clase base
-        return $this->renderDashboard($tenantSubdomain, [
-            'tenant' => $tenant,
-            'tenant_name' => $tenant['name'],
-            'subdomain' => $tenant['subdomain'],
-            'logged_user' => $loggedUser,
-            'page_title' => 'Dashboard - ' . $tenant['name'],
-            'current_locale' => $request->getLocale()
-        ]);
-    }
-
-    /**
-     * Construye el menú dinámico específico para Melisalacolina
-     * Extiende el menú base con funcionalidades de clínica
-     */
-    protected function buildDynamicMenu(string $tenantSubdomain): array
-    {
-        $baseMenu = parent::buildDynamicMenu($tenantSubdomain);
-
-        // Funcionalidades específicas de la clínica
-        $clinicSpecific = [
+        // Menú específico para clínica
+        $menuRoutes = [
+            'dashboard' => ['url' => '/dashboard', 'label' => 'Dashboard'],
+            'pacientes' => ['url' => '/pacientes', 'label' => 'Pacientes'],
+            'citas' => ['url' => '/citas', 'label' => 'Citas'],
             'consultas' => ['url' => '/consultas', 'label' => 'Consultas'],
             'procedimientos' => ['url' => '/procedimientos', 'label' => 'Procedimientos'],
             'laboratorio' => ['url' => '/laboratorio', 'label' => 'Laboratorio'],
             'imagenologia' => ['url' => '/imagenologia', 'label' => 'Imagenología'],
+            'mantenedores' => ['url' => '/mantenedores', 'label' => 'Mantenedores'],
+            'reportes' => ['url' => '/reportes', 'label' => 'Reportes'],
+            'configuracion' => ['url' => '/configuracion', 'label' => 'Configuración'],
         ];
-
-        return array_merge($baseMenu, $clinicSpecific);
+        
+        // Render directo del template específico de melisalacolina
+        return $this->render('dashboard/melisalacolina/index.html.twig', [
+            'tenant' => $tenant,
+            'tenant_name' => $tenant['name'],
+            'subdomain' => $tenant['subdomain'],
+            'logged_user' => $loggedUser,
+            'menu_routes' => $menuRoutes,
+            'page_title' => 'Dashboard - ' . $tenant['name'],
+            'current_locale' => $request->getLocale()
+        ]);
     }
 }

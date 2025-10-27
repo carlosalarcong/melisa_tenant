@@ -54,33 +54,29 @@ class DefaultController extends AbstractDashboardController
         
         $tenantSubdomain = $tenant['subdomain'] ?? 'melisahospital';
         
-        // Usar el método helper de la clase base
-        return $this->renderDashboard($tenantSubdomain, [
-            'tenant' => $tenant,
-            'tenant_name' => $tenant['name'],
-            'subdomain' => $tenant['subdomain'],
-            'logged_user' => $loggedUser,
-            'page_title' => $this->localizationService->trans('dashboard.title') . ' - ' . $tenant['name'],
-            'current_locale' => $request->getLocale()
-        ]);
-    }
-
-    /**
-     * Construye el menú dinámico específico para Melisahospital
-     * Extiende el menú base con funcionalidades hospitalarias
-     */
-    protected function buildDynamicMenu(string $tenantSubdomain): array
-    {
-        $baseMenu = parent::buildDynamicMenu($tenantSubdomain);
-
-        // Funcionalidades específicas del hospital
-        $hospitalSpecific = [
+        // Menú específico para hospital
+        $menuRoutes = [
+            'dashboard' => ['url' => '/dashboard', 'label' => 'Dashboard'],
+            'pacientes' => ['url' => '/pacientes', 'label' => 'Pacientes'],
+            'citas' => ['url' => '/citas', 'label' => 'Citas'],
             'quirofanos' => ['url' => '/quirofanos', 'label' => 'Quirófanos'],
             'hospitalizacion' => ['url' => '/hospitalizacion', 'label' => 'Hospitalización'],
             'laboratorio' => ['url' => '/laboratorio', 'label' => 'Laboratorio'],
             'farmacia' => ['url' => '/farmacia', 'label' => 'Farmacia'],
+            'mantenedores' => ['url' => '/mantenedores', 'label' => 'Mantenedores'],
+            'reportes' => ['url' => '/reportes', 'label' => 'Reportes'],
+            'configuracion' => ['url' => '/configuracion', 'label' => 'Configuración'],
         ];
-
-        return array_merge($baseMenu, $hospitalSpecific);
+        
+        // Render directo del template específico de melisahospital
+        return $this->render('dashboard/melisahospital/index.html.twig', [
+            'tenant' => $tenant,
+            'tenant_name' => $tenant['name'],
+            'subdomain' => $tenant['subdomain'],
+            'logged_user' => $loggedUser,
+            'menu_routes' => $menuRoutes,
+            'page_title' => $this->localizationService->trans('dashboard.title') . ' - ' . $tenant['name'],
+            'current_locale' => $request->getLocale()
+        ]);
     }
 }

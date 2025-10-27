@@ -50,12 +50,23 @@ class DefaultController extends AbstractDashboardController
         
         $tenantSubdomain = $tenant['subdomain'] ?? 'default';
         
-        // Usar el método helper de la clase base
-        return $this->renderDashboard($tenantSubdomain, [
+        // Menú básico para template default
+        $menuRoutes = [
+            'dashboard' => ['url' => '/dashboard', 'label' => 'Dashboard'],
+            'pacientes' => ['url' => '/pacientes', 'label' => 'Pacientes'],
+            'citas' => ['url' => '/citas', 'label' => 'Citas'],
+            'mantenedores' => ['url' => '/mantenedores', 'label' => 'Mantenedores'],
+            'reportes' => ['url' => '/reportes', 'label' => 'Reportes'],
+            'configuracion' => ['url' => '/configuracion', 'label' => 'Configuración'],
+        ];
+        
+        // Render directo del template default
+        return $this->render('dashboard/default.html.twig', [
             'tenant' => $tenant,
             'tenant_name' => $tenant['name'],
             'subdomain' => $tenant['subdomain'],
             'logged_user' => $loggedUser,
+            'menu_routes' => $menuRoutes,
             'page_title' => 'Dashboard - ' . $tenant['name'],
             'current_locale' => $request->getLocale()
         ]);
