@@ -45,14 +45,15 @@ class TenantResolver
             $connection = DriverManager::getConnection($this->centralDbConfig);
             
             $query = '
-                SELECT id, name, subdomain, database_name, rut_empresa, 
-                       COALESCE(domain, "localhost") as host,
+                SELECT id, name, subdomain, database_name, rut_empresa,
+                       domain,
+                       "localhost" as host,
                        3306 as host_port,
                        "melisa" as db_user,
                        "melisamelisa" as db_password,
                        "mysql" as driver,
                        is_active
-                FROM tenant 
+                FROM tenant
                 WHERE subdomain = ? AND is_active = 1
             ';
             
