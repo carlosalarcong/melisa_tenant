@@ -2,8 +2,7 @@
 
 namespace App\Controller\Mantenedores;
 
-use App\Controller\AbstractTenantController;
-use App\Service\TenantContext;
+use App\Controller\AbstractTenantAwareController;
 use App\Service\TenantResolver;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,8 +14,10 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 /**
  * Controlador base abstracto para todos los mantenedores
  * Proporciona funcionalidad común para CRUD con AJAX
+ * 
+ * ✨ Ahora hereda de AbstractTenantAwareController - sin necesidad de inyectar TenantContext
  */
-abstract class AbstractMantenedorController extends AbstractTenantController
+abstract class AbstractMantenedorController extends AbstractTenantAwareController
 {
     protected EntityManagerInterface $entityManager;
     protected ValidatorInterface $validator;
@@ -24,13 +25,12 @@ abstract class AbstractMantenedorController extends AbstractTenantController
     protected TenantResolver $tenantResolver;
 
     public function __construct(
-        TenantContext $tenantContext,
         EntityManagerInterface $entityManager,
         ValidatorInterface $validator,
         CsrfTokenManagerInterface $csrfTokenManager,
         TenantResolver $tenantResolver
     ) {
-        parent::__construct($tenantContext);
+        // ✨ Ya no necesitamos inyectar TenantContext - está disponible automáticamente
         $this->entityManager = $entityManager;
         $this->validator = $validator;
         $this->csrfTokenManager = $csrfTokenManager;
@@ -42,7 +42,8 @@ abstract class AbstractMantenedorController extends AbstractTenantController
      */
     protected function getTenantConnection(): ?\Doctrine\DBAL\Connection
     {
-        $tenant = $this->getCurrentTenant();
+        // ✨ Usar $this->getTenant() en lugar de $this->getCurrentTenant()
+        $tenant = $this->getTenant();
         
         if (!$tenant) {
             return null;
@@ -99,7 +100,7 @@ abstract class AbstractMantenedorController extends AbstractTenantController
         
         return $this->render($templateName, [
             'mantenedor_config' => $config,
-            'tenant' => $this->getCurrentTenant(),
+            'tenant' => $this->getTenant(),  // ✨ Usar getTenant() del nuevo sistema
             'csrf_token' => $this->csrfTokenManager->getToken('mantenedor_form')->getValue()
         ]);
     }
