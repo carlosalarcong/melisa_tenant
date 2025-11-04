@@ -1,0 +1,74 @@
+# =============================================================================
+# TRADUCCIONES MELISA HOSPITAL - ESPAÑOL
+# Terminología específica para HOSPITAL de alta complejidad
+# =============================================================================
+
+# AUTENTICACIÓN - Terminología hospitalaria formal
+auth:
+  login: 'Ingreso al Sistema Hospitalario'
+  logout: 'Finalizar Turno Médico'  # ← DIFERENTE: Enfocado en turnos
+  username: 'Credencial Médica'
+  password: 'PIN de Seguridad'
+  remember_me: 'Mantener sesión activa'
+
+# NAVEGACIÓN - Áreas hospitalarias
+nav:
+  dashboard: 'Puesto de Mando Central'  # ← DIFERENTE: Terminología militar/urgencias
+  patients: 'Pacientes Hospitalizados'  # ← DIFERENTE: Solo hospitalizados
+  appointments: 'Guardias y Turnos'  # ← DIFERENTE: Sistema de guardias
+  medical_records: 'Historias Clínicas Electrónicas'
+  reports: 'Informes Médicos y Estadísticas'
+  settings: 'Configuración Hospitalaria'
+
+# DASHBOARD - Terminología de emergencias
+dashboard:
+  title: 'Centro de Comando Hospitalario'  # ← DIFERENTE: Estilo comando
+  welcome: 'Bienvenido Doctor/a'  # ← DIFERENTE: Formal
+  today: 'Turno Actual'  # ← DIFERENTE: Por turnos
+  statistics: 'Estadísticas de Urgencias'  # ← DIFERENTE: Enfoque en urgencias
+
+# PACIENTES - Terminología hospitalaria
+patients:
+  title: 'Gestión de Pacientes Internados'  # ← DIFERENTE: Solo internados
+  add: 'Admitir Paciente de Emergencia'  # ← DIFERENTE: Admisión
+  edit: 'Actualizar Historia Clínica'
+  search: 'Buscar por HC N°...'  # ← DIFERENTE: Por historia clínica
+
+# CITAS - Sistema de guardias
+appointments:
+  title: 'Sistema de Guardias Médicas'  # ← DIFERENTE: Guardias
+  schedule: 'Asignar Guardia Médica'  # ← DIFERENTE: No "agendar"
+  cancel: 'Liberar Guardia'  # ← DIFERENTE: No "cancelar"
+  status: 'Estado de Turno'  # ← DIFERENTE: Turno
+
+# SECCIONES ESPECÍFICAS DEL HOSPITAL
+hospital:
+  emergency_room: 'Sala de Emergencias 24/7'
+  operating_rooms: 'Quirófanos y Pabellones'
+  icu: 'Unidad de Cuidados Intensivos (UCI)'
+  inpatient_ward: 'Salas de Hospitalización'
+  critical_care: 'Área de Pacientes Críticos'
+  trauma_center: 'Centro de Trauma'
+
+# ESTABLECIMIENTO - Identidad hospitalaria
+establishment:
+  type: 'Hospital de Alta Complejidad'
+  welcome_message: 'Bienvenido al Sistema Hospitalario Integrado'
+  main_service: 'Atención Médica de Urgencias y Alta Complejidad'
+  motto: 'Excelencia en Atención Crítica'
+
+# ROLES HOSPITALARIOS ESPECÍFICOS
+roles:
+  admin: 'Director Médico'
+  doctor: 'Médico de Guardia'
+  nurse: 'Enfermera Jefe'
+  technician: 'Técnico de Emergencias'
+  surgeon: 'Cirujano'
+  anesthesiologist: 'Anestesiólogo'
+
+# PRIORIDADES DE EMERGENCIA
+emergency:
+  critical: 'CÓDIGO ROJO - CRÍTICO'
+  urgent: 'CÓDIGO AMARILLO - URGENTE'
+  moderate: 'CÓDIGO VERDE - MODERADO'
+  minor: 'CÓDIGO AZUL - MENOR'

@@ -2,38 +2,25 @@
 
 namespace App\Controller\Dashboard\Melisahospital;
 
-use App\Controller\Dashboard\AbstractDashboardController;
-use App\Service\LocalizationService;
-use App\Service\TenantContext;
-use App\Service\DynamicControllerResolver;
+use App\Controller\AbstractTenantAwareController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Twig\Environment;
 
-class DefaultController extends AbstractDashboardController
+/**
+ * Dashboard específico de Melisa Hospital - completamente transparente
+ * No requiere inyectar nada en el constructor
+ * El tenant está disponible automáticamente vía $this->tenant
+ */
+class DefaultController extends AbstractTenantAwareController
 {
-    private LocalizationService $localizationService;
-    private TenantContext $tenantContext;
-
-    public function __construct(
-        LocalizationService $localizationService, // Maneja traducciones y configuración de idioma
-        TenantContext $tenantContext, // Proporciona contexto actual del tenant logueado
-        DynamicControllerResolver $controllerResolver, // Resuelve controladores específicos por tenant
-        Environment $twig // Verifica existencia de plantillas antes de renderizar
-    ) {
-        parent::__construct($controllerResolver, $twig);
-        $this->localizationService = $localizationService;
-        $this->tenantContext = $tenantContext;
-    }
-
     #[Route('/dashboard', name: 'app_dashboard_melisahospital')]
     public function index(Request $request): Response
     {
         $session = $request->getSession();
         
-        // Obtener datos del tenant usando método centralizado
-        $tenant = $this->getTenantData();
+        // ✨ $this->tenant está disponible automáticamente - inyectado por TenantContextInjector
+        $tenant = $this->getTenant();
         
         // Obtener datos del usuario logueado
         $loggedUser = [
@@ -52,8 +39,6 @@ class DefaultController extends AbstractDashboardController
             $loggedUser['last_name'] = $nameParts[1] ?? '';
         }
         
-        $tenantSubdomain = $tenant['subdomain'] ?? 'melisahospital';
-        
         // Menú específico para hospital
         $menuRoutes = [
             'dashboard' => ['url' => '/dashboard', 'label' => 'Dashboard'],
@@ -71,11 +56,11 @@ class DefaultController extends AbstractDashboardController
         // Render directo del template específico de melisahospital
         return $this->render('dashboard/melisahospital/index.html.twig', [
             'tenant' => $tenant,
-            'tenant_name' => $tenant['name'],
-            'subdomain' => $tenant['subdomain'],
+            'tenant_name' => $this->getTenantName(),
+            'subdomain' => $this->getTenantSubdomain(),
             'logged_user' => $loggedUser,
             'menu_routes' => $menuRoutes,
-            'page_title' => $this->localizationService->trans('dashboard.title') . ' - ' . $tenant['name'],
+            'page_title' => 'Dashboard - ' . $this->getTenantName(),
             'current_locale' => $request->getLocale()
         ]);
     }

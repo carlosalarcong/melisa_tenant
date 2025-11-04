@@ -1,0 +1,83 @@
+# =============================================================================
+# TRADUCCIONES MELISA LA COLINA - ESPAÑOL
+# Terminología específica para CLÍNICA privada de especialidades
+# =============================================================================
+
+# AUTENTICACIÓN - Terminología clínica amigable
+auth:
+  login: 'Acceso a La Colina'
+  logout: 'Cerrar Mi Sesión'  # ← DIFERENTE: Personal, amigable
+  username: 'Nombre de Usuario'
+  password: 'Contraseña Personal'
+  remember_me: 'Recordarme en este equipo'
+
+# NAVEGACIÓN - Áreas de clínica privada
+nav:
+  dashboard: 'Mi Escritorio Digital'  # ← DIFERENTE: Personal, moderno
+  patients: 'Mis Pacientes'  # ← DIFERENTE: Posesivo, relación cercana
+  appointments: 'Agenda de Consultas'  # ← DIFERENTE: Agenda personal
+  medical_records: 'Expedientes Digitales'
+  reports: 'Reportes y Análisis'
+  settings: 'Preferencias Personales'
+
+# DASHBOARD - Terminología premium/privada
+dashboard:
+  title: 'Mi Espacio de Trabajo'  # ← DIFERENTE: Personal
+  welcome: 'Bienvenido/a a La Colina'  # ← DIFERENTE: Nombre de la clínica
+  today: 'Mi Día'  # ← DIFERENTE: Personal
+  statistics: 'Resumen de Mi Práctica'  # ← DIFERENTE: Enfoque en práctica privada
+
+# PACIENTES - Terminología de atención personalizada
+patients:
+  title: 'Mis Pacientes Privados'  # ← DIFERENTE: Enfoque privado
+  add: 'Nuevo Paciente'  # ← DIFERENTE: Simple y directo
+  edit: 'Actualizar Perfil del Paciente'
+  search: 'Buscar en mi cartera...'  # ← DIFERENTE: "Cartera de pacientes"
+
+# CITAS - Sistema de agenda personal
+appointments:
+  title: 'Mi Agenda de Consultas'  # ← DIFERENTE: Agenda personal
+  schedule: 'Agendar Nueva Consulta'  # ← DIFERENTE: Enfoque en agendar
+  cancel: 'Cancelar Cita'  # ← DIFERENTE: Simple
+  status: 'Estado de la Cita'  # ← DIFERENTE: Cita
+
+# SECCIONES ESPECÍFICAS DE LA CLÍNICA
+clinic:
+  consultation_rooms: 'Consultorios Premium'
+  specialized_services: 'Servicios Especializados'
+  wellness_center: 'Centro de Bienestar'
+  aesthetic_medicine: 'Medicina Estética'
+  executive_checkup: 'Chequeo Ejecutivo'
+  vip_lounge: 'Sala VIP de Espera'
+
+# ESTABLECIMIENTO - Identidad clínica privada
+establishment:
+  type: 'Clínica de Especialidades Médicas'
+  welcome_message: 'Bienvenido a Clínica La Colina - Atención Médica de Excelencia'
+  main_service: 'Medicina Especializada y Preventiva'
+  motto: 'Tu Salud, Nuestra Prioridad'
+
+# ROLES CLÍNICOS ESPECÍFICOS
+roles:
+  admin: 'Gerente de Clínica'
+  doctor: 'Médico Especialista'
+  nurse: 'Asistente Médica'
+  receptionist: 'Coordinadora de Atención'
+  technician: 'Especialista Técnico'
+
+# TIPOS DE CONSULTA
+consultation:
+  first_time: 'Primera Consulta'
+  follow_up: 'Consulta de Seguimiento'
+  preventive: 'Chequeo Preventivo'
+  executive: 'Consulta Ejecutiva'
+  telemedicine: 'Telemedicina'
+  home_visit: 'Visita Domiciliaria'
+
+# SERVICIOS PREMIUM
+services:
+  cardiology: 'Cardiología Preventiva'
+  dermatology: 'Dermatología y Estética'
+  nutrition: 'Nutrición y Bienestar'
+  psychology: 'Salud Mental y Psicología'
+  physiotherapy: 'Fisioterapia y Rehabilitación'

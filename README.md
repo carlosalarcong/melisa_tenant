@@ -343,8 +343,23 @@ php bin/console debug:asset-map
 
 ---
 
+### � Documentación Técnica
+
+**Sistema Multi-Tenant:**
+- **[Sistema Transparente de Tenant](docs/TRANSPARENT_TENANT_SYSTEM.md)** - Arquitectura completa sin inyección manual
+- **[Ejemplos de Controladores](docs/CONTROLLER_EXAMPLES.md)** - 7 patrones de implementación
+- **[Flujo del Sistema](docs/SYSTEM_FLOW_DETAILED.md)** - Diagramas de ejecución completos
+- **[Migración Completada](docs/MIGRATION_COMPLETED.md)** - Reporte de migración
+
+**Localización y Traducciones:**
+- **[Comparativa de Sistemas](docs/LOCALIZATION_SYSTEM_COMPARISON.md)** - melisa_base vs melisa_tenant (1,117 líneas)
+- **[Flujo de TranslatorInterface](docs/TRANSLATOR_FLOW.md)** - Arquitectura completa de traducciones
+
+**Ver carpeta `docs/` para más guías técnicas**
+
+---
+
 ### 📧 Contacto
-- **Documentación**: Ver carpeta `docs/` para guías técnicas
 - **API Testing**: Usar `/api/docs` para pruebas interactivas
 - **Debug**: Usar `/_profiler` en desarrollo
 
@@ -354,5 +369,5 @@ php bin/console debug:asset-map
 
 ---
 
-*Manual de instalación consolidado - Octubre 2025*
+*Manual de instalación consolidado - Noviembre 2025*
 *Proyecto: Melisa Tenant Multi-Platform*

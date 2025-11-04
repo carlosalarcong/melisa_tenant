@@ -1,0 +1,83 @@
+# =============================================================================
+# MELISA LA COLINA TRANSLATIONS - ENGLISH
+# Clinic-specific terminology for private specialized care
+# =============================================================================
+
+# AUTHENTICATION - Friendly clinic terminology
+auth:
+  login: 'Access to La Colina'
+  logout: 'Sign Out'  # ← DIFFERENT: Personal, friendly
+  username: 'Username'
+  password: 'Personal Password'
+  remember_me: 'Remember me on this device'
+
+# NAVIGATION - Private clinic areas
+nav:
+  dashboard: 'My Digital Workspace'  # ← DIFFERENT: Personal, modern
+  patients: 'My Patients'  # ← DIFFERENT: Possessive, close relationship
+  appointments: 'Appointment Schedule'  # ← DIFFERENT: Personal schedule
+  medical_records: 'Digital Records'
+  reports: 'Reports and Analytics'
+  settings: 'Personal Preferences'
+
+# DASHBOARD - Premium/private terminology
+dashboard:
+  title: 'My Workspace'  # ← DIFFERENT: Personal
+  welcome: 'Welcome to La Colina'  # ← DIFFERENT: Clinic name
+  today: 'My Day'  # ← DIFFERENT: Personal
+  statistics: 'My Practice Summary'  # ← DIFFERENT: Private practice focus
+
+# PATIENTS - Personalized care terminology
+patients:
+  title: 'My Private Patients'  # ← DIFFERENT: Private focus
+  add: 'New Patient'  # ← DIFFERENT: Simple and direct
+  edit: 'Update Patient Profile'
+  search: 'Search in my portfolio...'  # ← DIFFERENT: "Patient portfolio"
+
+# APPOINTMENTS - Personal schedule system
+appointments:
+  title: 'My Consultation Schedule'  # ← DIFFERENT: Personal schedule
+  schedule: 'Schedule New Appointment'  # ← DIFFERENT: Focus on scheduling
+  cancel: 'Cancel Appointment'  # ← DIFFERENT: Simple
+  status: 'Appointment Status'  # ← DIFFERENT: Appointment
+
+# CLINIC-SPECIFIC SECTIONS
+clinic:
+  consultation_rooms: 'Premium Consultation Rooms'
+  specialized_services: 'Specialized Services'
+  wellness_center: 'Wellness Center'
+  aesthetic_medicine: 'Aesthetic Medicine'
+  executive_checkup: 'Executive Checkup'
+  vip_lounge: 'VIP Waiting Lounge'
+
+# ESTABLISHMENT - Private clinic identity
+establishment:
+  type: 'Specialized Medical Clinic'
+  welcome_message: 'Welcome to La Colina Clinic - Excellence in Medical Care'
+  main_service: 'Specialized and Preventive Medicine'
+  motto: 'Your Health, Our Priority'
+
+# CLINIC-SPECIFIC ROLES
+roles:
+  admin: 'Clinic Manager'
+  doctor: 'Specialist Physician'
+  nurse: 'Medical Assistant'
+  receptionist: 'Care Coordinator'
+  technician: 'Technical Specialist'
+
+# CONSULTATION TYPES
+consultation:
+  first_time: 'First Consultation'
+  follow_up: 'Follow-up Consultation'
+  preventive: 'Preventive Checkup'
+  executive: 'Executive Consultation'
+  telemedicine: 'Telemedicine'
+  home_visit: 'Home Visit'
+
+# PREMIUM SERVICES
+services:
+  cardiology: 'Preventive Cardiology'
+  dermatology: 'Dermatology and Aesthetics'
+  nutrition: 'Nutrition and Wellness'
+  psychology: 'Mental Health and Psychology'
+  physiotherapy: 'Physiotherapy and Rehabilitation'

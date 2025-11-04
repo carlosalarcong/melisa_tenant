@@ -2,34 +2,25 @@
 
 namespace App\Controller\Mantenedores;
 
-use App\Controller\AbstractTenantController;
-use App\Service\TenantContext;
+use App\Controller\AbstractTenantAwareController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class MantenedoresController extends AbstractTenantController
+/**
+ * Controlador principal de Mantenedores
+ * ✨ Ahora hereda de AbstractTenantAwareController - sin necesidad de constructor
+ */
+class MantenedoresController extends AbstractTenantAwareController
 {
-    public function __construct(TenantContext $tenantContext)
-    {
-        parent::__construct($tenantContext);
-    }
-
     /**
      * Página principal de mantenedores
      */
     #[Route('/mantenedores', name: 'mantenedores_index', methods: ['GET'])]
     public function index(Request $request): Response
     {
-        $tenant = $this->getCurrentTenant();
-        
-        // Debug temporal
-        if (!$tenant) {
-            $tenant = [
-                'name' => 'Melisa Hospital',
-                'subdomain' => 'melisahospital'
-            ];
-        }
+        // ✨ Tenant disponible automáticamente
+        $tenant = $this->getTenant();
         
         // Obtener contenido para precargar desde la ruta
         $preloadContent = $request->attributes->get('preload_content');
@@ -49,8 +40,8 @@ class MantenedoresController extends AbstractTenantController
         
         return $this->render('mantenedores/index.html.twig', [
             'tenant' => $tenant,
-            'subdomain' => $tenant['subdomain'] ?? null,
-            'page_title' => 'Mantenedores - ' . ($tenant['name'] ?? 'Sistema'),
+            'subdomain' => $this->getTenantSubdomain(),
+            'page_title' => 'Mantenedores - ' . $this->getTenantName(),
             'menuItems' => $this->getMenuItems(),
             'basicItems' => $this->getBasicItems(),
             'preload_content_url' => $preloadUrl,
@@ -64,12 +55,13 @@ class MantenedoresController extends AbstractTenantController
     #[Route('/mantenedores/basico', name: 'mantenedores_basico_index', methods: ['GET'])]
     public function basico(): Response
     {
-        $tenant = $this->getCurrentTenant();
+        // ✨ Tenant disponible automáticamente
+        $tenant = $this->getTenant();
         
         return $this->render('mantenedores/basico.html.twig', [
             'tenant' => $tenant,
-            'subdomain' => $tenant['subdomain'] ?? null,
-            'page_title' => 'Mantenedores Básicos - ' . ($tenant['name'] ?? 'Sistema'),
+            'subdomain' => $this->getTenantSubdomain(),
+            'page_title' => 'Mantenedores Básicos - ' . $this->getTenantName(),
             'basicItems' => $this->getBasicItems()
         ]);
     }

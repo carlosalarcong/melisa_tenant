@@ -3,44 +3,57 @@
 # Sistema Multi-Tenant de Gestión Médica
 # =============================================================================
 
-# NAVEGACIÓN Y MENÚS
-nav:
-  dashboard: 'Tablero'
-  patients: 'Pacientes'
-  appointments: 'Citas'
-  medical_records: 'Historiales Médicos'
-  reports: 'Reportes'
-  settings: 'Configuración'
-  logout: 'Cerrar Sesión'
-  profile: 'Perfil'
-  administration: 'Administración'
+# =============================================================================
+# NOTA IMPORTANTE: Las claves nav.* y auth.* están COMENTADAS porque cada
+# tenant tiene sus propias traducciones específicas en:
+# - translations/melisahospital/melisahospital.es.yaml
+# - translations/melisalacolina/melisalacolina.es.yaml
+# - translations/default/default.es.yaml
+#
+# Esto permite que "auth.login" signifique cosas diferentes según el tenant:
+# - Hospital: "Ingreso al Sistema Hospitalario"
+# - Clínica: "Acceso a La Colina"
+# - Default: "Acceso al Sistema"
+# =============================================================================
 
-# AUTENTICACIÓN
-auth:
-  login: 'Iniciar Sesión'
-  logout: 'Cerrar Sesión'
-  username: 'Usuario'
-  password: 'Contraseña'
-  remember_me: 'Recordarme'
-  forgot_password: 'Olvidé mi contraseña'
-  reset_password: 'Restablecer Contraseña'
-  new_password: 'Nueva Contraseña'
-  confirm_password: 'Confirmar Contraseña'
-  email: 'Correo Electrónico'
-  login_success: 'Sesión iniciada correctamente'
-  login_error: 'Usuario o contraseña incorrectos'
-  logout_success: 'Sesión cerrada correctamente'
-  access_denied: 'Acceso denegado'
-  session_expired: 'Su sesión ha expirado'
-  system_description: 'Sistema Multi-Tenant de Gestión Médica'
-  selected_company: 'Empresa Seleccionada'
-  subdomain: 'Subdominio'
-  show_hide_password: 'Mostrar/Ocultar contraseña'
-  show_password: 'Mostrar contraseña'
-  hide_password: 'Ocultar contraseña'
-  tenant_not_found: 'No se pudo determinar la empresa'
-  tenant_not_determined: 'No se pudo determinar la empresa desde la URL. Verifique el subdomain.'
-  user_not_found: 'Usuario no encontrado o inactivo en %tenant%'
+# NAVEGACIÓN Y MENÚS - COMENTADAS PARA USAR LAS DEL TENANT
+# nav:
+#   dashboard: 'Tablero'
+#   patients: 'Pacientes'
+#   appointments: 'Citas'
+#   medical_records: 'Historiales Médicos'
+#   reports: 'Reportes'
+#   settings: 'Configuración'
+#   logout: 'Cerrar Sesión'
+#   profile: 'Perfil'
+#   administration: 'Administración'
+
+# AUTENTICACIÓN - COMENTADAS PARA USAR LAS DEL TENANT
+# auth:
+#   login: 'Iniciar Sesión'
+#   logout: 'Cerrar Sesión'
+#   username: 'Usuario'
+#   password: 'Contraseña'
+#   remember_me: 'Recordarme'
+#   forgot_password: 'Olvidé mi contraseña'
+#   reset_password: 'Restablecer Contraseña'
+#   new_password: 'Nueva Contraseña'
+#   confirm_password: 'Confirmar Contraseña'
+#   email: 'Correo Electrónico'
+#   login_success: 'Sesión iniciada correctamente'
+#   login_error: 'Usuario o contraseña incorrectos'
+#   logout_success: 'Sesión cerrada correctamente'
+#   access_denied: 'Acceso denegado'
+#   session_expired: 'Su sesión ha expirado'
+#   system_description: 'Sistema Multi-Tenant de Gestión Médica'
+#   selected_company: 'Empresa Seleccionada'
+#   subdomain: 'Subdominio'
+#   show_hide_password: 'Mostrar/Ocultar contraseña'
+#   show_password: 'Mostrar contraseña'
+#   hide_password: 'Ocultar contraseña'
+#   tenant_not_found: 'No se pudo determinar la empresa'
+#   tenant_not_determined: 'No se pudo determinar la empresa desde la URL. Verifique el subdomain.'
+#   user_not_found: 'Usuario no encontrado o inactivo en %tenant%'
 
 # TABLERO/DASHBOARD
 dashboard:
