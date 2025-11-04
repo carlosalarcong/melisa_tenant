@@ -2,11 +2,10 @@
 
 ![Symfony](https://img.shields.io/badge/Symfony-6.4-brightgreen)
 ![PHP](https://img.shields.io/badge/PHP-8.1+-blue)
-![API Platform](https://img.shields.io/badge/API%20Platform-4.2-success)
 ![Stimulus](https://img.shields.io/badge/Stimulus-3.2-yellow)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0-orange)
 
-**Melisa Tenant** es un sistema multi-tenant de gestión médica desarrollado con Symfony 6.4, API Platform y Stimulus. Cada clínica/hospital tiene su propio dashboard personalizado y base de datos independiente.
+**Melisa Tenant** es un sistema multi-tenant de gestión médica desarrollado con Symfony 6.4 y Stimulus. Cada clínica/hospital tiene su propio dashboard personalizado y base de datos independiente.
 
 ---
 
@@ -172,12 +171,7 @@ php bin/console app:migrate-tenant --dry-run
 ```
 assets/controllers/
 ├── dynamic_loader.js              # Sistema de fallback automático
-├── internal/                      # Controllers internos (formularios, UI)
-│   ├── default/
-│   ├── melisahospital/
-│   ├── melisalacolina/
-│   └── melisawiclinic/
-└── apiplatform/                   # Controllers API Platform
+└── internal/                      # Controllers internos (formularios, UI)
     ├── default/
     ├── melisahospital/
     ├── melisalacolina/
@@ -187,57 +181,6 @@ assets/controllers/
 **Sistema de Fallback:**
 1. Busca controller específico del tenant: `internal/melisalacolina/patient_controller.js`
 2. Si no existe, usa default: `internal/default/patient_controller.js`
-
----
-
-## 🚀 API Platform - REST API
-
-### 📊 Configuración API
-```yaml
-api_platform:
-    title: 'Melisa Medical API - Sistema Multi-tenant'
-    description: 'API REST para gestión médica hospitalaria y clínicas'
-    version: 1.0.0
-    
-    # Soporte multi-tenancy
-    defaults:
-        stateless: true
-        cache_headers:
-            vary: ['Content-Type', 'Authorization', 'Origin', 'X-Tenant-Context']
-    
-    # Documentación automática
-    swagger:
-        versions: [3]
-        api_keys:
-            tenant:
-                name: X-Tenant-Context
-                type: header
-```
-
-### 🔗 Endpoints Principales
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| `GET` | `/api/docs` | Documentación interactiva |
-| `GET` | `/api/patients` | Lista pacientes del tenant |
-| `GET` | `/api/patients/{id}` | Detalle paciente |
-| `POST` | `/api/patients` | Crear paciente |
-| `PUT/PATCH` | `/api/patients/{id}` | Actualizar paciente |
-| `DELETE` | `/api/patients/{id}` | Eliminar paciente |
-
-### 📡 Headers Multi-Tenant
-```http
-Content-Type: application/json
-X-Tenant-Context: melisahospital
-X-Hospital-ID: hospital-001
-Authorization: Bearer {token}
-```
-
-### 📝 Ejemplo de uso
-```bash
-curl -H "X-Tenant-Context: melisahospital" \
-     -H "Content-Type: application/json" \
-     "http://melisahospital.localhost:8081/api/patients"
-```
 
 ---
 
@@ -271,11 +214,10 @@ curl -H "X-Tenant-Context: melisawiclinic" "http://melisawiclinic.localhost:8081
 # 🧹 Limpiar cache
 php bin/console cache:clear
 
+php bin/console cache:clear
+
 # 🛣️ Ver rutas
 php bin/console debug:router
-
-# ⚙️ Verificar configuración API Platform
-php bin/console debug:config api_platform
 
 # 🗄️ Ejecutar migraciones multi-tenant
 php bin/console app:migrate-tenant
@@ -288,6 +230,17 @@ php bin/console debug:asset-map
 
 # 🚀 Compilar assets (después de cambios JS/CSS)
 php bin/console asset-map:compile
+```
+
+---
+
+## 🐛 Solución de Problemas
+
+### ❌ **Error: Database connection**
+```bash
+# Verificar configuración en .env.dev.local
+# DATABASE_URL="mysql://usuario:password@127.0.0.1:3306/melisa_central"
+```
 ```
 
 ---
