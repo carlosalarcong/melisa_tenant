@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Service\TenantResolver;
 use App\Service\LocalizationService;
-use App\Service\DynamicControllerResolver;
+use App\Service\AuthenticationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,36 +15,43 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class LoginController extends AbstractController
 {
-    public function __construct(
-        private TenantResolver $tenantResolver,
-        private LocalizationService $localizationService,
-        private DynamicControllerResolver $controllerResolver // Para resolver rutas dinámicamente según el tenant
-    ) {}
-
     #[Route('/login', name: 'app_login', methods: ['GET', 'POST'])]
-    public function login(Request $request, SessionInterface $session): Response
+    public function login(
+        Request $request, 
+        SessionInterface $session,
+        TenantResolver $tenantResolver,
+        LocalizationService $localizationService
+    ): Response
     {
         // Establecer idioma desde request o configuración
-        $locale = $this->localizationService->getCurrentLocale();
+        $locale = $localizationService->getCurrentLocale();
         $request->setLocale($locale);
         
         if ($request->isMethod('POST')) {
-            return $this->handleLogin($request, $session);
+            return $this->handleLogin($request, $session, $tenantResolver, $localizationService);
         }
         
         // Resolver tenant desde subdomain para mostrar en el formulario
-        $tenant = $this->tenantResolver->resolveTenantFromRequest($request);
+        $tenant = $tenantResolver->resolveTenantFromRequest($request);
         
         return $this->render('login/form.html.twig', [
             'error' => null,
             'username' => '',
             'tenant' => $tenant,
-            'tenant_name' => $tenant ? $tenant['name'] : $this->localizationService->trans('auth.tenant_not_found', [], 'messages')
+            'tenant_name' => $tenant ? $tenant['name'] : $localizationService->trans('auth.tenant_not_found', [], 'messages')
         ]);
     }
 
-    private function handleLogin(Request $request, SessionInterface $session): Response
+    private function handleLogin(
+        Request $request, 
+        SessionInterface $session,
+        TenantResolver $tenantResolver,
+        LocalizationService $localizationService,
+        AuthenticationService $authService = null
+    ): Response
     {
+        $authService = $authService ?? new AuthenticationService();
+        
         $username = trim($request->request->get('username', ''));
         $password = trim($request->request->get('password', ''));
         $rememberMe = $request->request->get('remember_me', false);
@@ -52,59 +59,42 @@ class LoginController extends AbstractController
         // Validar datos básicos
         if (!$username || !$password) {
             return $this->render('login/form.html.twig', [
-                'error' => $this->localizationService->trans('validation.required_fields', [], 'messages'),
+                'error' => $localizationService->trans('validation.required_fields', [], 'messages'),
                 'username' => $username,
                 'tenant' => null,
-                'tenant_name' => $this->localizationService->trans('messages.error', [], 'messages')
+                'tenant_name' => $localizationService->trans('messages.error', [], 'messages')
             ]);
         }
 
         try {
             // 1. Resolver tenant desde subdomain
-            $tenant = $this->tenantResolver->resolveTenantFromRequest($request);
+            $tenant = $tenantResolver->resolveTenantFromRequest($request);
             
             if (!$tenant) {
                 return $this->render('login/form.html.twig', [
-                    'error' => $this->localizationService->trans('auth.tenant_not_determined', [], 'messages'),
+                    'error' => $localizationService->trans('auth.tenant_not_determined', [], 'messages'),
                     'username' => $username,
                     'tenant' => null,
-                    'tenant_name' => $this->localizationService->trans('messages.error', [], 'messages')
+                    'tenant_name' => $localizationService->trans('messages.error', [], 'messages')
                 ]);
             }
 
             // 2. Conectar a la BD del tenant
-            $tenantConnection = $this->tenantResolver->createTenantConnection($tenant);
+            $tenantConnection = $tenantResolver->createTenantConnection($tenant);
             
-            // 3. Buscar usuario en la BD del tenant
-            $userQuery = '
-                SELECT id, username, password, first_name, last_name, email, is_active
-                FROM member 
-                WHERE username = ? AND is_active = true
-            ';
-            
-            $userResult = $tenantConnection->executeQuery($userQuery, [$username]);
-            $user = $userResult->fetchAssociative();
+            // 3. Autenticar usuario
+            $user = $authService->authenticateUser($tenantConnection, $username, $password);
             
             if (!$user) {
                 return $this->render('login/form.html.twig', [
-                    'error' => $this->localizationService->trans('auth.user_not_found', ['%tenant%' => $tenant['name']], 'messages'),
+                    'error' => $localizationService->trans('auth.login_error', [], 'messages'),
                     'username' => $username,
                     'tenant' => $tenant,
                     'tenant_name' => $tenant['name']
                 ]);
             }
 
-            // 4. Verificar contraseña
-            if (!password_verify($password, $user['password'])) {
-                return $this->render('login/form.html.twig', [
-                    'error' => $this->localizationService->trans('auth.login_error', [], 'messages'),
-                    'username' => $username,
-                    'tenant' => $tenant,
-                    'tenant_name' => $tenant['name']
-                ]);
-            }
-
-            // 5. Login exitoso - Crear sesión
+                        // 4. Login exitoso - Crear sesión
             $session->set('logged_in', true);
             $session->set('user_id', $user['id']);
             $session->set('username', $user['username']);
@@ -126,8 +116,10 @@ class LoginController extends AbstractController
                 'name' => $user['first_name'] . ' ' . $user['last_name']
             ]);
 
+            // 5. Redirección al dashboard usando resolución dinámica
+
             // 6. Redirección al dashboard usando resolución dinámica
-            $dashboardRoute = $this->controllerResolver->generateRedirectRoute($tenant['subdomain']);
+            $dashboardRoute = 'app_dashboard_' . strtolower($tenant['subdomain']);
             $response = $this->redirectToRoute($dashboardRoute);
             
             if ($rememberMe) {
@@ -138,10 +130,10 @@ class LoginController extends AbstractController
 
         } catch (\Exception $e) {
             return $this->render('login/form.html.twig', [
-                'error' => $this->localizationService->trans('messages.error', [], 'messages') . ': ' . $e->getMessage(),
+                'error' => $localizationService->trans('messages.error', [], 'messages') . ': ' . $e->getMessage(),
                 'username' => $username,
                 'tenant' => null,
-                'tenant_name' => $this->localizationService->trans('messages.error', [], 'messages')
+                'tenant_name' => $localizationService->trans('messages.error', [], 'messages')
             ]);
         }
     }
@@ -189,10 +181,10 @@ class LoginController extends AbstractController
     }
 
     #[Route('/api/tenants', name: 'app_tenants_list', methods: ['GET'])]
-    public function tenantsList(): JsonResponse
+    public function tenantsList(TenantResolver $tenantResolver): JsonResponse
     {
         try {
-            $tenants = $this->tenantResolver->getAllActiveTenants();
+            $tenants = $tenantResolver->getAllActiveTenants();
             
             // Formatear los tenants para el frontend
             $formattedTenants = array_map(function($tenant) {
