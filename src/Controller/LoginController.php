@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Service\TenantResolver;
 use App\Service\LocalizationService;
 use App\Service\AuthenticationService;
+use App\Service\DynamicControllerResolver;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,7 +22,8 @@ class LoginController extends AbstractController
         SessionInterface $session,
         TenantResolver $tenantResolver,
         LocalizationService $localizationService,
-        AuthenticationService $authService
+        AuthenticationService $authService,
+        DynamicControllerResolver $controllerResolver
     ): Response
     {
         // Establecer idioma desde request o configuración
@@ -29,7 +31,7 @@ class LoginController extends AbstractController
         $request->setLocale($locale);
         
         if ($request->isMethod('POST')) {
-            return $this->handleLogin($request, $session, $tenantResolver, $localizationService, $authService);
+            return $this->handleLogin($request, $session, $tenantResolver, $localizationService, $authService, $controllerResolver);
         }
         
         // Resolver tenant desde subdomain para mostrar en el formulario
@@ -48,7 +50,8 @@ class LoginController extends AbstractController
         SessionInterface $session,
         TenantResolver $tenantResolver,
         LocalizationService $localizationService,
-        AuthenticationService $authService
+        AuthenticationService $authService,
+        DynamicControllerResolver $controllerResolver
     ): Response
     {
         
@@ -113,9 +116,14 @@ class LoginController extends AbstractController
                 'name' => $user['first_name'] . ' ' . $user['last_name']
             ]);
 
-            // 4. Redirección al dashboard usando resolución dinámica
-            $dashboardRoute = 'app_dashboard_' . strtolower($tenant['subdomain']);
-            $response = $this->redirectToRoute($dashboardRoute);
+            // 4. Redirección al dashboard usando resolución dinámica con fallback automático
+            try {
+                $dashboardRoute = $controllerResolver->generateRedirectRoute($tenant['subdomain'], 'dashboard');
+                $response = $this->redirectToRoute($dashboardRoute);
+            } catch (\Exception $e) {
+                // Si no existe la ruta específica del tenant, usar default
+                $response = $this->redirectToRoute('app_dashboard_default');
+            }
             
             if ($rememberMe) {
                 $this->setRememberMeCookies($response, $tenant, $user);
