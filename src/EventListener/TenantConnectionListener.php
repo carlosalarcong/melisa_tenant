@@ -14,20 +14,13 @@ use Psr\Log\LoggerInterface;
  */
 class TenantConnectionListener implements EventSubscriberInterface
 {
-    private TenantResolver $tenantResolver;
-    private Connection $connection;
-    private LoggerInterface $logger;
     private ?string $currentTenant = null;
 
     public function __construct(
-        TenantResolver $tenantResolver,
-        Connection $connection,
-        LoggerInterface $logger
-    ) {
-        $this->tenantResolver = $tenantResolver;
-        $this->connection = $connection;
-        $this->logger = $logger;
-    }
+        private TenantResolver $tenantResolver,
+        private Connection $connection,
+        private LoggerInterface $logger
+    ) {}
 
     public static function getSubscribedEvents(): array
     {
@@ -47,7 +40,7 @@ class TenantConnectionListener implements EventSubscriberInterface
         
         $this->logger->info('TenantConnectionListener ejecutándose', ['host' => $host]);
 
-        // Extract tenant from subdomain
+        // Extraer tenant desde el subdominio
         $tenant = $this->extractTenantFromHost($host);
         
         if ($tenant && $tenant !== $this->currentTenant) {
@@ -58,24 +51,24 @@ class TenantConnectionListener implements EventSubscriberInterface
 
     private function extractTenantFromHost(string $host): ?string
     {
-        // Extract tenant from subdomain (e.g., melisahospital.melisaupgrade.prod -> melisahospital)
+        // Extraer tenant desde el subdominio (ej: melisahospital.melisaupgrade.prod -> melisahospital)
         $parts = explode('.', $host);
-        
+
         if (count($parts) >= 2) {
             $subdomain = $parts[0];
-            
-            // Skip common subdomains
+
+            // Omitir subdominios comunes
             if (!in_array($subdomain, ['www', 'api', 'admin'])) {
                 return $subdomain;
             }
         }
-        
+
         return $this->getFallbackTenant();
     }
 
     private function getFallbackTenant(): ?string
     {
-        // For development or fallback scenarios
+        // Para desarrollo o escenarios de fallback
         return 'melisahospital';
     }
 
@@ -83,30 +76,30 @@ class TenantConnectionListener implements EventSubscriberInterface
     {
         try {
             $this->logger->info('Configurando database para tenant', ['tenant' => $tenant]);
-            
-            // Close existing connection if connected
+
+            // Cerrar conexión existente si está conectada
             if ($this->connection->isConnected()) {
                 $this->connection->close();
             }
-            
-            // Get current connection parameters
+
+            // Obtener parámetros actuales de la conexión
             $params = $this->connection->getParams();
             $originalDb = $params['dbname'] ?? 'unknown';
-            
+
             $this->logger->info('Cambiando database', ['from' => $originalDb, 'to' => $tenant]);
-            
-            // Update database name directly in the connection
+
+            // Actualizar el nombre de la base de datos directamente en la conexión
             $params['dbname'] = $tenant;
-            
-            // Use reflection to update the connection parameters
+
+            // Usar reflexión para actualizar los parámetros de la conexión
             $reflection = new \ReflectionObject($this->connection);
             $paramsProperty = $reflection->getProperty('params');
             $paramsProperty->setAccessible(true);
             $paramsProperty->setValue($this->connection, $params);
-            
-            // Force reconnection with new database
-            $this->connection->connect();
-            
+
+            // Doctrine reconectará automáticamente con la nueva base de datos en la siguiente consulta (lazy connection)
+            // No es necesario llamar connect() explícitamente - está deprecated en DBAL 4.x
+
             $this->currentTenant = $tenant;
             
             $this->logger->info('Database configurada exitosamente', ['tenant' => $tenant]);

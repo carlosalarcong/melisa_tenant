@@ -8,13 +8,22 @@ doctrine:
 
         profiling_collect_backtrace: '%kernel.debug%'
         use_savepoints: true
+
+        # Schema Manager Factory - Solución para deprecación de Doctrine DBAL 4.x
+        schema_manager_factory: doctrine.dbal.default_schema_manager_factory
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true
-        report_fields_where_declared: true
+        # report_fields_where_declared: Removido - siempre será true en DoctrineBundle 3.0
         validate_xml_mapping: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         auto_mapping: true
+
+        # Controller resolver automapping - Configurado explícitamente a false (nuevo default en DoctrineBundle 3.0)
+        # Usar Symfony Mapped Route Parameters en su lugar
+        controller_resolver:
+            auto_mapping: false
+
         mappings:
             App:
                 type: attribute

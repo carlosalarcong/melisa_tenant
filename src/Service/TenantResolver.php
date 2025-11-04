@@ -2,19 +2,31 @@
 
 namespace App\Service;
 
+use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Schema\DefaultSchemaManagerFactory;
 use Symfony\Component\HttpFoundation\Request;
 
 class TenantResolver
 {
-    private $centralDbConfig = [
-        'host' => 'localhost',
-        'port' => 3306,
-        'dbname' => 'melisa_central',
-        'user' => 'melisa',
-        'password' => 'melisamelisa',
-        'driver' => 'pdo_mysql',
-    ];
+    private array $centralDbConfig;
+    private Configuration $dbalConfig;
+
+    public function __construct()
+    {
+        // Configuración DBAL con Schema Manager Factory
+        $this->dbalConfig = new Configuration();
+        $this->dbalConfig->setSchemaManagerFactory(new DefaultSchemaManagerFactory());
+
+        $this->centralDbConfig = [
+            'host' => 'localhost',
+            'port' => 3306,
+            'dbname' => 'melisa_central',
+            'user' => 'melisa',
+            'password' => 'melisamelisa',
+            'driver' => 'pdo_mysql',
+        ];
+    }
 
     /**
      * Resuelve el tenant desde el subdomain de la URL
@@ -42,7 +54,7 @@ class TenantResolver
     public function getTenantBySlug(string $slug): ?array
     {
         try {
-            $connection = DriverManager::getConnection($this->centralDbConfig);
+            $connection = DriverManager::getConnection($this->centralDbConfig, $this->dbalConfig);
             
             $query = '
                 SELECT id, name, subdomain, database_name, rut_empresa,
@@ -79,7 +91,7 @@ class TenantResolver
             'driver' => 'pdo_mysql',
         ];
 
-        return DriverManager::getConnection($tenantDbConfig);
+        return DriverManager::getConnection($tenantDbConfig, $this->dbalConfig);
     }
 
     /**
@@ -88,7 +100,7 @@ class TenantResolver
     public function getAllActiveTenants(): array
     {
         try {
-            $connection = DriverManager::getConnection($this->centralDbConfig);
+            $connection = DriverManager::getConnection($this->centralDbConfig, $this->dbalConfig);
             
             $query = 'SELECT subdomain, name FROM tenant WHERE is_active = 1 ORDER BY name';
             $result = $connection->executeQuery($query);
