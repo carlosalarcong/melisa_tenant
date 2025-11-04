@@ -1,7 +1,6 @@
 # 🏗️ Arquitectura Completa de Melisa Tenant
 
 ![Symfony](https://img.shields.io/badge/Symfony-6.4-brightgreen)
-![API Platform](https://img.shields.io/badge/API%20Platform-4.2-success)
 ![Stimulus](https://img.shields.io/badge/Stimulus-3.2-yellow)
 ![Multi-Tenant](https://img.shields.io/badge/Multi--Tenant-Activo-blue)
 
@@ -16,13 +15,12 @@
 3. [Stack Tecnológico](#️-stack-tecnológico)
 4. [Componentes del Sistema](#-componentes-del-sistema)
 5. [Flujo de Datos](#-flujo-de-datos)
-6. [API Platform Integration](#-api-platform-integration)
-7. [Sistema Stimulus](#-sistema-stimulus)
-8. [Base de Datos](#️-base-de-datos)
-9. [Servicios Core](#️-servicios-core)
-10. [Seguridad y Autenticación](#-seguridad-y-autenticación)
-11. [Performance y Escalabilidad](#-performance-y-escalabilidad)
-12. [Patrones de Diseño](#-patrones-de-diseño)
+6. [Sistema Stimulus](#-sistema-stimulus)
+7. [Base de Datos](#️-base-de-datos)
+8. [Servicios Core](#️-servicios-core)
+9. [Seguridad y Autenticación](#-seguridad-y-autenticación)
+10. [Performance y Escalabilidad](#-performance-y-escalabilidad)
+11. [Patrones de Diseño](#-patrones-de-diseño)
 
 ---
 
@@ -172,7 +170,6 @@ class DynamicControllerResolver
 |------------|---------|-----------|
 | **PHP** | 8.1+ | Runtime principal |
 | **Symfony** | 6.4 | Framework web MVC |
-| **API Platform** | 4.2 | REST API automático |
 | **Doctrine ORM** | 2.x | Mapeo objeto-relacional |
 | **MySQL** | 8.0+ | Base de datos principal |
 | **Twig** | 3.x | Motor de templates |
@@ -260,56 +257,7 @@ class Member implements UserInterface
     private Collection $tenantMemberships;
 }
 ```
-
-### 2. 🚀 **API Platform State Providers**
-
-#### **Estructura de State Providers**
-```
-src/State/
-├── DynamicPatientStateProvider.php  # 🔄 Provider dinámico principal
-├── Default/                         # 🎯 Providers por defecto
-│   ├── PatientProvider.php         # Gestión pacientes estándar
-│   └── ReportProvider.php          # Reportes básicos
-├── Melisalacolina/                 # 🌿 Providers clínica
-│   ├── PatientProvider.php         # Pacientes con seguros
-│   └── SpecialtyProvider.php       # Especialidades médicas
-└── Melisawiclinic/                # 💻 Providers tecnológicos
-    ├── PatientProvider.php         # Pacientes con IoT
-    └── TelemetryProvider.php       # Datos telemetría
-```
-
-#### **DynamicPatientStateProvider.php**
-```php
-<?php
-namespace App\State;
-
-class DynamicPatientStateProvider implements ProviderInterface
-{
-    public function __construct(
-        private TenantContext $tenantContext,
-        private ServiceLocator $stateProviders
-    ) {}
-
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
-    {
-        $tenant = $this->tenantContext->getCurrentTenant();
-        
-        // Buscar provider específico del tenant
-        $providerKey = "patient_provider_{$tenant->getSubdomain()}";
-        
-        if ($this->stateProviders->has($providerKey)) {
-            $provider = $this->stateProviders->get($providerKey);
-            return $provider->provide($operation, $uriVariables, $context);
-        }
-        
-        // Fallback a provider por defecto
-        $defaultProvider = $this->stateProviders->get('patient_provider_default');
-        return $defaultProvider->provide($operation, $uriVariables, $context);
-    }
-}
-```
-
-### 3. 🎮 **Sistema Stimulus con Fallback**
+### 2. 🎮 **Sistema Stimulus con Fallback**
 
 #### **Estructura de Controllers Stimulus**
 ```
@@ -328,13 +276,6 @@ assets/controllers/
 │       ├── patient_controller.js   # Pacientes ambulatorios
 │       ├── appointment_controller.js # Sistema citas
 │       └── insurance_controller.js # Gestión seguros
-└── apiplatform/                   # 🚀 Controllers API Platform
-    ├── default/                    # 🎯 API controllers base
-    │   └── api_patient_controller.js # API pacientes estándar
-    ├── melisahospital/            # 🏥 API controllers hospital
-    │   └── api_patient_controller.js # API pacientes hospitalarios
-    └── melisalacolina/            # 🌿 API controllers clínica
-        └── api_patient_controller.js # API pacientes clínica
 ```
 
 #### **dynamic_loader.js - Sistema de Fallback**
@@ -401,7 +342,6 @@ sequenceDiagram
     participant TC as TenantContext
     participant C as Controller
     participant DB as Database
-    participant API as API Platform
     
     U->>N: HTTP Request (melisahospital.localhost:8081/dashboard)
     N->>S: Forward Request
@@ -417,281 +357,6 @@ sequenceDiagram
 ```
 
 ### 📊 **API Request Flow**
-
-```mermaid
-sequenceDiagram
-    participant C as Client
-    participant AP as API Platform
-    participant SP as State Provider
-    participant TC as TenantContext
-    participant DB as Database
-    
-    C->>AP: GET /api/patients (Header: X-Tenant-Context: melisalacolina)
-    AP->>SP: DynamicPatientStateProvider
-    SP->>TC: Get Current Tenant
-    TC->>SP: Return melisalacolina tenant
-    SP->>SP: Load Melisalacolina/PatientProvider
-    SP->>DB: Query melisalacolina database
-    DB->>SP: Return clinic patients
-    SP->>AP: Formatted patient data
-    AP->>C: JSON Response with clinic patients
-```
-
----
-
-## 🚀 API Platform Integration
-
-### 🔧 **Configuración Principal**
-
-#### **config/packages/api_platform.yaml**
-```yaml
-api_platform:
-    title: 'Melisa Medical API - Sistema Multi-tenant'
-    description: 'API REST para gestión médica hospitalaria y clínicas'
-    version: 1.0.0
-    
-    # Soporte multi-tenancy
-    defaults:
-        stateless: true
-        cache_headers:
-            vary: ['Content-Type', 'Authorization', 'Origin', 'X-Tenant-Context']
-    
-    # Documentación automática
-    swagger:
-        versions: [3]
-        api_keys:
-            tenant:
-                name: X-Tenant-Context
-                type: header
-    
-    # Formatos médicos soportados
-    formats:
-        jsonld: ['application/ld+json']  # JSON-LD para interoperabilidad
-        json: ['application/json']       # JSON estándar
-        html: ['text/html']             # Documentación web
-        xml: ['application/xml']        # XML para sistemas legacy
-        csv: ['text/csv']               # CSV para exportaciones
-    
-    # Paginación optimizada para datos médicos
-    collection:
-        pagination:
-            enabled: true
-            items_per_page: 20
-            maximum_items_per_page: 100
-            page_parameter_name: 'page'
-```
-
-### 📋 **ApiResource Dinámico**
-
-#### **src/ApiResource/Patient.php**
-```php
-<?php
-namespace App\ApiResource;
-
-use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Put;
-use ApiPlatform\Metadata\Delete;
-use App\State\DynamicPatientStateProvider;
-
-#[ApiResource(
-    operations: [
-        new GetCollection(
-            uriTemplate: '/patients',
-            provider: DynamicPatientStateProvider::class,
-            openapiContext: [
-                'summary' => 'Lista pacientes del tenant actual',
-                'parameters' => [
-                    [
-                        'name' => 'X-Tenant-Context',
-                        'in' => 'header',
-                        'required' => true,
-                        'schema' => ['type' => 'string'],
-                        'description' => 'Identificador del tenant (melisahospital, melisalacolina, etc.)'
-                    ]
-                ]
-            ]
-        ),
-        new Get(
-            uriTemplate: '/patients/{id}',
-            provider: DynamicPatientStateProvider::class
-        ),
-        new Post(
-            uriTemplate: '/patients',
-            processor: DynamicPatientStateProcessor::class
-        ),
-        new Put(
-            uriTemplate: '/patients/{id}',
-            processor: DynamicPatientStateProcessor::class
-        ),
-        new Delete(
-            uriTemplate: '/patients/{id}',
-            processor: DynamicPatientStateProcessor::class
-        )
-    ],
-    normalizationContext: ['groups' => ['patient:read']],
-    denormalizationContext: ['groups' => ['patient:write']]
-)]
-class Patient
-{
-    // Estructura de datos médicos básica
-}
-```
-
----
-
-## 🎮 Sistema Stimulus
-
-### ⚡ **Integración con API Platform**
-
-#### **apiplatform/default/api_patient_controller.js**
-```javascript
-import { Controller } from "@hotwired/stimulus";
-
-export default class extends Controller {
-    static targets = ["list", "form", "search", "pagination"];
-    static values = { 
-        tenant: String, 
-        apiUrl: String,
-        itemsPerPage: { type: Number, default: 20 }
-    };
-
-    connect() {
-        this.loadPatients();
-        this.setupRealTimeUpdates();
-    }
-
-    async loadPatients(page = 1) {
-        try {
-            const response = await fetch(
-                `${this.apiUrlValue}?page=${page}&itemsPerPage=${this.itemsPerPageValue}`,
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Tenant-Context': this.tenantValue
-                    }
-                }
-            );
-
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            this.renderPatients(data['hydra:member']);
-            this.renderPagination(data['hydra:view']);
-        } catch (error) {
-            this.handleError(error);
-        }
-    }
-
-    renderPatients(patients) {
-        this.listTarget.innerHTML = patients.map(patient => `
-            <div class="patient-card" data-patient-id="${patient.id}">
-                <h5>${patient.name}</h5>
-                <p>Edad: ${patient.age} años</p>
-                <p>Estado: <span class="badge badge-${this.getStatusColor(patient.status)}">${patient.status}</span></p>
-                <div class="actions">
-                    <button class="btn btn-sm btn-primary" data-action="click->apiplatform--api-patient#editPatient" data-patient-id="${patient.id}">
-                        Editar
-                    </button>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    async searchPatients(event) {
-        const query = event.target.value;
-        if (query.length >= 3) {
-            await this.loadPatients(1, { search: query });
-        } else if (query.length === 0) {
-            await this.loadPatients();
-        }
-    }
-
-    setupRealTimeUpdates() {
-        // WebSocket connection para actualizaciones en tiempo real
-        if (window.WebSocket) {
-            this.websocket = new WebSocket(`wss://${window.location.host}/patients/updates`);
-            this.websocket.onmessage = (event) => {
-                const update = JSON.parse(event.data);
-                if (update.tenant === this.tenantValue) {
-                    this.handleRealTimeUpdate(update);
-                }
-            };
-        }
-    }
-}
-```
-
-#### **Controller Específico Hospital: melisahospital/api_patient_controller.js**
-```javascript
-import DefaultApiPatientController from "../default/api_patient_controller.js";
-
-export default class extends DefaultApiPatientController {
-    static values = { 
-        ...DefaultApiPatientController.values,
-        emergencyLevel: String,
-        icuBed: Number 
-    };
-
-    connect() {
-        super.connect();
-        this.loadEmergencyPatients();
-        this.loadICUStatus();
-    }
-
-    renderPatients(patients) {
-        // Render específico para hospital con información de emergencias
-        this.listTarget.innerHTML = patients.map(patient => `
-            <div class="patient-card hospital-patient" data-patient-id="${patient.id}">
-                <div class="patient-header">
-                    <h5>${patient.name}</h5>
-                    ${patient.emergencyLevel ? `<span class="emergency-badge ${patient.emergencyLevel}">${patient.emergencyLevel.toUpperCase()}</span>` : ''}
-                </div>
-                <div class="patient-info">
-                    <p>Edad: ${patient.age} años | Habitación: ${patient.room || 'N/A'}</p>
-                    <p>Estado: <span class="badge badge-${this.getStatusColor(patient.status)}">${patient.status}</span></p>
-                    ${patient.icuBed ? `<p>UCI - Cama: ${patient.icuBed}</p>` : ''}
-                </div>
-                <div class="actions">
-                    <button class="btn btn-sm btn-primary" data-action="click->apiplatform--api-patient#editPatient" data-patient-id="${patient.id}">
-                        Historia Clínica
-                    </button>
-                    ${patient.emergencyLevel ? `
-                        <button class="btn btn-sm btn-danger" data-action="click->apiplatform--api-patient#emergencyProtocol" data-patient-id="${patient.id}">
-                            Protocolo Emergencia
-                        </button>
-                    ` : ''}
-                </div>
-            </div>
-        `).join('');
-    }
-
-    async loadEmergencyPatients() {
-        const response = await fetch(`${this.apiUrlValue}/emergency`, {
-            headers: {
-                'X-Tenant-Context': this.tenantValue
-            }
-        });
-        const emergencyData = await response.json();
-        this.updateEmergencyDashboard(emergencyData);
-    }
-
-    emergencyProtocol(event) {
-        const patientId = event.currentTarget.dataset.patientId;
-        // Lógica específica de protocolo de emergencia hospitalaria
-        this.dispatch("emergency:activated", { detail: { patientId } });
-    }
-}
-```
-
----
-
-## 🗄️ Base de Datos
-
 ### 🏗️ **Arquitectura de Datos Multi-Tenant**
 
 #### **Esquema de Bases de Datos**
@@ -1248,11 +913,6 @@ graph TB
         P[MetricsService]
     end
     
-    subgraph "API Platform"
-        Q[DynamicPatientStateProvider]
-        R[State Providers por Tenant]
-        S[API Documentation]
-    end
     
     subgraph "Database Layer"
         T[(melisa_central)]
