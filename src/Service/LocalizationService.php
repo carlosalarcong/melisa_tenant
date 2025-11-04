@@ -14,6 +14,7 @@ class LocalizationService
     private TranslatorInterface $translator;
     private RequestStack $requestStack;
     private TenantContext $tenantContext;
+    private TenantResolver $tenantResolver;
     
     private array $supportedLocales = ['es', 'en'];
     private string $defaultLocale = 'es';
@@ -21,11 +22,13 @@ class LocalizationService
     public function __construct(
         TranslatorInterface $translator,
         RequestStack $requestStack,
-        TenantContext $tenantContext
+        TenantContext $tenantContext,
+        TenantResolver $tenantResolver
     ) {
         $this->translator = $translator;
         $this->requestStack = $requestStack;
         $this->tenantContext = $tenantContext;
+        $this->tenantResolver = $tenantResolver;
     }
 
     /**
@@ -98,11 +101,82 @@ class LocalizationService
     }
 
     /**
-     * Traduce un mensaje en el idioma actual
+     * Traduce un mensaje en el idioma actual usando el dominio del tenant
+     * 
+     * Este método busca traducciones en este orden:
+     * 1. Dominio específico del tenant (melisahospital, melisalacolina, etc.)
+     * 2. Dominio messages global (fallback)
+     * 
+     * Usa el método trans() del TranslatorInterface que retorna:
+     * - La traducción si la encuentra
+     * - La clave original si NO la encuentra
      */
     public function trans(string $id, array $parameters = [], string $domain = 'messages'): string
     {
-        return $this->translator->trans($id, $parameters, $domain, $this->getCurrentLocale());
+        $locale = $this->getCurrentLocale();
+        $tenantDomain = $this->getTenantDomain();
+        
+        // Debug: agregar logging temporal
+        // dump(['id' => $id, 'tenant_domain' => $tenantDomain, 'locale' => $locale]);
+        
+        // Si el dominio del tenant NO es 'default' ni 'messages', buscar allí primero
+        if ($tenantDomain !== 'default' && $tenantDomain !== 'messages') {
+            $tenantTranslation = $this->translator->trans($id, $parameters, $tenantDomain, $locale);
+            
+            // Si encontró la traducción (es diferente a la clave), retornarla
+            if ($tenantTranslation !== $id) {
+                return $tenantTranslation;
+            }
+        }
+        
+        // FALLBACK 1: Intentar en dominio 'default'
+        if ($tenantDomain !== 'default') {
+            $defaultTranslation = $this->translator->trans($id, $parameters, 'default', $locale);
+            if ($defaultTranslation !== $id) {
+                return $defaultTranslation;
+            }
+        }
+        
+        // FALLBACK 2: Usar dominio 'messages' estándar
+        return $this->translator->trans($id, $parameters, 'messages', $locale);
+    }
+    
+    /**
+     * Obtiene el dominio de traducción específico del tenant
+     * 
+     * Detecta el tenant desde múltiples fuentes:
+     * 1. TenantContext (si ya está establecido)
+     * 2. TenantResolver desde el request actual
+     * 
+     * Por ejemplo:
+     * - melisahospital → dominio: "melisahospital"
+     * - melisalacolina → dominio: "melisalacolina"
+     * - default → dominio: "default"
+     */
+    private function getTenantDomain(): string
+    {
+        // PRIORIDAD 1: TenantContext (ya establecido en sesión/request)
+        if ($this->tenantContext->hasCurrentTenant()) {
+            $tenant = $this->tenantContext->getCurrentTenant();
+            $subdomain = $tenant['subdomain'] ?? 'default';
+            return $subdomain;
+        }
+        
+        // PRIORIDAD 2: Resolver desde el request actual (para login, etc.)
+        $request = $this->requestStack->getCurrentRequest();
+        if ($request) {
+            try {
+                $tenant = $this->tenantResolver->resolveTenantFromRequest($request);
+                if ($tenant && isset($tenant['subdomain'])) {
+                    return $tenant['subdomain'];
+                }
+            } catch (\Exception $e) {
+                // Si falla la resolución, usar default
+            }
+        }
+        
+        // FALLBACK: Usar dominio default
+        return 'default';
     }
 
     /**

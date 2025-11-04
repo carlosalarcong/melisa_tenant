@@ -1,0 +1,125 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Test de Traducciones por Tenant{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">🌍 Test de Traducciones Multi-Tenant</h1>
+            
+            <div class="alert alert-info">
+                <h4>📊 Información del Tenant Actual</h4>
+                <ul>
+                    <li><strong>Tenant:</strong> {{ tenant_name }}</li>
+                    <li><strong>Subdomain:</strong> {{ tenant_subdomain }}</li>
+                    <li><strong>Locale Actual:</strong> {{ locale }}</li>
+                    <li><strong>Path Traducciones:</strong> <code>translations/{{ tenant_subdomain }}/messages.{{ locale }}.yaml</code></li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3>🔑 Traducciones Cargadas (TranslatorInterface)</h3>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Clave</th>
+                                <th>Traducción en {{ locale|upper }}</th>
+                                <th>Nota</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for key, value in translations %}
+                            <tr>
+                                <td><code>{{ key }}</code></td>
+                                <td><strong>{{ value }}</strong></td>
+                                <td>
+                                    {% if tenant_subdomain == 'melisahospital' %}
+                                        <span class="badge bg-danger">Hospital</span>
+                                    {% elseif tenant_subdomain == 'melisalacolina' %}
+                                        <span class="badge bg-success">Clínica</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Default</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <h3>✨ Comparativa de Traducciones por Tenant</h3>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header bg-secondary text-white">
+                                <h5>Default</h5>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-unstyled">
+                                    <li><strong>auth.logout:</strong> "Salir del Sistema"</li>
+                                    <li><strong>nav.dashboard:</strong> "Panel Principal"</li>
+                                    <li><strong>dashboard.title:</strong> "Panel de Control"</li>
+                                    <li><strong>patients.title:</strong> "Gestión de Pacientes"</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header bg-danger text-white">
+                                <h5>🏥 Hospital</h5>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-unstyled">
+                                    <li><strong>auth.logout:</strong> "Finalizar Turno Médico"</li>
+                                    <li><strong>nav.dashboard:</strong> "Puesto de Mando Central"</li>
+                                    <li><strong>dashboard.title:</strong> "Centro de Comando Hospitalario"</li>
+                                    <li><strong>patients.title:</strong> "Gestión de Pacientes Internados"</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header bg-success text-white">
+                                <h5>🏥 Clínica La Colina</h5>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-unstyled">
+                                    <li><strong>auth.logout:</strong> "Cerrar Mi Sesión"</li>
+                                    <li><strong>nav.dashboard:</strong> "Mi Escritorio Digital"</li>
+                                    <li><strong>dashboard.title:</strong> "Mi Espacio de Trabajo"</li>
+                                    <li><strong>patients.title:</strong> "Mis Pacientes Privados"</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <h3>🎯 Uso en Templates Twig</h3>
+                <pre class="bg-dark text-light p-3"><code>{# Traducción automática por tenant #}
+{{ '{{ \'auth.logout\'|trans }}' }}          → {{ 'auth.logout'|trans }}
+{{ '{{ \'nav.dashboard\'|trans }}' }}        → {{ 'nav.dashboard'|trans }}
+{{ '{{ \'dashboard.title\'|trans }}' }}      → {{ 'dashboard.title'|trans }}
+
+{# El tenant actual es: {{ tenant_subdomain }} #}
+{# Por lo tanto, usa: translations/{{ tenant_subdomain }}/messages.{{ locale }}.yaml #}</code></pre>
+            </div>
+
+            <div class="mt-4 text-center">
+                <a href="{{ path('app_dashboard', {controller: 'dashboard'}) }}" class="btn btn-primary">
+                    ← Volver al Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

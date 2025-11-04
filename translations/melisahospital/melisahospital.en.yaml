@@ -1,0 +1,74 @@
+# =============================================================================
+# MELISA HOSPITAL TRANSLATIONS - ENGLISH
+# Hospital-specific terminology for high-complexity care
+# =============================================================================
+
+# AUTHENTICATION - Hospital formal terminology
+auth:
+  login: 'Hospital System Login'
+  logout: 'End Medical Shift'  # ← DIFFERENT: Shift-focused
+  username: 'Medical Credentials'
+  password: 'Security PIN'
+  remember_me: 'Keep session active'
+
+# NAVIGATION - Hospital areas
+nav:
+  dashboard: 'Central Command Post'  # ← DIFFERENT: Military/emergency terminology
+  patients: 'Hospitalized Patients'  # ← DIFFERENT: Only hospitalized
+  appointments: 'Shifts and Duties'  # ← DIFFERENT: Shift system
+  medical_records: 'Electronic Health Records'
+  reports: 'Medical Reports and Statistics'
+  settings: 'Hospital Configuration'
+
+# DASHBOARD - Emergency terminology
+dashboard:
+  title: 'Hospital Command Center'  # ← DIFFERENT: Command style
+  welcome: 'Welcome Doctor'  # ← DIFFERENT: Formal
+  today: 'Current Shift'  # ← DIFFERENT: By shifts
+  statistics: 'Emergency Statistics'  # ← DIFFERENT: Emergency focus
+
+# PATIENTS - Hospital terminology
+patients:
+  title: 'Inpatient Management'  # ← DIFFERENT: Only inpatients
+  add: 'Admit Emergency Patient'  # ← DIFFERENT: Admission
+  edit: 'Update Medical Record'
+  search: 'Search by MR #...'  # ← DIFFERENT: By medical record
+
+# APPOINTMENTS - Duty system
+appointments:
+  title: 'Medical Duty System'  # ← DIFFERENT: Duties
+  schedule: 'Assign Medical Duty'  # ← DIFFERENT: Not "schedule"
+  cancel: 'Release Duty'  # ← DIFFERENT: Not "cancel"
+  status: 'Shift Status'  # ← DIFFERENT: Shift
+
+# HOSPITAL-SPECIFIC SECTIONS
+hospital:
+  emergency_room: '24/7 Emergency Room'
+  operating_rooms: 'Operating Rooms and Theatres'
+  icu: 'Intensive Care Unit (ICU)'
+  inpatient_ward: 'Hospitalization Wards'
+  critical_care: 'Critical Patient Area'
+  trauma_center: 'Trauma Center'
+
+# ESTABLISHMENT - Hospital identity
+establishment:
+  type: 'High-Complexity Hospital'
+  welcome_message: 'Welcome to the Integrated Hospital System'
+  main_service: 'Emergency and High-Complexity Medical Care'
+  motto: 'Excellence in Critical Care'
+
+# HOSPITAL-SPECIFIC ROLES
+roles:
+  admin: 'Medical Director'
+  doctor: 'Duty Physician'
+  nurse: 'Head Nurse'
+  technician: 'Emergency Technician'
+  surgeon: 'Surgeon'
+  anesthesiologist: 'Anesthesiologist'
+
+# EMERGENCY PRIORITIES
+emergency:
+  critical: 'CODE RED - CRITICAL'
+  urgent: 'CODE YELLOW - URGENT'
+  moderate: 'CODE GREEN - MODERATE'
+  minor: 'CODE BLUE - MINOR'

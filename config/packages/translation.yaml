@@ -5,4 +5,11 @@ framework:
         fallbacks:
             - es
             - en
+        # Habilitar caché de traducciones
+        cache_dir: '%kernel.cache_dir%/translations'
+        # Paths adicionales para buscar traducciones por tenant
+        paths:
+            - '%kernel.project_dir%/translations/default'
+            - '%kernel.project_dir%/translations/melisahospital'
+            - '%kernel.project_dir%/translations/melisalacolina'
         providers:

@@ -45,6 +45,12 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    App\EventListener\TenantTranslationListener:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
+        tags:
+            - { name: kernel.event_subscriber }
+
     App\EventListener\TenantConnectionListener:
         arguments:
             $tenantResolver: '@App\Service\TenantResolver'
