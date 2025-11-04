@@ -20,7 +20,8 @@ class LoginController extends AbstractController
         Request $request, 
         SessionInterface $session,
         TenantResolver $tenantResolver,
-        LocalizationService $localizationService
+        LocalizationService $localizationService,
+        AuthenticationService $authService
     ): Response
     {
         // Establecer idioma desde request o configuración
@@ -28,7 +29,7 @@ class LoginController extends AbstractController
         $request->setLocale($locale);
         
         if ($request->isMethod('POST')) {
-            return $this->handleLogin($request, $session, $tenantResolver, $localizationService);
+            return $this->handleLogin($request, $session, $tenantResolver, $localizationService, $authService);
         }
         
         // Resolver tenant desde subdomain para mostrar en el formulario
@@ -47,10 +48,9 @@ class LoginController extends AbstractController
         SessionInterface $session,
         TenantResolver $tenantResolver,
         LocalizationService $localizationService,
-        AuthenticationService $authService = null
+        AuthenticationService $authService
     ): Response
     {
-        $authService = $authService ?? new AuthenticationService();
         
         $username = trim($request->request->get('username', ''));
         $password = trim($request->request->get('password', ''));
@@ -79,11 +79,8 @@ class LoginController extends AbstractController
                 ]);
             }
 
-            // 2. Conectar a la BD del tenant
-            $tenantConnection = $tenantResolver->createTenantConnection($tenant);
-            
-            // 3. Autenticar usuario
-            $user = $authService->authenticateUser($tenantConnection, $username, $password);
+            // 2. Autenticar usuario
+            $user = $authService->authenticateUser($username, $password);
             
             if (!$user) {
                 return $this->render('login/form.html.twig', [
@@ -94,7 +91,7 @@ class LoginController extends AbstractController
                 ]);
             }
 
-                        // 4. Login exitoso - Crear sesión
+            // 3. Login exitoso - Crear sesión
             $session->set('logged_in', true);
             $session->set('user_id', $user['id']);
             $session->set('username', $user['username']);
@@ -116,9 +113,7 @@ class LoginController extends AbstractController
                 'name' => $user['first_name'] . ' ' . $user['last_name']
             ]);
 
-            // 5. Redirección al dashboard usando resolución dinámica
-
-            // 6. Redirección al dashboard usando resolución dinámica
+            // 4. Redirección al dashboard usando resolución dinámica
             $dashboardRoute = 'app_dashboard_' . strtolower($tenant['subdomain']);
             $response = $this->redirectToRoute($dashboardRoute);
             

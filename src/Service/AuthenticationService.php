@@ -2,20 +2,17 @@
 
 namespace App\Service;
 
-use Doctrine\DBAL\Connection;
+use App\Repository\MemberRepository;
 
 class AuthenticationService
 {
-    public function authenticateUser(Connection $tenantConnection, string $username, string $password): ?array
+    public function __construct(
+        private MemberRepository $memberRepository
+    ) {}
+
+    public function authenticateUser(string $username, string $password): ?array
     {
-        $userQuery = '
-            SELECT id, username, password, first_name, last_name, email, is_active
-            FROM member 
-            WHERE username = ? AND is_active = true
-        ';
-        
-        $userResult = $tenantConnection->executeQuery($userQuery, [$username]);
-        $user = $userResult->fetchAssociative();
+        $user = $this->memberRepository->findActiveUserByUsername($username);
         
         if (!$user) {
             return null;
