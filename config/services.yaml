@@ -63,17 +63,3 @@ services:
     App\EventSubscriber\DynamicControllerSubscriber:
         tags:
             - { name: kernel.event_subscriber }
-
-    # API Platform State Providers
-    App\State\DynamicPatientStateProvider:
-        autowire: true
-        tags: ['api_platform.state_provider']
-    
-    App\State\Default\PatientStateProvider:
-        autowire: true
-        
-    App\State\Melisalacolina\PatientStateProvider:
-        autowire: true
-        
-    App\State\Melisawiclinic\PatientStateProvider:
-        autowire: true
