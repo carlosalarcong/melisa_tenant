@@ -26,6 +26,21 @@ class LoginController extends AbstractController
         DynamicControllerResolver $controllerResolver
     ): Response
     {
+        // Si el usuario ya está logueado, redirigir al dashboard
+        if ($session->get('logged_in', false)) {
+            $tenant = $session->get('tenant');
+            if ($tenant && isset($tenant['subdomain'])) {
+                try {
+                    $dashboardRoute = $controllerResolver->generateRedirectRoute($tenant['subdomain'], 'dashboard');
+                    return $this->redirectToRoute($dashboardRoute);
+                } catch (\Exception $e) {
+                    return $this->redirectToRoute('app_dashboard_default');
+                }
+            }
+            // Si no hay tenant en sesión, redirigir a default
+            return $this->redirectToRoute('app_dashboard_default');
+        }
+        
         // Establecer idioma desde request o configuración
         $locale = $localizationService->getCurrentLocale();
         $request->setLocale($locale);
