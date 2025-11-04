@@ -10,6 +10,13 @@ use Twig\TwigFilter;
 /**
  * Extensión Twig para funcionalidades de localización en Melisa Tenant
  * 
+ * IMPORTANTE: Esta extensión SOBRESCRIBE el filtro |trans de Symfony
+ * para hacerlo tenant-aware automáticamente.
+ * 
+ * Ahora |trans detecta el tenant y usa sus traducciones específicas:
+ * - {{ 'auth.login'|trans }} funcionará automáticamente
+ * - Ya NO es necesario usar |ttrans (aunque sigue disponible como alias)
+ * 
  * Proporciona filtros y funciones para traducciones específicas por tenant
  */
 class LocalizationExtension extends AbstractExtension
@@ -24,7 +31,9 @@ class LocalizationExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            // Filtro para traducciones por tenant: {{ 'auth.login'|ttrans }}
+            // SOBRESCRIBIR el filtro trans estándar de Symfony para que sea tenant-aware
+            new TwigFilter('trans', [$this, 'translateTenant']),
+            // Mantener ttrans como alias
             new TwigFilter('ttrans', [$this, 'translateTenant']),
             // Alias para mantener compatibilidad
             new TwigFilter('tenant_trans', [$this, 'translateTenant']),
@@ -47,8 +56,14 @@ class LocalizationExtension extends AbstractExtension
     /**
      * Traduce usando el dominio del tenant automáticamente
      * 
-     * Uso en Twig: {{ 'auth.login'|ttrans }}
-     *              {{ 'auth.user_not_found'|ttrans({'%tenant%': 'Hospital'}) }}
+     * Este método SOBRESCRIBE el filtro |trans estándar de Symfony
+     * para que detecte automáticamente el tenant y use sus traducciones.
+     * 
+     * Uso en Twig: {{ 'auth.login'|trans }}
+     *              {{ 'auth.login'|ttrans }}  (alias)
+     *              {{ 'auth.user_not_found'|trans({'%tenant%': 'Hospital'}) }}
+     * 
+     * Ya NO es necesario usar |ttrans, el filtro |trans funciona automáticamente
      */
     public function translateTenant(string $id, array $parameters = []): string
     {
