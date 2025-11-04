@@ -1,3 +1,26 @@
+# 🎮 Stimulus - Guía Completa
+
+**Documentación consolidada de Stimulus para Melisa Tenant**
+
+**Fusiona**: STIMULUS_CONCEPTS.md + STIMULUS_INTEGRATION.md + CONTROLLER_STRUCTURE.md
+
+---
+
+## 📋 Tabla de Contenidos
+
+1. [Conceptos Fundamentales](#conceptos-fundamentales)
+2. [Arquitectura de Controladores](#arquitectura-de-controladores)
+3. [Estructura de Archivos](#estructura-de-archivos)
+4. [Integración con API Platform](#integración-con-api-platform)
+5. [Ejemplos Prácticos](#ejemplos-prácticos)
+6. [Best Practices](#best-practices)
+
+---
+
+
+
+# 📚 PARTE 1: CONCEPTOS FUNDAMENTALES
+
 # 🎮 Stimulus Concepts & Examples - Guía Completa
 
 ## 📚 **¿Qué es Stimulus?**
@@ -650,3 +673,522 @@ export default class extends Controller {
 
 *Documentación actualizada: Octubre 15, 2025*
 *Framework: Stimulus 3.2.2 con Symfony 6.4*
+
+---
+
+# 📁 PARTE 2: ESTRUCTURA DE CONTROLADORES
+
+# 🎮 Nueva Estructura de Controllers Stimulus
+
+## 📁 **Estructura de Carpetas**
+
+```
+assets/controllers/
+├── dynamic_loader.js                    # Sistema de carga dinámica
+├── controllers.json                     # Configuración
+│
+├── internal/                           # Controllers internos (formularios, UI)
+│   ├── default/
+│   │   └── patient_controller.js       # Controller base interno
+│   ├── melisahospital/
+│   │   └── patient_controller.js       # Hospital específico
+│   ├── melisalacolina/
+│   │   └── patient_controller.js       # La Colina específico  
+│   └── melisawiclinic/
+│       └── patient_controller.js       # Wi Clinic específico
+│
+└── apiplatform/                        # Controllers API Platform
+    ├── default/
+    │   └── api_patient_controller.js   # Controller base API Platform
+    ├── melisahospital/
+    │   └── api_patient_controller.js   # Hospital API específico
+    ├── melisalacolina/
+    │   └── api_patient_controller.js   # La Colina API específico
+    └── melisawiclinic/
+        └── api_patient_controller.js   # Wi Clinic API específico
+```
+
+## 🎯 **Uso en Templates**
+
+### **Controllers Internos (formularios, UI)**
+```html
+<!-- Busca: internal/[subdomain]/patient_controller.js → internal/default/patient_controller.js -->
+<div data-controller="internal--patient">
+    <input data-internal--patient-target="name">
+    <button data-action="click->internal--patient#save">Guardar</button>
+</div>
+```
+
+### **Controllers API Platform (APIs externas)**
+```html
+<!-- Busca: apiplatform/[subdomain]/api_patient_controller.js → apiplatform/default/api_patient_controller.js -->
+<div data-controller="apiplatform--api-patient">
+    <div data-apiplatform--api-patient-target="patientList"></div>
+    <button data-action="click->apiplatform--api-patient#loadPatients">Cargar</button>
+</div>
+```
+
+## ⚙️ **Sistema de Fallback**
+
+### **Algoritmo de búsqueda:**
+1. **Detectar subdomain:** `melisalacolina.localhost` → `melisalacolina`
+2. **Buscar específico:** `internal/melisalacolina/patient_controller.js`
+3. **Fallback a default:** Si no existe → `internal/default/patient_controller.js`
+4. **Error si no existe:** Ni específico ni default encontrados
+
+### **Ejemplos:**
+
+| URL | Subdomain | Controller buscado | Fallback |
+|-----|-----------|-------------------|----------|
+| `melisalacolina.localhost` | `melisalacolina` | `internal/melisalacolina/patient_controller.js` | `internal/default/patient_controller.js` |
+| `melisawiclinic.localhost` | `melisawiclinic` | `apiplatform/melisawiclinic/api_patient_controller.js` | `apiplatform/default/api_patient_controller.js` |
+| `melisahospital.localhost` | `melisahospital` | `internal/melisahospital/patient_controller.js` | `internal/default/patient_controller.js` |
+
+## 🔧 **Configuración Automática**
+
+### **Dynamic Loader**
+- Se carga automáticamente en `assets/app.js`
+- Detecta subdomain actual
+- Registra controllers encontrados en el DOM
+- Maneja cache para rendimiento
+
+### **Debug**
+```javascript
+// En consola del navegador:
+console.log(DynamicControllerLoader.getDebugInfo())
+// Output:
+// {
+//   subdomain: "melisalacolina",
+//   loadedControllers: ["internal--patient", "apiplatform--api-patient"],
+//   hostname: "melisalacolina.localhost"
+// }
+```
+
+## 📝 **Convenciones de Nombres**
+
+### **Archivos:**
+- `patient_controller.js` (underscore)
+- `api_patient_controller.js` (underscore)
+
+### **Data Controllers:**
+- `internal--patient` (double dash)
+- `apiplatform--api-patient` (double dash)
+
+### **Targets:**
+- `data-internal--patient-target="name"`
+- `data-apiplatform--api-patient-target="patientList"`
+
+### **Actions:**
+- `data-action="click->internal--patient#save"`
+- `data-action="click->apiplatform--api-patient#loadPatients"`
+
+## 🏥 **Ejemplos Específicos por Tenant**
+
+### **La Colina (melisalacolina)**
+```javascript
+// internal/melisalacolina/patient_controller.js
+import PatientController from "../default/patient_controller.js"
+
+export default class extends PatientController {
+    static targets = [...PatientController.targets, "specialty", "insurance"]
+    
+    connect() {
+        super.connect()
+        this.setupClinicTheme() // Verde La Colina
+        this.populateSpecialties() // Especialidades médicas
+    }
+}
+```
+
+### **Wi Clinic (melisawiclinic)**
+```javascript
+// apiplatform/melisawiclinic/api_patient_controller.js  
+import ApiPatientController from "../default/api_patient_controller.js"
+
+export default class extends ApiPatientController {
+    static targets = [...ApiPatientController.targets, "techDevices", "telemetry"]
+    
+    connect() {
+        super.connect()
+        this.enableTechFeatures() // IoT, AI, Blockchain
+        this.startTelemetry() // Métricas en tiempo real
+    }
+}
+```
+
+## 🚀 **URLs de Examples**
+
+| Funcionalidad | URL |
+|---------------|-----|
+| **Examples Index** | `/examples` |
+| **API Platform Demo** | `/examples/api-platform` |
+| **Internal Controllers Demo** | `/examples/internal-controllers` |
+| **API Docs** | `/api/docs` |
+
+## 📚 **Ventajas del Sistema**
+
+### ✅ **Organización Clara**
+- Separación entre lógica interna y API Platform
+- Controllers específicos por tenant
+- Fallback automático a default
+
+### ✅ **Mantenibilidad**
+- Herencia clara desde controllers base
+- Código compartido en default
+- Especialización por subdomain
+
+### ✅ **Escalabilidad**
+- Fácil agregar nuevos tenants
+- Controllers se cargan dinámicamente
+- Cache automático para rendimiento
+
+### ✅ **Desarrollo**
+- Convenciones claras de nombres
+- Debug info integrado
+- Hot reload en desarrollo
+
+## 🔍 **Troubleshooting**
+
+### **Controller no encontrado**
+```
+🎮 [Dynamic Loader] ❌ Controller no encontrado: internal--patient
+```
+**Solución:** Verificar que exista `internal/[subdomain]/patient_controller.js` o `internal/default/patient_controller.js`
+
+### **Error de import**
+```
+🎮 [Dynamic Loader] ❌ Error en import: ./controllers/internal/melisalacolina/patient_controller.js
+```
+**Solución:** Verificar sintaxis del archivo y que herede correctamente del default
+
+### **Subdomain mal detectado**
+```javascript
+// Forzar subdomain para testing:
+DynamicControllerLoader.currentSubdomain = 'melisalacolina'
+```
+
+---
+
+*Actualizado: Octubre 15, 2025*
+*Sistema: Dynamic Controller Loading con Multi-tenant*
+
+---
+
+# 🔌 PARTE 3: INTEGRACIÓN CON API PLATFORM
+
+# 🎯 Stimulus + API Platform Integration Guide
+
+## 📋 Controladores Stimulus Creados
+
+### 🏗️ **Estructura de Controladores**
+
+```
+assets/controllers/
+├── patient_controller.js                    # ← Controlador original (legacy)
+└── apiplatform/
+    ├── patient_controller.js                # ← Controlador base API Platform
+    └── tenants/
+        ├── lacolina_patient_controller.js   # ← Especialización La Colina
+        └── wiclinic_patient_controller.js   # ← Especialización Wi Clinic
+```
+
+### 🚀 **Controlador Base: apiplatform/patient_controller.js**
+
+**Características principales:**
+- ✅ Integración completa con API Platform
+- ✅ Headers multi-tenant automáticos
+- ✅ Cache local para optimización
+- ✅ Búsqueda en tiempo real
+- ✅ Manejo de errores robusto
+- ✅ UI/UX responsiva
+
+**Targets disponibles:**
+```javascript
+static targets = [
+    // UI General
+    "loading", "error", "searchResults", "patientList", "info",
+    
+    // Datos del Paciente
+    "name", "cedula", "email", "phone", "address", "gender", "birthDate",
+    
+    // Información Médica
+    "bloodType", "allergies", "medications", 
+    
+    // Contacto de Emergencia
+    "emergencyContact", "emergencyPhone",
+    
+    // Metadatos
+    "patientId", "tenant", "createdAt", "updatedAt"
+]
+```
+
+**Values de configuración:**
+```javascript
+static values = { 
+    patientId: String,          // ID del paciente
+    apiUrl: String,             // URL base: "/api/patients"
+    tenant: String,             // Tenant actual
+    autoLoad: Boolean,          // Auto-cargar al conectar
+    cacheEnabled: Boolean,      // Habilitar cache local
+    debugMode: Boolean          // Modo debug
+}
+```
+
+---
+
+## 🏥 **Controladores Especializados**
+
+### 1. 🏥 **La Colina Clinic (lacolina_patient_controller.js)**
+
+**Extensiones específicas:**
+- ✅ Badges de especialidades médicas
+- ✅ Información de seguros simulada
+- ✅ Filtros por especialidad en búsqueda
+- ✅ Estilos visuales personalizados
+
+**Targets adicionales:**
+```javascript
+"specialty", "referringDoctor", "insuranceProvider",
+"appointmentHistory", "treatmentPlan"
+```
+
+**Especialidades detectadas:**
+- Cardiología
+- Neurología 
+- Ginecología
+- Dermatología
+- Traumatología
+
+### 2. 💻 **Wi Clinic Tech (wiclinic_patient_controller.js)**
+
+**Extensiones tecnológicas:**
+- ✅ Indicadores de dispositivos IoT
+- ✅ Telemetría en tiempo real
+- ✅ Hash blockchain simulado
+- ✅ Diagnósticos de IA
+- ✅ Métricas de wearables
+
+**Targets adicionales:**
+```javascript
+"techDevices", "telemetryData", "aiDiagnosis",
+"vrSessions", "blockchainHash", "iotMetrics"
+```
+
+**Características tech detectadas:**
+- 📡 Telemedicina
+- ⌚ Wearables 
+- 🌐 IoT
+- 🤖 IA
+- 🥽 VR
+- 🔗 Blockchain
+
+---
+
+## 🎨 **Uso en Templates**
+
+### 📄 **Template Base (/dashboard/patients-api)**
+
+```twig
+<div data-controller="apiplatform--patient"
+     data-apiplatform--patient-api-url-value="/api/patients"
+     data-apiplatform--patient-tenant-value="{{ tenant_info.subdomain }}"
+     data-apiplatform--patient-auto-load-value="true"
+     data-apiplatform--patient-cache-enabled-value="true"
+     data-apiplatform--patient-debug-mode-value="true">
+
+    <!-- Lista de pacientes -->
+    <div data-apiplatform--patient-target="patientList"></div>
+    
+    <!-- Información del paciente -->
+    <div data-apiplatform--patient-target="info">
+        <h2 data-apiplatform--patient-target="name"></h2>
+        <p data-apiplatform--patient-target="email"></p>
+        <!-- Más campos... -->
+    </div>
+    
+    <!-- Búsqueda -->
+    <input data-action="input->apiplatform--patient#searchPatients">
+    
+    <!-- Botones -->
+    <button data-action="click->apiplatform--patient#refresh">Actualizar</button>
+</div>
+```
+
+### 🏥 **Para usar controlador específico de La Colina:**
+
+```twig
+<!-- Cambiar el data-controller -->
+<div data-controller="apiplatform--tenants--lacolina-patient">
+    <!-- Targets adicionales -->
+    <span data-apiplatform--tenants--lacolina-patient-target="specialty"></span>
+    <span data-apiplatform--tenants--lacolina-patient-target="insuranceProvider"></span>
+</div>
+```
+
+### 💻 **Para usar controlador específico de Wi Clinic:**
+
+```twig
+<!-- Cambiar el data-controller -->
+<div data-controller="apiplatform--tenants--wiclinic-patient">
+    <!-- Targets tecnológicos -->
+    <div data-apiplatform--tenants--wiclinic-patient-target="telemetryData"></div>
+    <span data-apiplatform--tenants--wiclinic-patient-target="blockchainHash"></span>
+</div>
+```
+
+---
+
+## 🚀 **Métodos Principales**
+
+### 📋 **Controlador Base**
+
+```javascript
+// Cargar lista completa
+await controller.loadPatientsList()
+
+// Cargar paciente específico
+await controller.loadPatientInfo('HSP001')
+
+// Búsqueda
+await controller.searchPatients(event)
+
+// Seleccionar de lista
+controller.selectPatient(event)
+
+// Actualizar datos
+await controller.refresh()
+
+// Limpiar
+controller.clearInfo()
+```
+
+### 🏥 **La Colina - Métodos Específicos**
+
+```javascript
+// Crear badge de especialidad
+controller.createSpecialtyBadge(patient)
+
+// Extraer especialidades
+controller.extractSpecialtyFromName("Paciente Cardiología")
+
+// Información de seguros
+controller.generateInsuranceInfo(patient)
+```
+
+### 💻 **Wi Clinic - Métodos Tecnológicos**
+
+```javascript
+// Detectar características tech
+controller.detectTechFeatures(patient)
+
+// Generar datos de telemetría
+controller.generateTelemetryData()
+
+// Hash blockchain
+controller.generateBlockchainHash(patientId)
+
+// Diagnóstico IA
+controller.generateAIDiagnosis(patient)
+```
+
+---
+
+## 🔧 **Configuración y Personalización**
+
+### 🎨 **Estilos CSS Automáticos**
+
+**La Colina:**
+```css
+.lacolina-patient-card {
+    border-left: 4px solid #059669;
+}
+.lacolina-specialty-badge {
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+}
+```
+
+**Wi Clinic:**
+```css
+.wiclinic-patient-card {
+    border-left: 4px solid #7c3aed;
+    background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+}
+.tech-indicator {
+    animation: pulse 2s infinite;
+}
+```
+
+### ⚙️ **Variables CSS Dinámicas**
+
+Los controladores especializados configuran automáticamente:
+```css
+:root {
+    --clinic-primary: #059669;    /* La Colina */
+    --tech-primary: #7c3aed;      /* Wi Clinic */
+}
+```
+
+---
+
+## 🧪 **Testing y Debug**
+
+### 🔍 **Debug Mode**
+
+Habilitar con `data-apiplatform--patient-debug-mode-value="true"`:
+
+```javascript
+// Logs automáticos
+🏥 [API Platform Patient] Controlador conectado
+🏥 [La Colina] Controlador especializado conectado  
+💻 [Wi Clinic] Tech Controller conectado
+```
+
+### 🧪 **Comandos de Testing**
+
+```bash
+# Limpiar caché
+php bin/console cache:clear
+
+# Verificar rutas
+php bin/console debug:router | grep api
+
+# Probar endpoint
+curl -H "X-Tenant-Context: melisahospital" \
+     "http://melisahospital.localhost:8081/api/patients"
+```
+
+### 🔧 **Atajos de Teclado**
+
+- `Ctrl + R` - Refresh de datos
+- Click en card - Seleccionar paciente
+- Typing en search - Búsqueda automática
+
+---
+
+## 🎯 **URLs de Acceso**
+
+| Tenant | URL | Controlador |
+|--------|-----|-------------|
+| Hospital | http://melisahospital.localhost:8081/dashboard/patients-api | Base |
+| La Colina | http://melisalacolina.localhost:8081/dashboard/patients-api | Especializado |
+| Wi Clinic | http://melisawiclinic.localhost:8081/dashboard/patients-api | Tech |
+
+---
+
+## ✅ **Checklist de Implementación**
+
+- [x] Controlador base API Platform
+- [x] Especializaciones por tenant
+- [x] Template responsive
+- [x] Rutas configuradas
+- [x] Cache optimizado
+- [x] Búsqueda en tiempo real
+- [x] Manejo de errores
+- [x] Debug logging
+- [x] Estilos personalizados
+- [x] Telemetría simulada (Wi Clinic)
+
+---
+
+*Documentación actualizada: Octubre 15, 2025*
+*Versión: Stimulus 3.2.2 + API Platform 4.2*
