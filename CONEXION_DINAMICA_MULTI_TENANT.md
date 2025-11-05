@@ -73,6 +73,7 @@ class TenantConnectionListener implements EventSubscriberInterface
 
 ### 🎯 Servicio Principal de Resolución
 **Archivo:** `/var/www/html/melisa_tenant/src/Service/TenantResolver.php`
+
 ```php
 /**
  * Servicio que resuelve el tenant basado en el subdomain o sesión
@@ -80,15 +81,15 @@ class TenantConnectionListener implements EventSubscriberInterface
  */
 class TenantResolver
 {
-    // Configuración de BD central (contiene info de todos los tenants)
-    private array $centralDbConfig = [
-        'host' => 'localhost',
-        'port' => 3306,
-        'dbname' => 'melisa_central',
-        'user' => 'melisa',
-        'password' => 'melisamelisa',
-        'driver' => 'pdo_mysql',
-    ];
+    /**
+     * Constructor con inyección de DATABASE_URL desde .env
+     */
+    public function __construct(
+        private readonly string $centralDbUrl
+    ) {
+        // Parsea DATABASE_URL: mysql://user:pass@host:3306/melisa_central
+        $this->centralDbConfig = $this->parseDatabaseUrl($centralDbUrl);
+    }
     
     // Métodos principales:
     // - resolveTenantFromRequest(): Detecta tenant desde URL
@@ -97,6 +98,16 @@ class TenantResolver
     // - getAllActiveTenants(): Lista tenants activos para selector
 }
 ```
+
+**Configuración de credenciales:**
+- Las credenciales se leen desde la variable de entorno `DATABASE_URL` en `.env`
+- Formato: `mysql://usuario:password@host:puerto/melisa_central`
+- Se configura en `config/services.yaml`:
+  ```yaml
+  App\Service\TenantResolver:
+      arguments:
+          $centralDbUrl: '%env(DATABASE_URL)%'
+  ```
 
 **Nota:** Este servicio consulta `melisa_central` que contiene la tabla `tenant` con la configuración de todos los establecimientos.
 

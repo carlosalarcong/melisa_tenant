@@ -12,19 +12,47 @@ class TenantResolver
     private array $centralDbConfig;
     private Configuration $dbalConfig;
 
-    public function __construct()
-    {
+    /**
+     * Constructor con inyección de parámetros desde .env
+     * 
+     * @param string $centralDbUrl URL de conexión de la BD central (desde DATABASE_URL)
+     */
+    public function __construct(
+        private readonly string $centralDbUrl
+    ) {
         // Configuración DBAL con Schema Manager Factory
         $this->dbalConfig = new Configuration();
         $this->dbalConfig->setSchemaManagerFactory(new DefaultSchemaManagerFactory());
 
-        $this->centralDbConfig = [
-            'host' => 'localhost',
-            'port' => 3306,
-            'dbname' => 'melisa_central',
-            'user' => 'melisa',
-            'password' => 'melisamelisa',
+        // Parsear DATABASE_URL para obtener componentes
+        // Formato: mysql://user:password@host:port/database
+        $this->centralDbConfig = $this->parseDatabaseUrl($centralDbUrl);
+    }
+
+    /**
+     * Parsea la URL de base de datos en array de configuración
+     * 
+     * @param string $url URL en formato mysql://user:pass@host:port/dbname
+     * @return array Configuración para Doctrine DBAL
+     */
+    private function parseDatabaseUrl(string $url): array
+    {
+        $parsed = parse_url($url);
+        
+        // Extraer parámetros de query (serverVersion, charset, etc.)
+        $queryParams = [];
+        if (isset($parsed['query'])) {
+            parse_str($parsed['query'], $queryParams);
+        }
+
+        return [
+            'host' => $parsed['host'] ?? 'localhost',
+            'port' => $parsed['port'] ?? 3306,
+            'dbname' => ltrim($parsed['path'] ?? '', '/'),
+            'user' => $parsed['user'] ?? '',
+            'password' => $parsed['pass'] ?? '',
             'driver' => 'pdo_mysql',
+            'charset' => $queryParams['charset'] ?? 'utf8mb4',
         ];
     }
 
