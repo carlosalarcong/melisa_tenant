@@ -73,6 +73,12 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    App\EventListener\AuthenticationListener:
+        arguments:
+            $urlGenerator: '@router'
+        tags:
+            - { name: kernel.event_subscriber }
+
     # Event Subscribers
     App\EventSubscriber\DynamicControllerSubscriber:
         arguments:
