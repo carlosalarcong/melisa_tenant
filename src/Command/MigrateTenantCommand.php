@@ -4,6 +4,7 @@ namespace App\Command;
 
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Schema\DefaultSchemaManagerFactory;
 use Doctrine\DBAL\Schema\Schema;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -158,7 +159,9 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
     private function getActiveTenants(SymfonyStyle $io, ?string $tenantSubdomain = null): array
     {
         try {
-            $connection = DriverManager::getConnection($this->centralDbConfig);
+            $config = $this->centralDbConfig;
+            $config['schemaManagerFactory'] = new DefaultSchemaManagerFactory();
+            $connection = DriverManager::getConnection($config);
             
             $whereClause = 'WHERE is_active = 1';
             $params = [];
@@ -435,6 +438,7 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
                     'user' => $tenant['db_user'],
                     'password' => $tenant['db_password'],
                     'driver' => 'pdo_mysql',
+                    'schemaManagerFactory' => new DefaultSchemaManagerFactory(),
                 ];
                 
                 $connection = DriverManager::getConnection($tenantDbConfig);
@@ -471,7 +475,8 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
                 'dbname' => $testTenant['database_name'],
                 'user' => $testTenant['db_user'],
                 'password' => $testTenant['db_password'],
-                'charset' => 'utf8mb4'
+                'charset' => 'utf8mb4',
+                'schemaManagerFactory' => new DefaultSchemaManagerFactory(),
             ]);
 
             // Verificar si las tablas principales existen en el tenant usando SHOW TABLES
@@ -550,6 +555,7 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
                     'user' => $tenant['db_user'],
                     'password' => $tenant['db_password'],
                     'driver' => 'pdo_mysql',
+                    'schemaManagerFactory' => new DefaultSchemaManagerFactory(),
                 ];
                 
                 $connection = DriverManager::getConnection($tenantDbConfig);
@@ -620,6 +626,7 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
                 'user' => $tenant['db_user'],
                 'password' => $tenant['db_password'],
                 'driver' => 'pdo_mysql',
+                'schemaManagerFactory' => new DefaultSchemaManagerFactory(),
             ];
             
             $connection = DriverManager::getConnection($tenantDbConfig);
@@ -1138,6 +1145,7 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
             'user' => $tenant['db_user'],
             'password' => $tenant['db_password'],
             'driver' => 'pdo_mysql',
+            'schemaManagerFactory' => new DefaultSchemaManagerFactory(),
         ];
         
         $connection = DriverManager::getConnection($tenantDbConfig);
@@ -1339,6 +1347,7 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
             'user' => $tenant['db_user'],
             'password' => $tenant['db_password'],
             'driver' => 'pdo_mysql',
+            'schemaManagerFactory' => new DefaultSchemaManagerFactory(),
         ];
         
         $connection = DriverManager::getConnection($tenantDbConfig);

@@ -4,6 +4,7 @@ namespace App\Command;
 
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Schema\DefaultSchemaManagerFactory;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -42,6 +43,7 @@ class MigrationsTenantCommand extends Command
         $this
             ->addArgument('tenant', InputArgument::REQUIRED, 'Subdomain del tenant a usar como referencia (ej: melisalacolina, melisahospital)')
             ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Solo mostrar qué se ejecutaría sin hacer cambios')
+            ->addOption('force', null, InputOption::VALUE_NONE, 'Forzar ejecución sin confirmación')
             ->setHelp('
 Este comando genera migraciones comparando las entidades de src/Entity/ 
 con el esquema actual de un tenant ESPECÍFICO.
@@ -83,6 +85,7 @@ con el esquema actual de un tenant ESPECÍFICO.
     {
         $io = new SymfonyStyle($input, $output);
         $dryRun = $input->getOption('dry-run');
+        $force = $input->getOption('force');
         $tenantSubdomain = $input->getArgument('tenant');
 
         $io->title("🔧 Generación de Migraciones usando tenant: {$tenantSubdomain}");
@@ -110,7 +113,7 @@ con el esquema actual de un tenant ESPECÍFICO.
             }
 
             // 4. Generar migraciones usando la BD del tenant como referencia
-            $this->generateMigrationsWithTenantDb($tenantDbUrl, $tenant, $io);
+            $this->generateMigrationsWithTenantDb($tenantDbUrl, $tenant, $io, $force);
 
             // 5. Resultado final
             $io->success('✅ Proceso completado!');
@@ -132,7 +135,9 @@ con el esquema actual de un tenant ESPECÍFICO.
         $io->section("🔍 Obteniendo Tenant: {$tenantSubdomain}");
         
         try {
-            $connection = DriverManager::getConnection($this->centralDbConfig);
+            $config = $this->centralDbConfig;
+            $config['schemaManagerFactory'] = new DefaultSchemaManagerFactory();
+            $connection = DriverManager::getConnection($config);
             
             $query = "
                 SELECT id, name, subdomain, database_name,
@@ -241,7 +246,7 @@ con el esquema actual de un tenant ESPECÍFICO.
         );
     }
 
-    private function generateMigrationsWithTenantDb(string $tenantDbUrl, array $tenant, SymfonyStyle $io): void
+    private function generateMigrationsWithTenantDb(string $tenantDbUrl, array $tenant, SymfonyStyle $io, bool $force = false): void
     {
         $io->section('📦 Generando Migraciones');
         
@@ -269,7 +274,7 @@ con el esquema actual de un tenant ESPECÍFICO.
                 $io->text("   Recomendación: Ejecuta primero 'php bin/console app:migrate-tenant'");
                 $io->newLine();
                 
-                if (!$io->confirm('¿Deseas continuar de todos modos?', false)) {
+                if (!$force && !$io->confirm('¿Deseas continuar de todos modos?', false)) {
                     $io->note('Operación cancelada. Aplica las migraciones pendientes primero.');
                     return;
                 }
