@@ -33,6 +33,11 @@ Request: http://melisalacolina.melisaupgrade.prod:8081/
                     ↓
         Resuelve controller específico del tenant si existe
                     ↓
+    AuthenticationListener (Priority 10 - SEGURIDAD)
+                    ↓
+        Verifica sesión 'logged_in'
+        Si no está logueado → Redirect /login
+                    ↓
     LocalizationService (configura idioma del tenant)
                     ↓
         Aplicación usa BD correcta + idioma + contexto
@@ -394,7 +399,7 @@ class TenantTranslationListener implements EventSubscriberInterface
 
 ---
 
-### � Event Listener de Locale
+### 🌍 Event Listener de Locale
 **Archivo:** `/var/www/html/melisa_tenant/src/EventListener/LocaleListener.php`
 
 ```php
@@ -412,6 +417,52 @@ class LocaleListener implements EventSubscriberInterface
     }
 }
 ```
+
+---
+
+### 🔐 Event Listener de Autenticación (SEGURIDAD)
+**Archivo:** `/var/www/html/melisa_tenant/src/EventListener/AuthenticationListener.php`
+
+**Prioridad:** `10` (después de listeners de tenant, antes de controladores)
+
+```php
+/**
+ * Listener que verifica autenticación basada en sesión
+ * Protege TODAS las rutas excepto las públicas
+ */
+class AuthenticationListener implements EventSubscriberInterface
+{
+    private array $publicRoutes = [
+        'app_login',
+        'app_logout',
+        'app_tenants_list',
+    ];
+
+    private array $publicPaths = [
+        '/login',
+        '/logout',
+        '/api/tenants',
+    ];
+
+    public function onKernelRequest(RequestEvent $event): void
+    {
+        $session = $request->getSession();
+        $isLoggedIn = $session->get('logged_in', false);
+
+        if (!$isLoggedIn && !$this->isPublicRoute($route, $path)) {
+            // Redirigir al login
+            $event->setResponse(new RedirectResponse('/login'));
+        }
+    }
+}
+```
+
+**Características:**
+- ✅ **Protección global**: Todas las rutas requieren login excepto las públicas
+- ✅ **Rutas públicas configurables**: Login, logout, API de tenants
+- ✅ **Permite assets**: CSS, JS, imágenes accesibles sin autenticación
+- ✅ **Redirección automática**: Si no hay sesión → redirige a `/login`
+- ✅ **Basado en sesión**: Verifica `$session->get('logged_in')`
 
 ## 🔄 Flujo de Conexión Dinámica (Detallado)
 
@@ -765,6 +816,13 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    # Event Listener de autenticación (SEGURIDAD)
+    App\EventListener\AuthenticationListener:
+        arguments:
+            $urlGenerator: '@router'
+        tags:
+            - { name: kernel.event_subscriber }
+
     # Servicios de Tenant
     App\Service\TenantResolver:
         arguments:
@@ -825,6 +883,8 @@ Priority 20: LocaleListener (establece locale en request)
        ↓
 Priority 15: DynamicControllerSubscriber (resuelve controlador por tenant)
        ↓
+Priority 10: AuthenticationListener (verifica login - SEGURIDAD)
+       ↓
 Priority 0: Controllers (lógica de negocio)
 ```
 
@@ -847,6 +907,9 @@ Priority 0: Controllers (lógica de negocio)
 - **Sin queries cruzados**: Imposible acceder a datos de otro tenant
 - **Validación automática**: Solo tenants activos (`is_active = 1`) son accesibles
 - **Sin SQL injection**: Usa Doctrine DBAL con prepared statements
+- **Autenticación obligatoria**: AuthenticationListener protege todas las rutas
+- **Sesión verificada**: Cada request valida que el usuario esté logueado
+- **Redirección automática**: Usuarios no autenticados → `/login`
 
 ### ✅ **Eficiente en Performance**
 - **Cache en memoria**: TenantContext evita N queries a melisa_central
@@ -1083,6 +1146,42 @@ php bin/console cache:clear
 php bin/console translation:extract --force es
 ```
 
+#### **6. "Puedo acceder sin login" (CRÍTICO)**
+```bash
+# Verificar que AuthenticationListener está registrado
+grep -A 5 "AuthenticationListener" config/services.yaml
+
+# Verificar que el listener se está ejecutando
+tail -f var/log/dev.log | grep -i "authentication"
+
+# Limpiar cache de Symfony
+php bin/console cache:clear
+
+# Verificar que la sesión funciona
+# En un controller temporal:
+dump($request->getSession()->get('logged_in'));
+```
+
+**Solución:** El `AuthenticationListener` debe estar registrado en `services.yaml`:
+```yaml
+App\EventListener\AuthenticationListener:
+    arguments:
+        $urlGenerator: '@router'
+    tags:
+        - { name: kernel.event_subscriber }
+```
+
+#### **7. "Redirect loop infinito en /login"**
+```bash
+# Verificar que /login está en rutas públicas
+# En AuthenticationListener verificar:
+private array $publicPaths = [
+    '/login',      # ← Debe estar aquí
+    '/logout',
+    '/api/tenants',
+];
+```
+
 ---
 
 ### **Debug en Producción (con cuidado)**
@@ -1133,7 +1232,8 @@ src/
 ├── EventListener/
 │   ├── TenantConnectionListener.php # Configura BD automáticamente (Priority 1000)
 │   ├── TenantTranslationListener.php # Configura traducciones (Priority 25)
-│   └── LocaleListener.php           # Establece locale (Priority 20)
+│   ├── LocaleListener.php           # Establece locale (Priority 20)
+│   └── AuthenticationListener.php   # Protege rutas - Seguridad (Priority 10)
 ├── EventSubscriber/
 │   └── DynamicControllerSubscriber.php # Resuelve controllers dinámicamente (Priority 15)
 ├── Controller/
