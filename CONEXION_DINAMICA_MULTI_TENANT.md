@@ -25,6 +25,14 @@ Request: http://melisalacolina.melisaupgrade.prod:8081/
                     ↓
     TenantContext (almacena tenant en memoria/sesión)
                     ↓
+    TenantTranslationListener (Priority 25)
+                    ↓
+    LocaleListener (Priority 20)
+                    ↓
+    DynamicControllerSubscriber (Priority 15)
+                    ↓
+        Resuelve controller específico del tenant si existe
+                    ↓
     LocalizationService (configura idioma del tenant)
                     ↓
         Aplicación usa BD correcta + idioma + contexto
@@ -290,7 +298,9 @@ class AuthenticationService
 
 ---
 
-### 🎮 Controlador de Resolución Dinámica
+### 🎮 Sistema de Resolución Dinámica de Controladores
+
+#### **Servicio: DynamicControllerResolver**
 **Archivo:** `/var/www/html/melisa_tenant/src/Service/DynamicControllerResolver.php`
 ```php
 /**
@@ -304,10 +314,7 @@ class AuthenticationService
  */
 class DynamicControllerResolver
 {
-    // Resuelve controller dinámicamente
     public function resolveController(string $subdomain, string $baseController): string
-    
-    // Genera nombre de ruta dinámico
     public function generateRedirectRoute(string $subdomain, string $baseRoute): string
 }
 ```
@@ -318,6 +325,49 @@ class DynamicControllerResolver
 - Busca: `App\Tenant\Melisalacolina\Controller\DashboardController`
 - Si no existe: `App\Tenant\Default\Controller\DashboardController`
 - Si no existe: `App\Controller\DashboardController`
+
+#### **Event Subscriber: DynamicControllerSubscriber**
+**Archivo:** `/var/www/html/melisa_tenant/src/EventSubscriber/DynamicControllerSubscriber.php`
+
+```php
+/**
+ * Subscriber que intercepta requests y resuelve controladores dinámicamente
+ * Priority: 15 (después de LocaleListener, antes del controlador)
+ */
+class DynamicControllerSubscriber implements EventSubscriberInterface
+{
+    public function __construct(
+        private DynamicControllerResolver $controllerResolver,
+        private TenantContext $tenantContext,
+        private LoggerInterface $logger,
+        private array $excludedControllers = [],    // Desde services.yaml
+        private array $excludedNamespaces = []      // Desde services.yaml
+    ) {}
+}
+```
+
+**Configuración de Exclusiones:**
+
+La resolución dinámica se puede configurar en `services.yaml` mediante parámetros:
+
+```yaml
+parameters:
+    tenant.dynamic_resolution.excluded_controllers:
+        - 'App\Controller\LoginController'          # Login es común para todos
+        - 'App\Controller\SecurityController'       # Seguridad es común
+        - 'App\Controller\LocaleController'         # Cambio de idioma común
+        - 'App\Controller\PasswordResetController'  # Reset común
+    
+    tenant.dynamic_resolution.excluded_namespaces:
+        - 'Symfony\'                               # Controladores de Symfony
+        - 'App\Controller\Mantenedores\'          # Mantenedores son centrales
+```
+
+**Ventajas del Sistema:**
+- ✅ **Configurable**: Agregar/quitar exclusiones desde YAML sin tocar código
+- ✅ **Automático**: Cualquier controlador nuevo se resuelve dinámicamente por defecto
+- ✅ **Debugging**: Logs detallados de cada decisión de resolución
+- ✅ **Flexible**: Permite lógica específica por tenant con fallback automático
 
 ---
 
@@ -717,14 +767,26 @@ services:
 
     # Servicios de Tenant
     App\Service\TenantResolver:
+        arguments:
+            $centralDbUrl: '%env(DATABASE_URL)%'
         autowire: true
 
     App\Service\TenantContext:
+        arguments:
+            $centralDbUrl: '%env(DATABASE_URL)%'
         autowire: true
 
     App\Service\DynamicControllerResolver:
         arguments:
             $projectDir: '%kernel.project_dir%'
+
+    # Event Subscriber de resolución dinámica de controladores
+    App\EventSubscriber\DynamicControllerSubscriber:
+        arguments:
+            $excludedControllers: '%tenant.dynamic_resolution.excluded_controllers%'
+            $excludedNamespaces: '%tenant.dynamic_resolution.excluded_namespaces%'
+        tags:
+            - { name: kernel.event_subscriber }
 
     # Servicios de localización
     App\Service\LocalizationService:
@@ -738,6 +800,18 @@ services:
     App\Repository\:
         resource: '../src/Repository'
         tags: ['doctrine.repository_service']
+
+parameters:
+    # Configuración de resolución dinámica de controladores por tenant
+    tenant.dynamic_resolution.excluded_controllers:
+        - 'App\Controller\LoginController'
+        - 'App\Controller\SecurityController'
+        - 'App\Controller\LocaleController'
+        - 'App\Controller\PasswordResetController'
+    
+    tenant.dynamic_resolution.excluded_namespaces:
+        - 'Symfony\'
+        - 'App\Controller\Mantenedores\'
 ```
 
 ### **Orden de Ejecución de Event Listeners**
@@ -748,6 +822,8 @@ Priority 1000: TenantConnectionListener (configura BD del tenant)
 Priority 25: TenantTranslationListener (configura domain de traducciones)
        ↓
 Priority 20: LocaleListener (establece locale en request)
+       ↓
+Priority 15: DynamicControllerSubscriber (resuelve controlador por tenant)
        ↓
 Priority 0: Controllers (lógica de negocio)
 ```
@@ -1058,6 +1134,8 @@ src/
 │   ├── TenantConnectionListener.php # Configura BD automáticamente (Priority 1000)
 │   ├── TenantTranslationListener.php # Configura traducciones (Priority 25)
 │   └── LocaleListener.php           # Establece locale (Priority 20)
+├── EventSubscriber/
+│   └── DynamicControllerSubscriber.php # Resuelve controllers dinámicamente (Priority 15)
 ├── Controller/
 │   ├── LoginController.php          # Login multi-tenant
 │   ├── LocaleController.php         # Cambio de idioma
