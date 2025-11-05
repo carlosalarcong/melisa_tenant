@@ -86,3 +86,10 @@ services:
             $excludedNamespaces: '%tenant.dynamic_resolution.excluded_namespaces%'
         tags:
             - { name: kernel.event_subscriber }
+
+    # Commands
+    App\Command\MigrationsTenantCommand:
+        arguments:
+            $centralDbUrl: '%env(DATABASE_URL)%'
+        tags:
+            - { name: console.command }
