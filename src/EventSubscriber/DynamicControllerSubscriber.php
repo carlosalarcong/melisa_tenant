@@ -18,7 +18,9 @@ class DynamicControllerSubscriber implements EventSubscriberInterface
     public function __construct(
         private DynamicControllerResolver $controllerResolver,
         private TenantContext $tenantContext,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
+        private array $excludedControllers = [],
+        private array $excludedNamespaces = []
     ) {}
 
     public static function getSubscribedEvents(): array
@@ -78,42 +80,35 @@ class DynamicControllerSubscriber implements EventSubscriberInterface
      */
     private function shouldResolveDynamically(string $controller, string $tenantSubdomain): bool
     {
-        // No resolver controladores que ya están específicos del tenant
         if (str_contains($controller, ucfirst($tenantSubdomain))) {
             return false;
         }
 
-        // No resolver controladores de sistema (Security, Login, etc.)
-        $systemControllers = [
-            'App\\Controller\\LoginController',
-            'App\\Controller\\SecurityController',
-            'App\\Controller\\LocaleController',
-            'Symfony\\',
-        ];
-
-        foreach ($systemControllers as $systemController) {
-            if (str_starts_with($controller, $systemController)) {
+        foreach ($this->excludedControllers as $excludedController) {
+            if ($controller === $excludedController) {
+                $this->logger->debug('Controlador excluido por configuración exacta', [
+                    'controller' => $controller,
+                    'excluded' => $excludedController
+                ]);
                 return false;
             }
         }
 
-        // No resolver mantenedores básicos - son centrales para todos los tenants
-        $centralControllers = [
-            'App\\Controller\\Mantenedores\\Basico\\',
-            'App\\Controller\\Mantenedores\\',  // Todos los mantenedores son centrales ahora
-        ];
-
-        foreach ($centralControllers as $centralController) {
-            if (str_starts_with($controller, $centralController)) {
+        foreach ($this->excludedNamespaces as $excludedNamespace) {
+            if (str_starts_with($controller, $excludedNamespace)) {
+                $this->logger->debug('Controlador excluido por namespace', [
+                    'controller' => $controller,
+                    'namespace' => $excludedNamespace
+                ]);
                 return false;
             }
         }
 
-        // Por defecto, resolver TODOS los controladores de App\Controller\
-        // excepto los que específicamente excluimos arriba
-        // Esto hace el sistema escalable - cualquier nuevo controlador 
-        // automáticamente será resuelto dinámicamente por tenant
         if (str_starts_with($controller, 'App\\Controller\\')) {
+            $this->logger->debug('Controlador será resuelto dinámicamente', [
+                'controller' => $controller,
+                'tenant' => $tenantSubdomain
+            ]);
             return true;
         }
 
