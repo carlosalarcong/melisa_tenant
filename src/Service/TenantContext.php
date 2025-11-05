@@ -10,10 +10,38 @@ class TenantContext
     private ?array $currentTenant = null;
     private ?string $currentSubdomain = null;
     private RequestStack $requestStack;
+    private array $centralDbConfig;
     
-    public function __construct(RequestStack $requestStack)
-    {
+    /**
+     * Constructor con inyección de DATABASE_URL
+     * 
+     * @param RequestStack $requestStack Stack de requests de Symfony
+     * @param string $centralDbUrl URL de conexión desde .env
+     */
+    public function __construct(
+        RequestStack $requestStack,
+        private readonly string $centralDbUrl
+    ) {
         $this->requestStack = $requestStack;
+        $this->centralDbConfig = $this->parseDatabaseUrl($centralDbUrl);
+    }
+    
+    /**
+     * Parsea la URL de base de datos en array de configuración
+     * 
+     * @param string $url URL en formato mysql://user:pass@host:port/dbname
+     * @return array Configuración con host, port, user, password
+     */
+    private function parseDatabaseUrl(string $url): array
+    {
+        $parsed = parse_url($url);
+        
+        return [
+            'host' => $parsed['host'] ?? 'localhost',
+            'port' => $parsed['port'] ?? 3306,
+            'user' => $parsed['user'] ?? '',
+            'password' => $parsed['pass'] ?? '',
+        ];
     }
     
     public function setCurrentTenant(?array $tenant): void
@@ -49,10 +77,10 @@ class TenantContext
                     'subdomain' => $session->get('tenant_slug', 'default'),
                     'database_name' => $session->get('database_name', ''),
                     'rut_empresa' => null, // Datos adicionales pueden ser null
-                    'host' => 'localhost',
-                    'host_port' => 3306,
-                    'db_user' => 'melisa',
-                    'db_password' => 'melisamelisa'
+                    'host' => $this->centralDbConfig['host'],
+                    'host_port' => $this->centralDbConfig['port'],
+                    'db_user' => $this->centralDbConfig['user'],
+                    'db_password' => $this->centralDbConfig['password']
                 ];
                 
                 $this->setCurrentTenant($reconstructedTenant);
