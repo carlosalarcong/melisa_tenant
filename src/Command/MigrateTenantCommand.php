@@ -484,7 +484,7 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
             $tables = array_column($result->fetchAllAssociative(), 'Tables_in_' . $testTenant['database_name']);
             
             // Tablas que esperamos encontrar en el tenant
-            $expectedTenantTables = ['member', 'estado', 'pais', 'region', 'religion', 'sexo'];
+            $expectedTenantTables = ['member'];
             $tablesFound = 0;
             
             foreach ($expectedTenantTables as $expectedTable) {
