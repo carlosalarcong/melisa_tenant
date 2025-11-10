@@ -172,7 +172,9 @@ con el esquema actual de un tenant ESPECÍFICO.
         $io->section('🔍 Obteniendo Tenant de Referencia');
         
         try {
-            $connection = DriverManager::getConnection($this->centralDbConfig);
+            $config = $this->centralDbConfig;
+            $config['schemaManagerFactory'] = new DefaultSchemaManagerFactory();
+            $connection = DriverManager::getConnection($config);
             
             $query = "
                 SELECT id, name, subdomain, database_name,
