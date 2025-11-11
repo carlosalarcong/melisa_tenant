@@ -6,8 +6,9 @@ hakam_multi_tenancy:
     tenant_database_className: 'App\Entity\TenantDb'
     tenant_database_identifier: 'id'
     
-    # Usar nuestro provider personalizado
-    tenant_config_provider: 'App\Service\CustomTenantConfigProvider'
+    # NO especificar tenant_config_provider deja que el bundle use
+    # el servicio registrado vía TenantConfigProviderInterface
+    # tenant_config_provider: null  # Comentado - usar el alias del container
     
     tenant_connection:
         url: '%env(DATABASE_URL)%'

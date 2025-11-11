@@ -153,7 +153,79 @@ hakam_multi_tenancy:
 
 ---
 
-## 📋 FASE 3: ACTUALIZAR CONTROLADORES Y REPOSITORIOS (PRÓXIMA)
+## 📋 FASE 3: ACTUALIZAR CONTROLADORES Y REPOSITORIOS ✅ COMPLETADA
+**Duración real:** 30 minutos  
+**Objetivo:** Migrar controladores para usar TenantEntityManager
+
+### ✅ Tareas completadas:
+- [x] Actualizar `AbstractMantenedorController` para usar `TenantEntityManager`
+- [x] Cambiar `EntityManagerInterface` por `Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager`
+- [x] Registrar alias `TenantConfigProviderInterface` → `CustomTenantConfigProvider`
+- [x] Crear comando de prueba `app:test-tenant-em`
+- [x] Verificar funcionamiento end-to-end
+
+### 📝 Cambios implementados:
+
+**AbstractMantenedorController** (`src/Controller/Mantenedores/AbstractMantenedorController.php`):
+```php
+// ANTES:
+use Doctrine\ORM\EntityManagerInterface;
+protected EntityManagerInterface $entityManager;
+public function __construct(EntityManagerInterface $entityManager, ...)
+
+// AHORA:
+use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
+protected TenantEntityManager $entityManager;
+public function __construct(TenantEntityManager $entityManager, ...)
+```
+
+**config/services.yaml**:
+- Añadido alias: `Hakam\MultiTenancyBundle\Port\TenantConfigProviderInterface` → `App\Service\CustomTenantConfigProvider`
+- Permite que el bundle use nuestro provider personalizado
+
+### 🧪 Pruebas realizadas:
+
+Comando `app:test-tenant-em` ejecuta 6 pruebas:
+1. ✅ Lista tenants activos desde melisa_central
+2. ✅ Resuelve tenant específico (melisalacolina)
+3. ✅ CustomTenantConfigProvider retorna config correcta
+4. ✅ SwitchDbEvent se dispara sin errores
+5. ✅ Conexión cambia a melisalacolina (SELECT DATABASE())
+6. ✅ Cambio dinámico a melisa_template funciona
+
+**Resultado:** Todas las pruebas pasaron exitosamente.
+
+### 🔄 Flujo completo funcionando:
+```
+1. SwitchDbEvent('melisalacolina')
+2. DbSwitchEventListener escucha
+3. CustomTenantConfigProvider.getTenantConnectionConfig('melisalacolina')
+4. TenantResolver.getTenantBySlug('melisalacolina')
+5. Query a melisa_central: SELECT * FROM tenant WHERE subdomain='melisalacolina'
+6. Retorna TenantConnectionConfigDTO(dbname='melisalacolina', ...)
+7. TenantConnection.switchConnection(['dbname' => 'melisalacolina', ...])
+8. ✅ SELECT DATABASE() retorna 'melisalacolina'
+```
+
+### 📄 Archivos modificados:
+- `src/Controller/Mantenedores/AbstractMantenedorController.php` - Usa TenantEntityManager
+- `config/services.yaml` - Alias TenantConfigProviderInterface
+- `config/packages/hakam_multi_tenancy.yaml` - Config provider comentado
+- `src/Command/TestTenantEntityManagerCommand.php` - Comando de prueba
+
+### ⚠️ Punto de verificación PASADO:
+```bash
+✅ php bin/console cache:warmup
+✅ php bin/console debug:autowiring TenantEntityManager
+✅ php bin/console app:test-tenant-em
+✅ Cambio dinámico de BD funciona correctamente
+```
+
+**Estado:** TenantEntityManager totalmente funcional. Controladores actualizados. Sistema probado end-to-end.
+
+---
+
+## 📋 FASE 4: LIMPIEZA Y OPTIMIZACIÓN (PRÓXIMA)
 **Duración estimada:** 2-3 días  
 **Objetivo:** Cambiar conexión con evento en lugar de TenantResolver manual
 

@@ -56,6 +56,11 @@ services:
         autowire: true
         tags: ['controller.service_arguments']
 
+    # Alias para que el bundle use nuestro provider personalizado
+    Hakam\MultiTenancyBundle\Port\TenantConfigProviderInterface:
+        alias: App\Service\CustomTenantConfigProvider
+        public: true
+
     # Extensiones Twig
     App\Twig\LocalizationExtension:
         tags: ['twig.extension']

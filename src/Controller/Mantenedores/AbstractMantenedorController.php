@@ -4,7 +4,7 @@ namespace App\Controller\Mantenedores;
 
 use App\Controller\AbstractTenantAwareController;
 use App\Service\TenantResolver;
-use Doctrine\ORM\EntityManagerInterface;
+use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,22 +15,24 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
  * Controlador base abstracto para todos los mantenedores
  * Proporciona funcionalidad común para CRUD con AJAX
  * 
- * ✨ Ahora hereda de AbstractTenantAwareController - sin necesidad de inyectar TenantContext
+ * ✨ Ahora usa TenantEntityManager del bundle hakam/multi-tenancy-bundle
+ * ✨ Hereda de AbstractTenantAwareController - sin necesidad de inyectar TenantContext
  */
 abstract class AbstractMantenedorController extends AbstractTenantAwareController
 {
-    protected EntityManagerInterface $entityManager;
+    protected TenantEntityManager $entityManager;
     protected ValidatorInterface $validator;
     protected CsrfTokenManagerInterface $csrfTokenManager;
     protected TenantResolver $tenantResolver;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
+        TenantEntityManager $entityManager,
         ValidatorInterface $validator,
         CsrfTokenManagerInterface $csrfTokenManager,
         TenantResolver $tenantResolver
     ) {
-        // ✨ Ya no necesitamos inyectar TenantContext - está disponible automáticamente
+        // ✨ TenantEntityManager se inyecta automáticamente del bundle
+        // ✨ Ya tiene la conexión correcta gracias a SwitchDbEvent
         $this->entityManager = $entityManager;
         $this->validator = $validator;
         $this->csrfTokenManager = $csrfTokenManager;
