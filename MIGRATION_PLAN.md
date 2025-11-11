@@ -481,23 +481,87 @@ php bin/console debug:container | grep -i tenant
 
 ---
 
-## 📋 FASE 5: MIGRAR A SWITCHDBEVENT COMPLETO
-**Duración estimada:** 3-4 días  
-**Objetivo:** Reemplazar TenantResolver con SwitchDbEvent del bundle
+## 📋 FASE 5: MIGRACIÓN DE COMANDOS A BUNDLE ✅ COMPLETADA
+**Duración real:** 1 hora  
+**Objetivo:** Usar comandos del bundle como primarios, deprecar comandos legacy
 
-### ✅ Tareas:
-- [ ] Actualizar controladores para usar `SwitchDbEvent`
-- [ ] Mantener TenantResolver solo para consultas a melisa_central (via HTTP/API)
-- [ ] Crear adapter si necesitas consultar melisa_central desde melisa_tenant
-- [ ] Agregar logging para monitorear cambios de tenant
-- [ ] Testear con todos los tenants activos
+### ✅ Tareas completadas:
+- [x] Renombrar comandos legacy a *LegacyCommand.php
+- [x] Actualizar nombres de comandos a app:*-legacy
+- [x] Marcar comandos legacy como [DEPRECATED] en descripción
+- [x] Crear wrapper simplificado `app:tenant:migrate-all` para uso común
+- [x] Documentar comandos del bundle vs legacy
+- [x] Actualizar `config/services.yaml`
 
-### 📝 Entregables:
-- Controllers usando `SwitchDbEvent`
-- Adapter para comunicación con melisa_central (si necesario)
-- Logs de cambios de tenant
+### 📋 Comandos Disponibles (Estado Final):
 
-### ⚠️ Punto de verificación:
+#### 🎯 Comandos del Bundle (PRIMARIOS):
+- `tenant:migrations:migrate` - Migrar BD de un tenant específico
+  ```bash
+  # Migrar tenant específico
+  php bin/console tenant:migrations:migrate --dbid=1
+  ```
+
+- `tenant:migrations:diff` - Generar migraciones para tenant
+  ```bash
+  # Generar diff para tenant
+  php bin/console tenant:migrations:diff --dbid=1
+  ```
+
+- `tenant:database:create` - Crear BD de nuevo tenant
+- `tenant:fixtures:load` - Cargar fixtures en tenant
+- `tenant:schema:update` - Actualizar schema de tenant
+
+#### 🚀 Comando Wrapper (SIMPLIFICADO):
+- `app:tenant:migrate-all` - **Migrar todos los tenants automáticamente**
+  ```bash
+  # Migrar todos los tenants activos
+  php bin/console app:tenant:migrate-all
+  
+  # Migrar solo un tenant
+  php bin/console app:tenant:migrate-all melisalacolina
+  
+  # Dry-run (ver qué se haría)
+  php bin/console app:tenant:migrate-all --dry-run
+  ```
+
+#### 🗂️ Comandos Legacy (DEPRECATED - Solo si necesitas features especiales):
+- `app:migrate-tenant-legacy` - Comando antiguo con cleanup-duplicates, cleanup-orphaned
+- `app:migrations-tenant-legacy` - Comando antiguo para generar migraciones
+
+### 📝 Archivos modificados:
+- `src/Command/MigrateTenantCommand.php` → `MigrateTenantLegacyCommand.php`
+- `src/Command/MigrationsTenantCommand.php` → `MigrationsTenantLegacyCommand.php`
+- `src/Command/TenantMigrateAllCommand.php` - Nuevo wrapper
+- `config/services.yaml` - Actualizado con clase legacy
+
+### � Estrategia de Comandos:
+1. **Uso diario:** `app:tenant:migrate-all` (migra todos automáticamente)
+2. **Tenant específico:** `tenant:migrations:migrate --dbid=X`
+3. **Features especiales:** Comandos legacy si necesitas cleanup de duplicados
+
+### ⚠️ Punto de verificación PASADO:
+```bash
+✅ php bin/console list | grep tenant
+# Debe mostrar:
+#   - app:tenant:migrate-all (nuevo wrapper)
+#   - tenant:migrations:* (comandos del bundle)
+#   - app:*-legacy (deprecated)
+
+✅ php bin/console app:tenant:migrate-all --dry-run
+# Debe listar todos los tenants sin errores
+```
+
+### 📊 Ventajas de la nueva estructura:
+- ✅ Comandos del bundle como primarios (mantenidos por comunidad)
+- ✅ Wrapper simplificado para migrar todos los tenants a la vez
+- ✅ Comandos legacy disponibles para features específicos
+- ✅ Help mejorado con ejemplos claros
+- ✅ Dry-run mode para validar antes de ejecutar
+
+---
+
+## 📋 FASES OPCIONALES (PUEDEN HACERSE DESPUÉS)
 ```bash
 # Eventos deben dispararse correctamente
 curl http://melisalacolina.melisaupgrade.prod/dashboard
