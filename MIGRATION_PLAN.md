@@ -225,24 +225,48 @@ Comando `app:test-tenant-em` ejecuta 6 pruebas:
 
 ---
 
-## 📋 FASE 4: LIMPIEZA Y OPTIMIZACIÓN (PRÓXIMA)
-**Duración estimada:** 2-3 días  
-**Objetivo:** Cambiar conexión con evento en lugar de TenantResolver manual
+## 📋 FASE 4: LIMPIEZA Y OPTIMIZACIÓN ✅ COMPLETADA
+**Duración real:** 20 minutos  
+**Objetivo:** Eliminar código redundante y consolidar implementación
 
-### ✅ Tareas:
-- [ ] Crear listener para `SwitchDbEvent`
-- [ ] Integrar con TenantContext existente
-- [ ] Mantener TenantResolver para consultas a melisa_central
-- [ ] Actualizar EventSubscriber para usar SwitchDbEvent
-- [ ] Testear cambio de conexión con evento
+### ✅ Tareas completadas:
+- [x] Eliminar `TenantConnectionListener` antiguo (git rm)
+- [x] Remover configuración comentada de services.yaml
+- [x] Eliminar método `getTenantConnection()` redundante en AbstractMantenedorController
+- [x] Remover `TenantResolver` del constructor de AbstractMantenedorController (ya no se usa)
+- [x] Crear documentación completa en `MULTITENANCY.md`
+- [x] Prueba final de funcionalidad (app:test-tenant-em) ✅ Pasó
 
-### 📝 Entregables:
-- Listener funcionando
-- TenantResolver y SwitchDbEvent coexistiendo
+### 📝 Archivos eliminados:
+- `src/EventListener/TenantConnectionListener.php` - Listener antiguo
+- Método `getTenantConnection()` de AbstractMantenedorController
+- Parámetro `$tenantResolver` del constructor
 
-### ⚠️ Punto de verificación:
+### 📝 Archivos limpiados:
+- `config/services.yaml` - Removidos comentarios de listener antiguo
+- `src/Controller/Mantenedores/AbstractMantenedorController.php` - Código simplificado
+
+### 📄 Documentación creada:
+- `MULTITENANCY.md` - Guía completa de la arquitectura multi-tenant
+  - Flujo completo de cambio de BD (8 pasos)
+  - Descripción de cada componente
+  - Ejemplos de uso en controladores
+  - Configuración detallada
+  - Comandos útiles
+  - Comparación antes/después
+
+### ⚠️ Punto de verificación PASADO:
 ```bash
-# Debe cambiar conexión correctamente
+✅ php bin/console cache:clear
+✅ php bin/console app:test-tenant-em
+✅ Todas las pruebas pasaron exitosamente
+```
+
+**Estado:** Código limpio, optimizado y documentado. Listo para producción.
+
+---
+
+## 📋 FASE 5: CONSOLIDACIÓN Y MERGE (PRÓXIMA)
 curl http://melisalacolina.melisaupgrade.prod/dashboard
 ```
 

@@ -3,7 +3,6 @@
 namespace App\Controller\Mantenedores;
 
 use App\Controller\AbstractTenantAwareController;
-use App\Service\TenantResolver;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,46 +16,24 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
  * 
  * ✨ Ahora usa TenantEntityManager del bundle hakam/multi-tenancy-bundle
  * ✨ Hereda de AbstractTenantAwareController - sin necesidad de inyectar TenantContext
+ * ✨ La conexión a la BD del tenant se maneja automáticamente vía SwitchDbEvent
  */
 abstract class AbstractMantenedorController extends AbstractTenantAwareController
 {
     protected TenantEntityManager $entityManager;
     protected ValidatorInterface $validator;
     protected CsrfTokenManagerInterface $csrfTokenManager;
-    protected TenantResolver $tenantResolver;
 
     public function __construct(
         TenantEntityManager $entityManager,
         ValidatorInterface $validator,
-        CsrfTokenManagerInterface $csrfTokenManager,
-        TenantResolver $tenantResolver
+        CsrfTokenManagerInterface $csrfTokenManager
     ) {
         // ✨ TenantEntityManager se inyecta automáticamente del bundle
-        // ✨ Ya tiene la conexión correcta gracias a SwitchDbEvent
+        // ✨ Ya tiene la conexión correcta gracias a SwitchDbEvent y TenantDatabaseSwitchListener
         $this->entityManager = $entityManager;
         $this->validator = $validator;
         $this->csrfTokenManager = $csrfTokenManager;
-        $this->tenantResolver = $tenantResolver;
-    }
-
-    /**
-     * Obtiene la conexión de base de datos específica del tenant
-     */
-    protected function getTenantConnection(): ?\Doctrine\DBAL\Connection
-    {
-        // ✨ Usar $this->getTenant() en lugar de $this->getCurrentTenant()
-        $tenant = $this->getTenant();
-        
-        if (!$tenant) {
-            return null;
-        }
-        
-        try {
-            return $this->tenantResolver->createTenantConnection($tenant);
-        } catch (\Exception $e) {
-            error_log('Error creando conexión tenant: ' . $e->getMessage());
-            return null;
-        }
     }
 
     /**

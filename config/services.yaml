@@ -76,21 +76,12 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
-    # TenantDatabaseSwitchListener: Nuevo listener que usa SwitchDbEvent del bundle
-    # Reemplaza a TenantConnectionListener (conservado como backup)
+    # TenantDatabaseSwitchListener: Usa SwitchDbEvent del bundle
+    # Reemplaza al antiguo TenantConnectionListener (eliminado)
     App\EventListener\TenantDatabaseSwitchListener:
         autowire: true
         tags:
             - { name: kernel.event_subscriber }
-
-    # TenantConnectionListener: Listener original (temporalmente desactivado)
-    # App\EventListener\TenantConnectionListener:
-    #     arguments:
-    #         $tenantResolver: '@App\Service\TenantResolver'
-    #         $connection: '@doctrine.dbal.default_connection'
-    #         $logger: '@monolog.logger'
-    #     tags:
-    #         - { name: kernel.event_subscriber }
 
     App\EventListener\AuthenticationListener:
         arguments:
