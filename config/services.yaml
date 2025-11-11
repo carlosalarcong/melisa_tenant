@@ -97,8 +97,8 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
-    # Commands
-    App\Command\MigrationsTenantCommand:
+    # Commands (Legacy - deprecated)
+    App\Command\MigrationsTenantLegacyCommand:
         arguments:
             $centralDbUrl: '%env(DATABASE_URL)%'
         tags:
