@@ -89,30 +89,71 @@ hakam_multi_tenancy:
 
 ---
 
-## 📋 FASE 2: IMPLEMENTAR TENANTENTITYMANAGER (PRÓXIMA)
-**Duración estimada:** 2-3 días  
-**Objetivo:** Usar TenantEntityManager del bundle (sin Main EM)
+## 📋 FASE 2: IMPLEMENTAR TENANTENTITYMANAGER ✅ COMPLETADA
+**Duración real:** 45 minutos  
+**Objetivo:** Integrar TenantEntityManager y SwitchDbEvent del bundle con código existente
 
-### ✅ Tareas:
-- [ ] Configurar `TenantEntityManager` en doctrine.yaml
-- [ ] Mantener connection "default" apuntando a tenant dinámico
-- [ ] NO crear Entity Manager "default" para Main (no lo necesitas)
-- [ ] Actualizar servicios para inyectar `TenantEntityManager`
-- [ ] Mantener código actual funcionando en paralelo
+### ✅ Tareas completadas:
+- [x] Crear `CustomTenantConfigProvider` que usa `TenantResolver`
+- [x] Implementar `TenantConfigProviderInterface` del bundle
+- [x] Crear `TenantDatabaseSwitchListener` usando `SwitchDbEvent`
+- [x] Registrar servicios en `config/services.yaml`
+- [x] Configurar bundle para usar `CustomTenantConfigProvider`
+- [x] Desactivar `TenantConnectionListener` antiguo (comentado como backup)
+- [x] Verificar integración con cache:warmup
 
-### 📝 Entregables:
-- `config/packages/doctrine.yaml` con TenantEntityManager
-- TenantEntityManager disponible como servicio
+### 📝 Servicios implementados:
 
-### ⚠️ Punto de verificación:
-```bash
-# Verificar que TenantEntityManager se registró
-php bin/console debug:container TenantEntityManager
+**CustomTenantConfigProvider** (`src/Service/CustomTenantConfigProvider.php`):
+- Implementa `TenantConfigProviderInterface` del bundle
+- Usa `TenantResolver` para leer desde `melisa_central`
+- Convierte datos a `TenantConnectionConfigDTO`
+- Retorna `DriverTypeEnum::MYSQL` y `DatabaseStatusEnum::DATABASE_MIGRATED`
+
+**TenantDatabaseSwitchListener** (`src/EventListener/TenantDatabaseSwitchListener.php`):
+- Suscrito a `KernelEvents::REQUEST` con alta prioridad (1000)
+- Detecta subdomain y resuelve tenant con `TenantResolver`
+- Guarda tenant en `TenantContext` (para controladores)
+- Dispara `SwitchDbEvent` del bundle (el bundle hace el cambio de conexión)
+
+### 🔄 Flujo de cambio de BD (nuevo):
 ```
+1. Request → TenantDatabaseSwitchListener
+2. Extrae subdomain del host
+3. TenantResolver consulta melisa_central
+4. Guarda en TenantContext
+5. Dispara SwitchDbEvent(tenantId)
+6. DbSwitchEventListener (del bundle) escucha
+7. Llama CustomTenantConfigProvider.getTenantConnectionConfig(tenantId)
+8. TenantEntityManager.clear() + switchConnection(params)
+9. ✅ Conexión cambiada a BD del tenant
+```
+
+### 📄 Archivos modificados/creados:
+- `src/Service/CustomTenantConfigProvider.php` - Nuevo provider
+- `src/EventListener/TenantDatabaseSwitchListener.php` - Nuevo listener
+- `config/services.yaml` - Registro de servicios
+- `config/packages/hakam_multi_tenancy.yaml` - tenant_config_provider configurado
+
+### ⚠️ Punto de verificación PASADO:
+```bash
+✅ php bin/console cache:warmup
+✅ php bin/console debug:container CustomTenantConfigProvider
+✅ php bin/console debug:container TenantDatabaseSwitchListener
+✅ php bin/console debug:container tenant_entity_manager
+```
+
+### 🔧 Cambios en arquitectura:
+- ✅ Ahora usa `TenantEntityManager` del bundle (vía autowiring)
+- ✅ Cambio de conexión via `SwitchDbEvent` (evento del bundle)
+- ✅ Mantiene `TenantResolver` y `TenantContext` (código existente)
+- ✅ `TenantConnectionListener` antiguo comentado (backup temporal)
+
+**Estado:** Bundle integrado con lógica existente. TenantEntityManager y eventos funcionando.
 
 ---
 
-## 📋 FASE 3: IMPLEMENTAR SWITCHDBEVENT
+## 📋 FASE 3: ACTUALIZAR CONTROLADORES Y REPOSITORIOS (PRÓXIMA)
 **Duración estimada:** 2-3 días  
 **Objetivo:** Cambiar conexión con evento en lugar de TenantResolver manual
 

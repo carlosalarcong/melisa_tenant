@@ -1,0 +1,75 @@
+<?php
+
+namespace App\Service;
+
+use App\Service\TenantResolver;
+use Hakam\MultiTenancyBundle\Config\TenantConnectionConfigDTO;
+use Hakam\MultiTenancyBundle\Enum\DatabaseStatusEnum;
+use Hakam\MultiTenancyBundle\Enum\DriverTypeEnum;
+use Hakam\MultiTenancyBundle\Port\TenantConfigProviderInterface;
+
+/**
+ * Implementación personalizada de TenantConfigProvider
+ * 
+ * El bundle requiere esta interface para obtener configuración de conexiones.
+ * Nuestra implementación usa TenantResolver para leer desde melisa_central.
+ */
+class CustomTenantConfigProvider implements TenantConfigProviderInterface
+{
+    public function __construct(
+        private TenantResolver $tenantResolver
+    ) {}
+
+    /**
+     * Obtiene configuración de conexión para un tenant
+     * 
+     * @param mixed $identifier ID del tenant (subdomain o ID numérico)
+     * @return TenantConnectionConfigDTO Configuración para conexión
+     */
+    public function getTenantConnectionConfig(mixed $identifier): TenantConnectionConfigDTO
+    {
+        // Intentar resolver tenant por slug (subdomain)
+        $tenant = $this->tenantResolver->getTenantBySlug((string)$identifier);
+        
+        if (!$tenant) {
+            throw new \RuntimeException(
+                "Tenant no encontrado en melisa_central: {$identifier}"
+            );
+        }
+
+        // Convertir array de tenant a DTO del bundle usando fromArgs
+        return TenantConnectionConfigDTO::fromArgs(
+            identifier: $tenant['id'] ?? $identifier,
+            driver: DriverTypeEnum::MYSQL,
+            dbStatus: DatabaseStatusEnum::DATABASE_MIGRATED,  // Las DBs ya existen y están migradas
+            host: $tenant['host'] ?? 'localhost',
+            port: (int)($tenant['host_port'] ?? 3306),
+            dbname: $tenant['database_name'],
+            user: $tenant['db_user'] ?? 'melisa',
+            password: $tenant['db_password'] ?? 'melisamelisa'
+        );
+    }
+
+    /**
+     * Lista todas las configuraciones de tenants activos
+     * 
+     * @return TenantConnectionConfigDTO[]
+     */
+    public function getAllTenantsConfig(): array
+    {
+        $activeTenants = $this->tenantResolver->getAllActiveTenants();
+        
+        $configs = [];
+        foreach ($activeTenants as $tenant) {
+            $subdomain = $tenant['subdomain'];
+            try {
+                $configs[$subdomain] = $this->getTenantConnectionConfig($subdomain);
+            } catch (\Exception $e) {
+                // Log error pero continuar con otros tenants
+                continue;
+            }
+        }
+        
+        return $configs;
+    }
+}

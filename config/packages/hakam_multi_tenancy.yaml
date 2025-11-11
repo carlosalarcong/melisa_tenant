@@ -1,13 +1,13 @@
 hakam_multi_tenancy:
-    # IMPORTANTE: NO usamos el TenantConfigProvider del bundle
-    # Nuestra lógica de resolución de tenants ya existe en:
-    # - src/Service/TenantResolver.php (lee melisa_central)
-    # - src/Service/TenantContext.php (mantiene tenant actual)
+    # IMPORTANTE: Usamos nuestro CustomTenantConfigProvider
+    # que lee datos desde melisa_central vía TenantResolver
     
     # TenantDb es solo un stub para satisfacer dependencias del bundle
     tenant_database_className: 'App\Entity\TenantDb'
     tenant_database_identifier: 'id'
-    tenant_config_provider: null
+    
+    # Usar nuestro provider personalizado
+    tenant_config_provider: 'App\Service\CustomTenantConfigProvider'
     
     tenant_connection:
         url: '%env(DATABASE_URL)%'
