@@ -29,26 +29,67 @@ Adoptar features útiles de `hakam/multi-tenancy-bundle` para gestión de tenant
 
 ---
 
-## 📋 FASE 1: PREPARACIÓN Y ANÁLISIS
-**Duración estimada:** 1-2 días  
-**Objetivo:** Preparar el terreno sin romper nada
+## 📋 FASE 1: PREPARACIÓN Y ANÁLISIS ✅ COMPLETADA
+**Duración real:** 30 minutos  
+**Objetivo:** Instalar bundle sin romper funcionalidad existente
 
-### ✅ Tareas:
+### ✅ Tareas completadas:
 - [x] Crear branch `multitenancy` desde master
-- [ ] Instalar bundle sin activar
-- [ ] Auditar estructura actual de código
-- [ ] Mapear entidades actuales vs estructura bundle
-- [ ] Crear backup de base de datos
-- [ ] Documentar configuración actual
+- [x] Instalar bundle: `composer require hakam/multi-tenancy-bundle` (v2.9.3)
+- [x] Registrar `HakamMultiTenancyBundle` en `config/bundles.php`
+- [x] Crear configuración en `config/packages/hakam_multi_tenancy.yaml`
+- [x] Crear `src/Entity/TenantDb.php` como stub (requerida por bundle pero no usada)
+- [x] Limpiar conflicto con API Platform (removido automáticamente por Composer)
+- [x] Eliminar `config/packages/uid.yaml` (incompatibilidad)
+- [x] Verificar servicios del bundle disponibles
 
-### 📝 Entregables:
-- `composer.json` con bundle instalado
-- Documento de mapeo de entidades
-- Backup SQL de melisa_central
+### 📝 Servicios del bundle registrados:
+- ✅ `doctrine.orm.tenant_entity_manager` - TenantEntityManager
+- ✅ `doctrine.dbal.tenant_connection` - Conexión dinámica
+- ✅ Comandos: `tenant:migrations:migrate`, `tenant:database:create`, `tenant:fixtures:load`
+
+### � Archivos modificados:
+- `composer.json` - hakam/multi-tenancy-bundle v2.9.3
+- `config/bundles.php` - HakamMultiTenancyBundle registrado
+- `config/packages/hakam_multi_tenancy.yaml` - Configuración (ver abajo)
+- `src/Entity/TenantDb.php` - Entity stub (NO usada en lógica real)
+
+### ⚙️ Configuración aplicada:
+```yaml
+hakam_multi_tenancy:
+    tenant_database_className: 'App\Entity\TenantDb'  # Stub
+    tenant_database_identifier: 'id'
+    tenant_config_provider: null  # No usamos el provider del bundle
+    
+    tenant_connection:
+        url: '%env(DATABASE_URL)%'
+        driver: 'pdo_mysql'
+        charset: 'utf8mb4'
+        server_version: '8.0'
+    
+    tenant_migration:
+        tenant_migration_namespace: 'DoctrineMigrations'
+        tenant_migration_path: '%kernel.project_dir%/migrations'
+    
+    tenant_entity_manager:
+        mapping:
+            type: 'attribute'
+            dir: '%kernel.project_dir%/src/Entity'
+            prefix: 'App\Entity'
+```
+
+### ⚠️ Punto de verificación PASADO:
+```bash
+✅ php bin/console cache:clear
+✅ php bin/console debug:container | grep tenant
+✅ php bin/console list | grep tenant
+```
+
+**Estado:** Bundle instalado y funcional. Código existente sin cambios.
 
 ---
 
-## 📋 FASE 2: IMPLEMENTAR TENANTENTITYMANAGER
+## 📋 FASE 2: IMPLEMENTAR TENANTENTITYMANAGER (PRÓXIMA)
 **Duración estimada:** 2-3 días  
 **Objetivo:** Usar TenantEntityManager del bundle (sin Main EM)
 

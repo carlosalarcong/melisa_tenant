@@ -1,0 +1,31 @@
+hakam_multi_tenancy:
+    # IMPORTANTE: NO usamos el TenantConfigProvider del bundle
+    # Nuestra lógica de resolución de tenants ya existe en:
+    # - src/Service/TenantResolver.php (lee melisa_central)
+    # - src/Service/TenantContext.php (mantiene tenant actual)
+    
+    # TenantDb es solo un stub para satisfacer dependencias del bundle
+    tenant_database_className: 'App\Entity\TenantDb'
+    tenant_database_identifier: 'id'
+    tenant_config_provider: null
+    
+    tenant_connection:
+        url: '%env(DATABASE_URL)%'
+        driver: 'pdo_mysql'
+        charset: 'utf8mb4'
+        server_version: '8.0'
+    
+    tenant_migration:
+        # Directorio donde están las migraciones de tenant (ya existentes)
+        tenant_migration_namespace: 'DoctrineMigrations'
+        tenant_migration_path: '%kernel.project_dir%/migrations'
+    
+    tenant_entity_manager:
+        tenant_naming_strategy: 'doctrine.orm.naming_strategy.underscore_number_aware'
+        mapping:
+            type: 'attribute'
+            # Nuestras entidades están en src/Entity (no subdirectorio Tenant/)
+            dir: '%kernel.project_dir%/src/Entity'
+            prefix: 'App\Entity'
+            alias: 'App'
+            is_bundle: false
