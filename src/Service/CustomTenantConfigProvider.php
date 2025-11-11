@@ -28,8 +28,18 @@ class CustomTenantConfigProvider implements TenantConfigProviderInterface
      */
     public function getTenantConnectionConfig(mixed $identifier): TenantConnectionConfigDTO
     {
-        // Intentar resolver tenant por slug (subdomain)
-        $tenant = $this->tenantResolver->getTenantBySlug((string)$identifier);
+        // El identifier puede ser subdomain (string) o ID (int)
+        $tenant = null;
+        
+        // Primero intentar por ID si es numérico
+        if (is_numeric($identifier)) {
+            $tenant = $this->tenantResolver->getTenantById((int)$identifier);
+        }
+        
+        // Si no se encontró, intentar por subdomain
+        if (!$tenant) {
+            $tenant = $this->tenantResolver->getTenantBySlug((string)$identifier);
+        }
         
         if (!$tenant) {
             throw new \RuntimeException(

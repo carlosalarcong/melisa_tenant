@@ -77,7 +77,7 @@ class TenantResolver
     }
 
     /**
-     * Obtiene los datos del tenant desde la BD central
+     * Obtiene los datos del tenant desde la BD central por slug
      */
     public function getTenantBySlug(string $slug): ?array
     {
@@ -93,7 +93,7 @@ class TenantResolver
                        "melisamelisa" as db_password,
                        "mysql" as driver,
                        is_active
-                FROM tenant
+                FROM tenant_db
                 WHERE subdomain = ? AND is_active = 1
             ';
             
@@ -102,6 +102,35 @@ class TenantResolver
             
         } catch (\Exception $e) {
             throw new \Exception('Error resolviendo tenant: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Obtiene los datos del tenant desde la BD central por ID
+     */
+    public function getTenantById(int $id): ?array
+    {
+        try {
+            $connection = DriverManager::getConnection($this->centralDbConfig, $this->dbalConfig);
+            
+            $query = '
+                SELECT id, name, subdomain, database_name, rut_empresa,
+                       domain,
+                       "localhost" as host,
+                       3306 as host_port,
+                       "melisa" as db_user,
+                       "melisamelisa" as db_password,
+                       "mysql" as driver,
+                       is_active
+                FROM tenant_db
+                WHERE id = ? AND is_active = 1
+            ';
+            
+            $result = $connection->executeQuery($query, [$id]);
+            return $result->fetchAssociative() ?: null;
+            
+        } catch (\Exception $e) {
+            throw new \Exception('Error resolviendo tenant por ID: ' . $e->getMessage());
         }
     }
 
@@ -130,7 +159,7 @@ class TenantResolver
         try {
             $connection = DriverManager::getConnection($this->centralDbConfig, $this->dbalConfig);
             
-            $query = 'SELECT subdomain, name FROM tenant WHERE is_active = 1 ORDER BY name';
+            $query = 'SELECT subdomain, name FROM tenant_db WHERE is_active = 1 ORDER BY name';
             $result = $connection->executeQuery($query);
             
             return $result->fetchAllAssociative();

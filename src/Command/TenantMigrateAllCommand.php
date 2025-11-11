@@ -94,19 +94,32 @@ Wrapper simplificado para tenant:migrations:migrate del bundle.
 
         if ($dryRun) {
             $io->warning('[DRY RUN] No se aplicarán cambios reales');
-            $io->note("Usar: tenant:migrations:migrate --dbid={$tenant['id']} para migrar realmente");
+            $io->note("Ejecutar sin --dry-run para aplicar migraciones");
             return Command::SUCCESS;
         }
 
-        // Ejecutar comando del bundle
-        $command = $this->getApplication()->find('tenant:migrations:migrate');
+        // Ejecutar comando doctrine:migrations:migrate directamente con la BD del tenant
+        // Usando variables de entorno para cambiar la conexión
+        $command = $this->getApplication()->find('doctrine:migrations:migrate');
         
         $arguments = [
-            '--dbid' => (string)$tenant['id'],
             '--no-interaction' => true,
+            '--em' => 'tenant', // Usar el entity manager del tenant
         ];
 
         $greetInput = new ArrayInput($arguments);
+        
+        // Antes de ejecutar, disparar evento para cambiar BD
+        $io->text("🔄 Cambiando conexión a BD del tenant...");
+        
+        // Disparar SwitchDbEvent para cambiar a la BD del tenant
+        $eventDispatcher = $this->getApplication()->getKernel()->getContainer()->get('event_dispatcher');
+        $switchEvent = new \Hakam\MultiTenancyBundle\Event\SwitchDbEvent((string)$tenant['id']);
+        $eventDispatcher->dispatch($switchEvent);
+        
+        $io->text("✅ Conexión cambiada a: {$tenant['database_name']}");
+        $io->text("🚀 Ejecutando migraciones...");
+        
         $returnCode = $command->run($greetInput, $io);
 
         if ($returnCode === Command::SUCCESS) {
