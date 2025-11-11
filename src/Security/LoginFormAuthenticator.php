@@ -57,8 +57,9 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
      */
     public function authenticate(Request $request): Passport
     {
-        $username = $request->request->get('username', '');
-        $password = $request->request->get('password', '');
+        // Symfony Security espera campos con guion bajo
+        $username = $request->request->get('_username', '');
+        $password = $request->request->get('_password', '');
         $csrfToken = $request->request->get('_csrf_token');
 
         $this->logger->info('🔐 Intento de login', [

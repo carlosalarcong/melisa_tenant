@@ -188,23 +188,25 @@
             {% endif %}
 
             <form method="post" action="{{ path('app_login') }}">
+                {# Campo de usuario - Symfony Security espera '_username' #}
                 <div class="form-floating">
                     <input type="text" 
                            class="form-control" 
                            id="username" 
-                           name="username" 
+                           name="_username" 
                            placeholder="{{ 'auth.username'|trans }}"
-                           value="{{ username|default('') }}"
+                           value="{{ last_username }}"
                            required
                            autocomplete="username">
                     <label for="username">{{ 'auth.username'|trans }}</label>
                 </div>
 
+                {# Campo de contraseña - Symfony Security espera '_password' #}
                 <div class="form-floating password-input-group">
                     <input type="password" 
                            class="form-control" 
                            id="password" 
-                           name="password" 
+                           name="_password" 
                            placeholder="{{ 'auth.password'|trans }}"
                            required
                            autocomplete="current-password">
@@ -221,12 +223,16 @@
                     </button>
                 </div>
 
+                {# Checkbox Remember Me #}
                 <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" id="remember_me" name="remember_me" value="1">
+                    <input class="form-check-input" type="checkbox" id="remember_me" name="_remember_me" value="on">
                     <label class="form-check-label" for="remember_me">
                         {{ 'auth.remember_me'|trans }}
                     </label>
                 </div>
+
+                {# Token CSRF requerido por Symfony Security #}
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
                 <button type="submit" class="btn btn-login">
                     {{ 'auth.login'|trans }}

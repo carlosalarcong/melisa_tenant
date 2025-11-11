@@ -19,12 +19,12 @@ security:
             lazy: true
             provider: app_member_provider
             
-            # Formulario de login
-            form_login:
-                login_path: app_login
-                check_path: app_login
-                enable_csrf: true
-                default_target_path: app_dashboard_default
+            # Punto de entrada cuando usuario anónimo accede a ruta protegida
+            entry_point: App\Security\LoginFormAuthenticator
+            
+            # Autenticador personalizado que maneja tenant switching
+            custom_authenticators:
+                - App\Security\LoginFormAuthenticator
             
             # Remember me cookie
             remember_me:
@@ -37,10 +37,6 @@ security:
             logout:
                 path: app_logout
                 target: app_login
-            
-            # Autenticador personalizado
-            custom_authenticators:
-                - App\Security\LoginFormAuthenticator
 
     # Control de acceso
     # Note: Solo el *primer* access control que coincida será usado
