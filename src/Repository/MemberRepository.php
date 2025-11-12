@@ -3,17 +3,23 @@
 namespace App\Repository;
 
 use App\Entity\Member;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
+use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
+use Doctrine\ORM\EntityRepository;
 
 /**
- * @extends ServiceEntityRepository<Member>
+ * Repository para Member usando TenantEntityManager
+ * 
+ * IMPORTANTE: No extiende ServiceEntityRepository porque necesitamos
+ * usar TenantEntityManager en lugar de ManagerRegistry
  */
-class MemberRepository extends ServiceEntityRepository
+class MemberRepository extends EntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private TenantEntityManager $entityManager;
+
+    public function __construct(TenantEntityManager $entityManager)
     {
-        parent::__construct($registry, Member::class);
+        $this->entityManager = $entityManager;
+        parent::__construct($entityManager, $entityManager->getClassMetadata(Member::class));
     }
 
     /**

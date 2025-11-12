@@ -15,10 +15,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Process\Process;
 
 #[AsCommand(
-    name: 'app:migrations-tenant',
-    description: 'Generar migraciones basadas en entidades de src/Entity usando una base de datos tenant como referencia'
+    name: 'app:migrations-tenant-legacy',
+    description: '[DEPRECATED] Usar tenant:migrations:diff en su lugar. Comando legacy para generar migraciones.'
 )]
-class MigrationsTenantCommand extends Command
+class MigrationsTenantLegacyCommand extends Command
 {
     private array $centralDbConfig;
 

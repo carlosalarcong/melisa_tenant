@@ -16,10 +16,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Process\Process;
 
 #[AsCommand(
-    name: 'app:migrate-tenant',
-    description: 'Generar migraciones y aplicarlas automáticamente a todos los tenants activos o a un tenant específico'
+    name: 'app:migrate-tenant-legacy',
+    description: '[DEPRECATED] Usar tenant:migrations:migrate en su lugar. Comando legacy con features custom de limpieza.'
 )]
-class MigrateTenantCommand extends Command
+class MigrateTenantLegacyCommand extends Command
 {
     private int $verbosity = OutputInterface::VERBOSITY_NORMAL;
     private $centralDbConfig = [

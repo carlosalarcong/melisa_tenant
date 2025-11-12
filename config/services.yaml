@@ -50,6 +50,17 @@ services:
         autowire: true
         tags: ['controller.service_arguments']
 
+    # CustomTenantConfigProvider: Integración con hakam/multi-tenancy-bundle
+    # Usa TenantResolver para leer desde melisa_central
+    App\Service\CustomTenantConfigProvider:
+        autowire: true
+        tags: ['controller.service_arguments']
+
+    # Alias para que el bundle use nuestro provider personalizado
+    Hakam\MultiTenancyBundle\Port\TenantConfigProviderInterface:
+        alias: App\Service\CustomTenantConfigProvider
+        public: true
+
     # Extensiones Twig
     App\Twig\LocalizationExtension:
         tags: ['twig.extension']
@@ -65,11 +76,10 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
-    App\EventListener\TenantConnectionListener:
-        arguments:
-            $tenantResolver: '@App\Service\TenantResolver'
-            $connection: '@doctrine.dbal.default_connection'
-            $logger: '@monolog.logger'
+    # TenantDatabaseSwitchListener: Usa SwitchDbEvent del bundle
+    # Reemplaza al antiguo TenantConnectionListener (eliminado)
+    App\EventListener\TenantDatabaseSwitchListener:
+        autowire: true
         tags:
             - { name: kernel.event_subscriber }
 
@@ -87,8 +97,8 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
-    # Commands
-    App\Command\MigrationsTenantCommand:
+    # Commands (Legacy - deprecated)
+    App\Command\MigrationsTenantLegacyCommand:
         arguments:
             $centralDbUrl: '%env(DATABASE_URL)%'
         tags:
