@@ -237,6 +237,13 @@
                 <button type="submit" class="btn btn-login">
                     {{ 'auth.login'|trans }}
                 </button>
+                
+                {# Enlace para recuperar contraseña #}
+                <div class="text-center mt-3">
+                    <a href="{{ path('app_forgot_password_request') }}" class="text-muted" style="font-size: 0.9rem;">
+                        ¿Olvidó su contraseña?
+                    </a>
+                </div>
             </form>
 
             {% if not tenant %}
