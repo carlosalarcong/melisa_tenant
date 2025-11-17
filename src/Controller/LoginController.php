@@ -20,7 +20,7 @@ class LoginController extends AbstractController
 
         // Obtener error de login si existe
         $error = $authenticationUtils->getLastAuthenticationError();
-        
+
         // Obtener último username ingresado
         $lastUsername = $authenticationUtils->getLastUsername();
 

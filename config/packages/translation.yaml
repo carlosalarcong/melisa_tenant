@@ -10,6 +10,4 @@ framework:
         # Paths adicionales para buscar traducciones por tenant
         paths:
             - '%kernel.project_dir%/translations/default'
-            - '%kernel.project_dir%/translations/melisahospital'
-            - '%kernel.project_dir%/translations/melisalacolina'
         providers:

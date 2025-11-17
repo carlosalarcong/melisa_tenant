@@ -241,7 +241,7 @@ class LocalizationService
 
         // Traducciones específicas por tipo de establecimiento
         $tenantTranslations = [
-            'melisahospital' => [
+            'xxxmelisahospital' => [
                 'es' => [
                     'establishment_type' => 'Hospital',
                     'welcome_message' => 'Bienvenido al Sistema Hospitalario',
