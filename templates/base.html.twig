@@ -515,32 +515,6 @@
             });
         </script>
         
-        {% block javascripts %}
-            {% block importmap %}
-                <div data-turbo-permanent id="importmap-container">
-                    {{ importmap('app') }}
-                </div>
-            {% endblock %}
-            
-            <!-- Configuración para evitar warnings de import map duplicados -->
-            <script data-turbo-permanent>
-                // Configuración específica para evitar conflictos de import map
-                document.addEventListener('DOMContentLoaded', function() {
-                    // Silenciar warnings específicos de import map en desarrollo
-                    if (console.warn) {
-                        const originalWarn = console.warn;
-                        console.warn = function(message) {
-                            if (typeof message === 'string' && 
-                                (message.includes('import map rule for specifier') && 
-                                 message.includes('was removed, as it conflicted'))) {
-                                // Silenciar estos warnings específicos
-                                return;
-                            }
-                            originalWarn.apply(console, arguments);
-                        };
-                    }
-                });
-            </script>
-        {% endblock %}
+
     </body>
 </html>
