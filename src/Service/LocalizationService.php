@@ -16,8 +16,8 @@ class LocalizationService
     private TenantContext $tenantContext;
     private TenantResolver $tenantResolver;
     
-    private array $supportedLocales = ['es', 'en'];
-    private string $defaultLocale = 'es';
+    //private array $supportedLocales = ['es', 'en'];
+    //private string $defaultLocale = 'es';
 
     public function __construct(
         TranslatorInterface $translator,
@@ -34,6 +34,7 @@ class LocalizationService
     /**
      * Obtiene el idioma actual basado en el tenant y usuario
      */
+    /*
     public function getCurrentLocale(): string
     {
         $request = $this->requestStack->getCurrentRequest();
@@ -55,11 +56,15 @@ class LocalizationService
         // 1. Prioridad: Parámetro en sesión del usuario
         if ($request->hasSession()) {
             $session = $request->getSession();
+            dd($session->get('_locale'));
+
             if ($session->has('_locale')) {
                 $locale = $session->get('_locale');
-                if (in_array($locale, $this->supportedLocales)) {
+
+          //     dd($locale);
+           //     if (in_array($locale, $this->supportedLocales)) {
                     return $locale;
-                }
+          //      }
             }
         }
 
@@ -84,6 +89,7 @@ class LocalizationService
     /**
      * Establece el idioma para el usuario actual
      */
+    /*
     public function setUserLocale(string $locale): bool
     {
         if (!in_array($locale, $this->supportedLocales)) {
@@ -111,35 +117,34 @@ class LocalizationService
      * - La traducción si la encuentra
      * - La clave original si NO la encuentra
      */
+    /*
     public function trans(string $id, array $parameters = [], string $domain = 'messages'): string
     {
         $locale = $this->getCurrentLocale();
         $tenantDomain = $this->getTenantDomain();
-        
         // Debug: agregar logging temporal
         // dump(['id' => $id, 'tenant_domain' => $tenantDomain, 'locale' => $locale]);
-        
+
         // Si el dominio del tenant NO es 'default' ni 'messages', buscar allí primero
         if ($tenantDomain !== 'default' && $tenantDomain !== 'messages') {
             $tenantTranslation = $this->translator->trans($id, $parameters, $tenantDomain, $locale);
-            
             // Si encontró la traducción (es diferente a la clave), retornarla
             if ($tenantTranslation !== $id) {
-                return $tenantTranslation;
+             //   return $tenantTranslation;
             }
         }
         
         // FALLBACK 1: Intentar en dominio 'default'
-        if ($tenantDomain !== 'default') {
+       /* if ($tenantDomain !== 'default') {
             $defaultTranslation = $this->translator->trans($id, $parameters, 'default', $locale);
             if ($defaultTranslation !== $id) {
                 return $defaultTranslation;
             }
         }
-        
+        */
         // FALLBACK 2: Usar dominio 'messages' estándar
-        return $this->translator->trans($id, $parameters, 'messages', $locale);
-    }
+     //   return $this->translator->trans($id, $parameters, 'messages', $locale);
+    //}
     
     /**
      * Obtiene el dominio de traducción específico del tenant
@@ -153,6 +158,7 @@ class LocalizationService
      * - melisalacolina → dominio: "melisalacolina"
      * - default → dominio: "default"
      */
+    /*
     private function getTenantDomain(): string
     {
         // PRIORIDAD 1: TenantContext (ya establecido en sesión/request)
@@ -182,6 +188,7 @@ class LocalizationService
     /**
      * Obtiene todos los idiomas soportados
      */
+    /*
     public function getSupportedLocales(): array
     {
         return $this->supportedLocales;
@@ -190,7 +197,7 @@ class LocalizationService
     /**
      * Obtiene la información completa de idiomas soportados
      */
-    public function getSupportedLocalesInfo(): array
+    /*public function getSupportedLocalesInfo(): array
     {
         return [
             'es' => [
@@ -208,9 +215,11 @@ class LocalizationService
         ];
     }
 
+    */
     /**
      * Verifica si un idioma está soportado
      */
+    /*
     public function isLocaleSupported(string $locale): bool
     {
         return in_array($locale, $this->supportedLocales);
@@ -219,6 +228,7 @@ class LocalizationService
     /**
      * Obtiene el nombre del idioma actual
      */
+    /*
     public function getCurrentLocaleName(): string
     {
         $locale = $this->getCurrentLocale();
@@ -230,7 +240,7 @@ class LocalizationService
     /**
      * Obtiene configuraciones específicas del tenant para traducciones
      */
-    public function getTenantSpecificTranslations(): array
+    /*public function getTenantSpecificTranslations(): array
     {
         if (!$this->tenantContext->hasCurrentTenant()) {
             return [];
@@ -283,4 +293,5 @@ class LocalizationService
         
         return $tenantTranslations[$tenantName][$currentLocale] ?? [];
     }
+    */
 }

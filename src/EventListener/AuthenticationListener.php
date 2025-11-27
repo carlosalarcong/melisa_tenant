@@ -14,6 +14,21 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class AuthenticationListener implements EventSubscriberInterface
 {
+    public function __construct(
+    ) {}
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            KernelEvents::REQUEST => [['onKernelRequest', 10]],
+        ];
+    }
+
+    public function onKernelRequest(RequestEvent $event): void
+    {
+
+    }
+
+    /*
     private array $publicRoutes = [
         'app_login',
         'app_logout',
@@ -103,4 +118,5 @@ class AuthenticationListener implements EventSubscriberInterface
 
         return false;
     }
+    */
 }

@@ -39,11 +39,11 @@ class TenantTranslationListener implements EventSubscriberInterface
         $request = $event->getRequest();
         
         // Determinar el subdomain del tenant
-        $tenantSubdomain = 'default';
+        $tenantSubdomain = 'messages';
         
         if ($this->tenantContext->hasCurrentTenant()) {
             $tenant = $this->tenantContext->getCurrentTenant();
-            $tenantSubdomain = $tenant['subdomain'] ?? 'default';
+            $tenantSubdomain = $tenant['subdomain'] ?? 'messages';
         }
         
         // Establecer el tenant subdomain en atributos del request
@@ -64,7 +64,7 @@ class TenantTranslationListener implements EventSubscriberInterface
             return $tenantPath;
         }
         
-        return $this->projectDir . '/translations/default';
+        return $this->projectDir . '/translations';
     }
 
     public static function getSubscribedEvents(): array

@@ -14,11 +14,11 @@ class LocaleListener implements EventSubscriberInterface
 {
     private LocalizationService $localizationService;
 
-    public function __construct(LocalizationService $localizationService)
+    public function __construct()//(LocalizationService $localizationService)
     {
-        $this->localizationService = $localizationService;
+        //$this->localizationService = $localizationService;
     }
-
+/*
     public function onKernelRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
@@ -36,9 +36,8 @@ class LocaleListener implements EventSubscriberInterface
             $request->setLocale($locale);
             return;
         }
-
         // Para rutas web normales, usar el servicio de localización
-        $locale = $this->localizationService->getCurrentLocale();
+        $locale = $request->getDefaultLocale();
         $request->setLocale($locale);
 
         // Establecer locale en la sesión para persistencia (solo rutas web)
@@ -51,7 +50,11 @@ class LocaleListener implements EventSubscriberInterface
             }
         }
     }
+*/
+    public function onKernelRequest(RequestEvent $event): void
+    {
 
+    }
     public static function getSubscribedEvents(): array
     {
         return [
@@ -59,4 +62,5 @@ class LocaleListener implements EventSubscriberInterface
             KernelEvents::REQUEST => [['onKernelRequest', 20]],
         ];
     }
+//*/
 }

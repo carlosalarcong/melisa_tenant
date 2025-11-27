@@ -174,4 +174,9 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
             $this->router->generate('app_dashboard_default')
         );
     }
+
+    public function onAuthenticationFailure()
+    {
+        
+    }
 }

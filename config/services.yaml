@@ -34,9 +34,10 @@ services:
     # please note that last definitions always *replace* previous ones
 
     # Servicios específicos de Melisa Tenant
-    App\Service\LocalizationService:
-        autowire: true
-        tags: ['controller.service_arguments']
+
+    #App\Service\LocalizationService:
+    #    autowire: true
+    #    tags: ['controller.service_arguments']
 
     App\Service\TenantResolver:
         arguments:
@@ -83,11 +84,11 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
-    App\EventListener\AuthenticationListener:
-        arguments:
-            $urlGenerator: '@router'
-        tags:
-            - { name: kernel.event_subscriber }
+    #App\EventListener\AuthenticationListener:
+    #    arguments:
+    #        $urlGenerator: '@router'
+    #    tags:
+    #        - { name: kernel.event_subscriber }
 
     # Event Subscribers
     App\EventSubscriber\DynamicControllerSubscriber:

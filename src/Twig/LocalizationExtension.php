@@ -21,6 +21,7 @@ use Twig\TwigFilter;
  */
 class LocalizationExtension extends AbstractExtension
 {
+    /*
     private LocalizationService $localizationService;
 
     public function __construct(LocalizationService $localizationService)
@@ -65,6 +66,7 @@ class LocalizationExtension extends AbstractExtension
      * 
      * Ya NO es necesario usar |ttrans, el filtro |trans funciona automáticamente
      */
+    /**
     public function translateTenant(string $id, array $parameters = []): string
     {
         return $this->localizationService->trans($id, $parameters);
@@ -73,6 +75,7 @@ class LocalizationExtension extends AbstractExtension
     /**
      * Obtiene el idioma actual
      */
+    /**
     public function getCurrentLocale(): string
     {
         return $this->localizationService->getCurrentLocale();
@@ -81,6 +84,7 @@ class LocalizationExtension extends AbstractExtension
     /**
      * Obtiene todos los idiomas soportados con su información
      */
+    /**
     public function getSupportedLocales(): array
     {
         return $this->localizationService->getSupportedLocalesInfo();
@@ -89,6 +93,7 @@ class LocalizationExtension extends AbstractExtension
     /**
      * Obtiene traducciones específicas del tenant
      */
+    /**
     public function getTenantTranslations(): array
     {
         return $this->localizationService->getTenantSpecificTranslations();
@@ -97,6 +102,7 @@ class LocalizationExtension extends AbstractExtension
     /**
      * Obtiene el nombre del idioma actual
      */
+    /**
     public function getCurrentLocaleName(): string
     {
         return $this->localizationService->getCurrentLocaleName();
@@ -105,9 +111,11 @@ class LocalizationExtension extends AbstractExtension
     /**
      * Obtiene la bandera del idioma especificado
      */
+    /**
     public function getLocaleFlag(string $locale): string
     {
         $locales = $this->localizationService->getSupportedLocalesInfo();
         return $locales[$locale]['flag'] ?? '🌐';
     }
+     */
 }

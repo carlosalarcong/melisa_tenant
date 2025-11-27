@@ -2,7 +2,7 @@ twig:
     file_name_pattern: '*.twig'
     globals:
         # Variables globales para el sistema de traducciones
-        localization_service: '@App\Service\LocalizationService'
+        #localization_service: '@App\Service\LocalizationService'
 
 when@test:
     twig:

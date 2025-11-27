@@ -83,16 +83,12 @@ class TenantResolver
     {
         try {
             $connection = DriverManager::getConnection($this->centralDbConfig, $this->dbalConfig);
-            
+
+            //
             $query = '
-                SELECT id, name, subdomain, database_name, rut_empresa,
-                       domain,
-                       "localhost" as host,
-                       3306 as host_port,
-                       "melisa" as db_user,
-                       "melisamelisa" as db_password,
-                       "mysql" as driver,
-                       is_active
+                  SELECT id, name, subdomain, database_name, rut_empresa,
+                       domain, host, host_port, db_user, db_password,
+                       driver, is_active
                 FROM tenant_db
                 WHERE subdomain = ? AND is_active = 1
             ';
@@ -115,13 +111,8 @@ class TenantResolver
             
             $query = '
                 SELECT id, name, subdomain, database_name, rut_empresa,
-                       domain,
-                       "localhost" as host,
-                       3306 as host_port,
-                       "melisa" as db_user,
-                       "melisamelisa" as db_password,
-                       "mysql" as driver,
-                       is_active
+                       domain, host, host_port, db_user, db_password,
+                       driver, is_active
                 FROM tenant_db
                 WHERE id = ? AND is_active = 1
             ';
