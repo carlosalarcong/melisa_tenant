@@ -175,8 +175,5 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         );
     }
 
-    public function onAuthenticationFailure()
-    {
-        
-    }
+
 }
