@@ -3,17 +3,17 @@
 namespace App\Repository;
 
 use App\Entity\Setting;
-use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
-class SettingRepository extends EntityRepository
+/**
+ * Repository para Setting usando TenantEntityManager
+ */
+class SettingRepository extends ServiceEntityRepository
 {
-    private TenantEntityManager $entityManager;
-
-    public function __construct(TenantEntityManager $entityManager)
+    public function __construct(ManagerRegistry $registry)
     {
-        $this->entityManager = $entityManager;
-        parent::__construct($entityManager, $entityManager->getClassMetadata(Setting::class));
+        parent::__construct($registry, Setting::class);
     }
 
     public function getAllSetting(): array

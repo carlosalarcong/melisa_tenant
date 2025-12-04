@@ -4,22 +4,24 @@ namespace App\Repository;
 
 use App\Entity\Member;
 use App\Entity\ResetPasswordRequest;
-use Doctrine\ORM\EntityRepository;
-use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordRequestInterface;
 use SymfonyCasts\Bundle\ResetPassword\Persistence\Repository\ResetPasswordRequestRepositoryTrait;
 use SymfonyCasts\Bundle\ResetPassword\Persistence\ResetPasswordRequestRepositoryInterface;
 
 /**
- * @extends EntityRepository<ResetPasswordRequest>
+ * Repository para ResetPasswordRequest usando TenantEntityManager
+ * 
+ * @extends ServiceEntityRepository<ResetPasswordRequest>
  */
-class ResetPasswordRequestRepository extends EntityRepository implements ResetPasswordRequestRepositoryInterface
+class ResetPasswordRequestRepository extends ServiceEntityRepository implements ResetPasswordRequestRepositoryInterface
 {
     use ResetPasswordRequestRepositoryTrait;
 
-    public function __construct(TenantEntityManager $em)
+    public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($em, $em->getClassMetadata(ResetPasswordRequest::class));
+        parent::__construct($registry, ResetPasswordRequest::class);
     }
 
     /**

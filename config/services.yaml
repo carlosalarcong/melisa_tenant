@@ -35,27 +35,17 @@ services:
 
     # Servicios específicos de Melisa Tenant
 
-    #App\Service\LocalizationService:
-    #    autowire: true
-    #    tags: ['controller.service_arguments']
-
     App\Service\TenantResolver:
         arguments:
             $centralDbUrl: '%env(DATABASE_URL)%'
-        autowire: true
-        tags: ['controller.service_arguments']
 
     App\Service\TenantContext:
         arguments:
             $centralDbUrl: '%env(DATABASE_URL)%'
-        autowire: true
-        tags: ['controller.service_arguments']
 
     # CustomTenantConfigProvider: Integración con hakam/multi-tenancy-bundle
     # Usa TenantResolver para leer desde melisa_central
-    App\Service\CustomTenantConfigProvider:
-        autowire: true
-        tags: ['controller.service_arguments']
+    App\Service\CustomTenantConfigProvider: ~
 
     # Alias para que el bundle use nuestro provider personalizado
     Hakam\MultiTenancyBundle\Port\TenantConfigProviderInterface:
@@ -79,10 +69,7 @@ services:
 
     # TenantDatabaseSwitchListener: Usa SwitchDbEvent del bundle
     # Reemplaza al antiguo TenantConnectionListener (eliminado)
-    App\EventListener\TenantDatabaseSwitchListener:
-        autowire: true
-        tags:
-            - { name: kernel.event_subscriber }
+    App\EventListener\TenantDatabaseSwitchListener: ~
 
     #App\EventListener\AuthenticationListener:
     #    arguments:

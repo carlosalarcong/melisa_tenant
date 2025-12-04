@@ -2,18 +2,34 @@
 
 namespace App\Controller;
 
+use App\Entity\Setting;
+use App\Repository\SettingRepository;
 use App\Service\Settings;
+use Doctrine\DBAL\Connection;
+use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Yaml\Exception\ParseException;
+use Symfony\Component\Yaml\Yaml;
 
 
 #[Route('/settings')]
 class SettingsController extends AbstractTenantAwareController
 {
+    private array $formData = [];
+
     public function __construct(
-        private Settings            $settings,
+        private readonly Settings $settings,
+        private readonly SettingRepository $settingRepository,
+        private readonly Connection $connection,
+        #[Autowire('%kernel.project_dir%')]
+        private readonly string $projectDir,
     )
     {
     }
@@ -24,9 +40,8 @@ class SettingsController extends AbstractTenantAwareController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $setting = $this->settings->getBySlug('instance_language');
 
-
         try {
-            $config = Yaml::parseFile($this->getParameter('kernel.project_dir') . '/config/setting.yml');
+            $config = Yaml::parseFile($this->projectDir . '/config/settings.yml');
 
             if ($config === null) {
                 $config = array();
@@ -41,7 +56,7 @@ class SettingsController extends AbstractTenantAwareController
         }
 
         $slug_ = $parent;
-        $parent = $this->registry->getRepository(Setting::class)->findBy(['slug' => $slug_]);
+        $parent = $this->settingRepository->findBy(['slug' => $slug_]);
         $tmp_parent = null;
         if ($parent == null) {
             foreach ($config as $pkey => $pval) {
@@ -59,7 +74,6 @@ class SettingsController extends AbstractTenantAwareController
         return $this->render('default/settings/index.html.twig', [
             'config' => $config,
             'parent' => $parent,
-            ''
         ]);
     }
 
@@ -69,7 +83,7 @@ class SettingsController extends AbstractTenantAwareController
         $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
 
         try {
-            $config = Yaml::parseFile($this->getParameter('kernel.project_dir') . '/config/setting.yml');
+            $config = Yaml::parseFile($this->projectDir . '/config/setting.yml');
 
             if ($config === null) {
                 $config = array();
@@ -87,19 +101,18 @@ class SettingsController extends AbstractTenantAwareController
         $slug_ = $parent; //keep reference slug to parent
         $current_level = 0; //keep parent depth level
 
-
-        $settings = $this->registry->getRepository(Setting::class)->getAllSetting();
+        $settings = $this->settingRepository->getAllSetting();
 
         if (!is_null($setting_slug)) {
             $stmp = $this->settings->getSubyamlArray($config, $setting_slug);
             $setting = $stmp['values'];
             $current_level = $stmp['depth'];
             $root = $stmp['root'];
-            $parent = $this->registry->getRepository(Setting::class)->findOneBy(['slug' => $root]);
+            $parent = $this->settingRepository->findOneBy(['slug' => $root]);
             $slug_ = $parent->getSlug(); //update the parent if we want be added to form!!!
 
         } else {
-            $parent = $this->registry->getRepository(Setting::class)->findOneBy(['slug' => $slug_]);
+            $parent = $this->settingRepository->findOneBy(['slug' => $slug_]);
             $tmp_parent = null;
             if ($parent == null) {
                 foreach ($config as $pkey => $pval) {
@@ -231,7 +244,7 @@ class SettingsController extends AbstractTenantAwareController
         $specialAttributes = array();
 
         if (array_key_exists('special_attributes', $item)) {
-            if ($this->get('global_functions')->isSerialized($item['special_attributes'])) {
+            if ($this->isSerialized($item['special_attributes'])) {
                 $specialAttributes = unserialize($item['special_attributes']);
             } else {
                 $specialAttributes = $item['special_attributes'];
@@ -267,8 +280,7 @@ class SettingsController extends AbstractTenantAwareController
             case 'choice':
                 $format = ChoiceType::class;
                 if (isset($specialAttributes["type"]) && $specialAttributes["type"] == "custom-sql") {
-                    $conn = $this->getDoctrine()->getManager()->getConnection();
-                    $result = $conn->fetchAll($specialAttributes["sql"]);
+                    $result = $this->connection->fetchAllAssociative($specialAttributes["sql"]);
                     if (isset($specialAttributes["default_selection_text"])) {
                         $choices = array('' => $specialAttributes["default_selection_text"]);
                     } else {
@@ -354,7 +366,7 @@ class SettingsController extends AbstractTenantAwareController
                 dd('array');
                 //TODO: remove pesky little [0] index
                 if (gettype($fieldValue) != "array") {
-                    if ($this->get('global_functions')->isSerialized($fieldValue)) {
+                    if ($this->isSerialized($fieldValue)) {
                         $fieldValue = unserialize(trim($fieldValue));
                     } else {
                         if (gettype($item['field_default_value']) == "array") {
@@ -364,7 +376,7 @@ class SettingsController extends AbstractTenantAwareController
                         }
                     }
                 } else {
-                    if ($this->get('global_functions')->isSerialized($fieldValue)) {
+                    if ($this->isSerialized($fieldValue)) {
                         $fieldValue = unserialize($item['field_default_value']);
                     } else {
                         $fieldValue = $item['field_default_value'];
@@ -427,7 +439,7 @@ class SettingsController extends AbstractTenantAwareController
     public function imageAction($slug)
     {
         dd('app_settings_image');
-        $setting_value = $this->get('settings')->getBySlug($slug);
+        $setting_value = $this->settings->getBySlug($slug);
         if (empty($setting_value) || !file_exists($setting_value)) {
             $imgHash = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGP6zwAAAgcBApocMXEAAAAASUVORK5CYII=";
             $img = imagecreatefromstring(base64_decode($imgHash));
@@ -451,5 +463,44 @@ class SettingsController extends AbstractTenantAwareController
 
             return $response;
         }
+    }
+
+    /**
+     * Helper method to check if a string is serialized
+     */
+    private function isSerialized($data): bool
+    {
+        if (!is_string($data)) {
+            return false;
+        }
+        $data = trim($data);
+        if ($data === 'N;') {
+            return true;
+        }
+        if (strlen($data) < 4) {
+            return false;
+        }
+        if ($data[1] !== ':') {
+            return false;
+        }
+        $lastChar = substr($data, -1);
+        if ($lastChar !== ';' && $lastChar !== '}') {
+            return false;
+        }
+        $token = $data[0];
+        switch ($token) {
+            case 's':
+                if ($data[strlen($data) - 2] !== '"') {
+                    return false;
+                }
+            case 'a':
+            case 'O':
+                return (bool) preg_match("/^{$token}:[0-9]+:/s", $data);
+            case 'b':
+            case 'i':
+            case 'd':
+                return (bool) preg_match("/^{$token}:[0-9.E-]+;$/", $data);
+        }
+        return false;
     }
 }

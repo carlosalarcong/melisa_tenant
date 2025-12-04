@@ -3,20 +3,17 @@
 namespace App\Repository;
 
 use App\Entity\Gender;
-use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * Repository para Gender usando TenantEntityManager
  */
-class GenderRepository extends EntityRepository
+class GenderRepository extends ServiceEntityRepository
 {
-    private TenantEntityManager $entityManager;
-
-    public function __construct(TenantEntityManager $entityManager)
+    public function __construct(ManagerRegistry $registry)
     {
-        $this->entityManager = $entityManager;
-        parent::__construct($entityManager, $entityManager->getClassMetadata(Gender::class));
+        parent::__construct($registry, Gender::class);
     }
 
     /**
