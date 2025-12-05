@@ -2,6 +2,8 @@
 
 namespace App\Service;
 
+use App\Entity\Setting;
+use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Yaml\Yaml;
@@ -14,7 +16,7 @@ class Settings
         private readonly string              $settingFile,
 
         private readonly RequestStack        $requestStack,
-        //private readonly TenantEntityManager $tenantEntityManager,
+        private readonly TenantEntityManager $tenantEntityManager,
 
     )
     {
@@ -75,11 +77,11 @@ class Settings
     {
         $yaml_flat_settings = $this->getYamlSettings();
 
-        dd($yaml_flat_settings);
+        // dd($yaml_flat_settings);
         $db_flat_settings = array();
 
         $settings = $this->tenantEntityManager->getRepository(Setting::class)->getAllSetting();
-
+dd($settings);
         $settings_array = array();
         $this->all_settings = array();
 
