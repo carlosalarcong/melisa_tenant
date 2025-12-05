@@ -1,11 +1,58 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Password Reset Email Sent{% endblock %}
+{% block title %}Correo de Recuperación Enviado{% endblock %}
 
 {% block body %}
-    <p>
-        If an account matching your email exists, then an email was just sent that contains a link that you can use to reset your password.
-        This link will expire in {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
-    </p>
-    <p>If you don't receive an email please check your spam folder or <a href="{{ path('app_forgot_password_request') }}">try again</a>.</p>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-body p-5">
+                        {% for message in app.flashes('reset_password_info') %}
+                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                <strong>Solicitud existente:</strong> {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+
+                        <div class="text-center mb-4">
+                            <div class="mb-3">
+                                <i class="bi bi-envelope-check" style="font-size: 4rem; color: #28a745;"></i>
+                            </div>
+                            <h2 class="mb-3">Revisa tu correo electrónico</h2>
+                        </div>
+
+                        <div class="alert alert-success mb-4">
+                            <p class="mb-2">
+                                <strong>✓ Email enviado exitosamente</strong>
+                            </p>
+                            <p class="mb-0">
+                                Si existe una cuenta con el correo proporcionado, recibirás un email con instrucciones para restablecer tu contraseña.
+                            </p>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <p class="mb-2"><strong>⏰ Importante:</strong></p>
+                            <ul class="mb-0">
+                                <li>El enlace expirará en <strong>{{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}</strong></li>
+                                <li>Revisa tu bandeja de <strong>spam o correo no deseado</strong></li>
+                                <li>Puede tomar unos minutos en llegar</li>
+                            </ul>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <p class="text-muted mb-3">¿No recibiste el correo?</p>
+                            <a href="{{ path('app_forgot_password_request') }}" class="btn btn-outline-primary">
+                                <i class="bi bi-arrow-clockwise me-2"></i>Intentar de nuevo
+                            </a>
+                            <a href="{{ path('app_login') }}" class="btn btn-outline-secondary ms-2">
+                                <i class="bi bi-arrow-left me-2"></i>Volver al inicio de sesión
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

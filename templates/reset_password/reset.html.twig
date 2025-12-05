@@ -1,12 +1,58 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Reset your password{% endblock %}
+{% block title %}Restablecer Contraseña{% endblock %}
 
 {% block body %}
-    <h1>Reset your password</h1>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <div class="mb-3">
+                                <i class="bi bi-shield-lock" style="font-size: 3rem; color: #667eea;"></i>
+                            </div>
+                            <h2 class="mb-2">Restablecer Contraseña</h2>
+                            <p class="text-muted">Crea una nueva contraseña segura para tu cuenta</p>
+                        </div>
 
-    {{ form_start(resetForm) }}
-        {{ form_row(resetForm.plainPassword) }}
-        <button class="btn btn-primary">Reset password</button>
-    {{ form_end(resetForm) }}
+                        {{ form_start(resetForm) }}
+                            {{ form_row(resetForm.plainPassword.first, {
+                                'label': 'Nueva Contraseña',
+                                'attr': {'class': 'form-control form-control-lg', 'placeholder': 'Ingresa tu nueva contraseña'}
+                            }) }}
+                            
+                            {{ form_row(resetForm.plainPassword.second, {
+                                'label': 'Confirmar Contraseña',
+                                'attr': {'class': 'form-control form-control-lg', 'placeholder': 'Confirma tu nueva contraseña'}
+                            }) }}
+
+                            <div class="alert alert-warning mb-4">
+                                <small>
+                                    <strong><i class="bi bi-lightbulb me-1"></i>Consejos de seguridad:</strong>
+                                    <ul class="mb-0 mt-2">
+                                        <li>Usa al menos 8 caracteres</li>
+                                        <li>Combina mayúsculas, minúsculas y números</li>
+                                        <li>Incluye caracteres especiales (@, #, $, etc.)</li>
+                                    </ul>
+                                </small>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary btn-lg">
+                                    <i class="bi bi-check-circle me-2"></i>Restablecer Contraseña
+                                </button>
+                            </div>
+                        {{ form_end(resetForm) }}
+
+                        <div class="text-center mt-4">
+                            <a href="{{ path('app_login') }}" class="text-decoration-none">
+                                <i class="bi bi-arrow-left me-1"></i>Volver al inicio de sesión
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
