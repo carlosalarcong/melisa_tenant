@@ -1,5 +1,5 @@
 <?php
-namespace App\Entity;
+namespace App\Entity\Tenant;
 
 use App\Repository\GenderRepository;
 use Doctrine\ORM\Mapping as ORM;

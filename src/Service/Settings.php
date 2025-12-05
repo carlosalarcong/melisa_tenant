@@ -2,7 +2,7 @@
 
 namespace App\Service;
 
-use App\Entity\Setting;
+use App\Entity\Tenant\Setting;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;

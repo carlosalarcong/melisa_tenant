@@ -2,8 +2,8 @@ hakam_multi_tenancy:
     # IMPORTANTE: Usamos nuestro CustomTenantConfigProvider
     # que lee datos desde melisa_central vía TenantResolver
     
-    # TenantDb es solo un stub para satisfacer dependencias del bundle
-    tenant_database_className: 'App\Entity\TenantDb'
+    # TenantDb está en Main/ porque es de la base de datos central
+    tenant_database_className: 'App\Entity\Main\TenantDb'
     tenant_database_identifier: 'id'
     
     # NO especificar tenant_config_provider deja que el bundle use
@@ -19,14 +19,14 @@ hakam_multi_tenancy:
     tenant_migration:
         # Directorio donde están las migraciones de tenant (ya existentes)
         tenant_migration_namespace: 'DoctrineMigrations'
-        tenant_migration_path: '%kernel.project_dir%/migrations'
+        tenant_migration_path: '%kernel.project_dir%/migrations/Tenant'
     
     tenant_entity_manager:
         tenant_naming_strategy: 'doctrine.orm.naming_strategy.underscore_number_aware'
         mapping:
             type: 'attribute'
-            # Nuestras entidades están en src/Entity (no subdirectorio Tenant/)
-            dir: '%kernel.project_dir%/src/Entity'
-            prefix: 'App\Entity'
+            # Solo las entidades Tenant, NO las de Main
+            dir: '%kernel.project_dir%/src/Entity/Tenant'
+            prefix: 'App\Entity\Tenant'
             alias: 'App'
             is_bundle: false

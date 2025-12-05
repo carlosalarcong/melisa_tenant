@@ -3,10 +3,11 @@
 namespace App\Command;
 
 
+use App\Entity\Main\TenantDb;
+use App\Entity\Tenant\Setting;
 use Doctrine\ORM\EntityManagerInterface;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Hakam\MultiTenancyBundle\Event\SwitchDbEvent;
-use Hakam\MultiTenancyBundle\Model\TenantEntityInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -79,7 +80,7 @@ EOT
         $parts = explode('.', $environment);
 
         $yaml = new Parser();
-        $config = $yaml->parse(file_get_contents(__DIR__ . '/../../config/setting.yml'));
+        $config = $yaml->parse(file_get_contents(__DIR__ . '/../../config/settings.yml'));
 
         $flatYamlSettings= [];
         $flatSettings= [];
@@ -95,7 +96,7 @@ EOT
 
         //traer el switch connection y buscar todas las instancias activas
         if (count($parts) >= 1) {
-            $tenantUser = $this->mainEntityManager->getRepository(Tenant::class)->findOneBy(['slug' => $parts[0], 'active' => true]);
+            $tenantUser = $this->mainEntityManager->getRepository(TenantDb::class)->findOneBy(['slug' => $parts[0], 'active' => true]);
             $switchEvent = new SwitchDbEvent($tenantUser->getSlug());
             $this->dispatcher->dispatch($switchEvent);
         }

@@ -2,15 +2,15 @@
 
 namespace App\Security;
 
-use App\Entity\Member;
+use App\Entity\Tenant\Member;
 use App\Repository\MemberRepository;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Psr\Log\LoggerInterface;
 
 /**
  * Provider de usuarios usando TenantEntityManager

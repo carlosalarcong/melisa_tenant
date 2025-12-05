@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Main;
 
 use Doctrine\ORM\Mapping as ORM;
-use Hakam\MultiTenancyBundle\Services\TenantDbConfigurationInterface;
 use Hakam\MultiTenancyBundle\Enum\DatabaseStatusEnum;
 use Hakam\MultiTenancyBundle\Enum\DriverTypeEnum;
+use Hakam\MultiTenancyBundle\Services\TenantDbConfigurationInterface;
+use phpDocumentor\Reflection\DocBlock\Tags\TagWithType;
 
 /**
  * Entity para tenant_db que implementa la interface requerida por el bundle
@@ -25,8 +26,15 @@ class TenantDb implements TenantDbConfigurationInterface
     #[ORM\Column(length: 50, name: 'database_status')]
     private ?string $databaseStatus = 'DATABASE_MIGRATED';
 
-    // Métodos de la interface TenantDbConfigurationInterface
-    
+    #[ORM\Column(length: 100, unique: true, nullable: false)]
+    private ?string $slug = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $name = null;
+
+    #[ORM\Column(name: 'is_active', options: ['default' => true])]
+    private bool $active = true;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -84,6 +92,36 @@ class TenantDb implements TenantDbConfigurationInterface
     public function getDbPort(): int
     {
         return 3306;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): void
+    {
+        $this->slug = $slug;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): void
+    {
+        $this->name = $name;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active): void
+    {
+        $this->active = $active;
     }
 
     public function getDsnUrl(): string

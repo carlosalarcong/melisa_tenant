@@ -2,19 +2,16 @@
 
 namespace App\Controller;
 
-use App\Entity\Setting;
+use App\Entity\Tenant\Setting;
 use App\Repository\SettingRepository;
 use App\Service\Settings;
 use Doctrine\DBAL\Connection;
-use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 

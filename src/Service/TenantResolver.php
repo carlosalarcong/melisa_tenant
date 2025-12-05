@@ -86,11 +86,9 @@ class TenantResolver
 
             //
             $query = '
-                  SELECT id, name, subdomain, database_name, rut_empresa,
-                       domain, host, host_port, db_user, db_password,
-                       driver, is_active
+                  SELECT id, name, slug, database_name, database_status, is_active
                 FROM tenant_db
-                WHERE subdomain = ? AND is_active = 1
+                WHERE slug = ? AND is_active = 1
             ';
             
             $result = $connection->executeQuery($query, [$slug]);
@@ -110,9 +108,7 @@ class TenantResolver
             $connection = DriverManager::getConnection($this->centralDbConfig, $this->dbalConfig);
             
             $query = '
-                SELECT id, name, subdomain, database_name, rut_empresa,
-                       domain, host, host_port, db_user, db_password,
-                       driver, is_active
+                SELECT id, name, slug, database_name, database_status, is_active
                 FROM tenant_db
                 WHERE id = ? AND is_active = 1
             ';

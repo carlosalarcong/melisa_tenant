@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Tenant;
 
 use App\Repository\SettingRepository;
 use Doctrine\DBAL\Types\Types;

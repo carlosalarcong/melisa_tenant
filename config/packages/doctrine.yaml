@@ -1,36 +1,33 @@
 doctrine:
     dbal:
-        url: '%env(resolve:DATABASE_URL)%'
+        default_connection: main
+        connections:
+            main:
+                url: '%env(resolve:DATABASE_URL)%'
+                driver: 'pdo_mysql'
+                charset: utf8mb4
+                profiling_collect_backtrace: '%kernel.debug%'
+                use_savepoints: true
+                schema_manager_factory: doctrine.dbal.default_schema_manager_factory
 
-        # IMPORTANT: You MUST configure your server version,
-        # either here or in the DATABASE_URL env var (see .env file)
-        #server_version: '16'
-
-        profiling_collect_backtrace: '%kernel.debug%'
-        use_savepoints: true
-
-        # Schema Manager Factory - Solución para deprecación de Doctrine DBAL 4.x
-        schema_manager_factory: doctrine.dbal.default_schema_manager_factory
     orm:
+        default_entity_manager: main
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true
-        # report_fields_where_declared: Removido - siempre será true en DoctrineBundle 3.0
-        validate_xml_mapping: true
-        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
-        auto_mapping: true
-
-        # Controller resolver automapping - Configurado explícitamente a false (nuevo default en DoctrineBundle 3.0)
-        # Usar Symfony Mapped Route Parameters en su lugar
         controller_resolver:
             auto_mapping: false
 
-        mappings:
-            App:
-                type: attribute
-                is_bundle: false
-                dir: '%kernel.project_dir%/src/Entity'
-                prefix: 'App\Entity'
-                alias: App
+        entity_managers:
+            main:
+                connection: main
+                naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+                mappings:
+                    Main:
+                        type: attribute
+                        is_bundle: false
+                        dir: '%kernel.project_dir%/src/Entity/Main'
+                        prefix: 'App\Entity\Main'
+                        alias: Main
 
 when@test:
     doctrine:

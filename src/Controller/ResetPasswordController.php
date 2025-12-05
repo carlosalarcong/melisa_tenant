@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Member;
+use App\Entity\Tenant\Member;
 use App\Form\ChangePasswordFormType;
 use App\Form\ResetPasswordRequestFormType;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;

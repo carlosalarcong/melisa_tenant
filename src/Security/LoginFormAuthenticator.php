@@ -2,8 +2,8 @@
 
 namespace App\Security;
 
-use App\Service\TenantResolver;
 use App\Service\TenantContext;
+use App\Service\TenantResolver;
 use Hakam\MultiTenancyBundle\Event\SwitchDbEvent;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
@@ -159,7 +159,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         $session = $request->getSession();
         $session->set('logged_in', true);
         
-        if ($user instanceof \App\Entity\Member) {
+        if ($user instanceof \App\Entity\Tenant\Member) {
             $session->set('user_id', $user->getId());
             $session->set('username', $user->getUsername());
         }
