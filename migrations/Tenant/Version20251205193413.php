@@ -27,7 +27,7 @@ final class Version20251205193413 extends AbstractMigration
         $this->addSql('CREATE TABLE `health_insurance` (id INT AUTO_INCREMENT NOT NULL, health_insurance_type_id INT DEFAULT NULL, tax_affectation_type_id INT DEFAULT NULL, name VARCHAR(100) NOT NULL, interface_code VARCHAR(100) DEFAULT NULL, id_imed INT DEFAULT NULL, abbreviated_name VARCHAR(45) NOT NULL, is_default_value TINYINT(1) DEFAULT 1 NOT NULL, healthcare_prevition_hl7 VARCHAR(30) DEFAULT NULL, icon VARCHAR(45) DEFAULT NULL, is_active TINYINT(1) DEFAULT 1 NOT NULL, INDEX IDX_558804DE54CCFBDD (health_insurance_type_id), INDEX IDX_558804DE588DA015 (tax_affectation_type_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE health_insurance_type (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(100) NOT NULL, is_default_value TINYINT(1) DEFAULT 1 NOT NULL, is_agreement TINYINT(1) DEFAULT 1 NOT NULL, is_active TINYINT(1) DEFAULT 1 NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE `identification_type` (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(100) NOT NULL, is_active TINYINT(1) DEFAULT 1 NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE `marial_status` (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(100) NOT NULL, is_default_value TINYINT(1) DEFAULT 1 NOT NULL, marital_status_code_hl7 VARCHAR(2) DEFAULT NULL, is_active TINYINT(1) DEFAULT 1 NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE `marital_status` (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(100) NOT NULL, is_default_value TINYINT(1) DEFAULT 1 NOT NULL, marital_status_code_hl7 VARCHAR(2) DEFAULT NULL, is_active TINYINT(1) DEFAULT 1 NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE `municipality` (id INT AUTO_INCREMENT NOT NULL, province_id INT NOT NULL, name VARCHAR(100) NOT NULL, municipality_code_hl7 VARCHAR(10) DEFAULT NULL, is_active TINYINT(1) DEFAULT 1 NOT NULL, INDEX IDX_C6F56628E946114A (province_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE `occupation` (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(100) NOT NULL, is_default_value TINYINT(1) NOT NULL, is_active TINYINT(1) DEFAULT 1 NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE pais (id INT AUTO_INCREMENT NOT NULL, nombre_pais VARCHAR(255) DEFAULT NULL, nombre_gentilicio VARCHAR(255) NOT NULL, activo TINYINT(1) DEFAULT 1 NOT NULL, id_estado TINYINT(1) DEFAULT 1 NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
@@ -43,7 +43,7 @@ final class Version20251205193413 extends AbstractMigration
         $this->addSql('ALTER TABLE `municipality` ADD CONSTRAINT FK_C6F56628E946114A FOREIGN KEY (province_id) REFERENCES `province` (id)');
         $this->addSql('ALTER TABLE `person` ADD CONSTRAINT FK_34DCD176F54A83F FOREIGN KEY (identification_type_id) REFERENCES `identification_type` (id)');
         $this->addSql('ALTER TABLE `person` ADD CONSTRAINT FK_34DCD176D7A5352E FOREIGN KEY (education_level_id) REFERENCES `education_level` (id)');
-        $this->addSql('ALTER TABLE `person` ADD CONSTRAINT FK_34DCD176E559F9BF FOREIGN KEY (marital_status_id) REFERENCES `marial_status` (id)');
+        $this->addSql('ALTER TABLE `person` ADD CONSTRAINT FK_34DCD176E559F9BF FOREIGN KEY (marital_status_id) REFERENCES `marital_status` (id)');
         $this->addSql('ALTER TABLE `person` ADD CONSTRAINT FK_34DCD17622C8FC20 FOREIGN KEY (occupation_id) REFERENCES `occupation` (id)');
         $this->addSql('ALTER TABLE `person` ADD CONSTRAINT FK_34DCD176E7EEEDB3 FOREIGN KEY (ethnic_group_id) REFERENCES `ethnic_group` (id)');
         $this->addSql('ALTER TABLE `person` ADD CONSTRAINT FK_34DCD176B7850CBD FOREIGN KEY (religion_id) REFERENCES `religion` (id)');
@@ -82,7 +82,7 @@ final class Version20251205193413 extends AbstractMigration
         $this->addSql('DROP TABLE `health_insurance`');
         $this->addSql('DROP TABLE health_insurance_type');
         $this->addSql('DROP TABLE `identification_type`');
-        $this->addSql('DROP TABLE `marial_status`');
+        $this->addSql('DROP TABLE `marital_status`');
         $this->addSql('DROP TABLE `municipality`');
         $this->addSql('DROP TABLE `occupation`');
         $this->addSql('DROP TABLE pais');
