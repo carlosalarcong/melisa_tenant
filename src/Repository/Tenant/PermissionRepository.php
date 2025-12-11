@@ -24,7 +24,7 @@ class PermissionRepository extends ServiceEntityRepository
      */
     public function findAllByMember(Member $member): array
     {
-        return $this->findBy(['member' => $member]);
+        return $this->findBy(['user' => $member]);
     }
 
     /**
@@ -37,7 +37,7 @@ class PermissionRepository extends ServiceEntityRepository
         ?string $fieldName = null
     ): ?Permission {
         return $this->findOneBy([
-            'member' => $member,
+            'user' => $member,
             'domain' => $domain,
             'resourceId' => $resourceId,
             'fieldName' => $fieldName,
