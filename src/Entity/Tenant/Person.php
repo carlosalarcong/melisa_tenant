@@ -3,6 +3,7 @@
 namespace App\Entity\Tenant;
 
 //use App\Repository\PersonRepository;
+use App\Security\SecuredResourceInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -10,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity()]
 #[ORM\Table(name: '`person`')]
-class Person
+class Person implements SecuredResourceInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -512,5 +513,17 @@ class Person
         }
 
         return $this;
+    }
+
+    // ===== SecuredResourceInterface Implementation =====
+
+    public function getPermissionDomain(): string
+    {
+        return 'person';
+    }
+
+    public function getPermissionId(): int|string
+    {
+        return $this->id;
     }
 }
