@@ -1,0 +1,118 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Verificación de Permisos - Persona #{{ person.id }}{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-shield-alt"></i> Verificación Manual de Permisos
+                    </h3>
+                    <small class="text-white-50">Persona #{{ person.id }}: {{ person.name }} {{ person.lastName }}</small>
+                </div>
+                <div class="card-body">
+                    <h5>Permisos a Nivel de Recurso</h5>
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Acción</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="{{ permissions.view ? 'table-success' : 'table-danger' }}">
+                                <td><strong>VIEW</strong></td>
+                                <td>
+                                    {% if permissions.view %}
+                                        <span class="badge bg-success">✓ CONCEDIDO</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">✗ DENEGADO</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr class="{{ permissions.edit ? 'table-success' : 'table-danger' }}">
+                                <td><strong>EDIT</strong></td>
+                                <td>
+                                    {% if permissions.edit %}
+                                        <span class="badge bg-success">✓ CONCEDIDO</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">✗ DENEGADO</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr class="{{ permissions.delete ? 'table-success' : 'table-danger' }}">
+                                <td><strong>DELETE</strong></td>
+                                <td>
+                                    {% if permissions.delete %}
+                                        <span class="badge bg-success">✓ CONCEDIDO</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">✗ DENEGADO</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h5 class="mt-4">Permisos a Nivel de Campo</h5>
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Campo</th>
+                                <th>Acción</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="{{ permissions.edit_email ? 'table-success' : 'table-danger' }}">
+                                <td><code>email</code></td>
+                                <td>EDIT</td>
+                                <td>
+                                    {% if permissions.edit_email %}
+                                        <span class="badge bg-success">✓ CONCEDIDO</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">✗ DENEGADO</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr class="{{ permissions.edit_name ? 'table-success' : 'table-danger' }}">
+                                <td><code>name</code></td>
+                                <td>EDIT</td>
+                                <td>
+                                    {% if permissions.edit_name %}
+                                        <span class="badge bg-success">✓ CONCEDIDO</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">✗ DENEGADO</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr class="{{ permissions.view_mobilePhone ? 'table-success' : 'table-danger' }}">
+                                <td><code>mobilePhone</code></td>
+                                <td>VIEW</td>
+                                <td>
+                                    {% if permissions.view_mobilePhone %}
+                                        <span class="badge bg-success">✓ CONCEDIDO</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">✗ DENEGADO</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="mt-4">
+                        <a href="{{ path('person_test_list') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver al listado
+                        </a>
+                        <a href="{{ path('person_test_show', {id: person.id}) }}" class="btn btn-primary">
+                            <i class="fas fa-eye"></i> Ver persona
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
