@@ -426,7 +426,7 @@ class PermissionVoterTest extends TestCase
         // IMPORTANTE: Configurar que findAllByMember() debe ser llamado UNA SOLA VEZ
         // ->once() verifica que no se hagan queries repetidas gracias al cache
         $this->permissionRepository
-            ->expects($this->once()) // ✨ CLAVE: Solo una llamada
+            ->expects($this->once()) // CLAVE: Solo una llamada
             ->method('findAllByMember')
             ->with($this->user, 'test')
             ->willReturn([$permission]);
@@ -443,7 +443,7 @@ class PermissionVoterTest extends TestCase
         
         // ASSERT IMPLÍCITO: Si llegamos aquí sin errores, significa que
         // findAllByMember() fue llamado solo UNA VEZ (gracias a ->once())
-        // Las otras dos verificaciones usaron el cache in-memory ✨
+        // Las otras dos verificaciones usaron el cache in-memory
     }
 }
 
@@ -454,15 +454,15 @@ class PermissionVoterTest extends TestCase
  * 
  * Este archivo contiene 10 tests que cubren:
  * 
- * ✅ Soporte de atributos (VIEW, EDIT, DELETE)
- * ✅ Soporte de tipos de recursos (SecuredResourceInterface, FieldAccess)
- * ✅ Seguridad: denegar usuarios no autenticados
- * ✅ Permisos individuales de usuario
- * ✅ Permisos heredados de grupo
- * ✅ Denegación por defecto (sin permisos)
- * ✅ Prioridad: usuario > grupo
- * ✅ Permisos a nivel de campo (field-level)
- * ✅ Cache in-memory: reduce queries múltiples a una sola
+ * - Soporte de atributos (VIEW, EDIT, DELETE)
+ * - Soporte de tipos de recursos (SecuredResourceInterface, FieldAccess)
+ * - Seguridad: denegar usuarios no autenticados
+ * - Permisos individuales de usuario
+ * - Permisos heredados de grupo
+ * - Denegación por defecto (sin permisos)
+ * - Prioridad: usuario > grupo
+ * - Permisos a nivel de campo (field-level)
+ * - Cache in-memory: reduce queries múltiples a una sola
  * 
  * Principios demostrados:
  * - Mock objects para evitar base de datos

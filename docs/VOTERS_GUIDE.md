@@ -13,11 +13,11 @@ Un Voter es un componente de Symfony que decide si un usuario tiene permiso para
 
 ### Características Implementadas
 
-- ✅ **Atributos soportados:** `VIEW`, `EDIT`, `DELETE`
-- ✅ **Recursos soportados:** `SecuredResourceInterface` y `FieldAccess`
-- ✅ **Resolución en cascada:** De específico a general (4 niveles)
-- ✅ **Prioridad:** Usuario > Grupo > Denegar por defecto
-- ✅ **Tests:** 9 tests unitarios con 19 assertions
+- **Atributos soportados:** `VIEW`, `EDIT`, `DELETE`
+- **Recursos soportados:** `SecuredResourceInterface` y `FieldAccess`
+- **Resolución en cascada:** De específico a general (4 niveles)
+- **Prioridad:** Usuario > Grupo > Denegar por defecto
+- **Tests:** 9 tests unitarios con 19 assertions
 
 ---
 
@@ -72,12 +72,12 @@ El voter busca permisos de **más específico a más general:**
 **Escenario:** Usuario solicita editar campo `diagnosis` del paciente #123
 
 **Búsqueda en cascada:**
-1. 🔍 `patient + 123 + diagnosis` → ¿Existe? → Sí ✅ **PERMITIR**
+1. `patient + 123 + diagnosis` → ¿Existe? → Sí **PERMITIR**
 2. Si no existe, buscar: `patient + 123 + NULL`
 3. Si no existe, buscar: `patient + NULL + diagnosis`
 4. Si no existe, buscar: `patient + NULL + NULL`
 5. Si nada existe en permisos de usuario, repetir búsqueda en permisos de grupos
-6. Si tampoco hay permisos de grupo → ❌ **DENEGAR**
+6. Si tampoco hay permisos de grupo → **DENEGAR**
 
 ---
 
@@ -112,7 +112,7 @@ class PatientController extends AbstractController
 }
 ```
 
-### 2. En una Vista Twig - Funciones Helper (✅ IMPLEMENTADO)
+### 2. En una Vista Twig - Funciones Helper (IMPLEMENTADO)
 
 ```twig
 {# Método 1: Funciones helper directas (más simple) #}
@@ -233,7 +233,7 @@ public function getEditableFields(Patient $patient): array
   $fieldAccess = new FieldAccess($patient, 'diagnosis');
   ```
 
-### Twig Extension (✅ IMPLEMENTADO)
+### Twig Extension (IMPLEMENTADO)
 
 - **`SecurityExtension`** - Extensión Twig para permisos de campos
   - **`field_access(resource, field)`** - Crea objeto FieldAccess para usar con is_granted()
@@ -275,15 +275,15 @@ Siempre se deniega el acceso si el usuario no está autenticado.
 
 ### Tests Implementados (9 tests)
 
-1. ✅ **testSupportsViewEditDeleteAttributes** - Verifica atributos soportados
-2. ✅ **testSupportsSecuredResourceInterface** - Verifica soporte de interfaz
-3. ✅ **testSupportsFieldAccess** - Verifica soporte de campos
-4. ✅ **testDeniesAccessWhenUserNotAuthenticated** - Seguridad sin autenticación
-5. ✅ **testGrantsAccessWithUserSpecificPermission** - Permiso individual
-6. ✅ **testGrantsAccessWithGroupPermission** - Permiso heredado de grupo
-7. ✅ **testDeniesAccessByDefault** - Denegar por defecto
-8. ✅ **testUserPermissionOverridesGroupPermission** - Prioridad de usuario
-9. ✅ **testFieldLevelPermissionCascade** - Permisos a nivel de campo
+1. **testSupportsViewEditDeleteAttributes** - Verifica atributos soportados
+2. **testSupportsSecuredResourceInterface** - Verifica soporte de interfaz
+3. **testSupportsFieldAccess** - Verifica soporte de campos
+4. **testDeniesAccessWhenUserNotAuthenticated** - Seguridad sin autenticación
+5. **testGrantsAccessWithUserSpecificPermission** - Permiso individual
+6. **testGrantsAccessWithGroupPermission** - Permiso heredado de grupo
+7. **testDeniesAccessByDefault** - Denegar por defecto
+8. **testUserPermissionOverridesGroupPermission** - Prioridad de usuario
+9. **testFieldLevelPermissionCascade** - Permisos a nivel de campo
 
 ### Ejecutar Tests
 
@@ -314,13 +314,13 @@ php bin/phpunit --filter testGrantsAccessWithUserSpecificPermission
 
 ## Notas Técnicas
 
-### Rendimiento Optimizado (✅ Cache In-Memory Implementado)
+### Rendimiento Optimizado (Cache In-Memory Implementado)
 
-✅ **CON optimización de cache in-memory**, el sistema ejecuta:
+**CON optimización de cache in-memory**, el sistema ejecuta:
 - **1 query inicial** para cargar TODOS los permisos del usuario por dominio
 - **1 query inicial** para cargar TODOS los permisos de grupos por dominio
 - **Total: 2 queries por dominio** (se reutilizan durante todo el request)
-- **Con 10 campos verificados: 2 queries totales** ✨
+- **Con 10 campos verificados: 2 queries totales**
 
 #### Ejemplo de Mejora:
 
@@ -336,8 +336,8 @@ Total: 20-40 queries por request
 **AHORA (con cache in-memory):**
 ```
 Primera verificación → Query 1 (cargar todos permisos usuario) + Query 2 (cargar todos permisos grupos)
-Segunda verificación → [Cache] ✨
-Tercera verificación → [Cache] ✨
+Segunda verificación → [Cache]
+Tercera verificación → [Cache]
 ...
 Total: 2 queries por request
 ```
@@ -368,7 +368,7 @@ Total: 2 queries por request
 | 20 campos | 40-80 queries | 2 queries |
 | Tiempo estimado | 300-500ms | 15-20ms |
 
-💡 **Beneficio:** Reducción de ~95% en queries de base de datos para verificación de permisos.
+**Beneficio:** Reducción de ~95% en queries de base de datos para verificación de permisos.
 
 ### Métodos del Voter
 
@@ -403,19 +403,19 @@ private array $groupPermissionsCache = [];   // [userId => [domain => [GroupPerm
 
 El **PermissionVoter** implementa un sistema de permisos granulares con:
 
-✅ Permisos a nivel de **recurso completo**
-✅ Permisos a nivel de **campo específico**
-✅ Resolución en **cascada** (específico → general)
-✅ **Prioridad** de permisos individuales sobre grupales
-✅ **Denegar por defecto** para máxima seguridad
-✅ **Tests completos** con 9 escenarios cubiertos
-✅ **Twig Extension** con funciones helper para plantillas:
+- Permisos a nivel de **recurso completo**
+- Permisos a nivel de **campo específico**
+- Resolución en **cascada** (específico → general)
+- **Prioridad** de permisos individuales sobre grupales
+- **Denegar por defecto** para máxima seguridad
+- **Tests completos** con 9 escenarios cubiertos
+- **Twig Extension** con funciones helper para plantillas:
   - `can_view_field()`, `can_edit_field()`, `can_delete_field()`
   - `field_access()` para usar con `is_granted()`
-✅ **Optimización in-memory** - Cache de permisos por request:
+- **Optimización in-memory** - Cache de permisos por request:
   - Reduce de 20-40 queries a solo 2 queries por request
   - Mejora de rendimiento del ~95%
   - Sin dependencias externas (Redis, Memcached, etc.)
-✅ **Controlador de pruebas** con ejemplos de uso (PersonTestController)
+- **Controlador de pruebas** con ejemplos de uso (PersonTestController)
 
 El sistema está listo para ser usado en controladores, servicios y vistas Twig mediante `isGranted()`, `#[IsGranted]` y las funciones Twig.
