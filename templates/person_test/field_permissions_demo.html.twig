@@ -1,0 +1,286 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Demo Permisos de Campos - Persona #{{ person.id }}{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-lock"></i> Demo de Permisos Granulares por Campo
+                    </h3>
+                    <small class="text-white-50">Persona #{{ person.id }}: {{ person.name }} {{ person.lastName }}</small>
+                </div>
+                <div class="card-body">
+                    
+                    <div class="alert alert-info">
+                        <h5><i class="fas fa-info-circle"></i> Funciones Twig Disponibles</h5>
+                        <ul class="mb-0">
+                            <li><code>can_view_field(resource, 'field')</code> - Verifica permiso VIEW</li>
+                            <li><code>can_edit_field(resource, 'field')</code> - Verifica permiso EDIT</li>
+                            <li><code>can_delete_field(resource, 'field')</code> - Verifica permiso DELETE</li>
+                            <li><code>field_access(resource, 'field')</code> - Crea objeto para usar con is_granted()</li>
+                        </ul>
+                    </div>
+
+                    <h4 class="mt-4">1. Ejemplo con <code>can_view_field()</code></h4>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6>Campos Visibles:</h6>
+                            
+                            {% if can_view_field(person, 'email') %}
+                                <div class="alert alert-success">
+                                    <strong>Email:</strong> {{ person.email ?? 'N/A' }}
+                                    <span class="badge bg-success float-end">✓ Visible</span>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-secondary">
+                                    <strong>Email:</strong> [Campo oculto - Sin permiso VIEW]
+                                    <span class="badge bg-danger float-end">✗ Oculto</span>
+                                </div>
+                            {% endif %}
+
+                            {% if can_view_field(person, 'mobilePhone') %}
+                                <div class="alert alert-success">
+                                    <strong>Teléfono:</strong> {{ person.mobilePhone ?? 'N/A' }}
+                                    <span class="badge bg-success float-end">✓ Visible</span>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-secondary">
+                                    <strong>Teléfono:</strong> [Campo oculto - Sin permiso VIEW]
+                                    <span class="badge bg-danger float-end">✗ Oculto</span>
+                                </div>
+                            {% endif %}
+
+                            {% if can_view_field(person, 'identification') %}
+                                <div class="alert alert-success">
+                                    <strong>Identificación:</strong> {{ person.identification ?? 'N/A' }}
+                                    <span class="badge bg-success float-end">✓ Visible</span>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-secondary">
+                                    <strong>Identificación:</strong> [Campo oculto - Sin permiso VIEW]
+                                    <span class="badge bg-danger float-end">✗ Oculto</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <h4 class="mt-4">2. Ejemplo con <code>can_edit_field()</code></h4>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6>Formulario con Campos Editables:</h6>
+                            
+                            <form>
+                                <div class="mb-3">
+                                    <label class="form-label">Nombre</label>
+                                    {% if can_edit_field(person, 'name') %}
+                                        <input type="text" class="form-control" value="{{ person.name }}" name="name">
+                                        <small class="text-success">✓ Campo editable</small>
+                                    {% else %}
+                                        <input type="text" class="form-control" value="{{ person.name }}" disabled>
+                                        <small class="text-danger">✗ Solo lectura</small>
+                                    {% endif %}
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Apellido</label>
+                                    {% if can_edit_field(person, 'lastName') %}
+                                        <input type="text" class="form-control" value="{{ person.lastName }}" name="lastName">
+                                        <small class="text-success">✓ Campo editable</small>
+                                    {% else %}
+                                        <input type="text" class="form-control" value="{{ person.lastName }}" disabled>
+                                        <small class="text-danger">✗ Solo lectura</small>
+                                    {% endif %}
+                                </div>
+
+                                {% if can_view_field(person, 'email') %}
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    {% if can_edit_field(person, 'email') %}
+                                        <input type="email" class="form-control" value="{{ person.email }}" name="email">
+                                        <small class="text-success">✓ Campo editable</small>
+                                    {% else %}
+                                        <input type="email" class="form-control" value="{{ person.email }}" disabled>
+                                        <small class="text-danger">✗ Solo lectura</small>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </form>
+                        </div>
+                    </div>
+
+                    <h4 class="mt-4">3. Ejemplo con <code>field_access()</code> + <code>is_granted()</code></h4>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6>Sintaxis Alternativa (más flexible):</h6>
+                            
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Campo</th>
+                                        <th>VIEW</th>
+                                        <th>EDIT</th>
+                                        <th>DELETE</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><code>email</code></td>
+                                        <td>
+                                            {% if is_granted('VIEW', field_access(person, 'email')) %}
+                                                <span class="badge bg-success">✓</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">✗</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if is_granted('EDIT', field_access(person, 'email')) %}
+                                                <span class="badge bg-success">✓</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">✗</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if is_granted('DELETE', field_access(person, 'email')) %}
+                                                <span class="badge bg-success">✓</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">✗</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>mobilePhone</code></td>
+                                        <td>
+                                            {% if is_granted('VIEW', field_access(person, 'mobilePhone')) %}
+                                                <span class="badge bg-success">✓</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">✗</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if is_granted('EDIT', field_access(person, 'mobilePhone')) %}
+                                                <span class="badge bg-success">✓</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">✗</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if is_granted('DELETE', field_access(person, 'mobilePhone')) %}
+                                                <span class="badge bg-success">✓</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">✗</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>identification</code></td>
+                                        <td>
+                                            {% if is_granted('VIEW', field_access(person, 'identification')) %}
+                                                <span class="badge bg-success">✓</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">✗</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if is_granted('EDIT', field_access(person, 'identification')) %}
+                                                <span class="badge bg-success">✓</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">✗</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if is_granted('DELETE', field_access(person, 'identification')) %}
+                                                <span class="badge bg-success">✓</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">✗</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <h4 class="mt-4">4. Ejemplo Real: Formulario Dinámico</h4>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6>Solo se muestran y permiten editar los campos con permisos:</h6>
+                            
+                            <form class="row g-3">
+                                {# Siempre mostrar ID (no editable) #}
+                                <div class="col-md-6">
+                                    <label class="form-label">ID</label>
+                                    <input type="text" class="form-control" value="{{ person.id }}" disabled>
+                                </div>
+
+                                {# Campos condicionales según permisos #}
+                                {% if can_view_field(person, 'name') %}
+                                <div class="col-md-6">
+                                    <label class="form-label">Nombre</label>
+                                    <input type="text" class="form-control" value="{{ person.name }}" 
+                                           {{ can_edit_field(person, 'name') ? '' : 'disabled' }}>
+                                </div>
+                                {% endif %}
+
+                                {% if can_view_field(person, 'lastName') %}
+                                <div class="col-md-6">
+                                    <label class="form-label">Apellido</label>
+                                    <input type="text" class="form-control" value="{{ person.lastName }}" 
+                                           {{ can_edit_field(person, 'lastName') ? '' : 'disabled' }}>
+                                </div>
+                                {% endif %}
+
+                                {% if can_view_field(person, 'email') %}
+                                <div class="col-md-6">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" value="{{ person.email }}" 
+                                           {{ can_edit_field(person, 'email') ? '' : 'disabled' }}>
+                                </div>
+                                {% endif %}
+
+                                {% if can_view_field(person, 'mobilePhone') %}
+                                <div class="col-md-6">
+                                    <label class="form-label">Teléfono Móvil</label>
+                                    <input type="text" class="form-control" value="{{ person.mobilePhone }}" 
+                                           {{ can_edit_field(person, 'mobilePhone') ? '' : 'disabled' }}>
+                                </div>
+                                {% endif %}
+
+                                {% if can_view_field(person, 'identification') %}
+                                <div class="col-md-6">
+                                    <label class="form-label">Identificación</label>
+                                    <input type="text" class="form-control" value="{{ person.identification }}" 
+                                           {{ can_edit_field(person, 'identification') ? '' : 'disabled' }}>
+                                </div>
+                                {% endif %}
+
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary" 
+                                            {{ is_granted('EDIT', person) ? '' : 'disabled' }}>
+                                        Guardar Cambios
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <a href="{{ path('person_test_list') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                        <a href="{{ path('person_test_show', {id: person.id}) }}" class="btn btn-primary">
+                            <i class="fas fa-eye"></i> Vista Normal
+                        </a>
+                        <a href="{{ path('person_test_manual_check', {id: person.id}) }}" class="btn btn-info">
+                            <i class="fas fa-shield-alt"></i> Verificación Manual
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
