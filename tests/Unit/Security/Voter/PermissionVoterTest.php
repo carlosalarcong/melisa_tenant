@@ -397,6 +397,54 @@ class PermissionVoterTest extends TestCase
         // - Acción específica (EDIT)
         $this->assertTrue($result);
     }
+
+    /**
+     * TEST 10: Verifica que el cache in-memory funciona correctamente
+     * 
+     * El voter debe cargar los permisos UNA SOLA VEZ de la base de datos,
+     * y reutilizarlos en verificaciones posteriores sin hacer queries adicionales.
+     * 
+     * OPTIMIZACIÓN: De 20-40 queries a solo 2 queries por request.
+     */
+    public function testInMemoryCacheReducesQueries(): void
+    {
+        // ARRANGE: Configurar el usuario con ID
+        $this->user->method('getId')->willReturn(42);
+        $this->user->method('getGroups')->willReturn(new ArrayCollection());
+
+        // Crear recurso fake
+        $resource = $this->createMock(SecuredResourceInterface::class);
+        $resource->method('getPermissionDomain')->willReturn('test');
+        $resource->method('getPermissionId')->willReturn(1);
+
+        // Crear permiso fake
+        $permission = $this->createMock(Permission::class);
+        $permission->method('getResourceId')->willReturn(1);
+        $permission->method('getFieldName')->willReturn(null);
+        $permission->method('canView')->willReturn(true);
+
+        // IMPORTANTE: Configurar que findAllByMember() debe ser llamado UNA SOLA VEZ
+        // ->once() verifica que no se hagan queries repetidas gracias al cache
+        $this->permissionRepository
+            ->expects($this->once()) // ✨ CLAVE: Solo una llamada
+            ->method('findAllByMember')
+            ->with($this->user, 'test')
+            ->willReturn([$permission]);
+
+        // ACT: Verificar permisos TRES VECES seguidas
+        $result1 = $this->voter->vote($this->token, $resource, [PermissionVoter::VIEW]);
+        $result2 = $this->voter->vote($this->token, $resource, [PermissionVoter::VIEW]);
+        $result3 = $this->voter->vote($this->token, $resource, [PermissionVoter::VIEW]);
+
+        // ASSERT: Las tres verificaciones deben retornar el mismo resultado
+        $this->assertEquals(1, $result1); // VoterInterface::ACCESS_GRANTED
+        $this->assertEquals(1, $result2);
+        $this->assertEquals(1, $result3);
+        
+        // ASSERT IMPLÍCITO: Si llegamos aquí sin errores, significa que
+        // findAllByMember() fue llamado solo UNA VEZ (gracias a ->once())
+        // Las otras dos verificaciones usaron el cache in-memory ✨
+    }
 }
 
 /**
@@ -404,16 +452,17 @@ class PermissionVoterTest extends TestCase
  * RESUMEN DEL TEST SUITE
  * ============================================
  * 
- * Este archivo contiene 9 tests que cubren:
+ * Este archivo contiene 10 tests que cubren:
  * 
- * Soporte de atributos (VIEW, EDIT, DELETE)
- * Soporte de tipos de recursos (SecuredResourceInterface, FieldAccess)
- * Seguridad: denegar usuarios no autenticados
- * Permisos individuales de usuario
- * Permisos heredados de grupo
- * Denegación por defecto (sin permisos)
- * Prioridad: usuario > grupo
- * Permisos a nivel de campo (field-level)
+ * ✅ Soporte de atributos (VIEW, EDIT, DELETE)
+ * ✅ Soporte de tipos de recursos (SecuredResourceInterface, FieldAccess)
+ * ✅ Seguridad: denegar usuarios no autenticados
+ * ✅ Permisos individuales de usuario
+ * ✅ Permisos heredados de grupo
+ * ✅ Denegación por defecto (sin permisos)
+ * ✅ Prioridad: usuario > grupo
+ * ✅ Permisos a nivel de campo (field-level)
+ * ✅ Cache in-memory: reduce queries múltiples a una sola
  * 
  * Principios demostrados:
  * - Mock objects para evitar base de datos
@@ -421,6 +470,7 @@ class PermissionVoterTest extends TestCase
  * - Reflection para acceder a métodos protected
  * - Expects para verificar llamadas a métodos
  * - Asserts para verificar resultados
+ * - Verificación de optimizaciones de rendimiento
  * 
  * Ejecutar: php bin/phpunit tests/Unit/Security/Voter/PermissionVoterTest.php
  */
