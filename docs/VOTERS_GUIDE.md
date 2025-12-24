@@ -112,18 +112,41 @@ class PatientController extends AbstractController
 }
 ```
 
-### 2. En una Vista Twig
+### 2. En una Vista Twig - Funciones Helper (✅ IMPLEMENTADO)
+
+```twig
+{# Método 1: Funciones helper directas (más simple) #}
+{% if can_view_field(person, 'salary') %}
+    <p>Salario: {{ person.salary }}</p>
+{% endif %}
+
+{% if can_edit_field(person, 'email') %}
+    <input name="email" value="{{ person.email }}">
+{% else %}
+    <p>Email: {{ person.email }} (solo lectura)</p>
+{% endif %}
+
+{% if can_delete_field(patient, 'medicalHistory') %}
+    <button onclick="deleteField()">Eliminar historial</button>
+{% endif %}
+
+{# Método 2: field_access() + is_granted() (más flexible) #}
+{% if is_granted('VIEW', field_access(patient, 'diagnosis')) %}
+    <div class="diagnosis">
+        <strong>Diagnóstico:</strong> {{ patient.diagnosis }}
+    </div>
+{% endif %}
+
+{% if is_granted('EDIT', field_access(patient, 'treatment')) %}
+    <textarea name="treatment">{{ patient.treatment }}</textarea>
+{% endif %}
+```
+
+### 2b. En una Vista Twig - Verificar Recurso Completo
 
 ```twig
 {% if is_granted('VIEW', patient) %}
     <h1>{{ patient.fullName }}</h1>
-    
-    {# Mostrar campos sensibles solo si tiene permiso #}
-    {% if is_granted('VIEW', field_access(patient, 'diagnosis')) %}
-        <div class="diagnosis">
-            <strong>Diagnóstico:</strong> {{ patient.diagnosis }}
-        </div>
-    {% endif %}
     
     {# Botón de editar solo si tiene permiso #}
     {% if is_granted('EDIT', patient) %}
@@ -209,6 +232,14 @@ public function getEditableFields(Patient $patient): array
   ```php
   $fieldAccess = new FieldAccess($patient, 'diagnosis');
   ```
+
+### Twig Extension (✅ IMPLEMENTADO)
+
+- **`SecurityExtension`** - Extensión Twig para permisos de campos
+  - **`field_access(resource, field)`** - Crea objeto FieldAccess para usar con is_granted()
+  - **`can_view_field(resource, field)`** - Helper directo para verificar VIEW
+  - **`can_edit_field(resource, field)`** - Helper directo para verificar EDIT
+  - **`can_delete_field(resource, field)`** - Helper directo para verificar DELETE
 
 ### Repositorios
 
@@ -319,5 +350,9 @@ El **PermissionVoter** implementa un sistema de permisos granulares con:
 ✅ **Prioridad** de permisos individuales sobre grupales
 ✅ **Denegar por defecto** para máxima seguridad
 ✅ **Tests completos** con 9 escenarios cubiertos
+✅ **Twig Extension** con funciones helper para plantillas:
+  - `can_view_field()`, `can_edit_field()`, `can_delete_field()`
+  - `field_access()` para usar con `is_granted()`
+✅ **Controlador de pruebas** con ejemplos de uso (PersonTestController)
 
-El sistema está listo para ser usado en controladores, servicios y vistas Twig mediante `isGranted()` y `#[IsGranted]`.
+El sistema está listo para ser usado en controladores, servicios y vistas Twig mediante `isGranted()`, `#[IsGranted]` y las funciones Twig.

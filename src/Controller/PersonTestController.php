@@ -45,6 +45,9 @@ class PersonTestController extends AbstractController
      * Verifica que el usuario tenga permiso VIEW sobre la persona.
      * Si no tiene permiso, lanza AccessDeniedException (403).
      * 
+     * Las funciones Twig (can_view_field, can_edit_field) verifican
+     * permisos de campos directamente desde la plantilla.
+     * 
      * @Route("/{id}", name="person_test_show", methods=["GET"])
      */
     #[Route('/{id}', name: 'person_test_show', methods: ['GET'])]
@@ -52,24 +55,12 @@ class PersonTestController extends AbstractController
     public function show(Person $person): Response
     {
         // Si llegamos aquí, el usuario SÍ tiene permiso VIEW
-
-        // Verificar permisos de campos específicos
-        $canEditEmail = $this->isGranted(
-            PermissionVoter::EDIT,
-            new FieldAccess($person, 'email')
-        );
-
-        $canEditName = $this->isGranted(
-            PermissionVoter::EDIT,
-            new FieldAccess($person, 'name')
-        );
-
+        
+        // Verificar permiso DELETE a nivel de recurso
         $canDelete = $this->isGranted(PermissionVoter::DELETE, $person);
 
         return $this->render('person_test/show.html.twig', [
             'person' => $person,
-            'canEditEmail' => $canEditEmail,
-            'canEditName' => $canEditName,
             'canDelete' => $canDelete,
         ]);
     }
@@ -145,6 +136,26 @@ class PersonTestController extends AbstractController
         return $this->render('person_test/manual_check.html.twig', [
             'person' => $person,
             'permissions' => $permissions,
+        ]);
+    }
+
+    /**
+     * Demo completa de permisos a nivel de campo usando funciones Twig.
+     * 
+     * Muestra todos los ejemplos de uso de las funciones:
+     * - can_view_field()
+     * - can_edit_field() 
+     * - can_delete_field()
+     * - field_access() + is_granted()
+     * 
+     * @Route("/{id}/field-demo", name="person_test_field_demo", methods=["GET"])
+     */
+    #[Route('/{id}/field-demo', name: 'person_test_field_demo', methods: ['GET'])]
+    #[IsGranted(PermissionVoter::VIEW, subject: 'person')]
+    public function fieldPermissionsDemo(Person $person): Response
+    {
+        return $this->render('person_test/field_permissions_demo.html.twig', [
+            'person' => $person,
         ]);
     }
 }
