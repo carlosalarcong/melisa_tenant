@@ -74,6 +74,10 @@ class Person
     #[ORM\ManyToOne(inversedBy: 'people')]
     private ?Gender $gender = null;
 
+    #[ORM\ManyToOne(targetEntity: Organization::class)]
+    #[ORM\JoinColumn(name: 'organization_id', referencedColumnName: 'id', nullable: true)]
+    private ?Organization $organization = null;
+
     #[ORM\ManyToOne(inversedBy: 'people')]
     private ?Country $nacionality = null;
 
@@ -360,6 +364,18 @@ class Person
     public function setGender(?Gender $gender): static
     {
         $this->gender = $gender;
+
+        return $this;
+    }
+
+    public function getOrganization(): ?Organization
+    {
+        return $this->organization;
+    }
+
+    public function setOrganization(?Organization $organization): static
+    {
+        $this->organization = $organization;
 
         return $this;
     }
