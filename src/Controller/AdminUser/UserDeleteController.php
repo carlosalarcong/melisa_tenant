@@ -8,7 +8,7 @@ use App\Controller\AbstractTenantAwareController;
 use App\Entity\Tenant\Organization;
 use App\Repository\MemberRepository;
 use App\Service\AdminUser\UserManagementService;
-use Doctrine\ORM\EntityManagerInterface;
+use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class UserDeleteController extends AbstractTenantAwareController
 {
     public function __construct(
-        private EntityManagerInterface $em,
+        private TenantEntityManager $em,
         private MemberRepository $memberRepository,
         private UserManagementService $userManagement
     ) {}

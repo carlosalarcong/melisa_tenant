@@ -1,4 +1,4 @@
-{% extends 'layout_vertical.html.twig' %}
+{% extends 'admin_layout.html.twig' %}
 
 {% block title %}Editar Usuario - {{ member.person.name }} {{ member.person.lastName }}{% endblock %}
 
@@ -85,13 +85,13 @@
                                 <i class="ri-user-line me-1"></i> {{ member.username }}
                             </p>
                             <div>
-                                <span class="badge bg-{{ member.state.description == 'ACTIVE' ? 'success' : 'danger' }}-subtle text-{{ member.state.description == 'ACTIVE' ? 'success' : 'danger' }}">
+                                <span class="badge badge-soft-{{ member.state.description == 'ACTIVE' ? 'success' : 'danger' }}">
                                     {{ member.state.description }}
                                 </span>
-                                <span class="badge bg-primary-subtle text-primary ms-1">
+                                <span class="badge badge-soft-primary ms-1">
                                     {{ member.role.name }}
                                 </span>
-                                <span class="badge bg-info-subtle text-info ms-1">
+                                <span class="badge badge-soft-info ms-1">
                                     {{ member.userType.value }}
                                 </span>
                             </div>
@@ -118,14 +118,14 @@
                             <a class="nav-link" data-bs-toggle="tab" href="#tab-profiles" role="tab">
                                 <i class="ri-shield-user-line me-1"></i>
                                 Perfiles
-                                <span class="badge bg-primary-subtle text-primary ms-1">{{ activeProfiles|length }}</span>
+                                <span class="badge badge-soft-primary ms-1">{{ activeProfiles|length }}</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" data-bs-toggle="tab" href="#tab-groups" role="tab">
                                 <i class="ri-group-line me-1"></i>
                                 Grupos
-                                <span class="badge bg-info-subtle text-info ms-1">{{ member.memberGroups|length }}</span>
+                                <span class="badge badge-soft-info ms-1">{{ member.memberGroups|length }}</span>
                             </a>
                         </li>
                     </ul>
@@ -276,15 +276,15 @@
                                                     </div>
                                                     <div>
                                                         {% if profileData.isExcluded %}
-                                                            <span class="badge bg-danger-subtle text-danger origin-badge">
+                                                            <span class="badge badge-soft-danger origin-badge">
                                                                 <i class="ri-close-circle-line"></i> EXCLUIDO
                                                             </span>
                                                         {% elseif profileData.source == 'direct' %}
-                                                            <span class="badge bg-success-subtle text-success origin-badge">
+                                                            <span class="badge badge-soft-success origin-badge">
                                                                 <i class="ri-user-follow-line"></i> Directo
                                                             </span>
                                                         {% else %}
-                                                            <span class="badge bg-info-subtle text-info origin-badge">
+                                                            <span class="badge badge-soft-info origin-badge">
                                                                 <i class="ri-group-line"></i> {{ profileData.groupName }}
                                                             </span>
                                                         {% endif %}
@@ -298,9 +298,9 @@
                                         <div class="alert alert-info">
                                             <strong>Leyenda:</strong>
                                             <ul class="mb-0 mt-2">
-                                                <li><span class="badge bg-success-subtle text-success">Directo</span> - Asignado directamente al usuario</li>
-                                                <li><span class="badge bg-info-subtle text-info">Grupo</span> - Heredado de un grupo</li>
-                                                <li><span class="badge bg-danger-subtle text-danger">EXCLUIDO</span> - Exclusión explícita (estado INACTIVE)</li>
+                                                <li><span class="badge badge-soft-success">Directo</span> - Asignado directamente al usuario</li>
+                                                <li><span class="badge badge-soft-info">Grupo</span> - Heredado de un grupo</li>
+                                                <li><span class="badge badge-soft-danger">EXCLUIDO</span> - Exclusión explícita (estado INACTIVE)</li>
                                             </ul>
                                         </div>
                                     </div>
@@ -347,7 +347,7 @@
                                                         <strong>{{ memberGroup.group.name }}</strong>
                                                         <p class="text-muted mb-0 small">{{ memberGroup.group.description }}</p>
                                                     </div>
-                                                    <span class="badge bg-{{ memberGroup.isActive ? 'success' : 'danger' }}-subtle text-{{ memberGroup.isActive ? 'success' : 'danger' }}">
+                                                    <span class="badge badge-soft-{{ memberGroup.isActive ? 'success' : 'danger' }}">
                                                         {{ memberGroup.isActive ? 'ACTIVO' : 'INACTIVO' }}
                                                     </span>
                                                 </div>
