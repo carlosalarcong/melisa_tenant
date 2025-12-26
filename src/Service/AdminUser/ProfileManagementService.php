@@ -13,7 +13,7 @@ use App\Repository\GroupRepository;
 use App\Repository\ProfileRepository;
 use App\Repository\MemberProfileRepository;
 use App\Repository\MemberGroupRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -27,7 +27,7 @@ use Psr\Log\LoggerInterface;
 class ProfileManagementService
 {
     public function __construct(
-        private EntityManagerInterface $em,
+        private TenantEntityManager $em,
         private ProfileRepository $profileRepository,
         private GroupRepository $groupRepository,
         private MemberProfileRepository $memberProfileRepository,

@@ -7,7 +7,7 @@ namespace App\Service\AdminUser;
 use App\Entity\Tenant\Member;
 use App\Entity\Tenant\PasswordHistory;
 use App\Repository\PasswordHistoryRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -22,7 +22,7 @@ use Psr\Log\LoggerInterface;
 class PasswordManagementService
 {
     public function __construct(
-        private EntityManagerInterface $em,
+        private TenantEntityManager $em,
         private PasswordHistoryRepository $passwordHistoryRepository,
         private LoggerInterface $logger,
         private int $passwordHistoryCount = 5,

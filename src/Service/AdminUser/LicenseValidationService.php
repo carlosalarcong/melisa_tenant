@@ -7,7 +7,7 @@ namespace App\Service\AdminUser;
 use App\Entity\Tenant\Organization;
 use App\Entity\Tenant\License;
 use App\Repository\LicenseRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -19,7 +19,7 @@ class LicenseValidationService
 {
     public function __construct(
         private LicenseRepository $licenseRepository,
-        private EntityManagerInterface $em,
+        private TenantEntityManager $em,
         private LoggerInterface $logger,
         private int $warningThreshold = 5
     ) {}
@@ -40,7 +40,7 @@ class LicenseValidationService
      * Obtener información completa de licencias
      * 
      * @param Organization $tenant
-     * @return array ['total', 'used', 'available', 'needsWarning']
+     * @return array ['total', 'used', 'available', 'needsWarning', 'can_create_user']
      */
     public function getLicenseInfo(Organization $tenant): array
     {
@@ -54,7 +54,8 @@ class LicenseValidationService
                 'total' => 0,
                 'used' => 0,
                 'available' => 0,
-                'needsWarning' => true
+                'needsWarning' => true,
+                'can_create_user' => false
             ];
         }
         
@@ -72,7 +73,8 @@ class LicenseValidationService
             'total' => $usage['total'],
             'used' => $usage['used'],
             'available' => $usage['available'],
-            'needsWarning' => $needsWarning
+            'needsWarning' => $needsWarning,
+            'can_create_user' => $usage['available'] > 0
         ];
     }
 

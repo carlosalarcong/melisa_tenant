@@ -1,4 +1,4 @@
-{% extends 'layout_vertical.html.twig' %}
+{% extends 'admin_layout.html.twig' %}
 
 {% block title %}Ver Usuario - {{ member.person.name }} {{ member.person.lastName }}{% endblock %}
 
@@ -72,10 +72,10 @@
                     <p class="text-muted mb-3">{{ member.username }}</p>
 
                     <div class="mb-3">
-                        <span class="badge bg-primary-subtle text-primary me-1">
+                        <span class="badge badge-soft-primary me-1">
                             <i class="ri-shield-user-line me-1"></i>{{ member.role.name }}
                         </span>
-                        <span class="badge bg-info-subtle text-info">
+                        <span class="badge badge-soft-info">
                             <i class="ri-user-line me-1"></i>{{ member.userType.value }}
                         </span>
                     </div>
@@ -275,7 +275,7 @@
                 <div class="card-header">
                     <h5 class="card-title mb-0">
                         <i class="ri-shield-user-line me-1"></i> Perfiles Asignados
-                        <span class="badge bg-primary-subtle text-primary ms-2">{{ activeProfiles|length }}</span>
+                        <span class="badge badge-soft-primary ms-2">{{ activeProfiles|length }}</span>
                     </h5>
                 </div>
                 <div class="card-body">
@@ -317,7 +317,7 @@
                                                         <i class="ri-close-circle-line"></i> EXCLUIDO
                                                     </span>
                                                 {% else %}
-                                                    <span class="badge bg-success-subtle text-success">
+                                                    <span class="badge badge-soft-success">
                                                         <i class="ri-checkbox-circle-line"></i> Activo
                                                     </span>
                                                 {% endif %}
@@ -347,7 +347,7 @@
                 <div class="card-header">
                     <h5 class="card-title mb-0">
                         <i class="ri-group-line me-1"></i> Grupos
-                        <span class="badge bg-info-subtle text-info ms-2">{{ member.memberGroups|length }}</span>
+                        <span class="badge badge-soft-info ms-2">{{ member.memberGroups|length }}</span>
                     </h5>
                 </div>
                 <div class="card-body">
@@ -375,7 +375,7 @@
                                                     <p class="text-muted mb-0 small">{{ memberGroup.group.description }}</p>
                                                 </div>
                                                 <div class="flex-shrink-0">
-                                                    <span class="badge bg-{{ memberGroup.isActive ? 'success' : 'danger' }}-subtle text-{{ memberGroup.isActive ? 'success' : 'danger' }}">
+                                                    <span class="badge badge-soft-{{ memberGroup.isActive ? 'success' : 'danger' }}">
                                                         {{ memberGroup.isActive ? 'ACTIVO' : 'INACTIVO' }}
                                                     </span>
                                                 </div>

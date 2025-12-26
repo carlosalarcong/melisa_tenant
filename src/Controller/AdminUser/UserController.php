@@ -11,7 +11,7 @@ use App\Entity\Tenant\Role;
 use App\Entity\Tenant\State;
 use App\Repository\MemberRepository;
 use App\Service\AdminUser\LicenseValidationService;
-use Doctrine\ORM\EntityManagerInterface;
+use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -24,7 +24,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class UserController extends AbstractTenantAwareController
 {
     public function __construct(
-        private EntityManagerInterface $em,
+        private TenantEntityManager $em,
         private MemberRepository $memberRepository,
         private LicenseValidationService $licenseService
     ) {}
@@ -40,7 +40,7 @@ class UserController extends AbstractTenantAwareController
         
         if (!$organization) {
             $this->addFlash('error', 'No se pudo cargar la organización');
-            return $this->redirectToRoute('dashboard');
+            return $this->redirectToRoute('app_dashboard_default');
         }
 
         // Obtener filtros de búsqueda
@@ -76,11 +76,9 @@ class UserController extends AbstractTenantAwareController
      */
     private function getOrganization(): ?Organization
     {
-        $tenant = $this->getTenant();
-        
-        // Buscar organización por el tenant
-        // Asumiendo que el tenant tiene un ID de organización
-        return $this->em->getRepository(Organization::class)->find($tenant['id'] ?? 1);
+        // Buscar la primera organización activa
+        // En producción, esto debería venir del tenant context
+        return $this->em->getRepository(Organization::class)->findOneBy(['state' => $this->getActiveState()]);
     }
 
     /**

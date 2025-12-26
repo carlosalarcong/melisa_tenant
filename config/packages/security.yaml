@@ -44,6 +44,7 @@ security:
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/tenants, roles: PUBLIC_ACCESS }
         - { path: ^/reset-password, roles: PUBLIC_ACCESS }
+        - { path: ^/admin/users, roles: ROLE_ADMIN }
         - { path: ^/settings, roles: ROLE_ADMIN }
         - { path: ^/, roles: ROLE_USER }
 
