@@ -1,0 +1,64 @@
+parameters:
+    # Configuración del módulo de Administración de Usuarios
+    
+    # Validación de contraseñas
+    admin_user.password.min_length: 8
+    admin_user.password.require_uppercase: true
+    admin_user.password.require_lowercase: true
+    admin_user.password.require_numbers: true
+    admin_user.password.require_special_chars: false
+    admin_user.password.history_count: 5  # Últimas N contraseñas no reutilizables
+    admin_user.password.expiration_days: 90  # Días antes de expirar contraseña
+    
+    # Licencias
+    admin_user.license.check_enabled: true
+    admin_user.license.warning_threshold: 5  # Avisar cuando queden X licencias
+    
+    # Bloqueo de cuentas
+    admin_user.security.max_failed_attempts: 5
+    admin_user.security.lockout_duration_minutes: 30
+    
+    # Sesiones
+    admin_user.session.force_logout_on_password_change: true
+    admin_user.session.force_logout_on_permission_change: true
+    
+    # Zoom Integration
+    admin_user.zoom.enabled: '%env(bool:ZOOM_INTEGRATION_ENABLED)%'
+    admin_user.zoom.api_key: '%env(default::ZOOM_API_KEY)%'
+    admin_user.zoom.api_secret: '%env(default::ZOOM_API_SECRET)%'
+    
+    # Fotos de perfil
+    admin_user.photo.upload_directory: '%kernel.project_dir%/public/uploads/user_photos'
+    admin_user.photo.max_size_mb: 5
+    admin_user.photo.allowed_extensions: ['jpg', 'jpeg', 'png', 'gif']
+    
+    # Exportación
+    admin_user.export.max_records: 10000
+    admin_user.export.temp_directory: '%kernel.project_dir%/var/exports'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        bind:
+            # Bind parameters for easy injection
+            $passwordMinLength: '%admin_user.password.min_length%'
+            $passwordHistoryCount: '%admin_user.password.history_count%'
+            $passwordExpirationDays: '%admin_user.password.expiration_days%'
+            $maxFailedAttempts: '%admin_user.security.max_failed_attempts%'
+            $photoUploadDirectory: '%admin_user.photo.upload_directory%'
+            $zoomEnabled: '%admin_user.zoom.enabled%'
+
+    # Services
+    App\Service\AdminUser\:
+        resource: '../../src/Service/AdminUser'
+
+    # Controllers
+    App\Controller\AdminUser\:
+        resource: '../../src/Controller/AdminUser'
+        tags: ['controller.service_arguments']
+
+    # Validators
+    App\Validator\Constraints\:
+        resource: '../../src/Validator/Constraints'
+        tags: ['validator.constraint_validator']
