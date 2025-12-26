@@ -68,8 +68,9 @@ class UserCreateController extends AbstractTenantAwareController
 
         // Si es petición AJAX, devolver solo el formulario
         if ($request->isXmlHttpRequest()) {
-            return $this->render('admin_user/create_form.html.twig', [
+            return $this->render('admin_user/user_form.html.twig', [
                 'form' => $form->createView(),
+                'is_edit' => false,
                 'licenseInfo' => $licenseInfo,
                 'organization' => $organization,
             ]);

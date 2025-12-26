@@ -86,7 +86,16 @@ class UserEditController extends AbstractTenantAwareController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            return $this->handleEdit($form->getData(), $member);
+            return $this->handleEdit($form->getData(), $member, $request);
+        }
+        
+        // Si es petición AJAX, devolver solo el formulario
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('admin_user/user_form.html.twig', [
+                'form' => $form->createView(),
+                'is_edit' => true,
+                'member' => $member,
+            ]);
         }
         
         // Obtener perfiles y grupos del usuario
@@ -116,7 +125,7 @@ class UserEditController extends AbstractTenantAwareController
     /**
      * Procesa la edición del usuario
      */
-    private function handleEdit(array $formData, Member $member): Response
+    private function handleEdit(array $formData, Member $member, Request $request): Response
     {
         try {
             // Preparar datos completos
@@ -145,10 +154,29 @@ class UserEditController extends AbstractTenantAwareController
             $this->userManagement->updateUser($member, $data);
 
             $this->addFlash('success', 'Usuario actualizado exitosamente');
+            
+            // Si es petición AJAX, devolver JSON
+            if ($request->isXmlHttpRequest()) {
+                return $this->json([
+                    'success' => true,
+                    'message' => 'Usuario actualizado exitosamente',
+                    'userId' => $member->getId()
+                ]);
+            }
+            
             return $this->redirectToRoute('admin_user_view', ['id' => $member->getId()]);
 
         } catch (\Exception $e) {
             $this->addFlash('error', 'Error al actualizar usuario: ' . $e->getMessage());
+            
+            // Si es petición AJAX, devolver JSON con error
+            if ($request->isXmlHttpRequest()) {
+                return $this->json([
+                    'success' => false,
+                    'message' => 'Error al actualizar usuario: ' . $e->getMessage()
+                ], 400);
+            }
+            
             return $this->redirectToRoute('admin_user_edit', ['id' => $member->getId()]);
         }
     }
