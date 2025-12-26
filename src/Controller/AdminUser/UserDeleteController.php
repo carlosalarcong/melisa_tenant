@@ -6,6 +6,7 @@ namespace App\Controller\AdminUser;
 
 use App\Controller\AbstractTenantAwareController;
 use App\Entity\Tenant\Organization;
+use App\Entity\Tenant\State;
 use App\Repository\MemberRepository;
 use App\Service\AdminUser\UserManagementService;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
@@ -76,7 +77,15 @@ class UserDeleteController extends AbstractTenantAwareController
      */
     private function getOrganization(): ?Organization
     {
-        $tenant = $this->getTenant();
-        return $this->em->getRepository(Organization::class)->find($tenant['id'] ?? 1);
+        // Buscar la primera organización activa
+        return $this->em->getRepository(Organization::class)->findOneBy(['state' => $this->getActiveState()]);
+    }
+
+    /**
+     * Obtiene el estado ACTIVE
+     */
+    private function getActiveState(): ?State
+    {
+        return $this->em->getRepository(State::class)->findOneBy(['name' => 'ACTIVE']);
     }
 }
