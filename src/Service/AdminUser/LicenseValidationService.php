@@ -6,6 +6,7 @@ namespace App\Service\AdminUser;
 
 use App\Entity\Tenant\Organization;
 use App\Entity\Tenant\License;
+use App\Repository\LicenseRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -17,6 +18,7 @@ use Psr\Log\LoggerInterface;
 class LicenseValidationService
 {
     public function __construct(
+        private LicenseRepository $licenseRepository,
         private EntityManagerInterface $em,
         private LoggerInterface $logger,
         private int $warningThreshold = 5
@@ -42,29 +44,9 @@ class LicenseValidationService
      */
     public function getLicenseInfo(Organization $tenant): array
     {
-        $conn = $this->em->getConnection();
+        $usage = $this->licenseRepository->getLicenseUsage($tenant);
         
-        // Query atómico con FOR UPDATE para prevenir race conditions
-        $sql = "
-            SELECT 
-                l.cantidad_licencias as total,
-                COUNT(DISTINCT u.id_usuario_rebsol) as used
-            FROM licencia l
-            LEFT JOIN persona p ON p.id_empresa = l.id_empresa
-            LEFT JOIN usuarios_rebsol u ON u.id_persona = p.id_persona 
-                AND u.id_estado_usuario = (
-                    SELECT id_estado FROM estado WHERE nombre = 'ACTIVO' LIMIT 1
-                )
-            WHERE l.id_empresa = :tenantId
-            GROUP BY l.cantidad_licencias
-            FOR UPDATE
-        ";
-        
-        $stmt = $conn->prepare($sql);
-        $result = $stmt->executeQuery(['tenantId' => $tenant->getId()]);
-        $data = $result->fetchAssociative();
-        
-        if (!$data) {
+        if ($usage['total'] === 0) {
             $this->logger->warning('No se encontró información de licencias', [
                 'tenantId' => $tenant->getId()
             ]);
@@ -76,23 +58,20 @@ class LicenseValidationService
             ];
         }
         
-        $total = (int) $data['total'];
-        $used = (int) $data['used'];
-        $available = $total - $used;
-        $needsWarning = $available <= $this->warningThreshold;
+        $needsWarning = $usage['available'] <= $this->warningThreshold;
         
-        if ($needsWarning && $available > 0) {
+        if ($needsWarning && $usage['available'] > 0) {
             $this->logger->warning('Pocas licencias disponibles', [
                 'tenantId' => $tenant->getId(),
-                'available' => $available,
+                'available' => $usage['available'],
                 'threshold' => $this->warningThreshold
             ]);
         }
         
         return [
-            'total' => $total,
-            'used' => $used,
-            'available' => $available,
+            'total' => $usage['total'],
+            'used' => $usage['used'],
+            'available' => $usage['available'],
             'needsWarning' => $needsWarning
         ];
     }
@@ -118,8 +97,7 @@ class LicenseValidationService
      */
     public function getLicenseLimit(Organization $tenant): int
     {
-        $license = $this->em->getRepository(License::class)
-            ->findOneBy(['organization' => $tenant]);
+        $license = $this->licenseRepository->findByOrganization($tenant);
         
         return $license ? $license->getQuantity() : 0;
     }

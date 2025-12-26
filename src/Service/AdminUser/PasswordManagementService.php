@@ -6,6 +6,7 @@ namespace App\Service\AdminUser;
 
 use App\Entity\Tenant\Member;
 use App\Entity\Tenant\PasswordHistory;
+use App\Repository\PasswordHistoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -22,6 +23,7 @@ class PasswordManagementService
 {
     public function __construct(
         private EntityManagerInterface $em,
+        private PasswordHistoryRepository $passwordHistoryRepository,
         private LoggerInterface $logger,
         private int $passwordHistoryCount = 5,
         private int $passwordExpirationDays = 90
@@ -65,16 +67,11 @@ class PasswordManagementService
     public function isPasswordValid(Member $member, string $plainPassword): bool
     {
         try {
-            $repo = $this->em->getRepository(PasswordHistory::class);
-            
             // Obtener últimas N contraseñas del historial
-            $oldPasswords = $repo->createQueryBuilder('ph')
-                ->where('ph.member = :member')
-                ->setParameter('member', $member)
-                ->orderBy('ph.createdAt', 'DESC')
-                ->setMaxResults($this->passwordHistoryCount)
-                ->getQuery()
-                ->getResult();
+            $oldPasswords = $this->passwordHistoryRepository->getLastPasswords(
+                $member,
+                $this->passwordHistoryCount
+            );
             
             // Verificar contra cada contraseña del historial
             foreach ($oldPasswords as $passwordHistory) {
@@ -143,26 +140,10 @@ class PasswordManagementService
     private function cleanOldPasswords(Member $member): void
     {
         try {
-            $repo = $this->em->getRepository(PasswordHistory::class);
-            
-            // Obtener todos los registros ordenados por fecha
-            $allPasswords = $repo->createQueryBuilder('ph')
-                ->where('ph.member = :member')
-                ->setParameter('member', $member)
-                ->orderBy('ph.createdAt', 'DESC')
-                ->getQuery()
-                ->getResult();
-            
-            // Si hay más de N, eliminar los más antiguos
-            if (count($allPasswords) > $this->passwordHistoryCount) {
-                $toDelete = array_slice($allPasswords, $this->passwordHistoryCount);
-                
-                foreach ($toDelete as $oldPassword) {
-                    $this->em->remove($oldPassword);
-                }
-                
-                $this->em->flush();
-            }
+            $this->passwordHistoryRepository->deleteOldPasswords(
+                $member,
+                $this->passwordHistoryCount
+            );
             
         } catch (\Exception $e) {
             $this->logger->error('Error al limpiar historial de contraseñas', [
