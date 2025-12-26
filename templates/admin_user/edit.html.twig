@@ -1,0 +1,407 @@
+{% extends 'layout_vertical.html.twig' %}
+
+{% block title %}Editar Usuario - {{ member.person.name }} {{ member.person.lastName }}{% endblock %}
+
+{% block page_css %}
+    <style>
+        .profile-item, .group-item {
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+        }
+        .profile-item.excluded {
+            background: #ffe0e0;
+            border-left: 4px solid #dc3545;
+        }
+        .profile-item.direct {
+            border-left: 4px solid #0ab39c;
+        }
+        .profile-item.inherited {
+            border-left: 4px solid #299cdb;
+        }
+        .origin-badge {
+            font-size: 11px;
+            padding: 3px 8px;
+        }
+        .form-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .form-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #dee2e6;
+        }
+        .nav-tabs .nav-link {
+            font-weight: 500;
+        }
+        .tab-content {
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Title -->
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                <h4 class="mb-sm-0">Editar Usuario</h4>
+                <div class="page-title-right">
+                    <ol class="breadcrumb m-0">
+                        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ path('admin_user_index') }}">Usuarios</a></li>
+                        <li class="breadcrumb-item active">Editar</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Header -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-height-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <img src="{{ asset('assets/images/users/user-dummy-img.jpg') }}" alt="" class="avatar-lg rounded-circle">
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h5 class="mb-1">{{ member.person.name }} {{ member.person.lastName }}</h5>
+                            <p class="text-muted mb-1">
+                                <i class="ri-mail-line me-1"></i> {{ member.person.email }}
+                                <span class="mx-2">•</span>
+                                <i class="ri-user-line me-1"></i> {{ member.username }}
+                            </p>
+                            <div>
+                                <span class="badge bg-{{ member.state.description == 'ACTIVE' ? 'success' : 'danger' }}-subtle text-{{ member.state.description == 'ACTIVE' ? 'success' : 'danger' }}">
+                                    {{ member.state.description }}
+                                </span>
+                                <span class="badge bg-primary-subtle text-primary ms-1">
+                                    {{ member.role.name }}
+                                </span>
+                                <span class="badge bg-info-subtle text-info ms-1">
+                                    {{ member.userType.value }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs-custom card-header-tabs border-bottom-0" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#tab-basic" role="tab">
+                                <i class="ri-user-settings-line me-1"></i>
+                                Datos Básicos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#tab-profiles" role="tab">
+                                <i class="ri-shield-user-line me-1"></i>
+                                Perfiles
+                                <span class="badge bg-primary-subtle text-primary ms-1">{{ activeProfiles|length }}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#tab-groups" role="tab">
+                                <i class="ri-group-line me-1"></i>
+                                Grupos
+                                <span class="badge bg-info-subtle text-info ms-1">{{ member.memberGroups|length }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content">
+                        <!-- Tab: Datos Básicos -->
+                        <div class="tab-pane active" id="tab-basic" role="tabpanel">
+                            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': true}}) }}
+                                <!-- Datos Personales -->
+                                <div class="form-section">
+                                    <div class="form-section-title">
+                                        <i class="ri-user-line me-1"></i> Datos Personales
+                                    </div>
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <label class="form-label">{{ form_label(form.identification) }} <span class="text-danger">*</span></label>
+                                            {{ form_widget(form.identification, {'attr': {'class': 'form-control', 'readonly': true}}) }}
+                                            {{ form_errors(form.identification) }}
+                                            <div class="form-text">RUT no puede ser modificado</div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label">{{ form_label(form.name) }} <span class="text-danger">*</span></label>
+                                            {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+                                            {{ form_errors(form.name) }}
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label">{{ form_label(form.lastName) }} <span class="text-danger">*</span></label>
+                                            {{ form_widget(form.lastName, {'attr': {'class': 'form-control'}}) }}
+                                            {{ form_errors(form.lastName) }}
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label">{{ form_label(form.email) }} <span class="text-danger">*</span></label>
+                                            {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                                            {{ form_errors(form.email) }}
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label">{{ form_label(form.phones) }}</label>
+                                            {{ form_widget(form.phones, {'attr': {'class': 'form-control'}}) }}
+                                            {{ form_errors(form.phones) }}
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label">{{ form_label(form.birthDateAt) }}</label>
+                                            {{ form_widget(form.birthDateAt, {'attr': {'class': 'form-control'}}) }}
+                                            {{ form_errors(form.birthDateAt) }}
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label">{{ form_label(form.gender) }} <span class="text-danger">*</span></label>
+                                            {{ form_widget(form.gender, {'attr': {'class': 'form-select'}}) }}
+                                            {{ form_errors(form.gender) }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Datos de Usuario -->
+                                <div class="form-section">
+                                    <div class="form-section-title">
+                                        <i class="ri-key-line me-1"></i> Datos de Usuario
+                                    </div>
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <label class="form-label">{{ form_label(form.username) }} <span class="text-danger">*</span></label>
+                                            {{ form_widget(form.username, {'attr': {'class': 'form-control', 'readonly': true}}) }}
+                                            {{ form_errors(form.username) }}
+                                            <div class="form-text">Username no puede ser modificado</div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label">{{ form_label(form.userType) }} <span class="text-danger">*</span></label>
+                                            {{ form_widget(form.userType, {'attr': {'class': 'form-select'}}) }}
+                                            {{ form_errors(form.userType) }}
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label">{{ form_label(form.state) }} <span class="text-danger">*</span></label>
+                                            {{ form_widget(form.state, {'attr': {'class': 'form-select'}}) }}
+                                            {{ form_errors(form.state) }}
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <label class="form-label">{{ form_label(form.role) }} <span class="text-danger">*</span></label>
+                                            {{ form_widget(form.role, {'attr': {'class': 'form-select'}}) }}
+                                            {{ form_errors(form.role) }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Nueva Contraseña (Opcional) -->
+                                <div class="form-section">
+                                    <div class="form-section-title">
+                                        <i class="ri-lock-password-line me-1"></i> Cambiar Contraseña (Opcional)
+                                    </div>
+                                    <div class="alert alert-info">
+                                        <i class="ri-information-line me-2"></i>
+                                        Deja estos campos vacíos si no deseas cambiar la contraseña
+                                    </div>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">{{ form_label(form.password.first) }}</label>
+                                            {{ form_widget(form.password.first, {'attr': {'class': 'form-control'}}) }}
+                                            {{ form_errors(form.password.first) }}
+                                            <div class="form-text">Mínimo 8 caracteres</div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">{{ form_label(form.password.second) }}</label>
+                                            {{ form_widget(form.password.second, {'attr': {'class': 'form-control'}}) }}
+                                            {{ form_errors(form.password.second) }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-between">
+                                    <a href="{{ path('admin_user_index') }}" class="btn btn-light">
+                                        <i class="ri-arrow-left-line me-1"></i> Cancelar
+                                    </a>
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="ri-save-line me-1"></i> Guardar Cambios
+                                    </button>
+                                </div>
+                            {{ form_end(form) }}
+                        </div>
+
+                        <!-- Tab: Perfiles -->
+                        <div class="tab-pane" id="tab-profiles" role="tabpanel">
+                            <div class="row">
+                                <!-- Current Profiles -->
+                                <div class="col-lg-6">
+                                    <h5 class="mb-3">Perfiles Actuales</h5>
+                                    {% if activeProfiles is empty %}
+                                        <div class="alert alert-warning">
+                                            <i class="ri-alert-line me-2"></i>
+                                            Este usuario no tiene perfiles asignados
+                                        </div>
+                                    {% else %}
+                                        {% for profileData in activeProfiles %}
+                                            <div class="profile-item {{ profileData.isExcluded ? 'excluded' : (profileData.source == 'direct' ? 'direct' : 'inherited') }}">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <strong>{{ profileData.profile.name }}</strong>
+                                                        <p class="text-muted mb-1 small">{{ profileData.profile.description }}</p>
+                                                    </div>
+                                                    <div>
+                                                        {% if profileData.isExcluded %}
+                                                            <span class="badge bg-danger-subtle text-danger origin-badge">
+                                                                <i class="ri-close-circle-line"></i> EXCLUIDO
+                                                            </span>
+                                                        {% elseif profileData.source == 'direct' %}
+                                                            <span class="badge bg-success-subtle text-success origin-badge">
+                                                                <i class="ri-user-follow-line"></i> Directo
+                                                            </span>
+                                                        {% else %}
+                                                            <span class="badge bg-info-subtle text-info origin-badge">
+                                                                <i class="ri-group-line"></i> {{ profileData.groupName }}
+                                                            </span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+
+                                    <div class="mt-3">
+                                        <div class="alert alert-info">
+                                            <strong>Leyenda:</strong>
+                                            <ul class="mb-0 mt-2">
+                                                <li><span class="badge bg-success-subtle text-success">Directo</span> - Asignado directamente al usuario</li>
+                                                <li><span class="badge bg-info-subtle text-info">Grupo</span> - Heredado de un grupo</li>
+                                                <li><span class="badge bg-danger-subtle text-danger">EXCLUIDO</span> - Exclusión explícita (estado INACTIVE)</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Assign/Modify Profiles -->
+                                <div class="col-lg-6">
+                                    <h5 class="mb-3">Modificar Perfiles</h5>
+                                    {{ form_start(profileForm) }}
+                                        <div class="alert alert-warning">
+                                            <i class="ri-error-warning-line me-2"></i>
+                                            <strong>Importante:</strong> Si desmarcas un perfil heredado de un grupo, se creará una <strong>exclusión explícita</strong>.
+                                        </div>
+
+                                        {{ form_widget(profileForm.profiles) }}
+                                        {{ form_errors(profileForm.profiles) }}
+
+                                        <div class="mt-3">
+                                            <button type="submit" class="btn btn-primary w-100">
+                                                <i class="ri-save-line me-1"></i> Guardar Perfiles
+                                            </button>
+                                        </div>
+                                    {{ form_end(profileForm) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab: Grupos -->
+                        <div class="tab-pane" id="tab-groups" role="tabpanel">
+                            <div class="row">
+                                <!-- Current Groups -->
+                                <div class="col-lg-6">
+                                    <h5 class="mb-3">Grupos Actuales</h5>
+                                    {% if member.memberGroups is empty %}
+                                        <div class="alert alert-warning">
+                                            <i class="ri-alert-line me-2"></i>
+                                            Este usuario no pertenece a ningún grupo
+                                        </div>
+                                    {% else %}
+                                        {% for memberGroup in member.memberGroups %}
+                                            <div class="group-item">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <strong>{{ memberGroup.group.name }}</strong>
+                                                        <p class="text-muted mb-0 small">{{ memberGroup.group.description }}</p>
+                                                    </div>
+                                                    <span class="badge bg-{{ memberGroup.isActive ? 'success' : 'danger' }}-subtle text-{{ memberGroup.isActive ? 'success' : 'danger' }}">
+                                                        {{ memberGroup.isActive ? 'ACTIVO' : 'INACTIVO' }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+
+                                <!-- Assign/Modify Groups -->
+                                <div class="col-lg-6">
+                                    <h5 class="mb-3">Modificar Grupos</h5>
+                                    {{ form_start(groupForm) }}
+                                        {{ form_widget(groupForm.groups) }}
+                                        {{ form_errors(groupForm.groups) }}
+
+                                        <div class="mt-3">
+                                            <button type="submit" class="btn btn-primary w-100">
+                                                <i class="ri-save-line me-1"></i> Guardar Grupos
+                                            </button>
+                                        </div>
+                                    {{ form_end(groupForm) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_js %}
+<script>
+    $(document).ready(function() {
+        // Form validation
+        (function () {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation')
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+
+        // Highlight changed checkboxes
+        $('input[type="checkbox"]').on('change', function() {
+            $(this).closest('.form-check').toggleClass('bg-warning-subtle', this.checked !== this.defaultChecked);
+        });
+    });
+</script>
+{% endblock %}
