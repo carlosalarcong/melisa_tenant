@@ -252,7 +252,7 @@
                                                         </a>
                                                     </li>
                                                     <li>
-                                                        <a class="dropdown-item" href="{{ path('admin_user_edit', {id: member.id}) }}">
+                                                        <a class="dropdown-item" href="#" onclick="openEditModal({{ member.id }}); return false;">
                                                             <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Editar
                                                         </a>
                                                     </li>
@@ -294,11 +294,33 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                {% include 'admin_user/create_form.html.twig' with {
+                {% include 'admin_user/user_form.html.twig' with {
                     'form': createForm,
+                    'is_edit': false,
                     'licenseInfo': licenseInfo,
                     'organization': organization
                 } only %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="ri-pencil-line me-2"></i>Editar Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center py-5" id="editModalLoader">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <p class="mt-3 text-muted">Cargando formulario...</p>
+                </div>
+                <div id="editModalContent" style="display:none;"></div>
             </div>
         </div>
     </div>
@@ -400,6 +422,100 @@
             $('#activateForm').attr('action', '{{ path('admin_user_activate', {id: '__ID__'}) }}'.replace('__ID__', id));
             $('#activateToken').val('{{ csrf_token('activate_user_') }}' + id);
             new bootstrap.Modal(document.getElementById('activateModal')).show();
+        }
+
+        // Open edit modal and load form via AJAX
+        function openEditModal(userId) {
+            const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+            modal.show();
+            
+            // Reset modal content
+            $('#editModalLoader').show();
+            $('#editModalContent').hide().html('');
+            
+            // Load form via AJAX
+            $.ajax({
+                url: '{{ path('admin_user_edit', {id: '__ID__'}) }}'.replace('__ID__', userId),
+                type: 'GET',
+                success: function(response) {
+                    $('#editModalLoader').hide();
+                    $('#editModalContent').html(response).show();
+                    initializeEditForm();
+                },
+                error: function(xhr) {
+                    $('#editModalLoader').hide();
+                    let errorMsg = 'Error al cargar el formulario de edición.';
+                    if (xhr.status === 404) {
+                        errorMsg = 'Usuario no encontrado.';
+                    }
+                    $('#editModalContent').html(
+                        '<div class="alert alert-danger"><i class="ri-error-warning-line me-2"></i>' + errorMsg + '</div>'
+                    ).show();
+                }
+            });
+        }
+
+        // Reset edit modal on close
+        $('#editUserModal').on('hidden.bs.modal', function () {
+            $('#editModalLoader').show();
+            $('#editModalContent').hide().html('');
+        });
+
+        function initializeEditForm() {
+            // Form submit via AJAX
+            const form = document.querySelector('#editUserModal form');
+            if (form) {
+                $(form).on('submit', function(e) {
+                    e.preventDefault();
+                    
+                    if (!form.checkValidity()) {
+                        form.classList.add('was-validated');
+                        
+                        // Show first tab with errors
+                        const firstError = form.querySelector('.is-invalid');
+                        if (firstError) {
+                            const tabPane = firstError.closest('.tab-pane');
+                            if (tabPane) {
+                                const tabId = tabPane.getAttribute('id');
+                                document.querySelector('[href="#' + tabId + '"]').click();
+                            }
+                        }
+                        return false;
+                    }
+
+                    // Submit via AJAX
+                    const formData = new FormData(form);
+                    const submitBtn = $(form).find('button[type="submit"]');
+                    const originalText = submitBtn.html();
+                    
+                    submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Guardando...');
+
+                    $.ajax({
+                        url: form.action,
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(response) {
+                            if (response.success) {
+                                $('#editUserModal').modal('hide');
+                                showToast('success', response.message);
+                                
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 1500);
+                            }
+                        },
+                        error: function(xhr) {
+                            const response = xhr.responseJSON;
+                            showToast('error', response?.message || 'Error al actualizar el usuario');
+                            submitBtn.prop('disabled', false).html(originalText);
+                        }
+                    });
+                    
+                    return false;
+                });
+            }
         }
 
         // Initialize create form when modal opens
