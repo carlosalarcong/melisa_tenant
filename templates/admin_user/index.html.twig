@@ -111,9 +111,9 @@
                         <h5 class="card-title mb-0 flex-grow-1">Listado de Usuarios</h5>
                         <div class="flex-shrink-0">
                             {% if licenseInfo.can_create_user %}
-                                <a href="{{ path('admin_user_create') }}" class="btn btn-success">
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createUserModal">
                                     <i class="ri-add-line align-bottom me-1"></i> Nuevo Usuario
-                                </a>
+                                </button>
                             {% else %}
                                 <button class="btn btn-secondary" disabled title="No hay licencias disponibles">
                                     <i class="ri-add-line align-bottom me-1"></i> Nuevo Usuario
@@ -285,6 +285,25 @@
     </div>
 </div>
 
+<!-- Create User Modal -->
+<div class="modal fade" id="createUserModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="ri-user-add-line me-2"></i>Crear Nuevo Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                {% include 'admin_user/create_form.html.twig' with {
+                    'form': createForm,
+                    'licenseInfo': licenseInfo,
+                    'organization': organization
+                } only %}
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Delete Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
@@ -381,6 +400,154 @@
             $('#activateForm').attr('action', '{{ path('admin_user_activate', {id: '__ID__'}) }}'.replace('__ID__', id));
             $('#activateToken').val('{{ csrf_token('activate_user_') }}' + id);
             new bootstrap.Modal(document.getElementById('activateModal')).show();
+        }
+
+        // Initialize create form when modal opens
+        $('#createUserModal').on('shown.bs.modal', function () {
+            initializeCreateForm();
+        });
+
+        // Reset form when modal closes
+        $('#createUserModal').on('hidden.bs.modal', function () {
+            const form = $(this).find('form')[0];
+            if (form) {
+                form.reset();
+                form.classList.remove('was-validated');
+                $('#password-strength').addClass('d-none');
+            }
+        });
+
+        function initializeCreateForm() {
+            // Password strength meter
+            $('#password-field').on('keyup', function() {
+                const password = $(this).val();
+                if (password.length > 0) {
+                    $('#password-strength').removeClass('d-none');
+                    const strength = calculatePasswordStrength(password);
+                    updateStrengthMeter(strength);
+                } else {
+                    $('#password-strength').addClass('d-none');
+                }
+            });
+
+            // Form submit via AJAX
+            const form = document.querySelector('#createUserModal form');
+            if (form) {
+                $(form).on('submit', function(e) {
+                    e.preventDefault();
+                    
+                    if (!form.checkValidity()) {
+                        form.classList.add('was-validated');
+                        
+                        // Show first tab with errors
+                        const firstError = form.querySelector('.is-invalid');
+                        if (firstError) {
+                            const tabPane = firstError.closest('.tab-pane');
+                            if (tabPane) {
+                                const tabId = tabPane.getAttribute('id');
+                                $('[href="#' + tabId + '"]').tab('show');
+                            }
+                        }
+                        return false;
+                    }
+
+                    // Submit via AJAX
+                    const formData = new FormData(form);
+                    const submitBtn = $(form).find('button[type="submit"]');
+                    const originalText = submitBtn.html();
+                    
+                    submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Guardando...');
+
+                    $.ajax({
+                        url: form.action,
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                $('#createUserModal').modal('hide');
+                                
+                                // Show success message with toast
+                                showToast('success', response.message);
+                                
+                                // Reload page after short delay
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 1500);
+                            }
+                        },
+                        error: function(xhr) {
+                            const response = xhr.responseJSON;
+                            showToast('error', response?.message || 'Error al crear el usuario');
+                            submitBtn.prop('disabled', false).html(originalText);
+                        }
+                    });
+                    
+                    return false;
+                });
+            }
+        }
+
+        function calculatePasswordStrength(password) {
+            let strength = 0;
+            if (password.length >= 8) strength += 25;
+            if (password.length >= 12) strength += 25;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength += 25;
+            if (/\d/.test(password)) strength += 15;
+            if (/[^a-zA-Z\d]/.test(password)) strength += 10;
+            return Math.min(strength, 100);
+        }
+
+        function updateStrengthMeter(strength) {
+            const bar = $('#password-strength-bar');
+            const text = $('#password-strength-text');
+            
+            bar.css('width', strength + '%');
+            bar.removeClass('bg-danger bg-warning bg-info bg-success');
+            
+            if (strength < 40) {
+                bar.addClass('bg-danger');
+                text.text('Débil').removeClass().addClass('text-danger fw-medium');
+            } else if (strength < 60) {
+                bar.addClass('bg-warning');
+                text.text('Media').removeClass().addClass('text-warning fw-medium');
+            } else if (strength < 80) {
+                bar.addClass('bg-info');
+                text.text('Buena').removeClass().addClass('text-info fw-medium');
+            } else {
+                bar.addClass('bg-success');
+                text.text('Excelente').removeClass().addClass('text-success fw-medium');
+            }
+        }
+
+        function showToast(type, message) {
+            const bgClass = type === 'success' ? 'bg-success' : 'bg-danger';
+            const icon = type === 'success' ? 'ri-checkbox-circle-line' : 'ri-error-warning-line';
+            
+            const toast = $(`
+                <div class="position-fixed top-0 end-0 p-3" style="z-index: 11000;">
+                    <div class="toast align-items-center text-white ${bgClass} border-0" role="alert">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <i class="${icon} me-2"></i>${message}
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                        </div>
+                    </div>
+                </div>
+            `);
+            
+            $('body').append(toast);
+            const toastEl = new bootstrap.Toast(toast.find('.toast')[0]);
+            toastEl.show();
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
         }
     </script>
 {% endblock %}

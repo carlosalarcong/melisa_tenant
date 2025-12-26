@@ -60,12 +60,22 @@ class UserCreateController extends AbstractTenantAwareController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            return $this->handleCreate($form->getData(), $organization);
+            return $this->handleCreate($form->getData(), $organization, $request);
         }
 
         // Obtener información de licencias para mostrar
         $licenseInfo = $this->licenseService->getLicenseInfo($organization);
 
+        // Si es petición AJAX, devolver solo el formulario
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('admin_user/create_form.html.twig', [
+                'form' => $form->createView(),
+                'licenseInfo' => $licenseInfo,
+                'organization' => $organization,
+            ]);
+        }
+
+        // Devolver vista completa con layout
         return $this->render('admin_user/create.html.twig', [
             'form' => $form->createView(),
             'licenseInfo' => $licenseInfo,
@@ -76,7 +86,7 @@ class UserCreateController extends AbstractTenantAwareController
     /**
      * Procesa la creación del usuario
      */
-    private function handleCreate(array $formData, Organization $organization): Response
+    private function handleCreate(array $formData, Organization $organization, Request $request): Response
     {
         try {
             // Preparar datos completos del usuario
@@ -109,10 +119,30 @@ class UserCreateController extends AbstractTenantAwareController
             );
 
             $this->addFlash('success', 'Usuario creado exitosamente');
+            
+            // Si es petición AJAX, devolver JSON
+            if ($request->isXmlHttpRequest()) {
+                return $this->json([
+                    'success' => true,
+                    'message' => 'Usuario creado exitosamente',
+                    'userId' => $member->getId(),
+                    'redirect' => $this->generateUrl('admin_user_index')
+                ]);
+            }
+            
             return $this->redirectToRoute('admin_user_view', ['id' => $member->getId()]);
 
         } catch (\Exception $e) {
             $this->addFlash('error', 'Error al crear usuario: ' . $e->getMessage());
+            
+            // Si es petición AJAX, devolver JSON con error
+            if ($request->isXmlHttpRequest()) {
+                return $this->json([
+                    'success' => false,
+                    'message' => 'Error al crear usuario: ' . $e->getMessage()
+                ], 400);
+            }
+            
             return $this->redirectToRoute('admin_user_create');
         }
     }
