@@ -9,6 +9,7 @@ use App\Entity\Tenant\Member;
 use App\Entity\Tenant\Organization;
 use App\Entity\Tenant\Role;
 use App\Entity\Tenant\State;
+use App\Form\Type\AdminUser\UserType;
 use App\Repository\MemberRepository;
 use App\Service\AdminUser\LicenseValidationService;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
@@ -61,6 +62,12 @@ class UserController extends AbstractTenantAwareController
         $states = $this->em->getRepository(State::class)->findAll();
         $roles = $this->em->getRepository(Role::class)->findBy(['state' => $this->getActiveState()]);
 
+        // Crear formulario de creación para el modal
+        $createForm = $this->createForm(UserType::class, null, [
+            'is_edit' => false,
+            'require_password' => true,
+        ]);
+
         return $this->render('admin_user/index.html.twig', [
             'members' => $members,
             'filters' => $filters,
@@ -68,6 +75,7 @@ class UserController extends AbstractTenantAwareController
             'roles' => $roles,
             'licenseInfo' => $licenseInfo,
             'organization' => $organization,
+            'createForm' => $createForm->createView(),
         ]);
     }
 
