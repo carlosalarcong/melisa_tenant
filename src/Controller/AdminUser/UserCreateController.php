@@ -10,6 +10,7 @@ use App\Entity\Tenant\Organization;
 use App\Entity\Tenant\Person;
 use App\Entity\Tenant\Role;
 use App\Entity\Tenant\State;
+use App\Form\Type\AdminUser\UserType;
 use App\Repository\GenderRepository;
 use App\Service\AdminUser\LicenseValidationService;
 use App\Service\AdminUser\UserManagementService;
@@ -50,19 +51,23 @@ class UserCreateController extends AbstractTenantAwareController
             return $this->redirectToRoute('admin_user_index');
         }
 
-        // Procesar formulario POST
-        if ($request->isMethod('POST')) {
-            return $this->handleCreate($request, $organization);
+        // Crear formulario
+        $form = $this->createForm(UserType::class, null, [
+            'is_edit' => false,
+            'require_password' => true,
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            return $this->handleCreate($form->getData(), $organization);
         }
 
-        // Obtener datos para el formulario
-        $roles = $this->em->getRepository(Role::class)->findBy(['state' => $this->getActiveState()]);
-        $genders = $this->genderRepository->findAll();
+        // Obtener información de licencias para mostrar
         $licenseInfo = $this->licenseService->getLicenseInfo($organization);
 
         return $this->render('admin_user/create.html.twig', [
-            'roles' => $roles,
-            'genders' => $genders,
+            'form' => $form->createView(),
             'licenseInfo' => $licenseInfo,
             'organization' => $organization,
         ]);
@@ -71,38 +76,27 @@ class UserCreateController extends AbstractTenantAwareController
     /**
      * Procesa la creación del usuario
      */
-    private function handleCreate(Request $request, Organization $organization): Response
+    private function handleCreate(array $formData, Organization $organization): Response
     {
         try {
-            // Validar datos requeridos
-            $errors = $this->validateCreateData($request);
-            if (!empty($errors)) {
-                foreach ($errors as $error) {
-                    $this->addFlash('error', $error);
-                }
-                return $this->redirectToRoute('admin_user_create');
-            }
-
             // Preparar datos completos del usuario
             $data = [
                 // Person data
-                'identification' => $request->request->get('identification'),
-                'name' => $request->request->get('name'),
-                'lastName' => $request->request->get('lastName'),
-                'email' => $request->request->get('email'),
-                'phones' => $request->request->get('phones', ''),
-                'birthDateAt' => $request->request->get('birthDateAt') 
-                    ? new \DateTimeImmutable($request->request->get('birthDateAt'))
-                    : null,
-                'gender_id' => (int) $request->request->get('gender_id'),
+                'identification' => $formData['identification'],
+                'name' => $formData['name'],
+                'lastName' => $formData['lastName'],
+                'email' => $formData['email'],
+                'phones' => $formData['phones'] ?? '',
+                'birthDateAt' => $formData['birthDateAt'] ?? null,
+                'gender_id' => $formData['gender']?->getId(),
                 // Member data
-                'username' => $request->request->get('username'),
-                'password' => $request->request->get('password'),
-                'role_id' => (int) $request->request->get('role_id'),
+                'username' => $formData['username'],
+                'password' => $formData['password'],
+                'role_id' => $formData['role']?->getId(),
             ];
 
             // Determinar tipo de usuario
-            $userTypeStr = $request->request->get('userType');
+            $userTypeStr = $formData['userType'];
             $userType = $userTypeStr === 'PROFESSIONAL' 
                 ? \App\Enum\UserTypeEnum::PROFESSIONAL 
                 : \App\Enum\UserTypeEnum::ADMINISTRATIVE;
@@ -121,53 +115,6 @@ class UserCreateController extends AbstractTenantAwareController
             $this->addFlash('error', 'Error al crear usuario: ' . $e->getMessage());
             return $this->redirectToRoute('admin_user_create');
         }
-    }
-
-    /**
-     * Valida los datos del formulario
-     */
-    private function validateCreateData(Request $request): array
-    {
-        $errors = [];
-
-        // Campos requeridos
-        $required = [
-            'identification' => 'RUT/Identificación',
-            'name' => 'Nombre',
-            'lastName' => 'Apellido',
-            'email' => 'Email',
-            'username' => 'Nombre de usuario',
-            'password' => 'Contraseña',
-            'userType' => 'Tipo de usuario',
-            'role_id' => 'Rol',
-            'gender_id' => 'Género',
-        ];
-
-        foreach ($required as $field => $label) {
-            if (empty($request->request->get($field))) {
-                $errors[] = "El campo {$label} es requerido";
-            }
-        }
-
-        // Validar email
-        $email = $request->request->get('email');
-        if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'El email no es válido';
-        }
-
-        // Validar contraseña
-        $password = $request->request->get('password');
-        $passwordConfirm = $request->request->get('password_confirm');
-        
-        if ($password && strlen($password) < 8) {
-            $errors[] = 'La contraseña debe tener al menos 8 caracteres';
-        }
-
-        if ($password !== $passwordConfirm) {
-            $errors[] = 'Las contraseñas no coinciden';
-        }
-
-        return $errors;
     }
 
     /**

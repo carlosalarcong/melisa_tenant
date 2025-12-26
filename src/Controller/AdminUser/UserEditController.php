@@ -9,6 +9,9 @@ use App\Entity\Tenant\Member;
 use App\Entity\Tenant\Organization;
 use App\Entity\Tenant\Role;
 use App\Entity\Tenant\State;
+use App\Form\Type\AdminUser\GroupAssignmentType;
+use App\Form\Type\AdminUser\ProfileAssignmentType;
+use App\Form\Type\AdminUser\UserType;
 use App\Repository\GenderRepository;
 use App\Repository\MemberRepository;
 use App\Service\AdminUser\ProfileManagementService;
@@ -59,25 +62,51 @@ class UserEditController extends AbstractTenantAwareController
             return $this->redirectToRoute('admin_user_index');
         }
 
-        // Procesar formulario POST
-        if ($request->isMethod('POST')) {
-            return $this->handleEdit($request, $member);
-        }
+        // Preparar datos iniciales del formulario
+        $formData = [
+            'identification' => $member->getPerson()->getIdentification(),
+            'name' => $member->getPerson()->getName(),
+            'lastName' => $member->getPerson()->getLastName(),
+            'email' => $member->getEmail(),
+            'phones' => $member->getPerson()->getPhones(),
+            'birthDateAt' => $member->getPerson()->getBirthDateAt(),
+            'gender' => $member->getPerson()->getGender(),
+            'username' => $member->getUsername(),
+            'userType' => $member->getUserType(),
+            'role' => $member->getRole(),
+            'state' => $member->getState(),
+        ];
 
-        // Obtener datos para el formulario
-        $roles = $this->em->getRepository(Role::class)->findBy(['state' => $this->getActiveState()]);
-        $genders = $this->genderRepository->findAll();
-        $states = $this->em->getRepository(State::class)->findAll();
+        // Crear formulario
+        $form = $this->createForm(UserType::class, $formData, [
+            'is_edit' => true,
+            'require_password' => false,
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            return $this->handleEdit($form->getData(), $member);
+        }
         
         // Obtener perfiles y grupos del usuario
         $memberProfiles = $this->profileManagement->getActiveProfiles($member);
         $memberGroups = $this->profileManagement->getMemberGroups($member);
 
+        // Formularios de perfiles y grupos
+        $profileForm = $this->createForm(ProfileAssignmentType::class, null, [
+            'organization' => $organization,
+        ]);
+        
+        $groupForm = $this->createForm(GroupAssignmentType::class, null, [
+            'organization' => $organization,
+        ]);
+
         return $this->render('admin_user/edit.html.twig', [
+            'form' => $form->createView(),
+            'profileForm' => $profileForm->createView(),
+            'groupForm' => $groupForm->createView(),
             'member' => $member,
-            'roles' => $roles,
-            'genders' => $genders,
-            'states' => $states,
             'memberProfiles' => $memberProfiles,
             'memberGroups' => $memberGroups,
             'organization' => $organization,
@@ -87,59 +116,33 @@ class UserEditController extends AbstractTenantAwareController
     /**
      * Procesa la edición del usuario
      */
-    private function handleEdit(Request $request, Member $member): Response
+    private function handleEdit(array $formData, Member $member): Response
     {
         try {
-            // Validar datos requeridos
-            $errors = $this->validateEditData($request);
-            if (!empty($errors)) {
-                foreach ($errors as $error) {
-                    $this->addFlash('error', $error);
-                }
-                return $this->redirectToRoute('admin_user_edit', ['id' => $member->getId()]);
-            }
-
-            $person = $member->getPerson();
-
             // Preparar datos completos
             $data = [
                 // Person data
-                'identification' => $request->request->get('identification'),
-                'name' => $request->request->get('name'),
-                'lastName' => $request->request->get('lastName'),
-                'email' => $request->request->get('email'),
-                'phones' => $request->request->get('phones', ''),
-                'birthDateAt' => $request->request->get('birthDateAt') 
-                    ? new \DateTimeImmutable($request->request->get('birthDateAt'))
-                    : null,
-                'gender_id' => (int) $request->request->get('gender_id'),
+                'identification' => $formData['identification'],
+                'name' => $formData['name'],
+                'lastName' => $formData['lastName'],
+                'email' => $formData['email'],
+                'phones' => $formData['phones'] ?? '',
+                'birthDateAt' => $formData['birthDateAt'] ?? null,
+                'gender_id' => $formData['gender']?->getId(),
                 // Member data
-                'username' => $request->request->get('username'),
-                'userType' => $request->request->get('userType'),
-                'role_id' => (int) $request->request->get('role_id'),
-                'state_id' => (int) $request->request->get('state_id'),
+                'username' => $formData['username'],
+                'userType' => $formData['userType'],
+                'role_id' => $formData['role']?->getId(),
+                'state_id' => $formData['state']?->getId(),
             ];
 
             // Agregar contraseña solo si se proporcionó
-            $password = $request->request->get('password');
-            if (!empty($password)) {
-                $data['password'] = $password;
+            if (!empty($formData['password'])) {
+                $data['password'] = $formData['password'];
             }
 
             // Actualizar usuario
             $this->userManagement->updateUser($member, $data);
-
-            // Actualizar perfiles y grupos si se proporcionaron
-            $profileIds = $request->request->all('profile_ids') ?? [];
-            $groupIds = $request->request->all('group_ids') ?? [];
-            
-            if (!empty($profileIds)) {
-                $this->profileManagement->updateMemberProfiles($member, $profileIds);
-            }
-            
-            if (!empty($groupIds)) {
-                $this->profileManagement->updateMemberGroups($member, $groupIds);
-            }
 
             $this->addFlash('success', 'Usuario actualizado exitosamente');
             return $this->redirectToRoute('admin_user_view', ['id' => $member->getId()]);
@@ -148,54 +151,6 @@ class UserEditController extends AbstractTenantAwareController
             $this->addFlash('error', 'Error al actualizar usuario: ' . $e->getMessage());
             return $this->redirectToRoute('admin_user_edit', ['id' => $member->getId()]);
         }
-    }
-
-    /**
-     * Valida los datos del formulario
-     */
-    private function validateEditData(Request $request): array
-    {
-        $errors = [];
-
-        // Campos requeridos
-        $required = [
-            'identification' => 'RUT/Identificación',
-            'name' => 'Nombre',
-            'lastName' => 'Apellido',
-            'email' => 'Email',
-            'username' => 'Nombre de usuario',
-            'userType' => 'Tipo de usuario',
-            'role_id' => 'Rol',
-            'gender_id' => 'Género',
-            'state_id' => 'Estado',
-        ];
-
-        foreach ($required as $field => $label) {
-            if (empty($request->request->get($field))) {
-                $errors[] = "El campo {$label} es requerido";
-            }
-        }
-
-        // Validar email
-        $email = $request->request->get('email');
-        if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'El email no es válido';
-        }
-
-        // Validar contraseña si se proporcionó
-        $password = $request->request->get('password');
-        if ($password) {
-            if (strlen($password) < 8) {
-                $errors[] = 'La contraseña debe tener al menos 8 caracteres';
-            }
-
-            $passwordConfirm = $request->request->get('password_confirm');
-            if ($password !== $passwordConfirm) {
-                $errors[] = 'Las contraseñas no coinciden';
-            }
-        }
-
-        return $errors;
     }
 
     /**
