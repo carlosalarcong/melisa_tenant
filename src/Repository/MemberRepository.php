@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Tenant\Member;
+use App\Entity\Tenant\Organization;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -44,6 +45,59 @@ class MemberRepository extends ServiceEntityRepository
             'email' => $result['email'],
             'is_active' => $result['isActive']
         ];
+    }
+
+    /**
+     * Busca miembros por filtros
+     * 
+     * @param Organization $organization
+     * @param array $filters ['search' => string, 'state' => int, 'role' => int, 'userType' => string]
+     * @return Member[]
+     */
+    public function findByFilters(Organization $organization, array $filters = []): array
+    {
+        $qb = $this->createQueryBuilder('m')
+            ->innerJoin('m.person', 'p')
+            ->innerJoin('p.organization', 'o')
+            ->leftJoin('m.state', 's')
+            ->leftJoin('m.role', 'r')
+            ->where('o.id = :organizationId')
+            ->setParameter('organizationId', $organization->getId())
+            ->orderBy('p.lastName', 'ASC')
+            ->addOrderBy('p.name', 'ASC');
+
+        // Filtro de búsqueda (nombre, apellido, email, username)
+        if (!empty($filters['search'])) {
+            $qb->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->like('p.name', ':search'),
+                    $qb->expr()->like('p.lastName', ':search'),
+                    $qb->expr()->like('m.email', ':search'),
+                    $qb->expr()->like('m.username', ':search')
+                )
+            )
+            ->setParameter('search', '%' . $filters['search'] . '%');
+        }
+
+        // Filtro por estado
+        if (!empty($filters['state'])) {
+            $qb->andWhere('s.id = :stateId')
+               ->setParameter('stateId', $filters['state']);
+        }
+
+        // Filtro por rol
+        if (!empty($filters['role'])) {
+            $qb->andWhere('r.id = :roleId')
+               ->setParameter('roleId', $filters['role']);
+        }
+
+        // Filtro por tipo de usuario
+        if (!empty($filters['userType'])) {
+            $qb->andWhere('m.userType = :userType')
+               ->setParameter('userType', $filters['userType']);
+        }
+
+        return $qb->getQuery()->getResult();
     }
 
     //    /**
