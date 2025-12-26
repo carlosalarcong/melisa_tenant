@@ -1,0 +1,258 @@
+{% extends 'layout_vertical.html.twig' %}
+
+{% block title %}Crear Usuario{% endblock %}
+
+{% block page_css %}
+    <style>
+        .form-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .form-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #dee2e6;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Title -->
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                <h4 class="mb-sm-0">Crear Nuevo Usuario</h4>
+                <div class="page-title-right">
+                    <ol class="breadcrumb m-0">
+                        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ path('admin_user_index') }}">Usuarios</a></li>
+                        <li class="breadcrumb-item active">Crear</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- License Warning -->
+    {% if licenseInfo.available <= 5 %}
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-warning alert-border-left alert-dismissible fade show" role="alert">
+                    <i class="ri-alert-line me-3 align-middle fs-16"></i><strong>Atención!</strong> 
+                    Quedan solo <strong>{{ licenseInfo.available }}</strong> licencias disponibles.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Form -->
+    <div class="row">
+        <div class="col-lg-12">
+            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': true}}) }}
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Información del Usuario</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Datos Personales -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <i class="ri-user-line me-1"></i> Datos Personales
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">{{ form_label(form.identification) }} <span class="text-danger">*</span></label>
+                                    {{ form_widget(form.identification, {'attr': {'class': 'form-control', 'placeholder': '12345678-9'}}) }}
+                                    {{ form_errors(form.identification) }}
+                                    <div class="form-text">RUT o identificación única</div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">{{ form_label(form.name) }} <span class="text-danger">*</span></label>
+                                    {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+                                    {{ form_errors(form.name) }}
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">{{ form_label(form.lastName) }} <span class="text-danger">*</span></label>
+                                    {{ form_widget(form.lastName, {'attr': {'class': 'form-control'}}) }}
+                                    {{ form_errors(form.lastName) }}
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">{{ form_label(form.email) }} <span class="text-danger">*</span></label>
+                                    {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'usuario@ejemplo.com'}}) }}
+                                    {{ form_errors(form.email) }}
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">{{ form_label(form.phones) }}</label>
+                                    {{ form_widget(form.phones, {'attr': {'class': 'form-control', 'placeholder': '+56912345678'}}) }}
+                                    {{ form_errors(form.phones) }}
+                                    <div class="form-text">{{ form_help(form.phones) }}</div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">{{ form_label(form.birthDateAt) }}</label>
+                                    {{ form_widget(form.birthDateAt, {'attr': {'class': 'form-control'}}) }}
+                                    {{ form_errors(form.birthDateAt) }}
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">{{ form_label(form.gender) }} <span class="text-danger">*</span></label>
+                                    {{ form_widget(form.gender, {'attr': {'class': 'form-select'}}) }}
+                                    {{ form_errors(form.gender) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Datos de Acceso -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <i class="ri-key-line me-1"></i> Datos de Acceso
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">{{ form_label(form.username) }} <span class="text-danger">*</span></label>
+                                    {{ form_widget(form.username, {'attr': {'class': 'form-control', 'autocomplete': 'off'}}) }}
+                                    {{ form_errors(form.username) }}
+                                    <div class="form-text">Solo letras, números, puntos, guiones. Mínimo 4 caracteres</div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">{{ form_label(form.userType) }} <span class="text-danger">*</span></label>
+                                    {{ form_widget(form.userType, {'attr': {'class': 'form-select'}}) }}
+                                    {{ form_errors(form.userType) }}
+                                </div>
+
+                                <div class="col-md-12">
+                                    <label class="form-label">{{ form_label(form.role) }} <span class="text-danger">*</span></label>
+                                    {{ form_widget(form.role, {'attr': {'class': 'form-select'}}) }}
+                                    {{ form_errors(form.role) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contraseña -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <i class="ri-lock-password-line me-1"></i> Contraseña
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">{{ form_label(form.password.first) }} <span class="text-danger">*</span></label>
+                                    {{ form_widget(form.password.first, {'attr': {'class': 'form-control'}}) }}
+                                    {{ form_errors(form.password.first) }}
+                                    <div class="form-text">Mínimo 8 caracteres</div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">{{ form_label(form.password.second) }} <span class="text-danger">*</span></label>
+                                    {{ form_widget(form.password.second, {'attr': {'class': 'form-control'}}) }}
+                                    {{ form_errors(form.password.second) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Password Strength Indicator -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="password-strength" class="d-none">
+                                    <p class="mb-1">Fortaleza de la contraseña:</p>
+                                    <div class="progress" style="height: 8px;">
+                                        <div id="password-strength-bar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                    <p id="password-strength-text" class="mt-1 text-muted"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ path('admin_user_index') }}" class="btn btn-light">
+                                <i class="ri-arrow-left-line me-1"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="ri-save-line me-1"></i> Guardar Usuario
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_js %}
+<script>
+    $(document).ready(function() {
+        // Password strength meter
+        $('input[type="password"]').on('keyup', function() {
+            const password = $(this).val();
+            if (password.length > 0) {
+                $('#password-strength').removeClass('d-none');
+                const strength = calculatePasswordStrength(password);
+                updateStrengthMeter(strength);
+            } else {
+                $('#password-strength').addClass('d-none');
+            }
+        });
+
+        function calculatePasswordStrength(password) {
+            let strength = 0;
+            if (password.length >= 8) strength += 25;
+            if (password.length >= 12) strength += 25;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength += 25;
+            if (/\d/.test(password)) strength += 15;
+            if (/[^a-zA-Z\d]/.test(password)) strength += 10;
+            return Math.min(strength, 100);
+        }
+
+        function updateStrengthMeter(strength) {
+            const bar = $('#password-strength-bar');
+            const text = $('#password-strength-text');
+            
+            bar.css('width', strength + '%');
+            bar.removeClass('bg-danger bg-warning bg-info bg-success');
+            
+            if (strength < 40) {
+                bar.addClass('bg-danger');
+                text.text('Débil').removeClass().addClass('text-danger');
+            } else if (strength < 60) {
+                bar.addClass('bg-warning');
+                text.text('Media').removeClass().addClass('text-warning');
+            } else if (strength < 80) {
+                bar.addClass('bg-info');
+                text.text('Buena').removeClass().addClass('text-info');
+            } else {
+                bar.addClass('bg-success');
+                text.text('Excelente').removeClass().addClass('text-success');
+            }
+        }
+
+        // Form validation
+        (function () {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation')
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+    });
+</script>
+{% endblock %}
