@@ -51,6 +51,33 @@ class Member implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $passwordChangedAt = null;
+
+    /**
+     * User type: 0 = Clinical Professional, 1 = Administrative
+     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $userType = null;
+
+    /**
+     * Failed login attempts counter
+     */
+    #[ORM\Column(type: 'integer', options: ['default' => 0])]
+    private int $loginAttempts = 0;
+
+    #[ORM\ManyToOne(targetEntity: Person::class)]
+    #[ORM\JoinColumn(name: 'person_id', referencedColumnName: 'id', nullable: true)]
+    private ?Person $person = null;
+
+    #[ORM\ManyToOne(targetEntity: State::class)]
+    #[ORM\JoinColumn(name: 'state_id', referencedColumnName: 'id', nullable: true)]
+    private ?State $state = null;
+
+    #[ORM\ManyToOne(targetEntity: Role::class)]
+    #[ORM\JoinColumn(name: 'role_id', referencedColumnName: 'id', nullable: true)]
+    private ?Role $role = null;
+
     /**
      * @var Collection<int, MemberGroup>
      */
@@ -204,6 +231,84 @@ class Member implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+        return $this;
+    }
+
+    public function getPasswordChangedAt(): ?\DateTimeImmutable
+    {
+        return $this->passwordChangedAt;
+    }
+
+    public function setPasswordChangedAt(?\DateTimeImmutable $passwordChangedAt): static
+    {
+        $this->passwordChangedAt = $passwordChangedAt;
+        return $this;
+    }
+
+    public function getUserType(): ?int
+    {
+        return $this->userType;
+    }
+
+    public function setUserType(?int $userType): static
+    {
+        $this->userType = $userType;
+        return $this;
+    }
+
+    public function getLoginAttempts(): int
+    {
+        return $this->loginAttempts;
+    }
+
+    public function setLoginAttempts(int $loginAttempts): static
+    {
+        $this->loginAttempts = $loginAttempts;
+        return $this;
+    }
+
+    public function incrementLoginAttempts(): static
+    {
+        $this->loginAttempts++;
+        return $this;
+    }
+
+    public function resetLoginAttempts(): static
+    {
+        $this->loginAttempts = 0;
+        return $this;
+    }
+
+    public function getPerson(): ?Person
+    {
+        return $this->person;
+    }
+
+    public function setPerson(?Person $person): static
+    {
+        $this->person = $person;
+        return $this;
+    }
+
+    public function getState(): ?State
+    {
+        return $this->state;
+    }
+
+    public function setState(?State $state): static
+    {
+        $this->state = $state;
+        return $this;
+    }
+
+    public function getRole(): ?Role
+    {
+        return $this->role;
+    }
+
+    public function setRole(?Role $role): static
+    {
+        $this->role = $role;
         return $this;
     }
 
