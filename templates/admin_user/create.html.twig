@@ -4,19 +4,22 @@
 
 {% block page_css %}
     <style>
-        .form-section {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+        .nav-tabs-custom {
+            border-bottom: 2px solid #e9ecef;
         }
-        .form-section-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #495057;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #dee2e6;
+        .nav-tabs-custom .nav-link {
+            border: none;
+            color: #6c757d;
+            padding: 15px 25px;
+            font-weight: 500;
+        }
+        .nav-tabs-custom .nav-link.active {
+            color: #405189;
+            border-bottom: 3px solid #405189;
+        }
+        .tab-icon {
+            font-size: 18px;
+            margin-right: 8px;
         }
     </style>
 {% endblock %}
@@ -30,7 +33,7 @@
                 <h4 class="mb-sm-0">Crear Nuevo Usuario</h4>
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ path('app_dashboard_default') }}">Dashboard</a></li>
                         <li class="breadcrumb-item"><a href="{{ path('admin_user_index') }}">Usuarios</a></li>
                         <li class="breadcrumb-item active">Crear</li>
                     </ol>
@@ -61,128 +64,191 @@
                         <h5 class="card-title mb-0">Información del Usuario</h5>
                     </div>
                     <div class="card-body">
-                        <!-- Datos Personales -->
-                        <div class="form-section">
-                            <div class="form-section-title">
-                                <i class="ri-user-line me-1"></i> Datos Personales
-                            </div>
-                            <div class="row g-3">
-                                <div class="col-md-4">
-                                    <label class="form-label">{{ form_label(form.identification) }} <span class="text-danger">*</span></label>
-                                    {{ form_widget(form.identification, {'attr': {'class': 'form-control', 'placeholder': '12345678-9'}}) }}
-                                    {{ form_errors(form.identification) }}
-                                    <div class="form-text">RUT o identificación única</div>
-                                </div>
+                        <!-- Nav Tabs -->
+                        <ul class="nav nav-tabs nav-tabs-custom mb-4" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#datos-personales" role="tab">
+                                    <i class="ri-user-line tab-icon"></i>
+                                    Datos Personales
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#datos-usuario" role="tab">
+                                    <i class="ri-key-line tab-icon"></i>
+                                    Datos de Usuario
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#datos-institucion" role="tab">
+                                    <i class="ri-building-line tab-icon"></i>
+                                    Datos Institución
+                                </a>
+                            </li>
+                        </ul>
 
-                                <div class="col-md-4">
-                                    <label class="form-label">{{ form_label(form.name) }} <span class="text-danger">*</span></label>
-                                    {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
-                                    {{ form_errors(form.name) }}
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label class="form-label">{{ form_label(form.lastName) }} <span class="text-danger">*</span></label>
-                                    {{ form_widget(form.lastName, {'attr': {'class': 'form-control'}}) }}
-                                    {{ form_errors(form.lastName) }}
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label class="form-label">{{ form_label(form.email) }} <span class="text-danger">*</span></label>
-                                    {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'usuario@ejemplo.com'}}) }}
-                                    {{ form_errors(form.email) }}
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label class="form-label">{{ form_label(form.phones) }}</label>
-                                    {{ form_widget(form.phones, {'attr': {'class': 'form-control', 'placeholder': '+56912345678'}}) }}
-                                    {{ form_errors(form.phones) }}
-                                    <div class="form-text">{{ form_help(form.phones) }}</div>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label class="form-label">{{ form_label(form.birthDateAt) }}</label>
-                                    {{ form_widget(form.birthDateAt, {'attr': {'class': 'form-control'}}) }}
-                                    {{ form_errors(form.birthDateAt) }}
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label class="form-label">{{ form_label(form.gender) }} <span class="text-danger">*</span></label>
-                                    {{ form_widget(form.gender, {'attr': {'class': 'form-select'}}) }}
-                                    {{ form_errors(form.gender) }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Datos de Acceso -->
-                        <div class="form-section">
-                            <div class="form-section-title">
-                                <i class="ri-key-line me-1"></i> Datos de Acceso
-                            </div>
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">{{ form_label(form.username) }} <span class="text-danger">*</span></label>
-                                    {{ form_widget(form.username, {'attr': {'class': 'form-control', 'autocomplete': 'off'}}) }}
-                                    {{ form_errors(form.username) }}
-                                    <div class="form-text">Solo letras, números, puntos, guiones. Mínimo 4 caracteres</div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label class="form-label">{{ form_label(form.userType) }} <span class="text-danger">*</span></label>
-                                    {{ form_widget(form.userType, {'attr': {'class': 'form-select'}}) }}
-                                    {{ form_errors(form.userType) }}
-                                </div>
-
-                                <div class="col-md-12">
-                                    <label class="form-label">{{ form_label(form.role) }} <span class="text-danger">*</span></label>
-                                    {{ form_widget(form.role, {'attr': {'class': 'form-select'}}) }}
-                                    {{ form_errors(form.role) }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Contraseña -->
-                        <div class="form-section">
-                            <div class="form-section-title">
-                                <i class="ri-lock-password-line me-1"></i> Contraseña
-                            </div>
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">{{ form_label(form.password.first) }} <span class="text-danger">*</span></label>
-                                    {{ form_widget(form.password.first, {'attr': {'class': 'form-control'}}) }}
-                                    {{ form_errors(form.password.first) }}
-                                    <div class="form-text">Mínimo 8 caracteres</div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label class="form-label">{{ form_label(form.password.second) }} <span class="text-danger">*</span></label>
-                                    {{ form_widget(form.password.second, {'attr': {'class': 'form-control'}}) }}
-                                    {{ form_errors(form.password.second) }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Password Strength Indicator -->
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div id="password-strength" class="d-none">
-                                    <p class="mb-1">Fortaleza de la contraseña:</p>
-                                    <div class="progress" style="height: 8px;">
-                                        <div id="password-strength-bar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                        <!-- Tab Content -->
+                        <div class="tab-content">
+                            <!-- Tab 1: Datos Personales -->
+                            <div class="tab-pane fade show active" id="datos-personales" role="tabpanel">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">{{ form_label(form.identification) }} <span class="text-danger">*</span></label>
+                                        {{ form_widget(form.identification, {'attr': {'class': 'form-control', 'placeholder': '12345678-9'}}) }}
+                                        {{ form_errors(form.identification) }}
+                                        <div class="form-text">RUT o identificación única</div>
                                     </div>
-                                    <p id="password-strength-text" class="mt-1 text-muted"></p>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label">{{ form_label(form.name) }} <span class="text-danger">*</span></label>
+                                        {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+                                        {{ form_errors(form.name) }}
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label">{{ form_label(form.lastName) }} <span class="text-danger">*</span></label>
+                                        {{ form_widget(form.lastName, {'attr': {'class': 'form-control'}}) }}
+                                        {{ form_errors(form.lastName) }}
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">{{ form_label(form.email) }} <span class="text-danger">*</span></label>
+                                        {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'usuario@ejemplo.com'}}) }}
+                                        {{ form_errors(form.email) }}
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">{{ form_label(form.phones) }}</label>
+                                        {{ form_widget(form.phones, {'attr': {'class': 'form-control', 'placeholder': '+56912345678'}}) }}
+                                        {{ form_errors(form.phones) }}
+                                        <div class="form-text">{{ form_help(form.phones) }}</div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">{{ form_label(form.birthDateAt) }}</label>
+                                        {{ form_widget(form.birthDateAt, {'attr': {'class': 'form-control'}}) }}
+                                        {{ form_errors(form.birthDateAt) }}
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">{{ form_label(form.gender) }} <span class="text-danger">*</span></label>
+                                        {{ form_widget(form.gender, {'attr': {'class': 'form-select'}}) }}
+                                        {{ form_errors(form.gender) }}
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-end mt-4">
+                                    <a href="{{ path('admin_user_index') }}" class="btn btn-light me-2">
+                                        <i class="ri-close-line me-1"></i> Cancelar
+                                    </a>
+                                    <button type="button" class="btn btn-primary" onclick="$('[href=\'#datos-usuario\']').tab('show')">
+                                        Siguiente <i class="ri-arrow-right-line ms-1"></i>
+                                    </button>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div class="card-footer">
-                        <div class="d-flex justify-content-between">
-                            <a href="{{ path('admin_user_index') }}" class="btn btn-light">
-                                <i class="ri-arrow-left-line me-1"></i> Cancelar
-                            </a>
-                            <button type="submit" class="btn btn-success">
-                                <i class="ri-save-line me-1"></i> Guardar Usuario
-                            </button>
+                            <!-- Tab 2: Datos de Usuario -->
+                            <div class="tab-pane fade" id="datos-usuario" role="tabpanel">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">{{ form_label(form.username) }} <span class="text-danger">*</span></label>
+                                        {{ form_widget(form.username, {'attr': {'class': 'form-control', 'autocomplete': 'off'}}) }}
+                                        {{ form_errors(form.username) }}
+                                        <div class="form-text">Solo letras, números, puntos, guiones. Mínimo 4 caracteres</div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">{{ form_label(form.userType) }} <span class="text-danger">*</span></label>
+                                        {{ form_widget(form.userType, {'attr': {'class': 'form-select'}}) }}
+                                        {{ form_errors(form.userType) }}
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <label class="form-label">{{ form_label(form.role) }} <span class="text-danger">*</span></label>
+                                        {{ form_widget(form.role, {'attr': {'class': 'form-select'}}) }}
+                                        {{ form_errors(form.role) }}
+                                    </div>
+
+                                    <div class="col-12">
+                                        <hr class="my-4">
+                                        <h6 class="mb-3"><i class="ri-lock-password-line me-2"></i>Contraseña</h6>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">{{ form_label(form.password.first) }} <span class="text-danger">*</span></label>
+                                        {{ form_widget(form.password.first, {'attr': {'class': 'form-control', 'id': 'password-field'}}) }}
+                                        {{ form_errors(form.password.first) }}
+                                        <div class="form-text">Mínimo 8 caracteres</div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">{{ form_label(form.password.second) }} <span class="text-danger">*</span></label>
+                                        {{ form_widget(form.password.second, {'attr': {'class': 'form-control'}}) }}
+                                        {{ form_errors(form.password.second) }}
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div id="password-strength" class="d-none">
+                                            <p class="mb-1 fw-medium">Fortaleza de la contraseña:</p>
+                                            <div class="progress" style="height: 8px;">
+                                                <div id="password-strength-bar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                            </div>
+                                            <p id="password-strength-text" class="mt-1 text-muted mb-0"></p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-between mt-4">
+                                    <button type="button" class="btn btn-light" onclick="$('[href=\'#datos-personales\']').tab('show')">
+                                        <i class="ri-arrow-left-line me-1"></i> Anterior
+                                    </button>
+                                    <button type="button" class="btn btn-primary" onclick="$('[href=\'#datos-institucion\']').tab('show')">
+                                        Siguiente <i class="ri-arrow-right-line ms-1"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Tab 3: Datos Institución -->
+                            <div class="tab-pane fade" id="datos-institucion" role="tabpanel">
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <div class="alert alert-info">
+                                            <i class="ri-information-line me-2"></i>
+                                            Los datos de institución se configurarán automáticamente según la organización actual.
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <label class="form-label">Organización</label>
+                                        <input type="text" class="form-control" value="{{ app.user.person.organization.name ?? 'Sin organización' }}" disabled readonly>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Estado Inicial</label>
+                                        <input type="text" class="form-control" value="Activo" disabled readonly>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="card bg-light border-0">
+                                            <div class="card-body">
+                                                <h6 class="mb-2"><i class="ri-shield-check-line me-2 text-success"></i>Permisos y Accesos</h6>
+                                                <p class="text-muted mb-0">
+                                                    El usuario tendrá acceso a los módulos según el rol seleccionado en la pestaña "Datos de Usuario".
+                                                    Los perfiles y grupos específicos pueden ser asignados después de crear el usuario.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-between mt-4">
+                                    <button type="button" class="btn btn-light" onclick="$('[href=\'#datos-usuario\']').tab('show')">
+                                        <i class="ri-arrow-left-line me-1"></i> Anterior
+                                    </button>
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="ri-save-line me-1"></i> Guardar Usuario
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -196,7 +262,7 @@
 <script>
     $(document).ready(function() {
         // Password strength meter
-        $('input[type="password"]').on('keyup', function() {
+        $('#password-field').on('keyup', function() {
             const password = $(this).val();
             if (password.length > 0) {
                 $('#password-strength').removeClass('d-none');
@@ -226,16 +292,16 @@
             
             if (strength < 40) {
                 bar.addClass('bg-danger');
-                text.text('Débil').removeClass().addClass('text-danger');
+                text.text('Débil').removeClass().addClass('text-danger fw-medium');
             } else if (strength < 60) {
                 bar.addClass('bg-warning');
-                text.text('Media').removeClass().addClass('text-warning');
+                text.text('Media').removeClass().addClass('text-warning fw-medium');
             } else if (strength < 80) {
                 bar.addClass('bg-info');
-                text.text('Buena').removeClass().addClass('text-info');
+                text.text('Buena').removeClass().addClass('text-info fw-medium');
             } else {
                 bar.addClass('bg-success');
-                text.text('Excelente').removeClass().addClass('text-success');
+                text.text('Excelente').removeClass().addClass('text-success fw-medium');
             }
         }
 
@@ -248,6 +314,16 @@
                     if (!form.checkValidity()) {
                         event.preventDefault()
                         event.stopPropagation()
+                        
+                        // Show first tab with errors
+                        const firstError = form.querySelector('.is-invalid');
+                        if (firstError) {
+                            const tabPane = firstError.closest('.tab-pane');
+                            if (tabPane) {
+                                const tabId = tabPane.getAttribute('id');
+                                $('[href="#' + tabId + '"]').tab('show');
+                            }
+                        }
                     }
                     form.classList.add('was-validated')
                 }, false)
