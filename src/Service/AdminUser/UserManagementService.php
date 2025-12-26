@@ -11,7 +11,7 @@ use App\Entity\Tenant\Person;
 use App\Entity\Tenant\Role;
 use App\Enum\StateEnum;
 use App\Enum\UserTypeEnum;
-use Doctrine\ORM\EntityManagerInterface;
+use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -29,7 +29,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 class UserManagementService
 {
     public function __construct(
-        private EntityManagerInterface $em,
+        private TenantEntityManager $em,
         private UserPasswordHasherInterface $passwordHasher,
         private PasswordManagementService $passwordService,
         private LicenseValidationService $licenseService,

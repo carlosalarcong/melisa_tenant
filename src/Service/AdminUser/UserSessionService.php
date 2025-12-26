@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Service\AdminUser;
 
 use App\Entity\Tenant\Member;
-use Doctrine\ORM\EntityManagerInterface;
+use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -21,7 +21,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 class UserSessionService
 {
     public function __construct(
-        private EntityManagerInterface $em,
+        private TenantEntityManager $em,
         private TokenStorageInterface $tokenStorage,
         private LoggerInterface $logger,
         private int $maxFailedAttempts = 5
