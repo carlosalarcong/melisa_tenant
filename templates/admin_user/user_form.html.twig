@@ -87,48 +87,73 @@
         <!-- Tab 1: Datos Personales -->
         <div class="tab-pane fade show active" id="datos-personales" role="tabpanel">
             <div class="row g-3">
-                <div class="col-md-4">
+                <div class="col-md-6">
+                    <label class="form-label">{{ form_label(form.documentType) }} <span class="text-danger">*</span></label>
+                    {{ form_widget(form.documentType) }}
+                    {{ form_errors(form.documentType) }}
+                </div>
+
+                <div class="col-md-6">
                     <label class="form-label">{{ form_label(form.identification) }} <span class="text-danger">*</span></label>
-                    {{ form_widget(form.identification, {'attr': {'class': 'form-control', 'placeholder': '12345678-9', 'readonly': is_edit}}) }}
+                    {{ form_widget(form.identification, {'attr': {'readonly': is_edit}}) }}
                     {{ form_errors(form.identification) }}
-                    <div class="form-text">{{ is_edit ? 'RUT no puede ser modificado' : 'RUT o identificación única' }}</div>
+                    <div class="form-text">{{ is_edit ? 'Identificación no puede ser modificada' : 'RUT o identificación única' }}</div>
                 </div>
 
                 <div class="col-md-4">
                     <label class="form-label">{{ form_label(form.name) }} <span class="text-danger">*</span></label>
-                    {{ form_widget(form.name, {'attr': {'class': 'form-control', 'data-admin-user--username-generator-target': 'name'}}) }}
+                    {{ form_widget(form.name, {'attr': {'data-admin-user--username-generator-target': 'name'}}) }}
                     {{ form_errors(form.name) }}
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <label class="form-label">{{ form_label(form.lastName) }} <span class="text-danger">*</span></label>
-                    {{ form_widget(form.lastName, {'attr': {'class': 'form-control', 'data-admin-user--username-generator-target': 'lastName'}}) }}
+                    {{ form_widget(form.lastName, {'attr': {'data-admin-user--username-generator-target': 'lastName'}}) }}
                     {{ form_errors(form.lastName) }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">{{ form_label(form.secondLastName) }}</label>
+                    {{ form_widget(form.secondLastName) }}
+                    {{ form_errors(form.secondLastName) }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">{{ form_label(form.gender) }} <span class="text-danger">*</span></label>
+                    {{ form_widget(form.gender) }}
+                    {{ form_errors(form.gender) }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">{{ form_label(form.birthDateAt) }}</label>
+                    {{ form_widget(form.birthDateAt) }}
+                    {{ form_errors(form.birthDateAt) }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">{{ form_label(form.mobilePhone) }} <span class="text-danger">*</span></label>
+                    {{ form_widget(form.mobilePhone) }}
+                    {{ form_errors(form.mobilePhone) }}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">{{ form_label(form.landlinePhone) }}</label>
+                    {{ form_widget(form.landlinePhone) }}
+                    {{ form_errors(form.landlinePhone) }}
+                    <div class="form-text">Teléfono fijo opcional</div>
                 </div>
 
                 <div class="col-md-6">
                     <label class="form-label">{{ form_label(form.email) }} <span class="text-danger">*</span></label>
-                    {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'usuario@ejemplo.com'}}) }}
+                    {{ form_widget(form.email) }}
                     {{ form_errors(form.email) }}
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label">{{ form_label(form.phones) }}</label>
-                    {{ form_widget(form.phones, {'attr': {'class': 'form-control', 'placeholder': '+56912345678'}}) }}
-                    {{ form_errors(form.phones) }}
-                    <div class="form-text">{{ form_help(form.phones) }}</div>
-                </div>
-
-                <div class="col-md-6">
-                    <label class="form-label">{{ form_label(form.birthDateAt) }}</label>
-                    {{ form_widget(form.birthDateAt, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_errors(form.birthDateAt) }}
-                </div>
-
-                <div class="col-md-6">
-                    <label class="form-label">{{ form_label(form.gender) }} <span class="text-danger">*</span></label>
-                    {{ form_widget(form.gender, {'attr': {'class': 'form-select'}}) }}
-                    {{ form_errors(form.gender) }}
+                    <label class="form-label">{{ form_label(form.secondEmail) }}</label>
+                    {{ form_widget(form.secondEmail) }}
+                    {{ form_errors(form.secondEmail) }}
+                    <div class="form-text">Email secundario opcional</div>
                 </div>
             </div>
 
