@@ -9,7 +9,7 @@ use App\Entity\Tenant\Branch;
 use App\Entity\Tenant\Department;
 use App\Entity\Tenant\MedicalService;
 use App\Entity\Tenant\State;
-use Doctrine\ORM\EntityManagerInterface;
+use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class LocationCascadeController extends AbstractTenantAwareController
 {
     public function __construct(
-        private EntityManagerInterface $em
+        private TenantEntityManager $em
     ) {}
 
     /**
