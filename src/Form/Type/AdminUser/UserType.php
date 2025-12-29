@@ -9,6 +9,13 @@ use App\Entity\Tenant\IdentificationType;
 use App\Entity\Tenant\Member;
 use App\Entity\Tenant\Role;
 use App\Entity\Tenant\State;
+use App\Entity\Tenant\Position;
+use App\Entity\Tenant\ProfessionalType;
+use App\Entity\Tenant\Branch;
+use App\Entity\Tenant\Department;
+use App\Entity\Tenant\MedicalService;
+use App\Entity\Tenant\MedicalSpecialty;
+use App\Entity\Tenant\HealthInsurance;
 use App\Enum\UserTypeEnum;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -17,7 +24,9 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -343,6 +352,168 @@ class UserType extends AbstractType
             'mapped' => false,
             'help' => $isEdit ? 'Dejar vacío si no desea cambiar la contraseña' : 'Se genera automáticamente o puede ingresarla manualmente',
         ]);
+
+        // === DATOS INSTITUCIÓN (solo para crear) ===
+
+        if (!$isEdit) {
+            $builder
+                ->add('position', EntityType::class, [
+                    'label' => 'Cargo Institución',
+                    'class' => Position::class,
+                    'choice_label' => 'name',
+                    'required' => true,
+                    'placeholder' => 'Seleccionar Cargo',
+                    'attr' => [
+                        'class' => 'form-select',
+                    ],
+                    'mapped' => false,
+                ])
+                ->add('branch', EntityType::class, [
+                    'label' => 'Sucursal',
+                    'class' => Branch::class,
+                    'choice_label' => 'name',
+                    'required' => true,
+                    'placeholder' => 'Seleccionar Sucursal',
+                    'attr' => [
+                        'class' => 'form-select',
+                    ],
+                    'mapped' => false,
+                ])
+                ->add('department', EntityType::class, [
+                    'label' => 'Unidad',
+                    'class' => Department::class,
+                    'choice_label' => 'name',
+                    'required' => true,
+                    'placeholder' => 'Seleccionar Unidad',
+                    'attr' => [
+                        'class' => 'form-select',
+                        'disabled' => true,
+                    ],
+                    'mapped' => false,
+                ])
+                ->add('medicalService', EntityType::class, [
+                    'label' => 'Servicio',
+                    'class' => MedicalService::class,
+                    'choice_label' => 'name',
+                    'required' => true,
+                    'placeholder' => 'Seleccionar Servicio',
+                    'attr' => [
+                        'class' => 'form-select',
+                        'disabled' => true,
+                    ],
+                    'mapped' => false,
+                ]);
+        }
+
+        // === CAMPOS PROFESIONALES (cuando userType es Médico/Clínico) ===
+
+        $builder
+            ->add('professionalType', EntityType::class, [
+                'label' => 'Tipo de Profesional',
+                'class' => ProfessionalType::class,
+                'choice_label' => 'name',
+                'required' => false,
+                'placeholder' => 'Seleccionar Tipo Profesional',
+                'attr' => [
+                    'class' => 'form-select',
+                ],
+                'mapped' => false,
+            ])
+            ->add('specialties', EntityType::class, [
+                'label' => 'Especialidad',
+                'class' => MedicalSpecialty::class,
+                'choice_label' => 'name',
+                'required' => false,
+                'multiple' => true,
+                'expanded' => false,
+                'attr' => [
+                    'class' => 'form-select',
+                    'data-placeholder' => 'Seleccione una Especialidad',
+                ],
+                'mapped' => false,
+            ])
+            ->add('healthInsurances', EntityType::class, [
+                'label' => 'Previsión',
+                'class' => HealthInsurance::class,
+                'choice_label' => 'name',
+                'required' => false,
+                'multiple' => true,
+                'expanded' => false,
+                'attr' => [
+                    'class' => 'form-select',
+                    'data-placeholder' => 'Seleccione una Previsión',
+                ],
+                'mapped' => false,
+            ])
+            ->add('rcm', TextType::class, [
+                'label' => 'RCM',
+                'required' => false,
+                'attr' => [
+                    'placeholder' => 'Ingrese RCM',
+                    'class' => 'form-control',
+                    'maxlength' => 100,
+                ],
+            ])
+            ->add('superintendentRegistry', TextType::class, [
+                'label' => 'Registro Superintendencia',
+                'required' => false,
+                'attr' => [
+                    'placeholder' => 'Ingrese Registro SuperIntendencia',
+                    'class' => 'form-control',
+                    'maxlength' => 100,
+                ],
+            ])
+            ->add('observation', TextareaType::class, [
+                'label' => 'Observación General',
+                'required' => false,
+                'attr' => [
+                    'placeholder' => 'Ingrese Observación',
+                    'class' => 'form-control',
+                    'rows' => 3,
+                    'maxlength' => 5000,
+                ],
+            ])
+            ->add('webObservation', TextareaType::class, [
+                'label' => 'Observación Web',
+                'required' => false,
+                'attr' => [
+                    'placeholder' => 'Ingrese Observación',
+                    'class' => 'form-control',
+                    'rows' => 3,
+                    'maxlength' => 5000,
+                ],
+            ])
+            ->add('overbookingQuantity', IntegerType::class, [
+                'label' => 'Cantidad Sobrecupo',
+                'required' => false,
+                'data' => 0,
+                'attr' => [
+                    'class' => 'form-control',
+                    'min' => 0,
+                    'max' => 10,
+                ],
+                'constraints' => [
+                    new Assert\Range([
+                        'min' => 0,
+                        'max' => 10,
+                        'notInRangeMessage' => 'El sobrecupo debe estar entre {{ min }} y {{ max }}',
+                    ]),
+                ],
+            ])
+            ->add('isEmergencyProfessional', CheckboxType::class, [
+                'label' => 'Profesional Urgencia por defecto',
+                'required' => false,
+                'attr' => [
+                    'class' => 'form-check-input',
+                ],
+            ])
+            ->add('isIntegrationProfessional', CheckboxType::class, [
+                'label' => 'Profesional Integración por defecto',
+                'required' => false,
+                'attr' => [
+                    'class' => 'form-check-input',
+                ],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
