@@ -57,7 +57,7 @@
     {% endif %}
 {% endif %}
 
-{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': true, 'data-controller': 'admin-user--username-generator admin-user--rut-validator admin-user--password-generator admin-user--expiration-date'}}) }}
+{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': true, 'data-controller': 'admin-user--username-generator admin-user--rut-validator admin-user--password-generator admin-user--expiration-date admin-user--location-cascade'}}) }}
     <!-- Nav Tabs -->
     <ul class="nav nav-tabs nav-tabs-custom mb-4" role="tablist">
         <li class="nav-item">
@@ -358,6 +358,119 @@
                     <div class="col-md-6">
                         <label class="form-label">Organización</label>
                         <input type="text" class="form-control" value="{{ organization.name ?? 'Sin organización' }}" disabled readonly>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">{{ form_label(form.position) }} <span class="text-danger">*</span></label>
+                        {{ form_widget(form.position) }}
+                        {{ form_errors(form.position) }}
+                    </div>
+
+                    <div class="col-12 mt-4">
+                        <h6 class="mb-3"><i class="ri-map-pin-line me-2 text-primary"></i>Ubicación y Servicios</h6>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">{{ form_label(form.branch) }} <span class="text-danger">*</span></label>
+                        {{ form_widget(form.branch, {'attr': {
+                            'data-admin-user--location-cascade-target': 'branch',
+                            'data-action': 'change->admin-user--location-cascade#loadDepartments'
+                        }}) }}
+                        {{ form_errors(form.branch) }}
+                        <div class="form-text">Seleccione la sucursal principal</div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">{{ form_label(form.department) }} <span class="text-danger">*</span></label>
+                        {{ form_widget(form.department, {'attr': {
+                            'data-admin-user--location-cascade-target': 'department',
+                            'data-action': 'change->admin-user--location-cascade#loadServices'
+                        }}) }}
+                        {{ form_errors(form.department) }}
+                        <div class="form-text">Depende de la sucursal</div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">{{ form_label(form.medicalService) }} <span class="text-danger">*</span></label>
+                        {{ form_widget(form.medicalService, {'attr': {
+                            'data-admin-user--location-cascade-target': 'service'
+                        }}) }}
+                        {{ form_errors(form.medicalService) }}
+                        <div class="form-text">Depende de la unidad</div>
+                    </div>
+
+                    <div class="col-12 mt-4">
+                        <h6 class="mb-3"><i class="ri-stethoscope-line me-2 text-info"></i>Datos Profesionales (Opcional para Médicos)</h6>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">{{ form_label(form.professionalType) }}</label>
+                        {{ form_widget(form.professionalType) }}
+                        {{ form_errors(form.professionalType) }}
+                        <div class="form-text">Interno, Externo o Mixto</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">{{ form_label(form.rcm) }}</label>
+                        {{ form_widget(form.rcm) }}
+                        {{ form_errors(form.rcm) }}
+                        <div class="form-text">Registro Médico</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">{{ form_label(form.specialties) }}</label>
+                        {{ form_widget(form.specialties, {'attr': {'class': 'form-select', 'multiple': 'multiple', 'size': '4'}}) }}
+                        {{ form_errors(form.specialties) }}
+                        <div class="form-text">Puede seleccionar múltiples</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">{{ form_label(form.healthInsurances) }}</label>
+                        {{ form_widget(form.healthInsurances, {'attr': {'class': 'form-select', 'multiple': 'multiple', 'size': '4'}}) }}
+                        {{ form_errors(form.healthInsurances) }}
+                        <div class="form-text">Previsiones aceptadas</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">{{ form_label(form.superintendentRegistry) }}</label>
+                        {{ form_widget(form.superintendentRegistry) }}
+                        {{ form_errors(form.superintendentRegistry) }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">{{ form_label(form.overbookingQuantity) }}</label>
+                        {{ form_widget(form.overbookingQuantity) }}
+                        {{ form_errors(form.overbookingQuantity) }}
+                        <div class="form-text">Cantidad permitida de sobrecupo (0-10)</div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label">{{ form_label(form.observation) }}</label>
+                        {{ form_widget(form.observation) }}
+                        {{ form_errors(form.observation) }}
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label">{{ form_label(form.webObservation) }}</label>
+                        {{ form_widget(form.webObservation) }}
+                        {{ form_errors(form.webObservation) }}
+                    </div>
+
+                    <div class="col-12 mt-3">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    {{ form_widget(form.isEmergencyProfessional, {'attr': {'class': 'form-check-input', 'role': 'switch'}}) }}
+                                    {{ form_label(form.isEmergencyProfessional, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    {{ form_widget(form.isIntegrationProfessional, {'attr': {'class': 'form-check-input', 'role': 'switch'}}) }}
+                                    {{ form_label(form.isIntegrationProfessional, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="col-md-6">
