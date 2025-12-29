@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\AdminUser\Ajax;
 
 use App\Controller\AbstractTenantAwareController;
-use App\Entity\Tenant\Group;
 use App\Entity\Tenant\Organization;
-use App\Entity\Tenant\Profile;
 use App\Entity\Tenant\Role;
 use App\Entity\Tenant\State;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,65 +23,8 @@ class UserAjaxController extends AbstractTenantAwareController
         private EntityManagerInterface $em
     ) {}
 
-    /**
-     * Obtener perfiles disponibles
-     */
-    #[Route('/profiles', name: 'admin_user_ajax_profiles', methods: ['GET'])]
-    public function getProfiles(Request $request): JsonResponse
-    {
-        $organization = $this->getOrganization();
-        
-        if (!$organization) {
-            return $this->json(['error' => 'Organización no encontrada'], 404);
-        }
-
-        $activeState = $this->getActiveState();
-        
-        $profiles = $this->em->getRepository(Profile::class)->findBy([
-            'organization' => $organization,
-            'state' => $activeState
-        ]);
-
-        $data = array_map(function(Profile $profile) {
-            return [
-                'id' => $profile->getId(),
-                'name' => $profile->getName(),
-                'description' => $profile->getDescription(),
-            ];
-        }, $profiles);
-
-        return $this->json($data);
-    }
-
-    /**
-     * Obtener grupos disponibles
-     */
-    #[Route('/groups', name: 'admin_user_ajax_groups', methods: ['GET'])]
-    public function getGroups(Request $request): JsonResponse
-    {
-        $organization = $this->getOrganization();
-        
-        if (!$organization) {
-            return $this->json(['error' => 'Organización no encontrada'], 404);
-        }
-
-        $activeState = $this->getActiveState();
-        
-        $groups = $this->em->getRepository(Group::class)->findBy([
-            'organization' => $organization,
-            'state' => $activeState
-        ]);
-
-        $data = array_map(function(Group $group) {
-            return [
-                'id' => $group->getId(),
-                'name' => $group->getName(),
-                'description' => $group->getDescription(),
-            ];
-        }, $groups);
-
-        return $this->json($data);
-    }
+    // NOTA: Los métodos getProfiles() y getGroups() fueron eliminados
+    // porque las entidades Profile y Group ya no existen en el proyecto
 
     /**
      * Obtener roles disponibles
