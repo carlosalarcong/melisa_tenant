@@ -338,192 +338,251 @@
         {% if not is_edit %}
             <!-- Tab 3: Datos Institución (solo para crear) -->
             <div class="tab-pane fade" id="datos-institucion" role="tabpanel">
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label">{{ form_label(form.role) }} <span class="text-danger">*</span></label>
-                        {{ form_widget(form.role, {'attr': {
-                            'class': 'form-select',
-                            'data-admin-user--role-toggle-target': 'role',
-                            'data-action': 'change->admin-user--role-toggle#onRoleChange'
-                        }}) }}
-                        {{ form_errors(form.role) }}
+                <!-- Sección: Rol y Cargo -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-light border-bottom">
+                        <h6 class="mb-0"><i class="ri-shield-user-line me-2 text-primary"></i>Rol y Cargo Institucional</h6>
                     </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">{{ form_label(form.position) }} <span class="text-danger">*</span></label>
-                        {{ form_widget(form.position) }}
-                        {{ form_errors(form.position) }}
-                    </div>
-
-                    <div class="col-12 mt-4">
-                        <h6 class="mb-3"><i class="ri-map-pin-line me-2 text-primary"></i>Ubicación y Servicios</h6>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label">{{ form_label(form.branch) }} <span class="text-danger">*</span></label>
-                        {{ form_widget(form.branch, {'attr': {
-                            'data-admin-user--location-cascade-target': 'branch',
-                            'data-action': 'change->admin-user--location-cascade#loadDepartments'
-                        }}) }}
-                        {{ form_errors(form.branch) }}
-                        <div class="form-text">Seleccione la sucursal principal</div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label">{{ form_label(form.department) }} <span class="text-danger">*</span></label>
-                        {{ form_widget(form.department, {'attr': {
-                            'data-admin-user--location-cascade-target': 'department',
-                            'data-action': 'change->admin-user--location-cascade#loadServices'
-                        }}) }}
-                        {{ form_errors(form.department) }}
-                        <div class="form-text">Depende de la sucursal</div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label">{{ form_label(form.medicalService) }} <span class="text-danger">*</span></label>
-                        {{ form_widget(form.medicalService, {'attr': {
-                            'data-admin-user--location-cascade-target': 'service'
-                        }}) }}
-                        {{ form_errors(form.medicalService) }}
-                        <div class="form-text">Depende de la unidad</div>
-                    </div>
-
-                    <!-- Sección Datos Profesionales - Se oculta/muestra según rol -->
-                    <div data-admin-user--role-toggle-target="professionalSection" class="row g-3" style="display: none;">
-                        <div class="col-12 mt-4">
-                            <h6 class="mb-3"><i class="ri-stethoscope-line me-2 text-info"></i>Datos Profesionales (Opcional para Médicos)</h6>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">{{ form_label(form.professionalType) }}</label>
-                            {{ form_widget(form.professionalType, {'attr': {
-                                'data-admin-user--role-toggle-target': 'professionalType'
-                            }}) }}
-                            {{ form_errors(form.professionalType) }}
-                            <div class="form-text">Interno, Externo o Mixto</div>
-                        </div>
-
-                        <div class="col-md-6">
-                        <label class="form-label">{{ form_label(form.rcm) }}</label>
-                        {{ form_widget(form.rcm, {'attr': {
-                            'data-admin-user--role-toggle-target': 'rcm'
-                        }}) }}
-                        {{ form_errors(form.rcm) }}
-                        <div class="form-text">Registro Médico</div>
-                    </div>
-
-                    <div class="col-md-6" data-controller="admin-user--multi-select-badges" data-admin-user--multi-select-badges-label-value="Especialidad">
-                        <label class="form-label">{{ form_label(form.specialties) }}</label>
-                        
-                        <!-- Badges de selecciones actuales -->
-                        <div data-admin-user--multi-select-badges-target="badgeContainer" class="mb-2 d-flex flex-wrap gap-1" style="min-height: 28px;">
-                            <small class="text-muted" data-admin-user--multi-select-badges-target="emptyMessage">Ninguna seleccionada</small>
-                        </div>
-                        
-                        {{ form_widget(form.specialties, {'attr': {
-                            'class': 'form-select',
-                            'multiple': 'multiple',
-                            'size': '4',
-                            'data-admin-user--role-toggle-target': 'specialties',
-                            'data-admin-user--multi-select-badges-target': 'select',
-                            'data-action': 'change->admin-user--multi-select-badges#updateBadges'
-                        }}) }}
-                        {{ form_errors(form.specialties) }}
-                        <div class="form-text">Puede seleccionar múltiples. Use Ctrl/Cmd + Click</div>
-                    </div>
-
-                    <div class="col-md-6" data-controller="admin-user--multi-select-badges" data-admin-user--multi-select-badges-label-value="Previsión">
-                        <label class="form-label">{{ form_label(form.healthInsurances) }}</label>
-                        
-                        <!-- Badges de selecciones actuales -->
-                        <div data-admin-user--multi-select-badges-target="badgeContainer" class="mb-2 d-flex flex-wrap gap-1" style="min-height: 28px;">
-                            <small class="text-muted" data-admin-user--multi-select-badges-target="emptyMessage">Ninguna seleccionada</small>
-                        </div>
-                        
-                        {{ form_widget(form.healthInsurances, {'attr': {
-                            'class': 'form-select',
-                            'multiple': 'multiple',
-                            'size': '4',
-                            'data-admin-user--role-toggle-target': 'healthInsurances',
-                            'data-admin-user--multi-select-badges-target': 'select',
-                            'data-action': 'change->admin-user--multi-select-badges#updateBadges'
-                        }}) }}
-                        {{ form_errors(form.healthInsurances) }}
-                        <div class="form-text">Previsiones aceptadas. Use Ctrl/Cmd + Click</div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">{{ form_label(form.superintendentRegistry) }}</label>
-                        {{ form_widget(form.superintendentRegistry, {'attr': {
-                            'data-admin-user--role-toggle-target': 'superintendentRegistry'
-                        }}) }}
-                        {{ form_errors(form.superintendentRegistry) }}
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">{{ form_label(form.overbookingQuantity) }}</label>
-                        {{ form_widget(form.overbookingQuantity, {'attr': {
-                            'data-admin-user--role-toggle-target': 'overbookingQuantity'
-                        }}) }}
-                        {{ form_errors(form.overbookingQuantity) }}
-                        <div class="form-text">Cantidad permitida de sobrecupo (0-10)</div>
-                    </div>
-
-                    <div class="col-md-12">
-                        <label class="form-label">{{ form_label(form.observation) }}</label>
-                        {{ form_widget(form.observation, {'attr': {
-                            'data-admin-user--role-toggle-target': 'observation'
-                        }}) }}
-                        {{ form_errors(form.observation) }}
-                    </div>
-
-                    <div class="col-md-12">
-                        <label class="form-label">{{ form_label(form.webObservation) }}</label>
-                        {{ form_widget(form.webObservation, {'attr': {
-                            'data-admin-user--role-toggle-target': 'webObservation'
-                        }}) }}
-                        {{ form_errors(form.webObservation) }}
-                    </div>
-
-                    <div class="col-12 mt-3">
+                    <div class="card-body">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <div class="form-check form-switch">
-                                    {{ form_widget(form.isEmergencyProfessional, {'attr': {
-                                        'class': 'form-check-input',
-                                        'role': 'switch',
-                                        'data-admin-user--role-toggle-target': 'isEmergencyProfessional'
-                                    }}) }}
-                                    {{ form_label(form.isEmergencyProfessional, null, {'label_attr': {'class': 'form-check-label'}}) }}
-                                </div>
+                                <label class="form-label fw-medium">{{ form_label(form.role) }} <span class="text-danger">*</span></label>
+                                {{ form_widget(form.role, {'attr': {
+                                    'class': 'form-select',
+                                    'data-admin-user--role-toggle-target': 'role',
+                                    'data-action': 'change->admin-user--role-toggle#onRoleChange'
+                                }}) }}
+                                {{ form_errors(form.role) }}
+                                <div class="form-text"><i class="ri-information-line"></i> Determina los permisos y accesos del usuario</div>
                             </div>
+
                             <div class="col-md-6">
-                                <div class="form-check form-switch">
-                                    {{ form_widget(form.isIntegrationProfessional, {'attr': {
-                                        'class': 'form-check-input',
-                                        'role': 'switch',
-                                        'data-admin-user--role-toggle-target': 'isIntegrationProfessional'
-                                    }}) }}
-                                    {{ form_label(form.isIntegrationProfessional, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                                <label class="form-label fw-medium">{{ form_label(form.position) }} <span class="text-danger">*</span></label>
+                                {{ form_widget(form.position) }}
+                                {{ form_errors(form.position) }}
+                                <div class="form-text"><i class="ri-information-line"></i> Cargo dentro de la organización</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección: Ubicación y Servicios -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-light border-bottom">
+                        <h6 class="mb-0"><i class="ri-map-pin-line me-2 text-success"></i>Ubicación y Servicios</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label fw-medium">{{ form_label(form.branch) }} <span class="text-danger">*</span></label>
+                                {{ form_widget(form.branch, {'attr': {
+                                    'data-admin-user--location-cascade-target': 'branch',
+                                    'data-action': 'change->admin-user--location-cascade#loadDepartments'
+                                }}) }}
+                                {{ form_errors(form.branch) }}
+                                <div class="form-text"><i class="ri-building-line"></i> Sucursal principal de trabajo</div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-medium">{{ form_label(form.department) }} <span class="text-danger">*</span></label>
+                                {{ form_widget(form.department, {'attr': {
+                                    'data-admin-user--location-cascade-target': 'department',
+                                    'data-action': 'change->admin-user--location-cascade#loadServices'
+                                }}) }}
+                                {{ form_errors(form.department) }}
+                                <div class="form-text"><i class="ri-arrow-right-line"></i> Depende de la sucursal</div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-medium">{{ form_label(form.medicalService) }} <span class="text-danger">*</span></label>
+                                {{ form_widget(form.medicalService, {'attr': {
+                                    'data-admin-user--location-cascade-target': 'service'
+                                }}) }}
+                                {{ form_errors(form.medicalService) }}
+                                <div class="form-text"><i class="ri-arrow-right-line"></i> Depende de la unidad</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección Datos Profesionales - Se oculta/muestra según rol -->
+                <div data-admin-user--role-toggle-target="professionalSection" style="display: none;">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-info bg-opacity-10 border-bottom border-info">
+                            <h6 class="mb-0 text-info"><i class="ri-stethoscope-line me-2"></i>Datos Profesionales</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-4">
+                                <!-- Tipo y Registros -->
+                                <div class="col-12">
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-medium">{{ form_label(form.professionalType) }}</label>
+                                            {{ form_widget(form.professionalType, {'attr': {
+                                                'data-admin-user--role-toggle-target': 'professionalType'
+                                            }}) }}
+                                            {{ form_errors(form.professionalType) }}
+                                            <div class="form-text"><i class="ri-user-line"></i> Interno, Externo o Mixto</div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-medium">{{ form_label(form.rcm) }}</label>
+                                            {{ form_widget(form.rcm, {'attr': {
+                                                'data-admin-user--role-toggle-target': 'rcm'
+                                            }}) }}
+                                            {{ form_errors(form.rcm) }}
+                                            <div class="form-text"><i class="ri-file-list-line"></i> Registro Médico</div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-medium">{{ form_label(form.superintendentRegistry) }}</label>
+                                            {{ form_widget(form.superintendentRegistry, {'attr': {
+                                                'data-admin-user--role-toggle-target': 'superintendentRegistry'
+                                            }}) }}
+                                            {{ form_errors(form.superintendentRegistry) }}
+                                            <div class="form-text"><i class="ri-government-line"></i> Registro Superintendencia</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Especialidades y Previsiones -->
+                                <div class="col-12">
+                                    <div class="border-top pt-3">
+                                        <h6 class="text-muted mb-3"><i class="ri-hospital-line me-2"></i>Especialidades y Previsiones</h6>
+                                        <div class="row g-3">
+                                            <div class="col-md-6" data-controller="admin-user--multi-select-badges" data-admin-user--multi-select-badges-label-value="Especialidad">
+                                                <label class="form-label fw-medium">{{ form_label(form.specialties) }}</label>
+                                                
+                                                <!-- Badges de selecciones actuales -->
+                                                <div data-admin-user--multi-select-badges-target="badgeContainer" class="mb-2 p-2 bg-light rounded d-flex flex-wrap gap-1" style="min-height: 40px;">
+                                                    <small class="text-muted align-self-center" data-admin-user--multi-select-badges-target="emptyMessage"><i class="ri-information-line"></i> Ninguna seleccionada</small>
+                                                </div>
+                                                
+                                                {{ form_widget(form.specialties, {'attr': {
+                                                    'class': 'form-select',
+                                                    'multiple': 'multiple',
+                                                    'size': '5',
+                                                    'data-admin-user--role-toggle-target': 'specialties',
+                                                    'data-admin-user--multi-select-badges-target': 'select',
+                                                    'data-action': 'change->admin-user--multi-select-badges#updateBadges'
+                                                }}) }}
+                                                {{ form_errors(form.specialties) }}
+                                                <div class="form-text"><i class="ri-hand-finger-line"></i> Mantén Ctrl/Cmd y haz click para seleccionar múltiples</div>
+                                            </div>
+
+                                            <div class="col-md-6" data-controller="admin-user--multi-select-badges" data-admin-user--multi-select-badges-label-value="Previsión">
+                                                <label class="form-label fw-medium">{{ form_label(form.healthInsurances) }}</label>
+                                                
+                                                <!-- Badges de selecciones actuales -->
+                                                <div data-admin-user--multi-select-badges-target="badgeContainer" class="mb-2 p-2 bg-light rounded d-flex flex-wrap gap-1" style="min-height: 40px;">
+                                                    <small class="text-muted align-self-center" data-admin-user--multi-select-badges-target="emptyMessage"><i class="ri-information-line"></i> Ninguna seleccionada</small>
+                                                </div>
+                                                
+                                                {{ form_widget(form.healthInsurances, {'attr': {
+                                                    'class': 'form-select',
+                                                    'multiple': 'multiple',
+                                                    'size': '5',
+                                                    'data-admin-user--role-toggle-target': 'healthInsurances',
+                                                    'data-admin-user--multi-select-badges-target': 'select',
+                                                    'data-action': 'change->admin-user--multi-select-badges#updateBadges'
+                                                }}) }}
+                                                {{ form_errors(form.healthInsurances) }}
+                                                <div class="form-text"><i class="ri-hand-finger-line"></i> Previsiones que acepta el profesional</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Configuración de Agenda -->
+                                <div class="col-12">
+                                    <div class="border-top pt-3">
+                                        <h6 class="text-muted mb-3"><i class="ri-calendar-check-line me-2"></i>Configuración de Agenda</h6>
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-medium">{{ form_label(form.overbookingQuantity) }}</label>
+                                                {{ form_widget(form.overbookingQuantity, {'attr': {
+                                                    'data-admin-user--role-toggle-target': 'overbookingQuantity'
+                                                }}) }}
+                                                {{ form_errors(form.overbookingQuantity) }}
+                                                <div class="form-text"><i class="ri-add-circle-line"></i> Cantidad de sobrecupo permitido (0-10)</div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <div class="d-flex gap-4 align-items-center h-100">
+                                                    <div class="form-check form-switch">
+                                                        {{ form_widget(form.isEmergencyProfessional, {'attr': {
+                                                            'class': 'form-check-input',
+                                                            'role': 'switch',
+                                                            'id': 'emergency-switch',
+                                                            'data-admin-user--role-toggle-target': 'isEmergencyProfessional'
+                                                        }}) }}
+                                                        <label class="form-check-label" for="emergency-switch">
+                                                            <i class="ri-emergency-line text-danger"></i> {{ form_label(form.isEmergencyProfessional) }}
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check form-switch">
+                                                        {{ form_widget(form.isIntegrationProfessional, {'attr': {
+                                                            'class': 'form-check-input',
+                                                            'role': 'switch',
+                                                            'id': 'integration-switch',
+                                                            'data-admin-user--role-toggle-target': 'isIntegrationProfessional'
+                                                        }}) }}
+                                                        <label class="form-check-label" for="integration-switch">
+                                                            <i class="ri-links-line text-primary"></i> {{ form_label(form.isIntegrationProfessional) }}
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Observaciones -->
+                                <div class="col-12">
+                                    <div class="border-top pt-3">
+                                        <h6 class="text-muted mb-3"><i class="ri-file-text-line me-2"></i>Observaciones</h6>
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-medium">{{ form_label(form.observation) }}</label>
+                                                {{ form_widget(form.observation, {'attr': {
+                                                    'data-admin-user--role-toggle-target': 'observation',
+                                                    'rows': 3
+                                                }}) }}
+                                                {{ form_errors(form.observation) }}
+                                                <div class="form-text"><i class="ri-file-info-line"></i> Observaciones internas</div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-medium">{{ form_label(form.webObservation) }}</label>
+                                                {{ form_widget(form.webObservation, {'attr': {
+                                                    'data-admin-user--role-toggle-target': 'webObservation',
+                                                    'rows': 3
+                                                }}) }}
+                                                {{ form_errors(form.webObservation) }}
+                                                <div class="form-text"><i class="ri-global-line"></i> Visible en la web</div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- Fin Sección Datos Profesionales -->
+                </div>
+                <!-- Fin Sección Datos Profesionales -->
 
-                    <div class="col-md-6">
-                        <label class="form-label">Estado Inicial</label>
-                        <input type="text" class="form-control" value="Activo" disabled readonly>
-                    </div>
-
-                    <div class="col-12">
-                        <div class="card bg-light border-0">
-                            <div class="card-body">
-                                <h6 class="mb-2"><i class="ri-shield-check-line me-2 text-success"></i>Permisos y Accesos</h6>
-                                <p class="text-muted mb-0">
-                                    El usuario tendrá acceso a los módulos según el rol seleccionado.
-                                    Los perfiles y grupos específicos pueden ser asignados después de crear el usuario.
-                                </p>
+                <!-- Resumen -->
+                <div class="card border-0 shadow-sm bg-light">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <h6 class="mb-2"><i class="ri-shield-check-line me-2 text-success"></i>Estado Inicial del Usuario</h6>
+                                <p class="text-muted mb-0 small">El usuario será creado con estado <strong class="text-success">Activo</strong> y tendrá acceso inmediato según su rol asignado.</p>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="alert alert-info mb-0">
+                                    <i class="ri-information-line me-2"></i>
+                                    <strong>Nota:</strong> Los permisos específicos y grupos pueden ser configurados después de crear el usuario desde la sección de edición.
+                                </div>
                             </div>
                         </div>
                     </div>
