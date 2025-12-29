@@ -13,10 +13,11 @@ use App\Enum\UserTypeEnum;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -263,6 +264,58 @@ class UserType extends AbstractType
             ]);
         }
 
+        // === PERMISOS Y RESTRICCIONES ===
+
+        $builder
+            ->add('expirationDateType', ChoiceType::class, [
+                'label' => 'Fecha Caducidad',
+                'required' => true,
+                'choices' => [
+                    'Indefinido' => 'indefinite',
+                    'Definir fecha' => 'definite',
+                ],
+                'data' => 'indefinite',
+                'expanded' => true,
+                'mapped' => false,
+                'attr' => [
+                    'class' => 'form-check-inline',
+                ],
+            ])
+            ->add('expirationDate', DateType::class, [
+                'label' => 'Fecha de Expiración',
+                'required' => false,
+                'widget' => 'single_text',
+                'mapped' => false,
+                'attr' => [
+                    'class' => 'form-control',
+                    'min' => (new \DateTime())->format('Y-m-d'),
+                ],
+            ])
+            ->add('onlyPatientsModule', CheckboxType::class, [
+                'label' => 'Acceso solo módulo pacientes',
+                'required' => false,
+                'mapped' => false,
+                'attr' => [
+                    'class' => 'form-check-input',
+                ],
+            ])
+            ->add('onlyAssignedPatients', CheckboxType::class, [
+                'label' => 'Acceso solo en pacientes asignados',
+                'required' => false,
+                'mapped' => false,
+                'attr' => [
+                    'class' => 'form-check-input',
+                ],
+            ])
+            ->add('viewCashRegister', CheckboxType::class, [
+                'label' => 'Ver Caja',
+                'required' => false,
+                'mapped' => false,
+                'attr' => [
+                    'class' => 'form-check-input',
+                ],
+            ]);
+
         // === CONTRASEÑA ===
         
         $passwordConstraints = [
@@ -277,28 +330,18 @@ class UserType extends AbstractType
             $passwordConstraints[] = new Assert\NotBlank(['message' => 'La contraseña es requerida']);
         }
 
-        $builder->add('password', RepeatedType::class, [
-            'type' => PasswordType::class,
+        $builder->add('password', TextType::class, [
+            'label' => 'Contraseña',
             'required' => $requirePassword,
-            'first_options' => [
-                'label' => 'Contraseña',
-                'attr' => [
-                    'placeholder' => $isEdit ? 'Dejar vacío para no cambiar' : 'Mínimo 8 caracteres',
-                    'class' => 'form-control',
-                    'autocomplete' => 'new-password',
-                ],
-                'constraints' => $passwordConstraints,
+            'attr' => [
+                'placeholder' => $isEdit ? 'Dejar vacío para no cambiar' : 'Mínimo 8 caracteres',
+                'class' => 'form-control',
+                'autocomplete' => 'new-password',
+                'readonly' => true,
             ],
-            'second_options' => [
-                'label' => 'Confirmar Contraseña',
-                'attr' => [
-                    'placeholder' => 'Repetir contraseña',
-                    'class' => 'form-control',
-                    'autocomplete' => 'new-password',
-                ],
-            ],
-            'invalid_message' => 'Las contraseñas deben coincidir',
+            'constraints' => $passwordConstraints,
             'mapped' => false,
+            'help' => $isEdit ? 'Dejar vacío si no desea cambiar la contraseña' : 'Se genera automáticamente o puede ingresarla manualmente',
         ]);
     }
 
