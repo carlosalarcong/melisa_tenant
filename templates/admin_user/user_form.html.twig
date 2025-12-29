@@ -57,7 +57,7 @@
     {% endif %}
 {% endif %}
 
-{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': true, 'data-controller': 'admin-user--username-generator'}}) }}
+{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': true, 'data-controller': 'admin-user--username-generator admin-user--rut-validator'}}) }}
     <!-- Nav Tabs -->
     <ul class="nav nav-tabs nav-tabs-custom mb-4" role="tablist">
         <li class="nav-item">
@@ -89,14 +89,21 @@
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label">{{ form_label(form.documentType) }} <span class="text-danger">*</span></label>
-                    {{ form_widget(form.documentType) }}
+                    {{ form_widget(form.documentType, {'attr': {
+                        'data-admin-user--rut-validator-target': 'documentType',
+                        'data-action': 'change->admin-user--rut-validator#documentTypeChanged'
+                    }}) }}
                     {{ form_errors(form.documentType) }}
                 </div>
 
                 <div class="col-md-6">
                     <label class="form-label">{{ form_label(form.identification) }} <span class="text-danger">*</span></label>
-                    {{ form_widget(form.identification, {'attr': {'readonly': is_edit}}) }}
+                    {{ form_widget(form.identification, {'attr': {
+                        'readonly': is_edit,
+                        'data-admin-user--rut-validator-target': 'identification'
+                    }}) }}
                     {{ form_errors(form.identification) }}
+                    <div data-admin-user--rut-validator-target="message" style="display:none;"></div>
                     <div class="form-text">{{ is_edit ? 'Identificación no puede ser modificada' : 'RUT o identificación única' }}</div>
                 </div>
 
