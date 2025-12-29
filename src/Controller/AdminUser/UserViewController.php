@@ -51,18 +51,12 @@ class UserViewController extends AbstractTenantAwareController
             return $this->redirectToRoute('admin_user_index');
         }
 
-        // Obtener perfiles y grupos del usuario
-        $memberProfiles = $this->profileManagement->getActiveProfiles($member);
-        $memberGroups = $this->profileManagement->getMemberGroups($member);
-
         // Obtener información de contraseña
         $passwordExpired = $this->passwordManagement->isPasswordExpired($member);
         $daysUntilExpiration = $this->passwordManagement->getDaysUntilExpiration($member);
 
         return $this->render('admin_user/view.html.twig', [
             'member' => $member,
-            'memberProfiles' => $memberProfiles,
-            'memberGroups' => $memberGroups,
             'passwordExpired' => $passwordExpired,
             'daysUntilExpiration' => $daysUntilExpiration,
             'organization' => $organization,
@@ -74,8 +68,7 @@ class UserViewController extends AbstractTenantAwareController
      */
     private function getOrganization(): ?Organization
     {
-        $tenant = $this->getTenant();
-        // Buscar la primera organización activa
-        return $this->em->getRepository(Organization::class)->findOneBy(['state' => $this->getActiveState()]);
+        // Buscar la primera organización del tenant actual
+        return $this->em->getRepository(Organization::class)->findOneBy([]);
     }
 }
