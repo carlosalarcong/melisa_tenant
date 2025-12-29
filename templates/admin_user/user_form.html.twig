@@ -86,83 +86,118 @@
     <div class="tab-content">
         <!-- Tab 1: Datos Personales -->
         <div class="tab-pane fade show active" id="datos-personales" role="tabpanel">
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label">{{ form_label(form.documentType) }} <span class="text-danger">*</span></label>
-                    {{ form_widget(form.documentType, {'attr': {
-                        'data-admin-user--rut-validator-target': 'documentType',
-                        'data-action': 'change->admin-user--rut-validator#documentTypeChanged'
-                    }}) }}
-                    {{ form_errors(form.documentType) }}
+            <!-- Sección: Identificación -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light border-bottom">
+                    <h6 class="mb-0"><i class="ri-id-card-line me-2 text-primary"></i>Identificación</h6>
                 </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">{{ form_label(form.documentType) }} <span class="text-danger">*</span></label>
+                            {{ form_widget(form.documentType, {'attr': {
+                                'data-admin-user--rut-validator-target': 'documentType',
+                                'data-action': 'change->admin-user--rut-validator#documentTypeChanged'
+                            }}) }}
+                            {{ form_errors(form.documentType) }}
+                            <div class="form-text"><i class="ri-file-list-line"></i> Tipo de documento de identidad</div>
+                        </div>
 
-                <div class="col-md-6">
-                    <label class="form-label">{{ form_label(form.identification) }} <span class="text-danger">*</span></label>
-                    {{ form_widget(form.identification, {'attr': {
-                        'readonly': is_edit,
-                        'data-admin-user--rut-validator-target': 'identification'
-                    }}) }}
-                    {{ form_errors(form.identification) }}
-                    <div data-admin-user--rut-validator-target="message" style="display:none;"></div>
-                    <div class="form-text">{{ is_edit ? 'Identificación no puede ser modificada' : 'RUT o identificación única' }}</div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">{{ form_label(form.identification) }} <span class="text-danger">*</span></label>
+                            {{ form_widget(form.identification, {'attr': {
+                                'readonly': is_edit,
+                                'data-admin-user--rut-validator-target': 'identification'
+                            }}) }}
+                            {{ form_errors(form.identification) }}
+                            <div data-admin-user--rut-validator-target="message" style="display:none;"></div>
+                            <div class="form-text">
+                                <i class="ri-information-line"></i> {{ is_edit ? 'Identificación no puede ser modificada' : 'RUT con formato XX.XXX.XXX-X o identificación única' }}
+                            </div>
+                        </div>
+                    </div>
                 </div>
+            </div>
 
-                <div class="col-md-4">
-                    <label class="form-label">{{ form_label(form.name) }} <span class="text-danger">*</span></label>
-                    {{ form_widget(form.name, {'attr': {'data-admin-user--username-generator-target': 'name'}}) }}
-                    {{ form_errors(form.name) }}
+            <!-- Sección: Datos Personales -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light border-bottom">
+                    <h6 class="mb-0"><i class="ri-user-line me-2 text-success"></i>Información Personal</h6>
                 </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">{{ form_label(form.name) }} <span class="text-danger">*</span></label>
+                            {{ form_widget(form.name, {'attr': {'data-admin-user--username-generator-target': 'name'}}) }}
+                            {{ form_errors(form.name) }}
+                        </div>
 
-                <div class="col-md-4">
-                    <label class="form-label">{{ form_label(form.lastName) }} <span class="text-danger">*</span></label>
-                    {{ form_widget(form.lastName, {'attr': {'data-admin-user--username-generator-target': 'lastName'}}) }}
-                    {{ form_errors(form.lastName) }}
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">{{ form_label(form.lastName) }} <span class="text-danger">*</span></label>
+                            {{ form_widget(form.lastName, {'attr': {'data-admin-user--username-generator-target': 'lastName'}}) }}
+                            {{ form_errors(form.lastName) }}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">{{ form_label(form.secondLastName) }}</label>
+                            {{ form_widget(form.secondLastName) }}
+                            {{ form_errors(form.secondLastName) }}
+                            <div class="form-text"><i class="ri-information-line"></i> Apellido materno (opcional)</div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">{{ form_label(form.gender) }} <span class="text-danger">*</span></label>
+                            {{ form_widget(form.gender) }}
+                            {{ form_errors(form.gender) }}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">{{ form_label(form.birthDateAt) }}</label>
+                            {{ form_widget(form.birthDateAt) }}
+                            {{ form_errors(form.birthDateAt) }}
+                            <div class="form-text"><i class="ri-calendar-line"></i> Fecha de nacimiento (opcional)</div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">{{ form_label(form.mobilePhone) }} <span class="text-danger">*</span></label>
+                            {{ form_widget(form.mobilePhone) }}
+                            {{ form_errors(form.mobilePhone) }}
+                            <div class="form-text"><i class="ri-phone-line"></i> Teléfono móvil principal</div>
+                        </div>
+                    </div>
                 </div>
+            </div>
 
-                <div class="col-md-4">
-                    <label class="form-label">{{ form_label(form.secondLastName) }}</label>
-                    {{ form_widget(form.secondLastName) }}
-                    {{ form_errors(form.secondLastName) }}
+            <!-- Sección: Contacto -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light border-bottom">
+                    <h6 class="mb-0"><i class="ri-mail-line me-2 text-info"></i>Información de Contacto</h6>
                 </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6" data-controller="admin-user--email-validator">
+                            <label class="form-label fw-medium">{{ form_label(form.email) }} <span class="text-danger">*</span></label>
+                            {{ form_widget(form.email, {'attr': {'data-admin-user--email-validator-target': 'email'}}) }}
+                            {{ form_errors(form.email) }}
+                            <div data-admin-user--email-validator-target="message" style="display:none;"></div>
+                            <div class="form-text"><i class="ri-mail-send-line"></i> Correo electrónico principal</div>
+                        </div>
 
-                <div class="col-md-4">
-                    <label class="form-label">{{ form_label(form.gender) }} <span class="text-danger">*</span></label>
-                    {{ form_widget(form.gender) }}
-                    {{ form_errors(form.gender) }}
-                </div>
+                        <div class="col-md-6" data-controller="admin-user--email-validator">
+                            <label class="form-label fw-medium">{{ form_label(form.secondEmail) }}</label>
+                            {{ form_widget(form.secondEmail, {'attr': {'data-admin-user--email-validator-target': 'email'}}) }}
+                            {{ form_errors(form.secondEmail) }}
+                            <div data-admin-user--email-validator-target="message" style="display:none;"></div>
+                            <div class="form-text"><i class="ri-mail-line"></i> Correo alternativo (opcional)</div>
+                        </div>
 
-                <div class="col-md-4">
-                    <label class="form-label">{{ form_label(form.birthDateAt) }}</label>
-                    {{ form_widget(form.birthDateAt) }}
-                    {{ form_errors(form.birthDateAt) }}
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label">{{ form_label(form.mobilePhone) }} <span class="text-danger">*</span></label>
-                    {{ form_widget(form.mobilePhone) }}
-                    {{ form_errors(form.mobilePhone) }}
-                </div>
-
-                <div class="col-md-6">
-                    <label class="form-label">{{ form_label(form.landlinePhone) }}</label>
-                    {{ form_widget(form.landlinePhone) }}
-                    {{ form_errors(form.landlinePhone) }}
-                    <div class="form-text">Teléfono fijo opcional</div>
-                </div>
-
-                <div class="col-md-6" data-controller="admin-user--email-validator">
-                    <label class="form-label">{{ form_label(form.email) }} <span class="text-danger">*</span></label>
-                    {{ form_widget(form.email, {'attr': {'data-admin-user--email-validator-target': 'email'}}) }}
-                    {{ form_errors(form.email) }}
-                    <div data-admin-user--email-validator-target="message" style="display:none;"></div>
-                </div>
-
-                <div class="col-md-6" data-controller="admin-user--email-validator">
-                    <label class="form-label">{{ form_label(form.secondEmail) }}</label>
-                    {{ form_widget(form.secondEmail, {'attr': {'data-admin-user--email-validator-target': 'email'}}) }}
-                    {{ form_errors(form.secondEmail) }}
-                    <div data-admin-user--email-validator-target="message" style="display:none;"></div>
-                    <div class="form-text">Email secundario opcional</div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">{{ form_label(form.landlinePhone) }}</label>
+                            {{ form_widget(form.landlinePhone) }}
+                            {{ form_errors(form.landlinePhone) }}
+                            <div class="form-text"><i class="ri-phone-line"></i> Teléfono fijo (opcional)</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
