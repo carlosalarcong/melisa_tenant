@@ -8,7 +8,7 @@ use App\Controller\AbstractTenantAwareController;
 use App\Entity\Tenant\Organization;
 use App\Entity\Tenant\Role;
 use App\Entity\Tenant\State;
-use Doctrine\ORM\EntityManagerInterface;
+use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class UserAjaxController extends AbstractTenantAwareController
 {
     public function __construct(
-        private EntityManagerInterface $em
+        private TenantEntityManager $em
     ) {}
 
     // NOTA: Los métodos getProfiles() y getGroups() fueron eliminados
@@ -161,6 +161,39 @@ class UserAjaxController extends AbstractTenantAwareController
     {
         $tenant = $this->getTenant();
         return $this->em->getRepository(Organization::class)->find($tenant['id'] ?? 1);
+    }
+
+    /**
+     * Identifica si un rol es profesional clínico
+     * Retorna true si el rol requiere datos institucionales (cargo, sucursal, etc.)
+     */
+    #[Route('/identify-role/{roleId}', name: 'admin_user_ajax_identify_role', methods: ['GET'])]
+    public function identifyRole(int $roleId): JsonResponse
+    {
+        try {
+            $role = $this->em->getRepository(Role::class)->find($roleId);
+            
+            if (!$role) {
+                return $this->json([
+                    'success' => false,
+                    'isClinicalProfessional' => false,
+                    'message' => 'Rol no encontrado'
+                ], 404);
+            }
+
+            return $this->json([
+                'success' => true,
+                'isClinicalProfessional' => $role->getIsClinicalProfessional(),
+                'roleName' => $role->getName(),
+            ]);
+
+        } catch (\Exception $e) {
+            return $this->json([
+                'success' => false,
+                'isClinicalProfessional' => false,
+                'message' => 'Error al identificar rol: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

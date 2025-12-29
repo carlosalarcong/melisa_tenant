@@ -57,7 +57,7 @@
     {% endif %}
 {% endif %}
 
-{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': true, 'data-controller': 'admin-user--username-generator admin-user--rut-validator admin-user--password-generator admin-user--expiration-date admin-user--location-cascade'}}) }}
+{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': true, 'data-controller': 'admin-user--username-generator admin-user--rut-validator admin-user--password-generator admin-user--expiration-date admin-user--location-cascade admin-user--role-toggle'}}) }}
     <!-- Nav Tabs -->
     <ul class="nav nav-tabs nav-tabs-custom mb-4" role="tablist">
         <li class="nav-item">
@@ -340,24 +340,13 @@
             <div class="tab-pane fade" id="datos-institucion" role="tabpanel">
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label">{{ form_label(form.userType) }} <span class="text-danger">*</span></label>
-                        {{ form_widget(form.userType, {'attr': {'class': 'form-select'}}) }}
-                        {{ form_errors(form.userType) }}
-                    </div>
-
-                    <div class="col-md-6">
                         <label class="form-label">{{ form_label(form.role) }} <span class="text-danger">*</span></label>
-                        {{ form_widget(form.role, {'attr': {'class': 'form-select'}}) }}
+                        {{ form_widget(form.role, {'attr': {
+                            'class': 'form-select',
+                            'data-admin-user--role-toggle-target': 'role',
+                            'data-action': 'change->admin-user--role-toggle#onRoleChange'
+                        }}) }}
                         {{ form_errors(form.role) }}
-                    </div>
-
-                    <div class="col-12">
-                        <hr class="my-3">
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <label class="form-label">Organización</label>
-                        <input type="text" class="form-control" value="{{ organization.name ?? 'Sin organización' }}" disabled readonly>
                     </div>
 
                     <div class="col-md-6">
@@ -399,60 +388,100 @@
                         <div class="form-text">Depende de la unidad</div>
                     </div>
 
-                    <div class="col-12 mt-4">
-                        <h6 class="mb-3"><i class="ri-stethoscope-line me-2 text-info"></i>Datos Profesionales (Opcional para Médicos)</h6>
-                    </div>
+                    <!-- Sección Datos Profesionales - Se oculta/muestra según rol -->
+                    <div data-admin-user--role-toggle-target="professionalSection" class="row g-3" style="display: none;">
+                        <div class="col-12 mt-4">
+                            <h6 class="mb-3"><i class="ri-stethoscope-line me-2 text-info"></i>Datos Profesionales (Opcional para Médicos)</h6>
+                        </div>
 
-                    <div class="col-md-6">
-                        <label class="form-label">{{ form_label(form.professionalType) }}</label>
-                        {{ form_widget(form.professionalType) }}
-                        {{ form_errors(form.professionalType) }}
-                        <div class="form-text">Interno, Externo o Mixto</div>
-                    </div>
+                        <div class="col-md-6">
+                            <label class="form-label">{{ form_label(form.professionalType) }}</label>
+                            {{ form_widget(form.professionalType, {'attr': {
+                                'data-admin-user--role-toggle-target': 'professionalType'
+                            }}) }}
+                            {{ form_errors(form.professionalType) }}
+                            <div class="form-text">Interno, Externo o Mixto</div>
+                        </div>
 
-                    <div class="col-md-6">
+                        <div class="col-md-6">
                         <label class="form-label">{{ form_label(form.rcm) }}</label>
-                        {{ form_widget(form.rcm) }}
+                        {{ form_widget(form.rcm, {'attr': {
+                            'data-admin-user--role-toggle-target': 'rcm'
+                        }}) }}
                         {{ form_errors(form.rcm) }}
                         <div class="form-text">Registro Médico</div>
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-6" data-controller="admin-user--multi-select-badges" data-admin-user--multi-select-badges-label-value="Especialidad">
                         <label class="form-label">{{ form_label(form.specialties) }}</label>
-                        {{ form_widget(form.specialties, {'attr': {'class': 'form-select', 'multiple': 'multiple', 'size': '4'}}) }}
+                        
+                        <!-- Badges de selecciones actuales -->
+                        <div data-admin-user--multi-select-badges-target="badgeContainer" class="mb-2 d-flex flex-wrap gap-1" style="min-height: 28px;">
+                            <small class="text-muted" data-admin-user--multi-select-badges-target="emptyMessage">Ninguna seleccionada</small>
+                        </div>
+                        
+                        {{ form_widget(form.specialties, {'attr': {
+                            'class': 'form-select',
+                            'multiple': 'multiple',
+                            'size': '4',
+                            'data-admin-user--role-toggle-target': 'specialties',
+                            'data-admin-user--multi-select-badges-target': 'select',
+                            'data-action': 'change->admin-user--multi-select-badges#updateBadges'
+                        }}) }}
                         {{ form_errors(form.specialties) }}
-                        <div class="form-text">Puede seleccionar múltiples</div>
+                        <div class="form-text">Puede seleccionar múltiples. Use Ctrl/Cmd + Click</div>
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-6" data-controller="admin-user--multi-select-badges" data-admin-user--multi-select-badges-label-value="Previsión">
                         <label class="form-label">{{ form_label(form.healthInsurances) }}</label>
-                        {{ form_widget(form.healthInsurances, {'attr': {'class': 'form-select', 'multiple': 'multiple', 'size': '4'}}) }}
+                        
+                        <!-- Badges de selecciones actuales -->
+                        <div data-admin-user--multi-select-badges-target="badgeContainer" class="mb-2 d-flex flex-wrap gap-1" style="min-height: 28px;">
+                            <small class="text-muted" data-admin-user--multi-select-badges-target="emptyMessage">Ninguna seleccionada</small>
+                        </div>
+                        
+                        {{ form_widget(form.healthInsurances, {'attr': {
+                            'class': 'form-select',
+                            'multiple': 'multiple',
+                            'size': '4',
+                            'data-admin-user--role-toggle-target': 'healthInsurances',
+                            'data-admin-user--multi-select-badges-target': 'select',
+                            'data-action': 'change->admin-user--multi-select-badges#updateBadges'
+                        }}) }}
                         {{ form_errors(form.healthInsurances) }}
-                        <div class="form-text">Previsiones aceptadas</div>
+                        <div class="form-text">Previsiones aceptadas. Use Ctrl/Cmd + Click</div>
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label">{{ form_label(form.superintendentRegistry) }}</label>
-                        {{ form_widget(form.superintendentRegistry) }}
+                        {{ form_widget(form.superintendentRegistry, {'attr': {
+                            'data-admin-user--role-toggle-target': 'superintendentRegistry'
+                        }}) }}
                         {{ form_errors(form.superintendentRegistry) }}
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label">{{ form_label(form.overbookingQuantity) }}</label>
-                        {{ form_widget(form.overbookingQuantity) }}
+                        {{ form_widget(form.overbookingQuantity, {'attr': {
+                            'data-admin-user--role-toggle-target': 'overbookingQuantity'
+                        }}) }}
                         {{ form_errors(form.overbookingQuantity) }}
                         <div class="form-text">Cantidad permitida de sobrecupo (0-10)</div>
                     </div>
 
                     <div class="col-md-12">
                         <label class="form-label">{{ form_label(form.observation) }}</label>
-                        {{ form_widget(form.observation) }}
+                        {{ form_widget(form.observation, {'attr': {
+                            'data-admin-user--role-toggle-target': 'observation'
+                        }}) }}
                         {{ form_errors(form.observation) }}
                     </div>
 
                     <div class="col-md-12">
                         <label class="form-label">{{ form_label(form.webObservation) }}</label>
-                        {{ form_widget(form.webObservation) }}
+                        {{ form_widget(form.webObservation, {'attr': {
+                            'data-admin-user--role-toggle-target': 'webObservation'
+                        }}) }}
                         {{ form_errors(form.webObservation) }}
                     </div>
 
@@ -460,18 +489,27 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <div class="form-check form-switch">
-                                    {{ form_widget(form.isEmergencyProfessional, {'attr': {'class': 'form-check-input', 'role': 'switch'}}) }}
+                                    {{ form_widget(form.isEmergencyProfessional, {'attr': {
+                                        'class': 'form-check-input',
+                                        'role': 'switch',
+                                        'data-admin-user--role-toggle-target': 'isEmergencyProfessional'
+                                    }}) }}
                                     {{ form_label(form.isEmergencyProfessional, null, {'label_attr': {'class': 'form-check-label'}}) }}
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-check form-switch">
-                                    {{ form_widget(form.isIntegrationProfessional, {'attr': {'class': 'form-check-input', 'role': 'switch'}}) }}
+                                    {{ form_widget(form.isIntegrationProfessional, {'attr': {
+                                        'class': 'form-check-input',
+                                        'role': 'switch',
+                                        'data-admin-user--role-toggle-target': 'isIntegrationProfessional'
+                                    }}) }}
                                     {{ form_label(form.isIntegrationProfessional, null, {'label_attr': {'class': 'form-check-label'}}) }}
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <!-- Fin Sección Datos Profesionales -->
 
                     <div class="col-md-6">
                         <label class="form-label">Estado Inicial</label>
@@ -502,4 +540,5 @@
             </div>
         {% endif %}
     </div>
+    
 {{ form_end(form) }}
