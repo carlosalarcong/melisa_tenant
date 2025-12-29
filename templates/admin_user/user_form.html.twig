@@ -57,7 +57,7 @@
     {% endif %}
 {% endif %}
 
-{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': true, 'data-controller': 'admin-user--username-generator admin-user--rut-validator admin-user--email-validator'}}) }}
+{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': true, 'data-controller': 'admin-user--username-generator admin-user--rut-validator admin-user--password-generator admin-user--expiration-date'}}) }}
     <!-- Nav Tabs -->
     <ul class="nav nav-tabs nav-tabs-custom mb-4" role="tablist">
         <li class="nav-item">
@@ -223,35 +223,77 @@
                     {% if is_edit %}
                         <div class="alert alert-info mb-3">
                             <i class="ri-information-line me-2"></i>
-                            Deja estos campos vacíos si no deseas cambiar la contraseña
+                            Deja este campo vacío si no deseas cambiar la contraseña
                         </div>
                     {% endif %}
                 </div>
 
-                <div class="col-md-6">
-                    <label class="form-label">{{ form_label(form.password.first) }} {% if not is_edit %}<span class="text-danger">*</span>{% endif %}</label>
-                    {{ form_widget(form.password.first, {'attr': {'class': 'form-control', 'id': 'password-field'}}) }}
-                    {{ form_errors(form.password.first) }}
-                    <div class="form-text">Mínimo 8 caracteres</div>
+                <div class="col-md-12">
+                    <label class="form-label">{{ form_label(form.password) }} {% if not is_edit %}<span class="text-danger">*</span>{% endif %}</label>
+                    <div class="input-group">
+                        {{ form_widget(form.password, {'attr': {
+                            'class': 'form-control', 
+                            'id': 'password-field',
+                            'data-admin-user--password-generator-target': 'password',
+                            'readonly': false
+                        }}) }}
+                        <button type="button" class="btn btn-outline-primary" 
+                                data-action="click->admin-user--password-generator#generatePassword"
+                                title="Generar contraseña automática">
+                            <i class="ri-key-line"></i> Generar
+                        </button>
+                    </div>
+                    {{ form_errors(form.password) }}
+                    {{ form_help(form.password) }}
+                </div>
+
+                <div class="col-12">
+                    <hr class="my-4">
+                    <h6 class="mb-3"><i class="ri-shield-user-line me-2"></i>Permisos y Restricciones</h6>
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label">{{ form_label(form.password.second) }} {% if not is_edit %}<span class="text-danger">*</span>{% endif %}</label>
-                    {{ form_widget(form.password.second, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_errors(form.password.second) }}
-                </div>
-
-                {% if not is_edit %}
-                    <div class="col-md-12">
-                        <div id="password-strength" class="d-none">
-                            <p class="mb-1 fw-medium">Fortaleza de la contraseña:</p>
-                            <div class="progress" style="height: 8px;">
-                                <div id="password-strength-bar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                    <label class="form-label">{{ form_label(form.expirationDateType) }}</label>
+                    <div class="d-flex gap-3">
+                        {% for choice in form.expirationDateType %}
+                            <div class="form-check">
+                                {{ form_widget(choice, {'attr': {'class': 'form-check-input', 'data-action': 'change->admin-user--expiration-date#toggleDate'}}) }}
+                                {{ form_label(choice, null, {'label_attr': {'class': 'form-check-label'}}) }}
                             </div>
-                            <p id="password-strength-text" class="mt-1 text-muted mb-0"></p>
+                        {% endfor %}
+                    </div>
+                    {{ form_errors(form.expirationDateType) }}
+                </div>
+
+                <div class="col-md-6" id="expiration-date-container" style="display: none;" data-admin-user--expiration-date-target="dateContainer">
+                    <label class="form-label">{{ form_label(form.expirationDate) }}</label>
+                    {{ form_widget(form.expirationDate) }}
+                    {{ form_errors(form.expirationDate) }}
+                    <div class="form-text">La fecha debe ser posterior a hoy</div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="form-check form-switch">
+                                {{ form_widget(form.onlyPatientsModule, {'attr': {'class': 'form-check-input', 'role': 'switch'}}) }}
+                                {{ form_label(form.onlyPatientsModule, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check form-switch">
+                                {{ form_widget(form.onlyAssignedPatients, {'attr': {'class': 'form-check-input', 'role': 'switch'}}) }}
+                                {{ form_label(form.onlyAssignedPatients, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check form-switch">
+                                {{ form_widget(form.viewCashRegister, {'attr': {'class': 'form-check-input', 'role': 'switch'}}) }}
+                                {{ form_label(form.viewCashRegister, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                            </div>
                         </div>
                     </div>
-                {% endif %}
+                </div>
             </div>
 
             <div class="d-flex justify-content-between mt-4">
