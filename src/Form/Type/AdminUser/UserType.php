@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Form\Type\AdminUser;
 
 use App\Entity\Tenant\Gender;
+use App\Entity\Tenant\IdentificationType;
 use App\Entity\Tenant\Member;
 use App\Entity\Tenant\Role;
 use App\Entity\Tenant\State;
@@ -34,9 +35,24 @@ class UserType extends AbstractType
         // === DATOS DE PERSONA ===
         
         $builder
+            ->add('documentType', EntityType::class, [
+                'label' => 'Tipo de Documento',
+                'class' => IdentificationType::class,
+                'choice_label' => 'name',
+                'required' => true,
+                'placeholder' => 'Seleccionar Documento',
+                'attr' => [
+                    'class' => 'form-select',
+                ],
+                'mapped' => false, // No está en Member, se maneja en controller
+                'constraints' => [
+                    new Assert\NotBlank(['message' => 'El tipo de documento es requerido']),
+                ],
+            ])
             ->add('identification', TextType::class, [
                 'label' => 'RUT/Identificación',
                 'required' => true,
+                'mapped' => false, // No está en Member, está en Person
                 'attr' => [
                     'placeholder' => 'Ej: 12345678-9',
                     'class' => 'form-control',
@@ -50,8 +66,9 @@ class UserType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'Nombre',
                 'required' => true,
+                'mapped' => false, // Está en Person
                 'attr' => [
-                    'placeholder' => 'Nombre del usuario',
+                    'placeholder' => 'Ej: Juan',
                     'class' => 'form-control',
                     'maxlength' => 100,
                 ],
@@ -61,21 +78,36 @@ class UserType extends AbstractType
                 ],
             ])
             ->add('lastName', TextType::class, [
-                'label' => 'Apellido',
+                'label' => 'Apellido Paterno',
                 'required' => true,
+                'mapped' => false, // Está en Person
                 'attr' => [
-                    'placeholder' => 'Apellido del usuario',
+                    'placeholder' => 'Ej: Pérez',
                     'class' => 'form-control',
                     'maxlength' => 100,
                 ],
                 'constraints' => [
-                    new Assert\NotBlank(['message' => 'El apellido es requerido']),
+                    new Assert\NotBlank(['message' => 'El apellido paterno es requerido']),
+                    new Assert\Length(['max' => 100]),
+                ],
+            ])
+            ->add('secondLastName', TextType::class, [
+                'label' => 'Apellido Materno',
+                'required' => false,
+                'mapped' => false, // Está en Person como middleName
+                'attr' => [
+                    'placeholder' => 'Ej: Gómez',
+                    'class' => 'form-control',
+                    'maxlength' => 100,
+                ],
+                'constraints' => [
                     new Assert\Length(['max' => 100]),
                 ],
             ])
             ->add('email', EmailType::class, [
-                'label' => 'Email',
+                'label' => 'Email Principal',
                 'required' => true,
+                'mapped' => false, // Está en Person
                 'attr' => [
                     'placeholder' => 'correo@ejemplo.com',
                     'class' => 'form-control',
@@ -87,18 +119,51 @@ class UserType extends AbstractType
                     new Assert\Length(['max' => 180]),
                 ],
             ])
-            ->add('phones', TextType::class, [
-                'label' => 'Teléfonos',
+            ->add('secondEmail', EmailType::class, [
+                'label' => 'Email Secundario',
                 'required' => false,
+                'mapped' => false, // Está en Person como secondaryEmail
                 'attr' => [
-                    'placeholder' => 'Ej: +56912345678, +56987654321',
+                    'placeholder' => 'correo2@ejemplo.com',
                     'class' => 'form-control',
+                    'maxlength' => 180,
                 ],
-                'help' => 'Separar múltiples teléfonos con comas',
+                'constraints' => [
+                    new Assert\Email(['message' => 'El email no es válido']),
+                    new Assert\Length(['max' => 180]),
+                ],
+            ])
+            ->add('mobilePhone', TextType::class, [
+                'label' => 'Teléfono Móvil',
+                'required' => true,
+                'mapped' => false, // Está en Person
+                'attr' => [
+                    'placeholder' => 'Ej: +56912345678',
+                    'class' => 'form-control',
+                    'maxlength' => 20,
+                ],
+                'constraints' => [
+                    new Assert\NotBlank(['message' => 'El teléfono móvil es requerido']),
+                    new Assert\Length(['max' => 20]),
+                ],
+            ])
+            ->add('landlinePhone', TextType::class, [
+                'label' => 'Teléfono Fijo',
+                'required' => false,
+                'mapped' => false, // Está en Person como homePhone
+                'attr' => [
+                    'placeholder' => 'Ej: +56221234567',
+                    'class' => 'form-control',
+                    'maxlength' => 20,
+                ],
+                'constraints' => [
+                    new Assert\Length(['max' => 20]),
+                ],
             ])
             ->add('birthDateAt', BirthdayType::class, [
                 'label' => 'Fecha de Nacimiento',
                 'required' => false,
+                'mapped' => false, // Está en Person
                 'widget' => 'single_text',
                 'attr' => [
                     'class' => 'form-control',
@@ -110,6 +175,7 @@ class UserType extends AbstractType
                 'class' => Gender::class,
                 'choice_label' => 'name',
                 'required' => true,
+                'mapped' => false, // Está en Person
                 'placeholder' => 'Seleccione género',
                 'attr' => [
                     'class' => 'form-select',
