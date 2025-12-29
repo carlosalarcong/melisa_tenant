@@ -193,9 +193,22 @@
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label">{{ form_label(form.userType) }} <span class="text-danger">*</span></label>
-                    {{ form_widget(form.userType, {'attr': {'class': 'form-select'}}) }}
-                    {{ form_errors(form.userType) }}
+                    <label class="form-label">{{ form_label(form.password) }} {% if not is_edit %}<span class="text-danger">*</span>{% endif %}</label>
+                    <div class="input-group">
+                        {{ form_widget(form.password, {'attr': {
+                            'class': 'form-control', 
+                            'id': 'password-field',
+                            'data-admin-user--password-generator-target': 'password',
+                            'readonly': false,
+                            'placeholder': is_edit ? 'Dejar vacío para no cambiar' : 'Mínimo 8 caracteres'
+                        }}) }}
+                        <button type="button" class="btn btn-outline-primary" 
+                                data-action="click->admin-user--password-generator#generatePassword"
+                                title="Generar contraseña automática">
+                            <i class="ri-key-line"></i>
+                        </button>
+                    </div>
+                    {{ form_errors(form.password) }}
                 </div>
 
                 {% if is_edit %}
@@ -204,92 +217,102 @@
                         {{ form_widget(form.state, {'attr': {'class': 'form-select'}}) }}
                         {{ form_errors(form.state) }}
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label">{{ form_label(form.role) }} <span class="text-danger">*</span></label>
-                        {{ form_widget(form.role, {'attr': {'class': 'form-select'}}) }}
-                        {{ form_errors(form.role) }}
-                    </div>
-                {% else %}
-                    <div class="col-md-12">
-                        <label class="form-label">{{ form_label(form.role) }} <span class="text-danger">*</span></label>
-                        {{ form_widget(form.role, {'attr': {'class': 'form-select'}}) }}
-                        {{ form_errors(form.role) }}
-                    </div>
                 {% endif %}
 
-                <div class="col-12">
-                    <hr class="my-4">
-                    <h6 class="mb-3"><i class="ri-lock-password-line me-2"></i>{{ is_edit ? 'Cambiar Contraseña (Opcional)' : 'Contraseña' }}</h6>
-                    {% if is_edit %}
-                        <div class="alert alert-info mb-3">
-                            <i class="ri-information-line me-2"></i>
-                            Deja este campo vacío si no deseas cambiar la contraseña
+                <div class="col-12 mt-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-light border-bottom">
+                            <h6 class="mb-0"><i class="ri-shield-user-line me-2 text-primary"></i>Permisos y Restricciones</h6>
                         </div>
-                    {% endif %}
-                </div>
+                        <div class="card-body">
+                            <div class="row g-4">
+                                <!-- Fecha de Caducidad -->
+                                <div class="col-12">
+                                    <div class="border rounded p-3 bg-light">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <i class="ri-calendar-line fs-20 text-info me-2"></i>
+                                            <label class="form-label mb-0 fw-semibold">{{ form_label(form.expirationDateType) }}</label>
+                                        </div>
+                                        <div class="d-flex gap-4 mb-3">
+                                            {% for choice in form.expirationDateType %}
+                                                <div class="form-check">
+                                                    {{ form_widget(choice, {'attr': {'class': 'form-check-input', 'data-action': 'change->admin-user--expiration-date#toggleDate'}}) }}
+                                                    {{ form_label(choice, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                        {{ form_errors(form.expirationDateType) }}
+                                        
+                                        <div id="expiration-date-container" style="display: none;" data-admin-user--expiration-date-target="dateContainer">
+                                            <label class="form-label small text-muted mb-2">{{ form_label(form.expirationDate) }}</label>
+                                            {{ form_widget(form.expirationDate, {'attr': {'class': 'form-control'}}) }}
+                                            {{ form_errors(form.expirationDate) }}
+                                            <div class="form-text mt-1"><i class="ri-information-line"></i> Fecha posterior a hoy</div>
+                                        </div>
+                                    </div>
+                                </div>
 
-                <div class="col-md-12">
-                    <label class="form-label">{{ form_label(form.password) }} {% if not is_edit %}<span class="text-danger">*</span>{% endif %}</label>
-                    <div class="input-group">
-                        {{ form_widget(form.password, {'attr': {
-                            'class': 'form-control', 
-                            'id': 'password-field',
-                            'data-admin-user--password-generator-target': 'password',
-                            'readonly': false
-                        }}) }}
-                        <button type="button" class="btn btn-outline-primary" 
-                                data-action="click->admin-user--password-generator#generatePassword"
-                                title="Generar contraseña automática">
-                            <i class="ri-key-line"></i> Generar
-                        </button>
-                    </div>
-                    {{ form_errors(form.password) }}
-                    {{ form_help(form.password) }}
-                </div>
+                                <!-- Permisos de Acceso -->
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold mb-3">
+                                        <i class="ri-lock-unlock-line text-success me-2"></i>Restricciones de Acceso
+                                    </label>
+                                    <div class="row g-3">
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="card border h-100">
+                                                <div class="card-body p-3">
+                                                    <div class="d-flex align-items-start justify-content-between">
+                                                        <div class="flex-grow-1">
+                                                            <div class="form-check form-switch">
+                                                                {{ form_widget(form.onlyPatientsModule, {'attr': {'class': 'form-check-input', 'role': 'switch', 'id': 'switch-patients-module'}}) }}
+                                                                {{ form_label(form.onlyPatientsModule, null, {'label_attr': {'class': 'form-check-label fw-medium', 'for': 'switch-patients-module'}}) }}
+                                                            </div>
+                                                            <p class="text-muted small mb-0 mt-2">
+                                                                <i class="ri-user-heart-line me-1"></i>El usuario solo puede acceder al módulo de pacientes
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
-                <div class="col-12">
-                    <hr class="my-4">
-                    <h6 class="mb-3"><i class="ri-shield-user-line me-2"></i>Permisos y Restricciones</h6>
-                </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="card border h-100">
+                                                <div class="card-body p-3">
+                                                    <div class="d-flex align-items-start justify-content-between">
+                                                        <div class="flex-grow-1">
+                                                            <div class="form-check form-switch">
+                                                                {{ form_widget(form.onlyAssignedPatients, {'attr': {'class': 'form-check-input', 'role': 'switch', 'id': 'switch-assigned-patients'}}) }}
+                                                                {{ form_label(form.onlyAssignedPatients, null, {'label_attr': {'class': 'form-check-label fw-medium', 'for': 'switch-assigned-patients'}}) }}
+                                                            </div>
+                                                            <p class="text-muted small mb-0 mt-2">
+                                                                <i class="ri-user-follow-line me-1"></i>Limita el acceso solo a pacientes asignados
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
-                <div class="col-md-6">
-                    <label class="form-label">{{ form_label(form.expirationDateType) }}</label>
-                    <div class="d-flex gap-3">
-                        {% for choice in form.expirationDateType %}
-                            <div class="form-check">
-                                {{ form_widget(choice, {'attr': {'class': 'form-check-input', 'data-action': 'change->admin-user--expiration-date#toggleDate'}}) }}
-                                {{ form_label(choice, null, {'label_attr': {'class': 'form-check-label'}}) }}
-                            </div>
-                        {% endfor %}
-                    </div>
-                    {{ form_errors(form.expirationDateType) }}
-                </div>
-
-                <div class="col-md-6" id="expiration-date-container" style="display: none;" data-admin-user--expiration-date-target="dateContainer">
-                    <label class="form-label">{{ form_label(form.expirationDate) }}</label>
-                    {{ form_widget(form.expirationDate) }}
-                    {{ form_errors(form.expirationDate) }}
-                    <div class="form-text">La fecha debe ser posterior a hoy</div>
-                </div>
-
-                <div class="col-md-12">
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <div class="form-check form-switch">
-                                {{ form_widget(form.onlyPatientsModule, {'attr': {'class': 'form-check-input', 'role': 'switch'}}) }}
-                                {{ form_label(form.onlyPatientsModule, null, {'label_attr': {'class': 'form-check-label'}}) }}
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-check form-switch">
-                                {{ form_widget(form.onlyAssignedPatients, {'attr': {'class': 'form-check-input', 'role': 'switch'}}) }}
-                                {{ form_label(form.onlyAssignedPatients, null, {'label_attr': {'class': 'form-check-label'}}) }}
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-check form-switch">
-                                {{ form_widget(form.viewCashRegister, {'attr': {'class': 'form-check-input', 'role': 'switch'}}) }}
-                                {{ form_label(form.viewCashRegister, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="card border h-100">
+                                                <div class="card-body p-3">
+                                                    <div class="d-flex align-items-start justify-content-between">
+                                                        <div class="flex-grow-1">
+                                                            <div class="form-check form-switch">
+                                                                {{ form_widget(form.viewCashRegister, {'attr': {'class': 'form-check-input', 'role': 'switch', 'id': 'switch-cash-register'}}) }}
+                                                                {{ form_label(form.viewCashRegister, null, {'label_attr': {'class': 'form-check-label fw-medium', 'for': 'switch-cash-register'}}) }}
+                                                            </div>
+                                                            <p class="text-muted small mb-0 mt-2">
+                                                                <i class="ri-money-dollar-circle-line me-1"></i>Permite visualizar información de caja
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -316,11 +339,20 @@
             <!-- Tab 3: Datos Institución (solo para crear) -->
             <div class="tab-pane fade" id="datos-institucion" role="tabpanel">
                 <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">{{ form_label(form.userType) }} <span class="text-danger">*</span></label>
+                        {{ form_widget(form.userType, {'attr': {'class': 'form-select'}}) }}
+                        {{ form_errors(form.userType) }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">{{ form_label(form.role) }} <span class="text-danger">*</span></label>
+                        {{ form_widget(form.role, {'attr': {'class': 'form-select'}}) }}
+                        {{ form_errors(form.role) }}
+                    </div>
+
                     <div class="col-12">
-                        <div class="alert alert-info">
-                            <i class="ri-information-line me-2"></i>
-                            Los datos de institución se configurarán automáticamente según la organización actual.
-                        </div>
+                        <hr class="my-3">
                     </div>
                     
                     <div class="col-md-6">
