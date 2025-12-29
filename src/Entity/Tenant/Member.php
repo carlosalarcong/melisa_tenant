@@ -6,8 +6,6 @@ use App\Repository\MemberRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: MemberRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
@@ -78,18 +76,60 @@ class Member implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinColumn(name: 'role_id', referencedColumnName: 'id', nullable: true)]
     private ?Role $role = null;
 
+    #[ORM\ManyToOne(targetEntity: Position::class)]
+    #[ORM\JoinColumn(name: 'position_id', referencedColumnName: 'id', nullable: true)]
+    private ?Position $position = null;
+
+    #[ORM\ManyToOne(targetEntity: ProfessionalType::class)]
+    #[ORM\JoinColumn(name: 'professional_type_id', referencedColumnName: 'id', nullable: true)]
+    private ?ProfessionalType $professionalType = null;
+
     /**
-     * @var Collection<int, MemberGroup>
+     * RCM - Registro Médico (Medical Registration Number)
      */
-    #[ORM\ManyToMany(targetEntity: MemberGroup::class, inversedBy: 'members')]
-    #[ORM\JoinTable(name: 'member_group_membership')]
-    private Collection $groups;
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $rcm = null;
+
+    /**
+     * Superintendent Registry Number
+     */
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $superintendentRegistry = null;
+
+    /**
+     * General observation/comment
+     */
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $observation = null;
+
+    /**
+     * Web observation/comment
+     */
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $webObservation = null;
+
+    /**
+     * Overbooking quantity allowed
+     */
+    #[ORM\Column(type: 'integer', nullable: true, options: ['default' => 0])]
+    private ?int $overbookingQuantity = 0;
+
+    /**
+     * Is default emergency professional
+     */
+    #[ORM\Column(type: 'boolean', nullable: true, options: ['default' => false])]
+    private ?bool $isEmergencyProfessional = false;
+
+    /**
+     * Is default integration professional
+     */
+    #[ORM\Column(type: 'boolean', nullable: true, options: ['default' => false])]
+    private ?bool $isIntegrationProfessional = false;
 
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
-        $this->groups = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -312,27 +352,102 @@ class Member implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, MemberGroup>
-     */
-    public function getGroups(): Collection
+    public function getPosition(): ?Position
     {
-        return $this->groups;
+        return $this->position;
     }
 
-    public function addGroup(MemberGroup $group): static
+    public function setPosition(?Position $position): static
     {
-        if (!$this->groups->contains($group)) {
-            $this->groups->add($group);
-        }
-
+        $this->position = $position;
         return $this;
     }
 
-    public function removeGroup(MemberGroup $group): static
+    public function getProfessionalType(): ?ProfessionalType
     {
-        $this->groups->removeElement($group);
+        return $this->professionalType;
+    }
 
+    public function setProfessionalType(?ProfessionalType $professionalType): static
+    {
+        $this->professionalType = $professionalType;
+        return $this;
+    }
+
+    public function getRcm(): ?string
+    {
+        return $this->rcm;
+    }
+
+    public function setRcm(?string $rcm): static
+    {
+        $this->rcm = $rcm;
+        return $this;
+    }
+
+    public function getSuperintendentRegistry(): ?string
+    {
+        return $this->superintendentRegistry;
+    }
+
+    public function setSuperintendentRegistry(?string $superintendentRegistry): static
+    {
+        $this->superintendentRegistry = $superintendentRegistry;
+        return $this;
+    }
+
+    public function getObservation(): ?string
+    {
+        return $this->observation;
+    }
+
+    public function setObservation(?string $observation): static
+    {
+        $this->observation = $observation;
+        return $this;
+    }
+
+    public function getWebObservation(): ?string
+    {
+        return $this->webObservation;
+    }
+
+    public function setWebObservation(?string $webObservation): static
+    {
+        $this->webObservation = $webObservation;
+        return $this;
+    }
+
+    public function getOverbookingQuantity(): ?int
+    {
+        return $this->overbookingQuantity;
+    }
+
+    public function setOverbookingQuantity(?int $overbookingQuantity): static
+    {
+        $this->overbookingQuantity = $overbookingQuantity;
+        return $this;
+    }
+
+    public function isEmergencyProfessional(): ?bool
+    {
+        return $this->isEmergencyProfessional;
+    }
+
+    public function setIsEmergencyProfessional(?bool $isEmergencyProfessional): static
+    {
+        $this->isEmergencyProfessional = $isEmergencyProfessional;
+        return $this;
+    }
+
+    public function isIntegrationProfessional(): ?bool
+    {
+        return $this->isIntegrationProfessional;
+    }
+
+    public function setIsIntegrationProfessional(?bool $isIntegrationProfessional): static
+    {
+        $this->isIntegrationProfessional = $isIntegrationProfessional;
         return $this;
     }
 }
