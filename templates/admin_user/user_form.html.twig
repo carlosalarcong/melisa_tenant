@@ -57,7 +57,7 @@
     {% endif %}
 {% endif %}
 
-{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': true, 'data-controller': 'admin-user--username-generator admin-user--rut-validator'}}) }}
+{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': true, 'data-controller': 'admin-user--username-generator admin-user--rut-validator admin-user--email-validator'}}) }}
     <!-- Nav Tabs -->
     <ul class="nav nav-tabs nav-tabs-custom mb-4" role="tablist">
         <li class="nav-item">
@@ -150,16 +150,18 @@
                     <div class="form-text">Teléfono fijo opcional</div>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-6" data-controller="admin-user--email-validator">
                     <label class="form-label">{{ form_label(form.email) }} <span class="text-danger">*</span></label>
-                    {{ form_widget(form.email) }}
+                    {{ form_widget(form.email, {'attr': {'data-admin-user--email-validator-target': 'email'}}) }}
                     {{ form_errors(form.email) }}
+                    <div data-admin-user--email-validator-target="message" style="display:none;"></div>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-6" data-controller="admin-user--email-validator">
                     <label class="form-label">{{ form_label(form.secondEmail) }}</label>
-                    {{ form_widget(form.secondEmail) }}
+                    {{ form_widget(form.secondEmail, {'attr': {'data-admin-user--email-validator-target': 'email'}}) }}
                     {{ form_errors(form.secondEmail) }}
+                    <div data-admin-user--email-validator-target="message" style="display:none;"></div>
                     <div class="form-text">Email secundario opcional</div>
                 </div>
             </div>
