@@ -8,7 +8,6 @@ use App\Controller\AbstractTenantAwareController;
 use App\Entity\Tenant\Organization;
 use App\Repository\MemberRepository;
 use App\Service\AdminUser\PasswordManagementService;
-use App\Service\AdminUser\ProfileManagementService;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,7 +21,6 @@ class UserViewController extends AbstractTenantAwareController
     public function __construct(
         private TenantEntityManager $em,
         private MemberRepository $memberRepository,
-        private ProfileManagementService $profileManagement,
         private PasswordManagementService $passwordManagement
     ) {}
 

@@ -9,12 +9,9 @@ use App\Entity\Tenant\Member;
 use App\Entity\Tenant\Organization;
 use App\Entity\Tenant\Role;
 use App\Entity\Tenant\State;
-use App\Form\Type\AdminUser\GroupAssignmentType;
-use App\Form\Type\AdminUser\ProfileAssignmentType;
 use App\Form\Type\AdminUser\UserType;
 use App\Repository\GenderRepository;
 use App\Repository\MemberRepository;
-use App\Service\AdminUser\ProfileManagementService;
 use App\Service\AdminUser\UserManagementService;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +28,6 @@ class UserEditController extends AbstractTenantAwareController
         private TenantEntityManager $em,
         private MemberRepository $memberRepository,
         private UserManagementService $userManagement,
-        private ProfileManagementService $profileManagement,
         private GenderRepository $genderRepository
     ) {}
 
@@ -97,27 +93,10 @@ class UserEditController extends AbstractTenantAwareController
                 'member' => $member,
             ]);
         }
-        
-        // Obtener perfiles y grupos del usuario
-        $memberProfiles = $this->profileManagement->getActiveProfiles($member);
-        $memberGroups = $this->profileManagement->getMemberGroups($member);
-
-        // Formularios de perfiles y grupos
-        $profileForm = $this->createForm(ProfileAssignmentType::class, null, [
-            'organization' => $organization,
-        ]);
-        
-        $groupForm = $this->createForm(GroupAssignmentType::class, null, [
-            'organization' => $organization,
-        ]);
 
         return $this->render('admin_user/edit.html.twig', [
             'form' => $form->createView(),
-            'profileForm' => $profileForm->createView(),
-            'groupForm' => $groupForm->createView(),
             'member' => $member,
-            'memberProfiles' => $memberProfiles,
-            'memberGroups' => $memberGroups,
             'organization' => $organization,
         ]);
     }
