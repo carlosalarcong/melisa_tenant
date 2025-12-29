@@ -192,20 +192,14 @@
                                         <i class="ri-key-line me-1"></i> Datos de Usuario
                                     </div>
                                     <div class="row g-3">
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <label class="form-label">{{ form_label(form.username) }} <span class="text-danger">*</span></label>
                                             {{ form_widget(form.username, {'attr': {'class': 'form-control', 'readonly': true}}) }}
                                             {{ form_errors(form.username) }}
                                             <div class="form-text">Username no puede ser modificado</div>
                                         </div>
 
-                                        <div class="col-md-4">
-                                            <label class="form-label">{{ form_label(form.userType) }} <span class="text-danger">*</span></label>
-                                            {{ form_widget(form.userType, {'attr': {'class': 'form-select'}}) }}
-                                            {{ form_errors(form.userType) }}
-                                        </div>
-
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <label class="form-label">{{ form_label(form.state) }} <span class="text-danger">*</span></label>
                                             {{ form_widget(form.state, {'attr': {'class': 'form-select'}}) }}
                                             {{ form_errors(form.state) }}

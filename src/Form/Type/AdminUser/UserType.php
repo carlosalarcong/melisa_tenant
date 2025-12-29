@@ -222,20 +222,6 @@ class UserType extends AbstractType
                 ],
                 'help' => $isEdit ? 'El username no puede ser modificado' : 'Se genera automáticamente: primera letra del nombre + apellido',
             ])
-            ->add('userType', ChoiceType::class, [
-                'label' => 'Tipo de Usuario',
-                'required' => true,
-                'choices' => [
-                    'Profesional' => UserTypeEnum::PROFESSIONAL->value,
-                    'Administrativo' => UserTypeEnum::ADMINISTRATIVE->value,
-                ],
-                'attr' => [
-                    'class' => 'form-select',
-                ],
-                'constraints' => [
-                    new Assert\NotBlank(['message' => 'El tipo de usuario es requerido']),
-                ],
-            ])
             ->add('role', EntityType::class, [
                 'label' => 'Rol',
                 'class' => Role::class,

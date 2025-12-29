@@ -149,17 +149,11 @@
                             <!-- Tab 2: Datos de Usuario -->
                             <div class="tab-pane fade" id="datos-usuario" role="tabpanel">
                                 <div class="row g-3">
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <label class="form-label">{{ form_label(form.username) }} <span class="text-danger">*</span></label>
                                         {{ form_widget(form.username, {'attr': {'class': 'form-control', 'autocomplete': 'off'}}) }}
                                         {{ form_errors(form.username) }}
                                         <div class="form-text">Solo letras, números, puntos, guiones. Mínimo 4 caracteres</div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label class="form-label">{{ form_label(form.userType) }} <span class="text-danger">*</span></label>
-                                        {{ form_widget(form.userType, {'attr': {'class': 'form-select'}}) }}
-                                        {{ form_errors(form.userType) }}
                                     </div>
 
                                     <div class="col-md-12">
