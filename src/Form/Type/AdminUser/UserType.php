@@ -126,10 +126,11 @@ class UserType extends AbstractType
                 'label' => 'Nombre de Usuario',
                 'required' => true,
                 'attr' => [
-                    'placeholder' => 'username',
+                    'placeholder' => $isEdit ? 'No se puede modificar' : 'Se genera automáticamente',
                     'class' => 'form-control',
                     'maxlength' => 180,
                     'autocomplete' => 'username',
+                    'readonly' => true, // Readonly siempre (generado automáticamente)
                 ],
                 'constraints' => [
                     new Assert\NotBlank(['message' => 'El username es requerido']),
@@ -143,6 +144,7 @@ class UserType extends AbstractType
                         'message' => 'Solo se permiten letras, números, puntos, guiones y guiones bajos',
                     ]),
                 ],
+                'help' => $isEdit ? 'El username no puede ser modificado' : 'Se genera automáticamente: primera letra del nombre + apellido',
             ])
             ->add('userType', ChoiceType::class, [
                 'label' => 'Tipo de Usuario',

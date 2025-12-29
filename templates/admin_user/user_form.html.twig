@@ -57,7 +57,7 @@
     {% endif %}
 {% endif %}
 
-{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': true}}) }}
+{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': true, 'data-controller': 'admin-user--username-generator'}}) }}
     <!-- Nav Tabs -->
     <ul class="nav nav-tabs nav-tabs-custom mb-4" role="tablist">
         <li class="nav-item">
@@ -96,13 +96,13 @@
 
                 <div class="col-md-4">
                     <label class="form-label">{{ form_label(form.name) }} <span class="text-danger">*</span></label>
-                    {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_widget(form.name, {'attr': {'class': 'form-control', 'data-admin-user--username-generator-target': 'name'}}) }}
                     {{ form_errors(form.name) }}
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <label class="form-label">{{ form_label(form.lastName) }} <span class="text-danger">*</span></label>
-                    {{ form_widget(form.lastName, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_widget(form.lastName, {'attr': {'class': 'form-control', 'data-admin-user--username-generator-target': 'lastName'}}) }}
                     {{ form_errors(form.lastName) }}
                 </div>
 
@@ -144,9 +144,18 @@
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label">{{ form_label(form.username) }} <span class="text-danger">*</span></label>
-                    {{ form_widget(form.username, {'attr': {'class': 'form-control', 'autocomplete': 'off', 'readonly': is_edit}}) }}
+                    <div class="input-group">
+                        {{ form_widget(form.username, {'attr': {'class': 'form-control', 'data-admin-user--username-generator-target': 'username'}}) }}
+                        {% if not is_edit %}
+                        <button type="button" class="btn btn-outline-secondary" 
+                                data-action="admin-user--username-generator#generate"
+                                title="Regenerar username">
+                            <i class="ri-refresh-line"></i>
+                        </button>
+                        {% endif %}
+                    </div>
                     {{ form_errors(form.username) }}
-                    <div class="form-text">{{ is_edit ? 'Username no puede ser modificado' : 'Solo letras, números, puntos, guiones. Mínimo 4 caracteres' }}</div>
+                    {{ form_help(form.username) }}
                 </div>
 
                 <div class="col-md-6">

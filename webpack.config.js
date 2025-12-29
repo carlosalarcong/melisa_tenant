@@ -5,6 +5,9 @@ const RtlCssPlugin = require('rtlcss-webpack-plugin');
 Encore
   .setOutputPath('public/assets/')
   .setPublicPath('/assets')
+  // Entry points para JavaScript
+  .addEntry('js/main', './assets/app.js')
+  // Entry points para CSS
   .addEntry('app', './assets/scss/config/material/app.scss')
   .addEntry('bootstrap', './assets/scss/config/material/bootstrap.scss')
   .addEntry('icons', './assets/scss/icons.scss')
