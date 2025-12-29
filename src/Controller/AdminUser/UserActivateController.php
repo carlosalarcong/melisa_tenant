@@ -84,8 +84,7 @@ class UserActivateController extends AbstractTenantAwareController
      */
     private function getOrganization(): ?Organization
     {
-        $tenant = $this->getTenant();
-        // Buscar la primera organización activa
-        return $this->em->getRepository(Organization::class)->findOneBy(['state' => $this->getActiveState()]);
+        // Buscar la primera organización del tenant actual
+        return $this->em->getRepository(Organization::class)->findOneBy([]);
     }
 }
