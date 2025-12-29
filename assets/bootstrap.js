@@ -1,11 +1,26 @@
-import { startStimulusApp } from '@symfony/stimulus-bundle';
+import { Application } from '@hotwired/stimulus';
 
-const app = startStimulusApp();
-// register any custom, 3rd party controllers here
-// app.register('some_controller_name', SomeImportedController);
+// Iniciar Stimulus
+const app = Application.start();
 
-// Exponer la aplicación Stimulus globalmente para que pueda ser accedida desde otros scripts
+// Auto-registrar todos los controllers automáticamente
+// Busca recursivamente en ./controllers/ todos los archivos *_controller.js
+const controllers = require.context('./controllers', true, /_controller\.js$/);
+
+controllers.keys().forEach((key) => {
+    // Extraer el nombre del controller desde la ruta
+    // Ejemplo: ./admin_user/username_generator_controller.js → admin_user--username-generator
+    const controllerName = key
+        .replace('./', '')                           // Eliminar ./
+        .replace(/_controller\.js$/, '')             // Eliminar _controller.js
+        .replace(/\//g, '--')                        // Reemplazar / por --
+        .replace(/_/g, '-');                         // Reemplazar _ por -
+    
+    const module = controllers(key);
+
+    app.register(controllerName, module.default);
+});
+
+// Exponer globalmente
 window.Stimulus = app;
-
-// También exportar la aplicación para uso en módulos ES6
 export { app };
