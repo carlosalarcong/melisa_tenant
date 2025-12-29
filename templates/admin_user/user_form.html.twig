@@ -57,7 +57,14 @@
     {% endif %}
 {% endif %}
 
-{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': true, 'data-controller': 'admin-user--username-generator admin-user--rut-validator admin-user--password-generator admin-user--expiration-date admin-user--location-cascade admin-user--role-toggle'}}) }}
+{{ form_start(form, {
+    'action': is_edit ? path('admin_user_edit', {'id': member.id}) : path('admin_user_create'),
+    'attr': {
+        'class': 'needs-validation',
+        'novalidate': true,
+        'data-controller': 'admin-user--username-generator admin-user--rut-validator admin-user--password-generator admin-user--expiration-date admin-user--location-cascade admin-user--role-toggle admin-user--form-validation'
+    }
+}) }}
     <!-- Nav Tabs -->
     <ul class="nav nav-tabs nav-tabs-custom mb-4" role="tablist">
         <li class="nav-item">
@@ -636,3 +643,4 @@
     </div>
     
 {{ form_end(form) }}
+
