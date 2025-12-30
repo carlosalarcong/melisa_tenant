@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Legacy;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -163,11 +163,11 @@ class PrevisionPnatural
     /**
      * Set idPnatural.
      *
-     * @param \App\Entity\Pnatural $idPnatural
+     * @param \App\Entity\Legacy\Pnatural $idPnatural
      *
      * @return PrevisionPnatural
      */
-    public function setIdPnatural(\App\Entity\Pnatural $idPnatural)
+    public function setIdPnatural(\App\Entity\Legacy\Pnatural $idPnatural)
     {
         $this->idPnatural = $idPnatural;
 
@@ -177,7 +177,7 @@ class PrevisionPnatural
     /**
      * Get idPnatural.
      *
-     * @return \App\Entity\Pnatural
+     * @return \App\Entity\Legacy\Pnatural
      */
     public function getIdPnatural()
     {

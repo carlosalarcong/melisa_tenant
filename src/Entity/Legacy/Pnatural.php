@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Legacy;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -865,11 +865,11 @@ class Pnatural
     /**
      * Set idPersona.
      *
-     * @param \App\Entity\Persona $idPersona
+     * @param \App\Entity\Legacy\Persona $idPersona
      *
      * @return Pnatural
      */
-    public function setIdPersona(\App\Entity\Persona $idPersona)
+    public function setIdPersona(\App\Entity\Legacy\Persona $idPersona)
     {
         $this->idPersona = $idPersona;
 
@@ -879,7 +879,7 @@ class Pnatural
     /**
      * Get idPersona.
      *
-     * @return \App\Entity\Persona
+     * @return \App\Entity\Legacy\Persona
      */
     public function getIdPersona()
     {

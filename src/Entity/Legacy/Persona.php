@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Legacy;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -415,7 +415,7 @@ class Persona
     /**
      * obtener objeto Pnatural relacionado a esta persona
      *
-     * @return \App\Entity\Pnatural
+     * @return \App\Entity\Legacy\Pnatural
      */
     public function getIdPnatural($iNumeroHermanoGemelo = 0)
     {

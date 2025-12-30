@@ -331,11 +331,11 @@ class Paciente
     /**
      * Set idPnatural.
      *
-     * @param \App\Entity\Pnatural $idPnatural
+     * @param \App\Entity\Legacy\Pnatural $idPnatural
      *
      * @return Paciente
      */
-    public function setIdPnatural(\App\Entity\Pnatural $idPnatural)
+    public function setIdPnatural(\App\Entity\Legacy\Pnatural $idPnatural)
     {
         $this->idPnatural = $idPnatural;
 
@@ -345,7 +345,7 @@ class Paciente
     /**
      * Get idPnatural.
      *
-     * @return \App\Entity\Pnatural
+     * @return \App\Entity\Legacy\Pnatural
      */
     public function getIdPnatural()
     {
@@ -547,11 +547,11 @@ class Paciente
     /**
      * Set idTutor.
      *
-     * @param \App\Entity\Pnatural|null $idTutor
+     * @param \App\Entity\Legacy\Pnatural|null $idTutor
      *
      * @return Paciente
      */
-    public function setIdTutor(\App\Entity\Pnatural $idTutor = null)
+    public function setIdTutor(\App\Entity\Legacy\Pnatural $idTutor = null)
     {
         $this->idTutor = $idTutor;
 
@@ -561,7 +561,7 @@ class Paciente
     /**
      * Get idTutor.
      *
-     * @return \App\Entity\Pnatural|null
+     * @return \App\Entity\Legacy\Pnatural|null
      */
     public function getIdTutor()
     {

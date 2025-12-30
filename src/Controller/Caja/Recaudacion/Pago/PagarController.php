@@ -16,7 +16,7 @@ use App\Entity\DocumentoPago;
 use App\Entity\Paciente;
 use App\Entity\PagoCuenta;
 use App\Entity\PagoCuentaDetalle;
-use App\Entity\PrevisionPnatural;
+use App\Entity\Legacy\PrevisionPnatural;
 use App\Entity\ReservaAtencionLog;
 use App\Controller\Caja\RecaudacionController;
 use App\Form\Recaudacion\Pago\MediosPagoType;

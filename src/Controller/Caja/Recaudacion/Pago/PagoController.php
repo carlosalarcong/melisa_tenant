@@ -3,9 +3,9 @@
 namespace App\Controller\Caja\Recaudacion\Pago;
 
 use Rebsol\CajaBundle\Form\Type\Recaudacion\Pago\DiferenciaType;
-use App\Entity\Persona;
+use App\Entity\Legacy\Persona;
 use App\Entity\PersonaDomicilio;
-use App\Entity\Pnatural;
+use App\Entity\Legacy\Pnatural;
 use App\Controller\Caja\RecaudacionController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

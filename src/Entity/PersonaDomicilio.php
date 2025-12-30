@@ -244,11 +244,11 @@ class PersonaDomicilio
     /**
      * Set idPersona.
      *
-     * @param \App\Entity\Persona|null $idPersona
+     * @param \App\Entity\Legacy\Persona|null $idPersona
      *
      * @return PersonaDomicilio
      */
-    public function setIdPersona(\App\Entity\Persona $idPersona = null)
+    public function setIdPersona(\App\Entity\Legacy\Persona $idPersona = null)
     {
         $this->idPersona = $idPersona;
 
@@ -258,7 +258,7 @@ class PersonaDomicilio
     /**
      * Get idPersona.
      *
-     * @return \App\Entity\Persona|null
+     * @return \App\Entity\Legacy\Persona|null
      */
     public function getIdPersona()
     {
