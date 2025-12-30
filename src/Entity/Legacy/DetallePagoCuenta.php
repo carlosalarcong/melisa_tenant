@@ -278,11 +278,11 @@ class DetallePagoCuenta
     /**
      * Set idPagoCuenta.
      *
-     * @param \App\Entity\Legacy\Legacy\PagoCuenta|null $idPagoCuenta
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\PagoCuenta|null $idPagoCuenta
      *
      * @return DetallePagoCuenta
      */
-    public function setIdPagoCuenta(\App\Entity\Legacy\Legacy\PagoCuenta $idPagoCuenta = null)
+    public function setIdPagoCuenta(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\PagoCuenta $idPagoCuenta = null)
     {
         $this->idPagoCuenta = $idPagoCuenta;
 
@@ -292,7 +292,7 @@ class DetallePagoCuenta
     /**
      * Get idPagoCuenta.
      *
-     * @return \App\Entity\Legacy\Legacy\PagoCuenta|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\PagoCuenta|null
      */
     public function getIdPagoCuenta()
     {
@@ -302,11 +302,11 @@ class DetallePagoCuenta
     /**
      * Set idPrevision.
      *
-     * @param \App\Entity\Legacy\Legacy\Prevision|null $idPrevision
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Prevision|null $idPrevision
      *
      * @return DetallePagoCuenta
      */
-    public function setIdPrevision(\App\Entity\Legacy\Legacy\Prevision $idPrevision = null)
+    public function setIdPrevision(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Prevision $idPrevision = null)
     {
         $this->idPrevision = $idPrevision;
 
@@ -316,7 +316,7 @@ class DetallePagoCuenta
     /**
      * Get idPrevision.
      *
-     * @return \App\Entity\Legacy\Legacy\Prevision|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Prevision|null
      */
     public function getIdPrevision()
     {
@@ -326,11 +326,11 @@ class DetallePagoCuenta
     /**
      * Set idConvenio.
      *
-     * @param \App\Entity\Legacy\Legacy\Prevision|null $idConvenio
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Prevision|null $idConvenio
      *
      * @return DetallePagoCuenta
      */
-    public function setIdConvenio(\App\Entity\Legacy\Legacy\Prevision $idConvenio = null)
+    public function setIdConvenio(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Prevision $idConvenio = null)
     {
         $this->idConvenio = $idConvenio;
 
@@ -340,7 +340,7 @@ class DetallePagoCuenta
     /**
      * Get idConvenio.
      *
-     * @return \App\Entity\Legacy\Legacy\Prevision|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Prevision|null
      */
     public function getIdConvenio()
     {
@@ -350,11 +350,11 @@ class DetallePagoCuenta
     /**
      * Set idMotivoGratuidad.
      *
-     * @param \App\Entity\Legacy\Legacy\MotivoGratuidad|null $idMotivoGratuidad
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\MotivoGratuidad|null $idMotivoGratuidad
      *
      * @return DetallePagoCuenta
      */
-    public function setIdMotivoGratuidad(\App\Entity\Legacy\Legacy\MotivoGratuidad $idMotivoGratuidad = null)
+    public function setIdMotivoGratuidad(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\MotivoGratuidad $idMotivoGratuidad = null)
     {
         $this->idMotivoGratuidad = $idMotivoGratuidad;
 
@@ -364,7 +364,7 @@ class DetallePagoCuenta
     /**
      * Get idMotivoGratuidad.
      *
-     * @return \App\Entity\Legacy\Legacy\MotivoGratuidad|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\MotivoGratuidad|null
      */
     public function getIdMotivoGratuidad()
     {
@@ -374,11 +374,11 @@ class DetallePagoCuenta
     /**
      * Set idFormaPago.
      *
-     * @param \App\Entity\Legacy\Legacy\FormaPago|null $idFormaPago
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\FormaPago|null $idFormaPago
      *
      * @return DetallePagoCuenta
      */
-    public function setIdFormaPago(\App\Entity\Legacy\Legacy\FormaPago $idFormaPago = null)
+    public function setIdFormaPago(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\FormaPago $idFormaPago = null)
     {
         $this->idFormaPago = $idFormaPago;
 
@@ -388,7 +388,7 @@ class DetallePagoCuenta
     /**
      * Get idFormaPago.
      *
-     * @return \App\Entity\Legacy\Legacy\FormaPago|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\FormaPago|null
      */
     public function getIdFormaPago()
     {

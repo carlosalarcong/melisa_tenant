@@ -191,11 +191,11 @@ class DerivadorExterno
     /**
      * Set idEmpresa.
      *
-     * @param \App\Entity\Legacy\Legacy\Empresa $idEmpresa
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Empresa $idEmpresa
      *
      * @return DerivadorExterno
      */
-    public function setIdEmpresa(\App\Entity\Legacy\Legacy\Empresa $idEmpresa)
+    public function setIdEmpresa(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Empresa $idEmpresa)
     {
         $this->idEmpresa = $idEmpresa;
 
@@ -205,7 +205,7 @@ class DerivadorExterno
     /**
      * Get idEmpresa.
      *
-     * @return \App\Entity\Legacy\Legacy\Empresa
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Empresa
      */
     public function getIdEmpresa()
     {
@@ -215,11 +215,11 @@ class DerivadorExterno
     /**
      * Set idEstado.
      *
-     * @param \App\Entity\Legacy\Legacy\Estado $idEstado
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Estado $idEstado
      *
      * @return DerivadorExterno
      */
-    public function setIdEstado(\App\Entity\Legacy\Legacy\Estado $idEstado)
+    public function setIdEstado(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Estado $idEstado)
     {
         $this->idEstado = $idEstado;
 
@@ -229,7 +229,7 @@ class DerivadorExterno
     /**
      * Get idEstado.
      *
-     * @return \App\Entity\Legacy\Legacy\Estado
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Estado
      */
     public function getIdEstado()
     {
@@ -239,11 +239,11 @@ class DerivadorExterno
     /**
      * Set idUsuarioCreacion.
      *
-     * @param \App\Entity\Legacy\Legacy\UsuariosRebsol $idUsuarioCreacion
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol $idUsuarioCreacion
      *
      * @return DerivadorExterno
      */
-    public function setIdUsuarioCreacion(\App\Entity\Legacy\Legacy\UsuariosRebsol $idUsuarioCreacion)
+    public function setIdUsuarioCreacion(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol $idUsuarioCreacion)
     {
         $this->idUsuarioCreacion = $idUsuarioCreacion;
 
@@ -253,7 +253,7 @@ class DerivadorExterno
     /**
      * Get idUsuarioCreacion.
      *
-     * @return \App\Entity\Legacy\Legacy\UsuariosRebsol
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol
      */
     public function getIdUsuarioCreacion()
     {

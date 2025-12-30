@@ -397,11 +397,11 @@ class Caja
     /**
      * Set idSucursal.
      *
-     * @param \App\Entity\Legacy\Legacy\Sucursal $idSucursal
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Sucursal $idSucursal
      *
      * @return Caja
      */
-    public function setIdSucursal(\App\Entity\Legacy\Legacy\Sucursal $idSucursal)
+    public function setIdSucursal(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Sucursal $idSucursal)
     {
         $this->idSucursal = $idSucursal;
 
@@ -411,7 +411,7 @@ class Caja
     /**
      * Get idSucursal.
      *
-     * @return \App\Entity\Legacy\Legacy\Sucursal
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Sucursal
      */
     public function getIdSucursal()
     {
@@ -421,11 +421,11 @@ class Caja
     /**
      * Set idEstadoReapertura.
      *
-     * @param \App\Entity\Legacy\Legacy\EstadoReapertura|null $idEstadoReapertura
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\EstadoReapertura|null $idEstadoReapertura
      *
      * @return Caja
      */
-    public function setIdEstadoReapertura(\App\Entity\Legacy\Legacy\EstadoReapertura $idEstadoReapertura = null)
+    public function setIdEstadoReapertura(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\EstadoReapertura $idEstadoReapertura = null)
     {
         $this->idEstadoReapertura = $idEstadoReapertura;
 
@@ -435,7 +435,7 @@ class Caja
     /**
      * Get idEstadoReapertura.
      *
-     * @return \App\Entity\Legacy\Legacy\EstadoReapertura|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\EstadoReapertura|null
      */
     public function getIdEstadoReapertura()
     {
@@ -445,11 +445,11 @@ class Caja
     /**
      * Set idUsuario.
      *
-     * @param \App\Entity\Legacy\Legacy\UsuariosRebsol $idUsuario
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol $idUsuario
      *
      * @return Caja
      */
-    public function setIdUsuario(\App\Entity\Legacy\Legacy\UsuariosRebsol $idUsuario)
+    public function setIdUsuario(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol $idUsuario)
     {
         $this->idUsuario = $idUsuario;
 
@@ -459,7 +459,7 @@ class Caja
     /**
      * Get idUsuario.
      *
-     * @return \App\Entity\Legacy\Legacy\UsuariosRebsol
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol
      */
     public function getIdUsuario()
     {
@@ -469,11 +469,11 @@ class Caja
     /**
      * Set idUsuarioReapertura.
      *
-     * @param \App\Entity\Legacy\Legacy\UsuariosRebsol|null $idUsuarioReapertura
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol|null $idUsuarioReapertura
      *
      * @return Caja
      */
-    public function setIdUsuarioReapertura(\App\Entity\Legacy\Legacy\UsuariosRebsol $idUsuarioReapertura = null)
+    public function setIdUsuarioReapertura(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol $idUsuarioReapertura = null)
     {
         $this->idUsuarioReapertura = $idUsuarioReapertura;
 
@@ -483,7 +483,7 @@ class Caja
     /**
      * Get idUsuarioReapertura.
      *
-     * @return \App\Entity\Legacy\Legacy\UsuariosRebsol|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol|null
      */
     public function getIdUsuarioReapertura()
     {
@@ -493,11 +493,11 @@ class Caja
     /**
      * Set idUbicacionCajero.
      *
-     * @param \App\Entity\Legacy\Legacy\RelUbicacionCajero $idUbicacionCajero
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\RelUbicacionCajero $idUbicacionCajero
      *
      * @return Caja
      */
-    public function setIdUbicacionCajero(\App\Entity\Legacy\Legacy\RelUbicacionCajero $idUbicacionCajero)
+    public function setIdUbicacionCajero(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\RelUbicacionCajero $idUbicacionCajero)
     {
         $this->idUbicacionCajero = $idUbicacionCajero;
 
@@ -507,7 +507,7 @@ class Caja
     /**
      * Get idUbicacionCajero.
      *
-     * @return \App\Entity\Legacy\Legacy\RelUbicacionCajero
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\RelUbicacionCajero
      */
     public function getIdUbicacionCajero()
     {

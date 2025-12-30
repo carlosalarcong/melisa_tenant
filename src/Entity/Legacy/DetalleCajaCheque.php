@@ -160,11 +160,11 @@ class DetalleCajaCheque
     /**
      * Set idCaja.
      *
-     * @param \App\Entity\Legacy\Legacy\Caja $idCaja
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Caja $idCaja
      *
      * @return DetalleCajaCheque
      */
-    public function setIdCaja(\App\Entity\Legacy\Legacy\Caja $idCaja)
+    public function setIdCaja(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Caja $idCaja)
     {
         $this->idCaja = $idCaja;
 
@@ -174,7 +174,7 @@ class DetalleCajaCheque
     /**
      * Get idCaja.
      *
-     * @return \App\Entity\Legacy\Legacy\Caja
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Caja
      */
     public function getIdCaja()
     {
@@ -184,11 +184,11 @@ class DetalleCajaCheque
     /**
      * Set idBanco.
      *
-     * @param \App\Entity\Legacy\Legacy\Banco $idBanco
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Banco $idBanco
      *
      * @return DetalleCajaCheque
      */
-    public function setIdBanco(\App\Entity\Legacy\Legacy\Banco $idBanco)
+    public function setIdBanco(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Banco $idBanco)
     {
         $this->idBanco = $idBanco;
 
@@ -198,7 +198,7 @@ class DetalleCajaCheque
     /**
      * Get idBanco.
      *
-     * @return \App\Entity\Legacy\Legacy\Banco
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Banco
      */
     public function getIdBanco()
     {
@@ -208,11 +208,11 @@ class DetalleCajaCheque
     /**
      * Set idEstado.
      *
-     * @param \App\Entity\Legacy\Legacy\Estado $idEstado
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Estado $idEstado
      *
      * @return DetalleCajaCheque
      */
-    public function setIdEstado(\App\Entity\Legacy\Legacy\Estado $idEstado)
+    public function setIdEstado(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Estado $idEstado)
     {
         $this->idEstado = $idEstado;
 
@@ -222,7 +222,7 @@ class DetalleCajaCheque
     /**
      * Get idEstado.
      *
-     * @return \App\Entity\Legacy\Legacy\Estado
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Estado
      */
     public function getIdEstado()
     {

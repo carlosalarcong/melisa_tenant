@@ -291,11 +291,11 @@ class Diferencia
     /**
      * Set idPaciente.
      *
-     * @param \App\Entity\Legacy\Legacy\Paciente|null $idPaciente
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Paciente|null $idPaciente
      *
      * @return Diferencia
      */
-    public function setIdPaciente(\App\Entity\Legacy\Legacy\Paciente $idPaciente = null)
+    public function setIdPaciente(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Paciente $idPaciente = null)
     {
         $this->idPaciente = $idPaciente;
 
@@ -305,7 +305,7 @@ class Diferencia
     /**
      * Get idPaciente.
      *
-     * @return \App\Entity\Legacy\Legacy\Paciente|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Paciente|null
      */
     public function getIdPaciente()
     {
@@ -315,11 +315,11 @@ class Diferencia
     /**
      * Set idUsuarioAnulacion.
      *
-     * @param \App\Entity\Legacy\Legacy\UsuariosRebsol|null $idUsuarioAnulacion
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol|null $idUsuarioAnulacion
      *
      * @return Diferencia
      */
-    public function setIdUsuarioAnulacion(\App\Entity\Legacy\Legacy\UsuariosRebsol $idUsuarioAnulacion = null)
+    public function setIdUsuarioAnulacion(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol $idUsuarioAnulacion = null)
     {
         $this->idUsuarioAnulacion = $idUsuarioAnulacion;
 
@@ -329,7 +329,7 @@ class Diferencia
     /**
      * Get idUsuarioAnulacion.
      *
-     * @return \App\Entity\Legacy\Legacy\UsuariosRebsol|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol|null
      */
     public function getIdUsuarioAnulacion()
     {
@@ -339,11 +339,11 @@ class Diferencia
     /**
      * Set idUsuarioSolicitud.
      *
-     * @param \App\Entity\Legacy\Legacy\UsuariosRebsol $idUsuarioSolicitud
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol $idUsuarioSolicitud
      *
      * @return Diferencia
      */
-    public function setIdUsuarioSolicitud(\App\Entity\Legacy\Legacy\UsuariosRebsol $idUsuarioSolicitud)
+    public function setIdUsuarioSolicitud(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol $idUsuarioSolicitud)
     {
         $this->idUsuarioSolicitud = $idUsuarioSolicitud;
 
@@ -353,7 +353,7 @@ class Diferencia
     /**
      * Get idUsuarioSolicitud.
      *
-     * @return \App\Entity\Legacy\Legacy\UsuariosRebsol
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol
      */
     public function getIdUsuarioSolicitud()
     {
@@ -363,11 +363,11 @@ class Diferencia
     /**
      * Set idUsuarioAutorizacion.
      *
-     * @param \App\Entity\Legacy\Legacy\UsuariosRebsol|null $idUsuarioAutorizacion
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol|null $idUsuarioAutorizacion
      *
      * @return Diferencia
      */
-    public function setIdUsuarioAutorizacion(\App\Entity\Legacy\Legacy\UsuariosRebsol $idUsuarioAutorizacion = null)
+    public function setIdUsuarioAutorizacion(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol $idUsuarioAutorizacion = null)
     {
         $this->idUsuarioAutorizacion = $idUsuarioAutorizacion;
 
@@ -377,7 +377,7 @@ class Diferencia
     /**
      * Get idUsuarioAutorizacion.
      *
-     * @return \App\Entity\Legacy\Legacy\UsuariosRebsol|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol|null
      */
     public function getIdUsuarioAutorizacion()
     {
@@ -387,11 +387,11 @@ class Diferencia
     /**
      * Set idEstadoDiferencia.
      *
-     * @param \App\Entity\Legacy\Legacy\EstadoDiferencia $idEstadoDiferencia
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\EstadoDiferencia $idEstadoDiferencia
      *
      * @return Diferencia
      */
-    public function setIdEstadoDiferencia(\App\Entity\Legacy\Legacy\EstadoDiferencia $idEstadoDiferencia)
+    public function setIdEstadoDiferencia(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\EstadoDiferencia $idEstadoDiferencia)
     {
         $this->idEstadoDiferencia = $idEstadoDiferencia;
 
@@ -401,7 +401,7 @@ class Diferencia
     /**
      * Get idEstadoDiferencia.
      *
-     * @return \App\Entity\Legacy\Legacy\EstadoDiferencia
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\EstadoDiferencia
      */
     public function getIdEstadoDiferencia()
     {
@@ -411,11 +411,11 @@ class Diferencia
     /**
      * Set idMotivoDiferencia.
      *
-     * @param \App\Entity\Legacy\Legacy\MotivoDiferencia $idMotivoDiferencia
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\MotivoDiferencia $idMotivoDiferencia
      *
      * @return Diferencia
      */
-    public function setIdMotivoDiferencia(\App\Entity\Legacy\Legacy\MotivoDiferencia $idMotivoDiferencia)
+    public function setIdMotivoDiferencia(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\MotivoDiferencia $idMotivoDiferencia)
     {
         $this->idMotivoDiferencia = $idMotivoDiferencia;
 
@@ -425,7 +425,7 @@ class Diferencia
     /**
      * Get idMotivoDiferencia.
      *
-     * @return \App\Entity\Legacy\Legacy\MotivoDiferencia
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\MotivoDiferencia
      */
     public function getIdMotivoDiferencia()
     {
@@ -435,11 +435,11 @@ class Diferencia
     /**
      * Set idPagoCuenta.
      *
-     * @param \App\Entity\Legacy\Legacy\PagoCuenta|null $idPagoCuenta
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\PagoCuenta|null $idPagoCuenta
      *
      * @return Diferencia
      */
-    public function setIdPagoCuenta(\App\Entity\Legacy\Legacy\PagoCuenta $idPagoCuenta = null)
+    public function setIdPagoCuenta(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\PagoCuenta $idPagoCuenta = null)
     {
         $this->idPagoCuenta = $idPagoCuenta;
 
@@ -449,7 +449,7 @@ class Diferencia
     /**
      * Get idPagoCuenta.
      *
-     * @return \App\Entity\Legacy\Legacy\PagoCuenta|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\PagoCuenta|null
      */
     public function getIdPagoCuenta()
     {

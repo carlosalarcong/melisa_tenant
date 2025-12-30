@@ -139,11 +139,11 @@ class DetalleCaja
     /**
      * Set idCaja.
      *
-     * @param \App\Entity\Legacy\Legacy\Caja $idCaja
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Caja $idCaja
      *
      * @return DetalleCaja
      */
-    public function setIdCaja(\App\Entity\Legacy\Legacy\Caja $idCaja)
+    public function setIdCaja(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Caja $idCaja)
     {
         $this->idCaja = $idCaja;
 
@@ -153,7 +153,7 @@ class DetalleCaja
     /**
      * Get idCaja.
      *
-     * @return \App\Entity\Legacy\Legacy\Caja
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Caja
      */
     public function getIdCaja()
     {
@@ -163,11 +163,11 @@ class DetalleCaja
     /**
      * Set idBanco.
      *
-     * @param \App\Entity\Legacy\Legacy\Banco|null $idBanco
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Banco|null $idBanco
      *
      * @return DetalleCaja
      */
-    public function setIdBanco(\App\Entity\Legacy\Legacy\Banco $idBanco = null)
+    public function setIdBanco(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Banco $idBanco = null)
     {
         $this->idBanco = $idBanco;
 
@@ -177,7 +177,7 @@ class DetalleCaja
     /**
      * Get idBanco.
      *
-     * @return \App\Entity\Legacy\Legacy\Banco|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Banco|null
      */
     public function getIdBanco()
     {
@@ -187,11 +187,11 @@ class DetalleCaja
     /**
      * Set idFormaPago.
      *
-     * @param \App\Entity\Legacy\Legacy\FormaPago $idFormaPago
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\FormaPago $idFormaPago
      *
      * @return DetalleCaja
      */
-    public function setIdFormaPago(\App\Entity\Legacy\Legacy\FormaPago $idFormaPago)
+    public function setIdFormaPago(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\FormaPago $idFormaPago)
     {
         $this->idFormaPago = $idFormaPago;
 
@@ -201,7 +201,7 @@ class DetalleCaja
     /**
      * Get idFormaPago.
      *
-     * @return \App\Entity\Legacy\Legacy\FormaPago
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\FormaPago
      */
     public function getIdFormaPago()
     {
@@ -211,11 +211,11 @@ class DetalleCaja
     /**
      * Set idEstado.
      *
-     * @param \App\Entity\Legacy\Legacy\Estado $idEstado
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Estado $idEstado
      *
      * @return DetalleCaja
      */
-    public function setIdEstado(\App\Entity\Legacy\Legacy\Estado $idEstado)
+    public function setIdEstado(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Estado $idEstado)
     {
         $this->idEstado = $idEstado;
 
@@ -225,7 +225,7 @@ class DetalleCaja
     /**
      * Get idEstado.
      *
-     * @return \App\Entity\Legacy\Legacy\Estado
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Estado
      */
     public function getIdEstado()
     {

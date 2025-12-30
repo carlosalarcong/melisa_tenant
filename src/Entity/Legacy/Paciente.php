@@ -331,11 +331,11 @@ class Paciente
     /**
      * Set idPnatural.
      *
-     * @param \App\Entity\Legacy\Legacy\Legacy\Pnatural $idPnatural
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Pnatural $idPnatural
      *
      * @return Paciente
      */
-    public function setIdPnatural(\App\Entity\Legacy\Legacy\Legacy\Pnatural $idPnatural)
+    public function setIdPnatural(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Pnatural $idPnatural)
     {
         $this->idPnatural = $idPnatural;
 
@@ -345,7 +345,7 @@ class Paciente
     /**
      * Get idPnatural.
      *
-     * @return \App\Entity\Legacy\Legacy\Legacy\Pnatural
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Pnatural
      */
     public function getIdPnatural()
     {
@@ -355,11 +355,11 @@ class Paciente
     /**
      * Set idTipoAtencionFc.
      *
-     * @param \App\Entity\Legacy\Legacy\TipoAtencionFc $idTipoAtencionFc
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\TipoAtencionFc $idTipoAtencionFc
      *
      * @return Paciente
      */
-    public function setIdTipoAtencionFc(\App\Entity\Legacy\Legacy\TipoAtencionFc $idTipoAtencionFc)
+    public function setIdTipoAtencionFc(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\TipoAtencionFc $idTipoAtencionFc)
     {
         $this->idTipoAtencionFc = $idTipoAtencionFc;
 
@@ -369,7 +369,7 @@ class Paciente
     /**
      * Get idTipoAtencionFc.
      *
-     * @return \App\Entity\Legacy\Legacy\TipoAtencionFc
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\TipoAtencionFc
      */
     public function getIdTipoAtencionFc()
     {
@@ -379,11 +379,11 @@ class Paciente
     /**
      * Set idProfesional.
      *
-     * @param \App\Entity\Legacy\Legacy\UsuariosRebsol|null $idProfesional
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol|null $idProfesional
      *
      * @return Paciente
      */
-    public function setIdProfesional(\App\Entity\Legacy\Legacy\UsuariosRebsol $idProfesional = null)
+    public function setIdProfesional(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol $idProfesional = null)
     {
         $this->idProfesional = $idProfesional;
 
@@ -393,7 +393,7 @@ class Paciente
     /**
      * Get idProfesional.
      *
-     * @return \App\Entity\Legacy\Legacy\UsuariosRebsol|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol|null
      */
     public function getIdProfesional()
     {
@@ -403,11 +403,11 @@ class Paciente
     /**
      * Set idOrigen.
      *
-     * @param \App\Entity\Legacy\Legacy\Origen|null $idOrigen
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Origen|null $idOrigen
      *
      * @return Paciente
      */
-    public function setIdOrigen(\App\Entity\Legacy\Legacy\Origen $idOrigen = null)
+    public function setIdOrigen(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Origen $idOrigen = null)
     {
         $this->idOrigen = $idOrigen;
 
@@ -417,7 +417,7 @@ class Paciente
     /**
      * Get idOrigen.
      *
-     * @return \App\Entity\Legacy\Legacy\Origen|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Origen|null
      */
     public function getIdOrigen()
     {
@@ -427,11 +427,11 @@ class Paciente
     /**
      * Set idFinanciador.
      *
-     * @param \App\Entity\Legacy\Legacy\Prevision $idFinanciador
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Prevision $idFinanciador
      *
      * @return Paciente
      */
-    public function setIdFinanciador(\App\Entity\Legacy\Legacy\Prevision $idFinanciador)
+    public function setIdFinanciador(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Prevision $idFinanciador)
     {
         $this->idFinanciador = $idFinanciador;
 
@@ -441,7 +441,7 @@ class Paciente
     /**
      * Get idFinanciador.
      *
-     * @return \App\Entity\Legacy\Legacy\Prevision
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Prevision
      */
     public function getIdFinanciador()
     {
@@ -451,11 +451,11 @@ class Paciente
     /**
      * Set idConvenio.
      *
-     * @param \App\Entity\Legacy\Legacy\Prevision|null $idConvenio
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Prevision|null $idConvenio
      *
      * @return Paciente
      */
-    public function setIdConvenio(\App\Entity\Legacy\Legacy\Prevision $idConvenio = null)
+    public function setIdConvenio(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Prevision $idConvenio = null)
     {
         $this->idConvenio = $idConvenio;
 
@@ -465,7 +465,7 @@ class Paciente
     /**
      * Get idConvenio.
      *
-     * @return \App\Entity\Legacy\Legacy\Prevision|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Prevision|null
      */
     public function getIdConvenio()
     {
@@ -475,11 +475,11 @@ class Paciente
     /**
      * Set idPlan.
      *
-     * @param \App\Entity\Legacy\Legacy\PrPlan|null $idPlan
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\PrPlan|null $idPlan
      *
      * @return Paciente
      */
-    public function setIdPlan(\App\Entity\Legacy\Legacy\PrPlan $idPlan = null)
+    public function setIdPlan(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\PrPlan $idPlan = null)
     {
         $this->idPlan = $idPlan;
 
@@ -489,7 +489,7 @@ class Paciente
     /**
      * Get idPlan.
      *
-     * @return \App\Entity\Legacy\Legacy\PrPlan|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\PrPlan|null
      */
     public function getIdPlan()
     {
@@ -499,11 +499,11 @@ class Paciente
     /**
      * Set idDerivadorExterno.
      *
-     * @param \App\Entity\Legacy\Legacy\DerivadorExterno|null $idDerivadorExterno
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\DerivadorExterno|null $idDerivadorExterno
      *
      * @return Paciente
      */
-    public function setIdDerivadorExterno(\App\Entity\Legacy\Legacy\DerivadorExterno $idDerivadorExterno = null)
+    public function setIdDerivadorExterno(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\DerivadorExterno $idDerivadorExterno = null)
     {
         $this->idDerivadorExterno = $idDerivadorExterno;
 
@@ -513,7 +513,7 @@ class Paciente
     /**
      * Get idDerivadorExterno.
      *
-     * @return \App\Entity\Legacy\Legacy\DerivadorExterno|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\DerivadorExterno|null
      */
     public function getIdDerivadorExterno()
     {
@@ -523,11 +523,11 @@ class Paciente
     /**
      * Set idEmpresa.
      *
-     * @param \App\Entity\Legacy\Legacy\Empresa $idEmpresa
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Empresa $idEmpresa
      *
      * @return Paciente
      */
-    public function setIdEmpresa(\App\Entity\Legacy\Legacy\Empresa $idEmpresa)
+    public function setIdEmpresa(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Empresa $idEmpresa)
     {
         $this->idEmpresa = $idEmpresa;
 
@@ -537,7 +537,7 @@ class Paciente
     /**
      * Get idEmpresa.
      *
-     * @return \App\Entity\Legacy\Legacy\Empresa
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Empresa
      */
     public function getIdEmpresa()
     {
@@ -547,11 +547,11 @@ class Paciente
     /**
      * Set idTutor.
      *
-     * @param \App\Entity\Legacy\Legacy\Legacy\Pnatural|null $idTutor
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Pnatural|null $idTutor
      *
      * @return Paciente
      */
-    public function setIdTutor(\App\Entity\Legacy\Legacy\Legacy\Pnatural $idTutor = null)
+    public function setIdTutor(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Pnatural $idTutor = null)
     {
         $this->idTutor = $idTutor;
 
@@ -561,7 +561,7 @@ class Paciente
     /**
      * Get idTutor.
      *
-     * @return \App\Entity\Legacy\Legacy\Legacy\Pnatural|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Pnatural|null
      */
     public function getIdTutor()
     {

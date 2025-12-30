@@ -219,11 +219,11 @@ class PagoCuentaDetalle
     /**
      * Set idPagoCuenta.
      *
-     * @param \App\Entity\Legacy\Legacy\PagoCuenta|null $idPagoCuenta
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\PagoCuenta|null $idPagoCuenta
      *
      * @return PagoCuentaDetalle
      */
-    public function setIdPagoCuenta(\App\Entity\Legacy\Legacy\PagoCuenta $idPagoCuenta = null)
+    public function setIdPagoCuenta(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\PagoCuenta $idPagoCuenta = null)
     {
         $this->idPagoCuenta = $idPagoCuenta;
 
@@ -233,7 +233,7 @@ class PagoCuentaDetalle
     /**
      * Get idPagoCuenta.
      *
-     * @return \App\Entity\Legacy\Legacy\PagoCuenta|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\PagoCuenta|null
      */
     public function getIdPagoCuenta()
     {

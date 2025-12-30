@@ -159,11 +159,11 @@ class DetalleDocumentoPago
     /**
      * Set idDocumentoPago.
      *
-     * @param \App\Entity\Legacy\Legacy\DocumentoPago $idDocumentoPago
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\DocumentoPago $idDocumentoPago
      *
      * @return DetalleDocumentoPago
      */
-    public function setIdDocumentoPago(\App\Entity\Legacy\Legacy\DocumentoPago $idDocumentoPago)
+    public function setIdDocumentoPago(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\DocumentoPago $idDocumentoPago)
     {
         $this->idDocumentoPago = $idDocumentoPago;
 
@@ -173,7 +173,7 @@ class DetalleDocumentoPago
     /**
      * Get idDocumentoPago.
      *
-     * @return \App\Entity\Legacy\Legacy\DocumentoPago
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\DocumentoPago
      */
     public function getIdDocumentoPago()
     {
@@ -183,11 +183,11 @@ class DetalleDocumentoPago
     /**
      * Set idCondicionPago.
      *
-     * @param \App\Entity\Legacy\Legacy\CondicionPago $idCondicionPago
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\CondicionPago $idCondicionPago
      *
      * @return DetalleDocumentoPago
      */
-    public function setIdCondicionPago(\App\Entity\Legacy\Legacy\CondicionPago $idCondicionPago)
+    public function setIdCondicionPago(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\CondicionPago $idCondicionPago)
     {
         $this->idCondicionPago = $idCondicionPago;
 
@@ -197,7 +197,7 @@ class DetalleDocumentoPago
     /**
      * Get idCondicionPago.
      *
-     * @return \App\Entity\Legacy\Legacy\CondicionPago
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\CondicionPago
      */
     public function getIdCondicionPago()
     {
@@ -207,11 +207,11 @@ class DetalleDocumentoPago
     /**
      * Set idFormaPago.
      *
-     * @param \App\Entity\Legacy\Legacy\FormaPago $idFormaPago
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\FormaPago $idFormaPago
      *
      * @return DetalleDocumentoPago
      */
-    public function setIdFormaPago(\App\Entity\Legacy\Legacy\FormaPago $idFormaPago)
+    public function setIdFormaPago(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\FormaPago $idFormaPago)
     {
         $this->idFormaPago = $idFormaPago;
 
@@ -221,7 +221,7 @@ class DetalleDocumentoPago
     /**
      * Get idFormaPago.
      *
-     * @return \App\Entity\Legacy\Legacy\FormaPago
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\FormaPago
      */
     public function getIdFormaPago()
     {

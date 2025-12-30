@@ -618,11 +618,11 @@ class ArticuloPacienteLog
     /**
      * Set idUsuarioServicioSolicitante.
      *
-     * @param \App\Entity\Legacy\Legacy\RelUsuarioServicio|null $idUsuarioServicioSolicitante
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\RelUsuarioServicio|null $idUsuarioServicioSolicitante
      *
      * @return ArticuloPaciente
      */
-    public function setIdUsuarioServicioSolicitante(\App\Entity\Legacy\Legacy\RelUsuarioServicio $idUsuarioServicioSolicitante = null)
+    public function setIdUsuarioServicioSolicitante(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\RelUsuarioServicio $idUsuarioServicioSolicitante = null)
     {
         $this->idUsuarioServicioSolicitante = $idUsuarioServicioSolicitante;
 
@@ -632,7 +632,7 @@ class ArticuloPacienteLog
     /**
      * Get idUsuarioServicioSolicitante.
      *
-     * @return \App\Entity\Legacy\Legacy\RelUsuarioServicio|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\RelUsuarioServicio|null
      */
     public function getIdUsuarioServicioSolicitante()
     {
@@ -642,11 +642,11 @@ class ArticuloPacienteLog
     /**
      * Set idUsuarioServicioRealizador.
      *
-     * @param \App\Entity\Legacy\Legacy\RelUsuarioServicio|null $idUsuarioServicioRealizador
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\RelUsuarioServicio|null $idUsuarioServicioRealizador
      *
      * @return ArticuloPaciente
      */
-    public function setIdUsuarioServicioRealizador(\App\Entity\Legacy\Legacy\RelUsuarioServicio $idUsuarioServicioRealizador = null)
+    public function setIdUsuarioServicioRealizador(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\RelUsuarioServicio $idUsuarioServicioRealizador = null)
     {
         $this->idUsuarioServicioRealizador = $idUsuarioServicioRealizador;
 
@@ -656,7 +656,7 @@ class ArticuloPacienteLog
     /**
      * Get idUsuarioServicioRealizador.
      *
-     * @return \App\Entity\Legacy\Legacy\RelUsuarioServicio|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\RelUsuarioServicio|null
      */
     public function getIdUsuarioServicioRealizador()
     {
@@ -666,11 +666,11 @@ class ArticuloPacienteLog
     /**
      * Set idUsuarioAnulacion.
      *
-     * @param \App\Entity\Legacy\Legacy\UsuariosRebsol|null $idUsuarioAnulacion
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol|null $idUsuarioAnulacion
      *
      * @return ArticuloPaciente
      */
-    public function setIdUsuarioAnulacion(\App\Entity\Legacy\Legacy\UsuariosRebsol $idUsuarioAnulacion = null)
+    public function setIdUsuarioAnulacion(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol $idUsuarioAnulacion = null)
     {
         $this->idUsuarioAnulacion = $idUsuarioAnulacion;
 
@@ -680,7 +680,7 @@ class ArticuloPacienteLog
     /**
      * Get idUsuarioAnulacion.
      *
-     * @return \App\Entity\Legacy\Legacy\UsuariosRebsol|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol|null
      */
     public function getIdUsuarioAnulacion()
     {
@@ -690,11 +690,11 @@ class ArticuloPacienteLog
     /**
      * Set idServicioSolicitud.
      *
-     * @param \App\Entity\Legacy\Legacy\Servicio|null $idServicioSolicitud
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Servicio|null $idServicioSolicitud
      *
      * @return ArticuloPaciente
      */
-    public function setIdServicioSolicitud(\App\Entity\Legacy\Legacy\Servicio $idServicioSolicitud = null)
+    public function setIdServicioSolicitud(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Servicio $idServicioSolicitud = null)
     {
         $this->idServicioSolicitud = $idServicioSolicitud;
 
@@ -704,7 +704,7 @@ class ArticuloPacienteLog
     /**
      * Get idServicioSolicitud.
      *
-     * @return \App\Entity\Legacy\Legacy\Servicio|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Servicio|null
      */
     public function getIdServicioSolicitud()
     {
@@ -714,11 +714,11 @@ class ArticuloPacienteLog
     /**
      * Set idServicioRealizacion.
      *
-     * @param \App\Entity\Legacy\Legacy\Servicio|null $idServicioRealizacion
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Servicio|null $idServicioRealizacion
      *
      * @return ArticuloPaciente
      */
-    public function setIdServicioRealizacion(\App\Entity\Legacy\Legacy\Servicio $idServicioRealizacion = null)
+    public function setIdServicioRealizacion(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Servicio $idServicioRealizacion = null)
     {
         $this->idServicioRealizacion = $idServicioRealizacion;
 
@@ -728,7 +728,7 @@ class ArticuloPacienteLog
     /**
      * Get idServicioRealizacion.
      *
-     * @return \App\Entity\Legacy\Legacy\Servicio|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Servicio|null
      */
     public function getIdServicioRealizacion()
     {
@@ -738,11 +738,11 @@ class ArticuloPacienteLog
     /**
      * Set idArticulo.
      *
-     * @param \App\Entity\Legacy\Legacy\Articulo|null $idArticulo
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Articulo|null $idArticulo
      *
      * @return ArticuloPaciente
      */
-    public function setIdArticulo(\App\Entity\Legacy\Legacy\Articulo $idArticulo = null)
+    public function setIdArticulo(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Articulo $idArticulo = null)
     {
         $this->idArticulo = $idArticulo;
 
@@ -752,7 +752,7 @@ class ArticuloPacienteLog
     /**
      * Get idArticulo.
      *
-     * @return \App\Entity\Legacy\Legacy\Articulo|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Articulo|null
      */
     public function getIdArticulo()
     {
@@ -762,11 +762,11 @@ class ArticuloPacienteLog
     /**
      * Set idEstado.
      *
-     * @param \App\Entity\Legacy\Legacy\Estado|null $idEstado
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Estado|null $idEstado
      *
      * @return ArticuloPaciente
      */
-    public function setIdEstado(\App\Entity\Legacy\Legacy\Estado $idEstado = null)
+    public function setIdEstado(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Estado $idEstado = null)
     {
         $this->idEstado = $idEstado;
 
@@ -776,7 +776,7 @@ class ArticuloPacienteLog
     /**
      * Get idEstado.
      *
-     * @return \App\Entity\Legacy\Legacy\Estado|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Estado|null
      */
     public function getIdEstado()
     {
@@ -786,11 +786,11 @@ class ArticuloPacienteLog
     /**
      * Set idEstadoPago.
      *
-     * @param \App\Entity\Legacy\Legacy\EstadoPago|null $idEstadoPago
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\EstadoPago|null $idEstadoPago
      *
      * @return ArticuloPaciente
      */
-    public function setIdEstadoPago(\App\Entity\Legacy\Legacy\EstadoPago $idEstadoPago = null)
+    public function setIdEstadoPago(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\EstadoPago $idEstadoPago = null)
     {
         $this->idEstadoPago = $idEstadoPago;
 
@@ -800,7 +800,7 @@ class ArticuloPacienteLog
     /**
      * Get idEstadoPago.
      *
-     * @return \App\Entity\Legacy\Legacy\EstadoPago|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\EstadoPago|null
      */
     public function getIdEstadoPago()
     {
@@ -810,11 +810,11 @@ class ArticuloPacienteLog
     /**
      * Set idPaciente.
      *
-     * @param \App\Entity\Legacy\Legacy\Paciente|null $idPaciente
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Paciente|null $idPaciente
      *
      * @return ArticuloPaciente
      */
-    public function setIdPaciente(\App\Entity\Legacy\Legacy\Paciente $idPaciente = null)
+    public function setIdPaciente(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Paciente $idPaciente = null)
     {
         $this->idPaciente = $idPaciente;
 
@@ -824,7 +824,7 @@ class ArticuloPacienteLog
     /**
      * Get idPaciente.
      *
-     * @return \App\Entity\Legacy\Legacy\Paciente|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Paciente|null
      */
     public function getIdPaciente()
     {
@@ -834,11 +834,11 @@ class ArticuloPacienteLog
     /**
      * Set idPagoCuenta.
      *
-     * @param \App\Entity\Legacy\Legacy\PagoCuenta|null $idPagoCuenta
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\PagoCuenta|null $idPagoCuenta
      *
      * @return ArticuloPaciente
      */
-    public function setIdPagoCuenta(\App\Entity\Legacy\Legacy\PagoCuenta $idPagoCuenta = null)
+    public function setIdPagoCuenta(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\PagoCuenta $idPagoCuenta = null)
     {
         $this->idPagoCuenta = $idPagoCuenta;
 
@@ -848,7 +848,7 @@ class ArticuloPacienteLog
     /**
      * Get idPagoCuenta.
      *
-     * @return \App\Entity\Legacy\Legacy\PagoCuenta|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\PagoCuenta|null
      */
     public function getIdPagoCuenta()
     {
@@ -858,11 +858,11 @@ class ArticuloPacienteLog
     /**
      * Set idPrevision.
      *
-     * @param \App\Entity\Legacy\Legacy\Prevision|null $idPrevision
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Prevision|null $idPrevision
      *
      * @return ArticuloPaciente
      */
-    public function setIdPrevision(\App\Entity\Legacy\Legacy\Prevision $idPrevision = null)
+    public function setIdPrevision(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Prevision $idPrevision = null)
     {
         $this->idPrevision = $idPrevision;
 
@@ -872,7 +872,7 @@ class ArticuloPacienteLog
     /**
      * Get idPrevision.
      *
-     * @return \App\Entity\Legacy\Legacy\Prevision|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Prevision|null
      */
     public function getIdPrevision()
     {
@@ -882,11 +882,11 @@ class ArticuloPacienteLog
     /**
      * Set idAccionClinicaPaciente.
      *
-     * @param \App\Entity\Legacy\Legacy\AccionClinicaPaciente|null $idAccionClinicaPaciente
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\AccionClinicaPaciente|null $idAccionClinicaPaciente
      *
      * @return ArticuloPaciente
      */
-    public function setIdAccionClinicaPaciente(\App\Entity\Legacy\Legacy\AccionClinicaPaciente $idAccionClinicaPaciente = null)
+    public function setIdAccionClinicaPaciente(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\AccionClinicaPaciente $idAccionClinicaPaciente = null)
     {
         $this->idAccionClinicaPaciente = $idAccionClinicaPaciente;
 
@@ -896,7 +896,7 @@ class ArticuloPacienteLog
     /**
      * Get idAccionClinicaPaciente.
      *
-     * @return \App\Entity\Legacy\Legacy\AccionClinicaPaciente|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\AccionClinicaPaciente|null
      */
     public function getIdAccionClinicaPaciente()
     {
@@ -906,11 +906,11 @@ class ArticuloPacienteLog
     /**
      * Set idRchReceta.
      *
-     * @param \App\Entity\Legacy\Legacy\RchReceta|null $idRchReceta
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\RchReceta|null $idRchReceta
      *
      * @return ArticuloPaciente
      */
-    public function setIdRchReceta(\App\Entity\Legacy\Legacy\RchReceta $idRchReceta = null)
+    public function setIdRchReceta(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\RchReceta $idRchReceta = null)
     {
         $this->idRchReceta = $idRchReceta;
 
@@ -920,7 +920,7 @@ class ArticuloPacienteLog
     /**
      * Get idRchReceta.
      *
-     * @return \App\Entity\Legacy\Legacy\RchReceta|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\RchReceta|null
      */
     public function getIdRchReceta()
     {
@@ -930,11 +930,11 @@ class ArticuloPacienteLog
     /**
      * Set idTipoCargaArticuloPaciente.
      *
-     * @param \App\Entity\Legacy\Legacy\TipoCargaArticuloPaciente $idTipoCargaArticuloPaciente
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\TipoCargaArticuloPaciente $idTipoCargaArticuloPaciente
      *
      * @return ArticuloPaciente
      */
-    public function setIdTipoCargaArticuloPaciente(\App\Entity\Legacy\Legacy\TipoCargaArticuloPaciente $idTipoCargaArticuloPaciente)
+    public function setIdTipoCargaArticuloPaciente(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\TipoCargaArticuloPaciente $idTipoCargaArticuloPaciente)
     {
         $this->idTipoCargaArticuloPaciente = $idTipoCargaArticuloPaciente;
 
@@ -944,7 +944,7 @@ class ArticuloPacienteLog
     /**
      * Get idTipoCargaArticuloPaciente.
      *
-     * @return \App\Entity\Legacy\Legacy\TipoCargaArticuloPaciente
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\TipoCargaArticuloPaciente
      */
     public function getIdTipoCargaArticuloPaciente()
     {
@@ -954,11 +954,11 @@ class ArticuloPacienteLog
     /**
      * Set idBodega.
      *
-     * @param \App\Entity\Legacy\Legacy\Bodega|null $idBodega
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Bodega|null $idBodega
      *
      * @return ArticuloPaciente
      */
-    public function setIdBodega(\App\Entity\Legacy\Legacy\Bodega $idBodega = null)
+    public function setIdBodega(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Bodega $idBodega = null)
     {
         $this->idBodega = $idBodega;
 
@@ -968,7 +968,7 @@ class ArticuloPacienteLog
     /**
      * Get idBodega.
      *
-     * @return \App\Entity\Legacy\Legacy\Bodega|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Bodega|null
      */
     public function getIdBodega()
     {
@@ -978,11 +978,11 @@ class ArticuloPacienteLog
     /**
      * Set idRecienNacido.
      *
-     * @param \App\Entity\Legacy\Legacy\RecienNacido|null $idRecienNacido
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\RecienNacido|null $idRecienNacido
      *
      * @return ArticuloPaciente
      */
-    public function setIdRecienNacido(\App\Entity\Legacy\Legacy\RecienNacido $idRecienNacido = null)
+    public function setIdRecienNacido(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\RecienNacido $idRecienNacido = null)
     {
         $this->idRecienNacido = $idRecienNacido;
 
@@ -992,7 +992,7 @@ class ArticuloPacienteLog
     /**
      * Get idRecienNacido.
      *
-     * @return \App\Entity\Legacy\Legacy\RecienNacido|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\RecienNacido|null
      */
     public function getIdRecienNacido()
     {

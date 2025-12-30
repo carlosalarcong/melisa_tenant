@@ -98,11 +98,11 @@ class RelUbicacionCajero
     /**
      * Set idUsuario.
      *
-     * @param \App\Entity\Legacy\Legacy\UsuariosRebsol $idUsuario
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol $idUsuario
      *
      * @return RelUbicacionCajero
      */
-    public function setIdUsuario(\App\Entity\Legacy\Legacy\UsuariosRebsol $idUsuario)
+    public function setIdUsuario(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol $idUsuario)
     {
         $this->idUsuario = $idUsuario;
 
@@ -112,7 +112,7 @@ class RelUbicacionCajero
     /**
      * Get idUsuario.
      *
-     * @return \App\Entity\Legacy\Legacy\UsuariosRebsol
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol
      */
     public function getIdUsuario()
     {
@@ -122,11 +122,11 @@ class RelUbicacionCajero
     /**
      * Set idEstado.
      *
-     * @param \App\Entity\Legacy\Legacy\EstadoRelUbicacionCajero $idEstado
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\EstadoRelUbicacionCajero $idEstado
      *
      * @return RelUbicacionCajero
      */
-    public function setIdEstado(\App\Entity\Legacy\Legacy\EstadoRelUbicacionCajero $idEstado)
+    public function setIdEstado(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\EstadoRelUbicacionCajero $idEstado)
     {
         $this->idEstado = $idEstado;
 
@@ -136,7 +136,7 @@ class RelUbicacionCajero
     /**
      * Get idEstado.
      *
-     * @return \App\Entity\Legacy\Legacy\EstadoRelUbicacionCajero
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\EstadoRelUbicacionCajero
      */
     public function getIdEstado()
     {
@@ -146,11 +146,11 @@ class RelUbicacionCajero
     /**
      * Set idUbicacionCaja.
      *
-     * @param \App\Entity\Legacy\Legacy\UbicacionCaja $idUbicacionCaja
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UbicacionCaja $idUbicacionCaja
      *
      * @return RelUbicacionCajero
      */
-    public function setIdUbicacionCaja(\App\Entity\Legacy\Legacy\UbicacionCaja $idUbicacionCaja)
+    public function setIdUbicacionCaja(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UbicacionCaja $idUbicacionCaja)
     {
         $this->idUbicacionCaja = $idUbicacionCaja;
 
@@ -160,7 +160,7 @@ class RelUbicacionCajero
     /**
      * Get idUbicacionCaja.
      *
-     * @return \App\Entity\Legacy\Legacy\UbicacionCaja
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UbicacionCaja
      */
     public function getIdUbicacionCaja()
     {

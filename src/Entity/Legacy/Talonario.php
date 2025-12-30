@@ -283,11 +283,11 @@ class Talonario
     /**
      * Set idRelEmpresaTipoDocumento.
      *
-     * @param \App\Entity\Legacy\Legacy\RelEmpresaTipoDocumento|null $idRelEmpresaTipoDocumento
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\RelEmpresaTipoDocumento|null $idRelEmpresaTipoDocumento
      *
      * @return Talonario
      */
-    public function setIdRelEmpresaTipoDocumento(\App\Entity\Legacy\Legacy\RelEmpresaTipoDocumento $idRelEmpresaTipoDocumento = null)
+    public function setIdRelEmpresaTipoDocumento(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\RelEmpresaTipoDocumento $idRelEmpresaTipoDocumento = null)
     {
         $this->idRelEmpresaTipoDocumento = $idRelEmpresaTipoDocumento;
 
@@ -297,7 +297,7 @@ class Talonario
     /**
      * Get idRelEmpresaTipoDocumento.
      *
-     * @return \App\Entity\Legacy\Legacy\RelEmpresaTipoDocumento|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\RelEmpresaTipoDocumento|null
      */
     public function getIdRelEmpresaTipoDocumento()
     {
@@ -307,11 +307,11 @@ class Talonario
     /**
      * Set idEstado.
      *
-     * @param \App\Entity\Legacy\Legacy\Estado|null $idEstado
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Estado|null $idEstado
      *
      * @return Talonario
      */
-    public function setIdEstado(\App\Entity\Legacy\Legacy\Estado $idEstado = null)
+    public function setIdEstado(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Estado $idEstado = null)
     {
         $this->idEstado = $idEstado;
 
@@ -321,7 +321,7 @@ class Talonario
     /**
      * Get idEstado.
      *
-     * @return \App\Entity\Legacy\Legacy\Estado|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Estado|null
      */
     public function getIdEstado()
     {
@@ -331,11 +331,11 @@ class Talonario
     /**
      * Set idSucursal.
      *
-     * @param \App\Entity\Legacy\Legacy\Sucursal|null $idSucursal
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Sucursal|null $idSucursal
      *
      * @return Talonario
      */
-    public function setIdSucursal(\App\Entity\Legacy\Legacy\Sucursal $idSucursal = null)
+    public function setIdSucursal(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Sucursal $idSucursal = null)
     {
         $this->idSucursal = $idSucursal;
 
@@ -345,7 +345,7 @@ class Talonario
     /**
      * Get idSucursal.
      *
-     * @return \App\Entity\Legacy\Legacy\Sucursal|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Sucursal|null
      */
     public function getIdSucursal()
     {
@@ -355,11 +355,11 @@ class Talonario
     /**
      * Set idEstadoPila.
      *
-     * @param \App\Entity\Legacy\Legacy\EstadoPila|null $idEstadoPila
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\EstadoPila|null $idEstadoPila
      *
      * @return Talonario
      */
-    public function setIdEstadoPila(\App\Entity\Legacy\Legacy\EstadoPila $idEstadoPila = null)
+    public function setIdEstadoPila(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\EstadoPila $idEstadoPila = null)
     {
         $this->idEstadoPila = $idEstadoPila;
 
@@ -369,7 +369,7 @@ class Talonario
     /**
      * Get idEstadoPila.
      *
-     * @return \App\Entity\Legacy\Legacy\EstadoPila|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\EstadoPila|null
      */
     public function getIdEstadoPila()
     {
@@ -379,11 +379,11 @@ class Talonario
     /**
      * Set idSubEmpresa.
      *
-     * @param \App\Entity\Legacy\Legacy\SubEmpresa|null $idSubEmpresa
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\SubEmpresa|null $idSubEmpresa
      *
      * @return Talonario
      */
-    public function setIdSubEmpresa(\App\Entity\Legacy\Legacy\SubEmpresa $idSubEmpresa = null)
+    public function setIdSubEmpresa(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\SubEmpresa $idSubEmpresa = null)
     {
         $this->idSubEmpresa = $idSubEmpresa;
 
@@ -393,7 +393,7 @@ class Talonario
     /**
      * Get idSubEmpresa.
      *
-     * @return \App\Entity\Legacy\Legacy\SubEmpresa|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\SubEmpresa|null
      */
     public function getIdSubEmpresa()
     {
@@ -403,11 +403,11 @@ class Talonario
     /**
      * Set idUbicacionCaja.
      *
-     * @param \App\Entity\Legacy\Legacy\UbicacionCaja|null $idUbicacionCaja
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UbicacionCaja|null $idUbicacionCaja
      *
      * @return Talonario
      */
-    public function setIdUbicacionCaja(\App\Entity\Legacy\Legacy\UbicacionCaja $idUbicacionCaja = null)
+    public function setIdUbicacionCaja(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UbicacionCaja $idUbicacionCaja = null)
     {
         $this->idUbicacionCaja = $idUbicacionCaja;
 
@@ -417,7 +417,7 @@ class Talonario
     /**
      * Get idUbicacionCaja.
      *
-     * @return \App\Entity\Legacy\Legacy\UbicacionCaja|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UbicacionCaja|null
      */
     public function getIdUbicacionCaja()
     {

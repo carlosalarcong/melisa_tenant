@@ -220,11 +220,11 @@ class PersonaDomicilio
     /**
      * Set idComuna.
      *
-     * @param \App\Entity\Legacy\Legacy\Comuna|null $idComuna
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Comuna|null $idComuna
      *
      * @return PersonaDomicilio
      */
-    public function setIdComuna(\App\Entity\Legacy\Legacy\Comuna $idComuna = null)
+    public function setIdComuna(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Comuna $idComuna = null)
     {
         $this->idComuna = $idComuna;
 
@@ -234,7 +234,7 @@ class PersonaDomicilio
     /**
      * Get idComuna.
      *
-     * @return \App\Entity\Legacy\Legacy\Comuna|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Comuna|null
      */
     public function getIdComuna()
     {
@@ -244,11 +244,11 @@ class PersonaDomicilio
     /**
      * Set idPersona.
      *
-     * @param \App\Entity\Legacy\Legacy\Legacy\Persona|null $idPersona
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Persona|null $idPersona
      *
      * @return PersonaDomicilio
      */
-    public function setIdPersona(\App\Entity\Legacy\Legacy\Legacy\Persona $idPersona = null)
+    public function setIdPersona(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Persona $idPersona = null)
     {
         $this->idPersona = $idPersona;
 
@@ -258,7 +258,7 @@ class PersonaDomicilio
     /**
      * Get idPersona.
      *
-     * @return \App\Entity\Legacy\Legacy\Legacy\Persona|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Persona|null
      */
     public function getIdPersona()
     {
@@ -268,11 +268,11 @@ class PersonaDomicilio
     /**
      * Set idPais.
      *
-     * @param \App\Entity\Legacy\Legacy\Pais|null $idPais
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Pais|null $idPais
      *
      * @return PersonaDomicilio
      */
-    public function setIdPais(\App\Entity\Legacy\Legacy\Pais $idPais = null)
+    public function setIdPais(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Pais $idPais = null)
     {
         $this->idPais = $idPais;
 
@@ -282,7 +282,7 @@ class PersonaDomicilio
     /**
      * Get idPais.
      *
-     * @return \App\Entity\Legacy\Legacy\Pais|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Pais|null
      */
     public function getIdPais()
     {

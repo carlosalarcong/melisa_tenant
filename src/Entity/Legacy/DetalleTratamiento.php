@@ -170,11 +170,11 @@ class DetalleTratamiento
     /**
      * Set idEstado.
      *
-     * @param \App\Entity\Legacy\Legacy\Estado $idEstado
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Estado $idEstado
      *
      * @return DetalleTratamiento
      */
-    public function setIdEstado(\App\Entity\Legacy\Legacy\Estado $idEstado)
+    public function setIdEstado(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Estado $idEstado)
     {
         $this->idEstado = $idEstado;
 
@@ -184,7 +184,7 @@ class DetalleTratamiento
     /**
      * Get idEstado.
      *
-     * @return \App\Entity\Legacy\Legacy\Estado
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Estado
      */
     public function getIdEstado()
     {
@@ -194,11 +194,11 @@ class DetalleTratamiento
     /**
      * Set idTratamiento.
      *
-     * @param \App\Entity\Legacy\Legacy\Tratamiento $idTratamiento
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Tratamiento $idTratamiento
      *
      * @return DetalleTratamiento
      */
-    public function setIdTratamiento(\App\Entity\Legacy\Legacy\Tratamiento $idTratamiento)
+    public function setIdTratamiento(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Tratamiento $idTratamiento)
     {
         $this->idTratamiento = $idTratamiento;
 
@@ -208,7 +208,7 @@ class DetalleTratamiento
     /**
      * Get idTratamiento.
      *
-     * @return \App\Entity\Legacy\Legacy\Tratamiento
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Tratamiento
      */
     public function getIdTratamiento()
     {
@@ -218,11 +218,11 @@ class DetalleTratamiento
     /**
      * Set idAccionClinica.
      *
-     * @param \App\Entity\Legacy\Legacy\AccionClinica|null $idAccionClinica
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\AccionClinica|null $idAccionClinica
      *
      * @return DetalleTratamiento
      */
-    public function setIdAccionClinica(\App\Entity\Legacy\Legacy\AccionClinica $idAccionClinica = null)
+    public function setIdAccionClinica(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\AccionClinica $idAccionClinica = null)
     {
         $this->idAccionClinica = $idAccionClinica;
 
@@ -232,7 +232,7 @@ class DetalleTratamiento
     /**
      * Get idAccionClinica.
      *
-     * @return \App\Entity\Legacy\Legacy\AccionClinica|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\AccionClinica|null
      */
     public function getIdAccionClinica()
     {
@@ -242,11 +242,11 @@ class DetalleTratamiento
     /**
      * Set idArticulo.
      *
-     * @param \App\Entity\Legacy\Legacy\Articulo|null $idArticulo
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Articulo|null $idArticulo
      *
      * @return DetalleTratamiento
      */
-    public function setIdArticulo(\App\Entity\Legacy\Legacy\Articulo $idArticulo = null)
+    public function setIdArticulo(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Articulo $idArticulo = null)
     {
         $this->idArticulo = $idArticulo;
 
@@ -256,7 +256,7 @@ class DetalleTratamiento
     /**
      * Get idArticulo.
      *
-     * @return \App\Entity\Legacy\Legacy\Articulo|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Articulo|null
      */
     public function getIdArticulo()
     {

@@ -138,11 +138,11 @@ class Tratamiento
     /**
      * Set idPnatural.
      *
-     * @param \App\Entity\Legacy\Legacy\Legacy\Pnatural $idPnatural
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Pnatural $idPnatural
      *
      * @return Tratamiento
      */
-    public function setIdPnatural(\App\Entity\Legacy\Legacy\Legacy\Pnatural $idPnatural)
+    public function setIdPnatural(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Pnatural $idPnatural)
     {
         $this->idPnatural = $idPnatural;
 
@@ -152,7 +152,7 @@ class Tratamiento
     /**
      * Get idPnatural.
      *
-     * @return \App\Entity\Legacy\Legacy\Legacy\Pnatural
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Pnatural
      */
     public function getIdPnatural()
     {
@@ -162,11 +162,11 @@ class Tratamiento
     /**
      * Set idTipoTratamiento.
      *
-     * @param \App\Entity\Legacy\Legacy\TipoTratamiento $idTipoTratamiento
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\TipoTratamiento $idTipoTratamiento
      *
      * @return Tratamiento
      */
-    public function setIdTipoTratamiento(\App\Entity\Legacy\Legacy\TipoTratamiento $idTipoTratamiento)
+    public function setIdTipoTratamiento(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\TipoTratamiento $idTipoTratamiento)
     {
         $this->idTipoTratamiento = $idTipoTratamiento;
 
@@ -176,7 +176,7 @@ class Tratamiento
     /**
      * Get idTipoTratamiento.
      *
-     * @return \App\Entity\Legacy\Legacy\TipoTratamiento
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\TipoTratamiento
      */
     public function getIdTipoTratamiento()
     {
@@ -186,11 +186,11 @@ class Tratamiento
     /**
      * Set idEstado.
      *
-     * @param \App\Entity\Legacy\Legacy\EstadoTratamiento $idEstado
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\EstadoTratamiento $idEstado
      *
      * @return Tratamiento
      */
-    public function setIdEstado(\App\Entity\Legacy\Legacy\EstadoTratamiento $idEstado)
+    public function setIdEstado(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\EstadoTratamiento $idEstado)
     {
         $this->idEstado = $idEstado;
 
@@ -200,7 +200,7 @@ class Tratamiento
     /**
      * Get idEstado.
      *
-     * @return \App\Entity\Legacy\Legacy\EstadoTratamiento
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\EstadoTratamiento
      */
     public function getIdEstado()
     {
@@ -210,11 +210,11 @@ class Tratamiento
     /**
      * Set idUsuarioCreacion.
      *
-     * @param \App\Entity\Legacy\Legacy\UsuariosRebsol $idUsuarioCreacion
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol $idUsuarioCreacion
      *
      * @return Tratamiento
      */
-    public function setIdUsuarioCreacion(\App\Entity\Legacy\Legacy\UsuariosRebsol $idUsuarioCreacion)
+    public function setIdUsuarioCreacion(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol $idUsuarioCreacion)
     {
         $this->idUsuarioCreacion = $idUsuarioCreacion;
 
@@ -224,7 +224,7 @@ class Tratamiento
     /**
      * Get idUsuarioCreacion.
      *
-     * @return \App\Entity\Legacy\Legacy\UsuariosRebsol
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\UsuariosRebsol
      */
     public function getIdUsuarioCreacion()
     {

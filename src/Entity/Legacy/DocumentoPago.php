@@ -923,11 +923,11 @@ class DocumentoPago
     /**
      * Set idPaciente.
      *
-     * @param \App\Entity\Legacy\Legacy\Paciente $idPaciente
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Paciente $idPaciente
      *
      * @return DocumentoPago
      */
-    public function setIdPaciente(\App\Entity\Legacy\Legacy\Paciente $idPaciente)
+    public function setIdPaciente(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Paciente $idPaciente)
     {
         $this->idPaciente = $idPaciente;
 
@@ -937,7 +937,7 @@ class DocumentoPago
     /**
      * Get idPaciente.
      *
-     * @return \App\Entity\Legacy\Legacy\Paciente
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Paciente
      */
     public function getIdPaciente()
     {
@@ -947,11 +947,11 @@ class DocumentoPago
     /**
      * Set idDetallePagoCuenta.
      *
-     * @param \App\Entity\Legacy\Legacy\DetallePagoCuenta $idDetallePagoCuenta
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\DetallePagoCuenta $idDetallePagoCuenta
      *
      * @return DocumentoPago
      */
-    public function setIdDetallePagoCuenta(\App\Entity\Legacy\Legacy\DetallePagoCuenta $idDetallePagoCuenta)
+    public function setIdDetallePagoCuenta(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\DetallePagoCuenta $idDetallePagoCuenta)
     {
         $this->idDetallePagoCuenta = $idDetallePagoCuenta;
 
@@ -961,7 +961,7 @@ class DocumentoPago
     /**
      * Get idDetallePagoCuenta.
      *
-     * @return \App\Entity\Legacy\Legacy\DetallePagoCuenta
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\DetallePagoCuenta
      */
     public function getIdDetallePagoCuenta()
     {
@@ -971,11 +971,11 @@ class DocumentoPago
     /**
      * Set idFormaPago.
      *
-     * @param \App\Entity\Legacy\Legacy\FormaPago $idFormaPago
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\FormaPago $idFormaPago
      *
      * @return DocumentoPago
      */
-    public function setIdFormaPago(\App\Entity\Legacy\Legacy\FormaPago $idFormaPago)
+    public function setIdFormaPago(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\FormaPago $idFormaPago)
     {
         $this->idFormaPago = $idFormaPago;
 
@@ -985,7 +985,7 @@ class DocumentoPago
     /**
      * Get idFormaPago.
      *
-     * @return \App\Entity\Legacy\Legacy\FormaPago
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\FormaPago
      */
     public function getIdFormaPago()
     {
@@ -995,11 +995,11 @@ class DocumentoPago
     /**
      * Set idSucursal.
      *
-     * @param \App\Entity\Legacy\Legacy\Sucursal $idSucursal
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Sucursal $idSucursal
      *
      * @return DocumentoPago
      */
-    public function setIdSucursal(\App\Entity\Legacy\Legacy\Sucursal $idSucursal)
+    public function setIdSucursal(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Sucursal $idSucursal)
     {
         $this->idSucursal = $idSucursal;
 
@@ -1009,7 +1009,7 @@ class DocumentoPago
     /**
      * Get idSucursal.
      *
-     * @return \App\Entity\Legacy\Legacy\Sucursal
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Sucursal
      */
     public function getIdSucursal()
     {
@@ -1019,11 +1019,11 @@ class DocumentoPago
     /**
      * Set idBanco.
      *
-     * @param \App\Entity\Legacy\Legacy\Banco|null $idBanco
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Banco|null $idBanco
      *
      * @return DocumentoPago
      */
-    public function setIdBanco(\App\Entity\Legacy\Legacy\Banco $idBanco = null)
+    public function setIdBanco(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Banco $idBanco = null)
     {
         $this->idBanco = $idBanco;
 
@@ -1033,7 +1033,7 @@ class DocumentoPago
     /**
      * Get idBanco.
      *
-     * @return \App\Entity\Legacy\Legacy\Banco|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Banco|null
      */
     public function getIdBanco()
     {
@@ -1043,11 +1043,11 @@ class DocumentoPago
     /**
      * Set idCaja.
      *
-     * @param \App\Entity\Legacy\Legacy\Caja $idCaja
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Caja $idCaja
      *
      * @return DocumentoPago
      */
-    public function setIdCaja(\App\Entity\Legacy\Legacy\Caja $idCaja  = null)
+    public function setIdCaja(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Caja $idCaja  = null)
     {
         $this->idCaja = $idCaja;
 
@@ -1057,7 +1057,7 @@ class DocumentoPago
     /**
      * Get idCaja.
      *
-     * @return \App\Entity\Legacy\Legacy\Caja
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\Caja
      */
     public function getIdCaja()
     {
@@ -1067,11 +1067,11 @@ class DocumentoPago
     /**
      * Set idTarjetaCredito.
      *
-     * @param \App\Entity\Legacy\Legacy\TarjetaCredito|null $idTarjetaCredito
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\TarjetaCredito|null $idTarjetaCredito
      *
      * @return DocumentoPago
      */
-    public function setIdTarjetaCredito(\App\Entity\Legacy\Legacy\TarjetaCredito $idTarjetaCredito = null)
+    public function setIdTarjetaCredito(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\TarjetaCredito $idTarjetaCredito = null)
     {
         $this->idTarjetaCredito = $idTarjetaCredito;
 
@@ -1081,7 +1081,7 @@ class DocumentoPago
     /**
      * Get idTarjetaCredito.
      *
-     * @return \App\Entity\Legacy\Legacy\TarjetaCredito|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\TarjetaCredito|null
      */
     public function getIdTarjetaCredito()
     {
@@ -1091,11 +1091,11 @@ class DocumentoPago
     /**
      * Set idAdministradorSeguro.
      *
-     * @param \App\Entity\Legacy\Legacy\AdministradorSeguro|null $idAdministradorSeguro
+     * @param \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\AdministradorSeguro|null $idAdministradorSeguro
      *
      * @return DocumentoPago
      */
-    public function setIdAdministradorSeguro(\App\Entity\Legacy\Legacy\AdministradorSeguro $idAdministradorSeguro = null)
+    public function setIdAdministradorSeguro(\App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\AdministradorSeguro $idAdministradorSeguro = null)
     {
         $this->idAdministradorSeguro = $idAdministradorSeguro;
 
@@ -1105,7 +1105,7 @@ class DocumentoPago
     /**
      * Get idAdministradorSeguro.
      *
-     * @return \App\Entity\Legacy\Legacy\AdministradorSeguro|null
+     * @return \App\Entity\Legacy\Legacy\Legacy\Legacy\Legacy\Legacy\AdministradorSeguro|null
      */
     public function getIdAdministradorSeguro()
     {
