@@ -46,6 +46,21 @@ class MemberRepository extends ServiceEntityRepository
         ];
     }
 
+    /**
+     * Obtiene la sucursal del usuario (mock temporal)
+     * TODO: Implementar lógica real cuando se defina relación Member->Branch
+     */
+    public function obtenerSucursalUsuario(int $userId): ?object
+    {
+        // Mock temporal: retorna un objeto con ID 1 y método getId()
+        // Cuando se implemente la relación Member->Branch, 
+        // este método consultará la sucursal real del usuario
+        return new class {
+            public function getId() { return 1; }
+            public function getNombre() { return 'Sucursal Principal'; }
+        };
+    }
+
     //    /**
     //     * @return Member[] Returns an array of Member objects
     //     */

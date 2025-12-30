@@ -1,11 +1,20 @@
 <?php
 
-namespace Rebsol\RecaudacionBundle\Repository;
+namespace App\Repository;
 
-use Rebsol\RecaudacionBundle\Repository\DefaultRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
-class AccionClinicaRepository extends DefaultRepository
+/**
+ * ClinicalActionRepository (migrado desde AccionClinicaRepository)
+ */
+class ClinicalActionRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        // Mock: No entity mapping yet
+        parent::__construct($registry, \stdClass::class);
+    }
 
 	public function obtenerRecargoHorario($dia, $hora, $idRelSucursalPrevision)
 	{

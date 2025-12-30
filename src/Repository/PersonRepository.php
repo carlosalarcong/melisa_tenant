@@ -1,22 +1,34 @@
 <?php
 
-namespace Rebsol\RecaudacionBundle\Repository;
+namespace App\Repository;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * Class  PersonaRepository
- * @package  \Rebsol\RecaudacionBundle\Repository
+ * Class  PersonRepository (migrado desde PersonaRepository)
+ * @package  App\Repository
  * @author   sDelgado
  * Participantes: [ sDelgado ]
  * Fechas de Creación: [  21/12/15  ]
  * Fecha de Actualización: [ ]
  */
-class PersonaRepository {
+class PersonRepository extends ServiceEntityRepository
+{
+    public function __construct(ManagerRegistry $registry)
+    {
+        // Mock: No entity mapping yet
+        parent::__construct($registry, \stdClass::class);
+    }
 
+    // Legacy compatibility
 	private $_em;
 
-	public function __construct(EntityManager $entityManager) {
+	private function getManager() {
+		return $this->getEntityManager();
+	}
+
+	public function setEntityManager($entityManager) {
 
 		$this->_em         = $entityManager;
 	}

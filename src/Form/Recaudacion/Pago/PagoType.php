@@ -2,10 +2,10 @@
 
 namespace App\Form\Recaudacion\Pago;
 
-use Rebsol\HermesBundle\Entity\Comuna;
-use Rebsol\HermesBundle\Entity\PersonaDomicilio;
-use Rebsol\HermesBundle\Entity\Sexo;
-use Rebsol\HermesBundle\Entity\TipoIdentificacionExtranjero;
+use App\Entity\Tenant\Municipality;
+use App\Entity\Tenant\PersonAddress;
+use App\Entity\Tenant\Gender;
+use App\Entity\Tenant\IdentificationType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -16,7 +16,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as validaform;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Rebsol\HermesBundle\Entity\Pais;
+use App\Entity\Tenant\Country;
 
 /**
  * @author ovaldenegro
@@ -46,16 +46,15 @@ class PagoType extends AbstractType
             ))
             ->add('documento', EntityType::class, array(
                     'label' => 'documento',
-                    'class' => TipoIdentificacionExtranjero::class,
+                    'class' => IdentificationType::class,
                     'choice_label' => 'nombre',
                     'required' => false,
                     'mapped' => false,
-                    'em' => $options['database_default'],
                     'placeholder' => 'Seleccionar Documento',
                     'query_builder' => function (\Doctrine\ORM\EntityRepository $repository) use ($options) {
                         return $repository->createQueryBuilder('s')
-                            ->Where('s.idEstado = ?2')
-                            ->setParameter(2, $options['estado_activado']);
+                            ->Where('s.isActive = :active')
+                            ->setParameter('active', true);
                     },
                     'constraints' =>
                         array(
@@ -189,6 +188,7 @@ class PagoType extends AbstractType
                     'mapped' => false,
                     'required' => true,
                     'widget' => 'single_text',
+                    'html5' => false,
                     'format' => 'dd-MM-yyyy',
                     'constraints' =>
                         array(
@@ -204,20 +204,17 @@ class PagoType extends AbstractType
             //++++++++++++++++++++++//
             ->add('idSexo', EntityType::class, array(
                     'label' => 'Sexo',
-                    'class' => Sexo::class,
+                    'class' => Gender::class,
                     'choice_label' => 'nombreSexo',
                     'required' => true,
                     'mapped' => false,
-                    'em' => $options['database_default'],
                     'placeholder' => 'Seleccionar Sexo',
                     'query_builder' => function (\Doctrine\ORM\EntityRepository $repository) use ($options) {
-                        //debe definirse en las opciones del type "idEmpresa" 'iEmpresa' => null, para tener la variable libre, y recibir desde el controlador su valor, y previamente en el controlador, para lograr traer el valor de la empresa.
                         return $repository->createQueryBuilder('s')
-                            ->where('s.idEmpresa = ?1')
-                            ->andWhere('s.idEstado = ?2')
-                            ->andWhere('s.esPersona != 0')
-                            ->setParameter(1, $options['iEmpresa'])
-                            ->setParameter(2, $options['estado_activado']);
+                            ->where('s.isPerson = :isPerson')
+                            ->andWhere('s.isActive = :isActive')
+                            ->setParameter('isPerson', true)
+                            ->setParameter('isActive', true);
                     },
                     'constraints' =>
                         array(
@@ -229,15 +226,15 @@ class PagoType extends AbstractType
             // FIN CAMPOS SEXO
             ->add('pais', EntityType::class, array(
                     'label' => 'Pais'
-                    , 'class' => Pais::class
+                    , 'class' => Country::class
                     , 'choice_label' => 'nombrePais'
                     , 'required' => true
                     , 'mapped' => false
                     , 'placeholder' => 'Seleccionar País'
                     , 'query_builder' => function (\Doctrine\ORM\EntityRepository $repository) use($options) {
                         return $repository->createQueryBuilder('s')
-                            ->Where('s.idEstado = ?2')
-                            ->setParameter(2, $options['estado_activado']);
+                            ->Where('s.isActive = :active')
+                            ->setParameter('active', true);
                         }
                     , 'constraints' =>
                         array(
@@ -247,17 +244,16 @@ class PagoType extends AbstractType
             )
             ->add('comuna', EntityType::class, array(
                     'label' => 'Comuna',
-                    'class' => Comuna::class,
+                    'class' => Municipality::class,
                     'choice_label' => 'nombreComuna',
                     'required' => true,
                     'mapped' => false,
-                    'em' => $options['database_default'],
                     'placeholder' => 'Seleccionar Comuna',
                     'query_builder' => function (\Doctrine\ORM\EntityRepository $repository) use ($options) {
                         return $repository->createQueryBuilder('s')
-                            ->Where('s.idEstado = ?2')
-                            ->orderBy('s.nombreComuna', 'ASC')
-                            ->setParameter(2, $options['estado_activado']);
+                            ->Where('s.isActive = :active')
+                            ->orderBy('s.name', 'ASC')
+                            ->setParameter('active', true);
                     },
                     'constraints' =>
                         array(
@@ -297,11 +293,10 @@ class PagoType extends AbstractType
     {
         $resolver->setDefaults(array
         (
-            'data_class' => PersonaDomicilio::class,
+            'data_class' => PersonAddress::class,
             'validaform' => true,
             'iEmpresa' => null,
             'estado_activado' => null,
-            'database_default' => null,
             'habilitarPaisExtranjero' => 0
         ));
     }

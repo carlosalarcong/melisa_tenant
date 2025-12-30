@@ -91,4 +91,10 @@ class IdentificationType
 
         return $this;
     }
+
+    // Alias para compatibilidad Legacy
+    public function getNombre(): ?string
+    {
+        return $this->name;
+    }
 }

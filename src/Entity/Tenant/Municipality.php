@@ -24,7 +24,7 @@ class Municipality
 
     #[ORM\ManyToOne(inversedBy: 'municipalities')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?province $province = null;
+    private ?Province $province = null;
 
     #[ORM\Column(options: ["default" => true])]
     private ?bool $isActive = true;
@@ -69,12 +69,12 @@ class Municipality
         return $this;
     }
 
-    public function getProvince(): ?province
+    public function getProvince(): ?Province
     {
         return $this->province;
     }
 
-    public function setProvince(?province $province): static
+    public function setProvince(?Province $province): static
     {
         $this->province = $province;
 
@@ -121,5 +121,21 @@ class Municipality
         }
 
         return $this;
+    }
+
+    // Alias para compatibilidad Legacy
+    public function getNombreComuna(): ?string
+    {
+        return $this->name;
+    }
+
+    public function getIdProvincia()
+    {
+        return $this->province;
+    }
+
+    public function getIdEstado()
+    {
+        return $this->isActive ? (object)['id' => 1] : (object)['id' => 2];
     }
 }

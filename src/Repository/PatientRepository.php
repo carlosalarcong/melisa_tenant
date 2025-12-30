@@ -1,19 +1,26 @@
 <?php
 
-namespace Rebsol\RecaudacionBundle\Repository;
+namespace App\Repository;
 
-use Rebsol\ComercialBundle\Repository\DefaultRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
 
 /**
- * Class  PacienteRepository
- * @package  \Rebsol\CajaBundle\Repository
+ * Class  PatientRepository (migrado desde PacienteRepository)
+ * @package  App\Repository
  * @author   sDelgado
  * Participantes: [ sDelgado ]
  * Fechas de Creación: [  05/12/15  ]
  * Fecha de Actualización: [ ]
  */
-class PacienteRepository extends DefaultRepository{
+class PatientRepository extends ServiceEntityRepository
+{
+    public function __construct(ManagerRegistry $registry)
+    {
+        // Mock: No entity mapping yet
+        parent::__construct($registry, \stdClass::class);
+    }
 
 	/**
 	 * [obtenerRecetasPorPacienteNoValidadas description]

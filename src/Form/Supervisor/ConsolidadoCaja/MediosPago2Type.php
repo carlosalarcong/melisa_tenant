@@ -4,7 +4,7 @@ namespace App\Form\Supervisor\ConsolidadoCaja;
 
 use Rebsol\HermesBundle\Entity\Banco;
 use Rebsol\HermesBundle\Entity\CondicionPago;
-use Rebsol\HermesBundle\Entity\MotivoGratuidad;
+use App\Entity\Tenant\FreeChargeReason;
 use Rebsol\HermesBundle\Entity\TarjetaCredito;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -22,7 +22,7 @@ class MediosPago2Type extends AbstractType
 
         $builder
             ->add('idGratuidad', EntityType::class, array(
-                    'class' => MotivoGratuidad::class,
+                    'class' => FreeChargeReason::class,
                     'choice_label' => 'nombre',
                     'required' => true,
                     'em' => $options['database_default'],

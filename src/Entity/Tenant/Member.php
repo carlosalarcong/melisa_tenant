@@ -43,11 +43,18 @@ class Member implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?bool $isActive = true;
 
+    #[ORM\Column(nullable: true, options: ['default' => false])]
+    private ?bool $canViewCashRegister = false;
+
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\OneToOne(targetEntity: Person::class)]
+    #[ORM\JoinColumn(name: 'person_id', referencedColumnName: 'id', nullable: true)]
+    private ?Person $person = null;
 
     public function __construct()
     {
@@ -195,5 +202,35 @@ class Member implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->updatedAt = $updatedAt;
         return $this;
+    }
+
+    public function getPerson(): ?Person
+    {
+        return $this->person;
+    }
+
+    public function setPerson(?Person $person): static
+    {
+        $this->person = $person;
+        return $this;
+    }
+
+    public function getCanViewCashRegister(): ?bool
+    {
+        return $this->canViewCashRegister;
+    }
+
+    public function setCanViewCashRegister(?bool $canViewCashRegister): static
+    {
+        $this->canViewCashRegister = $canViewCashRegister;
+        return $this;
+    }
+
+    /**
+     * Alias para compatibilidad con código legacy
+     */
+    public function getVerCaja(): ?bool
+    {
+        return $this->canViewCashRegister;
     }
 }

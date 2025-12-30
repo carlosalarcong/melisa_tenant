@@ -5,19 +5,27 @@ namespace App\Controller\Caja;
 use Rebsol\AdmisionBundle\Form\Type\IdentificacionType;
 use App\Form\Recaudacion\Pago\AdjuntoType;
 use App\Form\Recaudacion\Pago\BusquedaAvanzadaDirectorioPacienteType;
-use App\Form\Recaudacion\Pago\MediosPagoType;
+use App\Form\Recaudacion\Pago\PaymentMethodsType;
 use App\Form\Recaudacion\Pago\PagoType;
 use App\Form\Recaudacion\Pago\PrestacionType;
 use App\Entity\Legacy\PersonaDomicilio;
 use App\Controller\Legacy\DefaultController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use App\Repository\CashRegisterRepository;
+use App\Repository\AccountPaymentRepository;
+use App\Repository\SystemParameterRepository;
+use App\Repository\OrganizationRepository;
 
 
 class RecaudacionController extends DefaultController
 {
     public function __construct(
-        protected RequestStack $requestStack
+        protected RequestStack $requestStack,
+        protected CashRegisterRepository $cashRegisterRepository,
+        protected AccountPaymentRepository $accountPaymentRepository,
+        protected SystemParameterRepository $systemParameterRepository,
+        protected OrganizationRepository $organizationRepository
     ) {
     }
 
@@ -94,17 +102,14 @@ class RecaudacionController extends DefaultController
     }
 
     /**
-     * @return Empresa
+     * @return object
      * Descripción: ObtenerEmpresaLogin() Obtiene el Objeto Empresa desde la sesión
+     * Adaptado para usar Organization (Tenant)
      */
     public function obtenerEmpresaLogin()
     {
-
-        $oUsuarioRebsol = $this->getUser();
-        $oPersona = $oUsuarioRebsol->getIdPersona();
-        $oEmpresa = $oPersona->getIdEmpresa();
-        return $oEmpresa;
-
+        // Obtiene la organización principal del tenant
+        return $this->organizationRepository->findMainOrganization();
     }
 
     /**
@@ -188,12 +193,12 @@ class RecaudacionController extends DefaultController
 
     protected function rPagoCuenta()
     {
-        return $this->getDoctrine()->getRepository("App\Entity\Legacy\PagoCuenta");
+        return $this->accountPaymentRepository;
     }
 
     protected function rCaja()
     {
-        return $this->getDoctrine()->getRepository("App\Entity\Legacy\Caja");
+        return $this->cashRegisterRepository;
     }
 
     protected function rDetalleCaja()
@@ -208,12 +213,15 @@ class RecaudacionController extends DefaultController
 
     protected function rDiferencia()
     {
-        return $this->getDoctrine()->getRepository("App\Entity\Legacy\Diferencia");
+        // TODO: Implementar repositorio de PaymentAdjustment (Tenant)
+        // Por ahora retorna null para evitar errores de entidades Legacy no mapeadas
+        return null;
+        // return $this->getDoctrine()->getRepository("App\Entity\Tenant\PaymentAdjustment");
     }
 
     protected function rParametro()
     {
-        return $this->getDoctrine()->getRepository("App\Entity\Legacy\Parametro");
+        return $this->systemParameterRepository;
     }
 
     protected function rUsuariosRebsol()

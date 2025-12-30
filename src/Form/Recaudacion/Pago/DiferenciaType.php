@@ -1,11 +1,10 @@
 <?php
 
 namespace App\Form\Recaudacion\Pago;
-//namespace Rebsol\HermesBundle\Form\Type\Caja\Recaudacion\Pago;
 
 use Rebsol\HermesBundle\Entity\MotivoDiferencia;
 use Rebsol\HermesBundle\Entity\TipoSentidoDiferencia;
-use Rebsol\HermesBundle\Form\Type\DefaultType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -19,7 +18,7 @@ use Symfony\Component\Validator\Constraints as validaform;
  * Participantes:
  *
  */
-class DiferenciaType extends DefaultType
+class DiferenciaType extends AbstractType
 {
     /**
      * [buildForm description]
@@ -37,7 +36,6 @@ class DiferenciaType extends DefaultType
                     'choice_label' => 'nombre',
                     'required' => true,
                     'mapped' => false,
-                    'em' => $options['database_default'],
                     'placeholder' => 'Seleccionar Tipo',
                     'query_builder' => function (\Doctrine\ORM\EntityRepository $repository) use ($options) {
                         return $repository->createQueryBuilder('t')
@@ -56,7 +54,6 @@ class DiferenciaType extends DefaultType
                     'choice_label' => 'nombre',
                     'required' => true,
                     'mapped' => false,
-                    'em' => $options['database_default'],
                     'placeholder' => 'Seleccionar Motivo',
                     'query_builder' => function (\Doctrine\ORM\EntityRepository $repository) use ($options) {
                         return $repository->createQueryBuilder('m')
@@ -143,7 +140,6 @@ class DiferenciaType extends DefaultType
         (
             'iEmpresa' => null,
             'estado_activado' => null,
-            'database_default' => null,
             'count' => null
         ));
     }

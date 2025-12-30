@@ -134,4 +134,15 @@ class Gender
 
         return $this;
     }
+
+    // Alias para compatibilidad Legacy
+    public function getNombreSexo(): ?string
+    {
+        return $this->name;
+    }
+
+    public function getIdEstado()
+    {
+        return $this->isActive ? (object)['id' => 1] : (object)['id' => 2];
+    }
 }

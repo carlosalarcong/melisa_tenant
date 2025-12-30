@@ -3,7 +3,6 @@
 namespace App\Entity\Legacy;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -15,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @ORM\Entity
  * @ORM\Entity(repositoryClass="Rebsol\HermesBundle\Repository\UsuariosRebsolRepository")
  */
-class UsuariosRebsol implements UserInterface
+class UsuariosRebsol
 {
     /**
      * @var int

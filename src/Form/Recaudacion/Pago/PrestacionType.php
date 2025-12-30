@@ -3,7 +3,7 @@
 namespace App\Form\Recaudacion\Pago;
 
 use Rebsol\HermesBundle\Entity\Origen;
-use Rebsol\HermesBundle\Entity\PersonaDomicilio;
+use App\Entity\Tenant\PersonAddress;
 use Rebsol\HermesBundle\Entity\Pnatural;
 use Rebsol\HermesBundle\Entity\Prevision;
 use Rebsol\HermesBundle\Entity\PrPlan;
@@ -35,7 +35,6 @@ class PrestacionType extends DefaultType
                 'choice_label' => 'nombrePrevision',
                 'required' => true,
                 'mapped' => false,
-                'em' => $options['database_default'],
                 'placeholder' => 'Seleccionar Financiador',
                 'query_builder' => function (\Doctrine\ORM\EntityRepository $repository) use ($options) {
                     return $repository->createQueryBuilder('p')
@@ -62,7 +61,6 @@ class PrestacionType extends DefaultType
                     'choice_label' => 'nombrePrevision',
                     'required' => false,
                     'mapped' => false,
-                    'em' => $options['database_default'],
                     'placeholder' => 'Seleccionar Convenio',
                     'query_builder' => function (\Doctrine\ORM\EntityRepository $repository) use ($options) {
                         return $repository->createQueryBuilder('p')
@@ -88,7 +86,6 @@ class PrestacionType extends DefaultType
                     'choice_label' => 'nombre',
                     'required' => true,
                     'mapped' => false,
-                    'em' => $options['database_default'],
                     'placeholder' => 'Seleccionar Plan',
                     'query_builder' => function (\Doctrine\ORM\EntityRepository $repository) use ($options) {
                         return $repository->createQueryBuilder('s');
@@ -100,7 +97,6 @@ class PrestacionType extends DefaultType
                     'choice_label' => 'nombre',
                     'required' => false,
                     'mapped' => false,
-                    'em' => $options['database_default'],
                     'placeholder' => 'Seleccionar Origen',
                     'query_builder' => function (\Doctrine\ORM\EntityRepository $repository) use ($options) {
                         return $repository->createQueryBuilder('s')
@@ -114,7 +110,6 @@ class PrestacionType extends DefaultType
                     'choice_label' => 'nombrePnatural',
                     'required' => false,
                     'mapped' => false,
-                    'em' => $options['database_default'],
                     'placeholder' => 'Seleccionar Profesional',
                     'query_builder' => function (\Doctrine\ORM\EntityRepository $repository) use ($options) {
 
@@ -147,7 +142,6 @@ class PrestacionType extends DefaultType
                     'choice_label' => 'nombre',
                     'required' => false,
                     'mapped' => false,
-                    'em' => $options['database_default'],
                     'placeholder' => 'Seleccionar Tipo Tratamiento',
                     'query_builder' => function (\Doctrine\ORM\EntityRepository $repository) use ($options) {
                         return $repository->createQueryBuilder('s')
@@ -219,12 +213,11 @@ class PrestacionType extends DefaultType
     {
         $resolver->setDefaults(array
         (
-            'data_class' => PersonaDomicilio::class,
+            'data_class' => PersonAddress::class,
             'validaform' => true,
             'iEmpresa' => null,
             'estado_activado' => null,
-            'sucursal' => null,
-            'database_default' => null
+            'sucursal' => null
         ));
     }
 

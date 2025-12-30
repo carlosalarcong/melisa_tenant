@@ -3,10 +3,10 @@
 namespace App\Form\Recaudacion\Pago;
 
 use Doctrine\ORM\EntityRepository;
-use Rebsol\HermesBundle\Entity\Banco;
-use Rebsol\HermesBundle\Entity\CondicionPago;
+use App\Entity\Tenant\Bank;
+use App\Entity\Tenant\PaymentCondition;
 use App\Entity\Tenant\FreeChargeReason;
-use Rebsol\HermesBundle\Entity\TarjetaCredito;
+use App\Entity\Tenant\CreditCard;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -16,12 +16,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as constraints;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 /**
+ * PaymentMethodsType - Form for payment methods (Medios de Pago)
  * @author ovaldenegro
  * @version 1.0.0
  * Fecha Creación: 05/11/2013
  * Participantes:
  */
-class MediosPagoType extends AbstractType
+class PaymentMethodsType extends AbstractType
 {
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -63,8 +64,8 @@ class MediosPagoType extends AbstractType
                         'placeholder' => 'Seleccionar Gratuidad',
                         'query_builder' => function (EntityRepository $repository) use ($options) {
                             return $repository->createQueryBuilder('s')
-                                ->Where('s.idEstado = ?2')
-                                ->andwhere('s.idSucursal = ?1')
+                                ->Where('s.stateId = ?2')
+                                ->andwhere('s.branchId = ?1')
                                 ->setParameter(1, $options['sucursal'])
                                 ->setParameter(2, $options['estado_activado']);
                         }
@@ -92,7 +93,7 @@ class MediosPagoType extends AbstractType
 
                     $builder
                         ->add('TarjetaDebito__' . $idForm . '_' . $i, EntityType::class, array(
-                                'class' => Banco::class,
+                                'class' => Bank::class,
                                 'choice_label' => 'nombre',
                                 'required' => true,
                                 'mapped' => false,
@@ -100,15 +101,15 @@ class MediosPagoType extends AbstractType
                                 'placeholder' => 'Seleccionar Banco',
                                 'query_builder' => function (EntityRepository $repository) use ($options) {
                                     return $repository->createQueryBuilder('s')
-                                        ->where('s.idEmpresa = ?1')
-                                        ->andWhere('s.idEstado = ?2')
+                                        ->where('s.organizationId = ?1')
+                                        ->andWhere('s.stateId = ?2')
                                         ->setParameter(1, $options['iEmpresa'])
                                         ->setParameter(2, $options['estado_activado']);
                                 }
                             )
                         )
                         ->add('TarjetaCredito_' . $idForm . '_' . $i, EntityType::class, array(
-                                'class' => TarjetaCredito::class,
+                                'class' => CreditCard::class,
                                 'choice_label' => 'nombre',
                                 'required' => true,
                                 'mapped' => false,
@@ -116,11 +117,11 @@ class MediosPagoType extends AbstractType
                                 'placeholder' => 'Seleccionar Tarjeta',
                                 'query_builder' => function (EntityRepository $repository) use ($options) {
                                     return $repository->createQueryBuilder('t')
-                                        ->join('t.idTarjetaCreditoTipo', 'tct')
-                                        ->where('tct.idEmpresa = ?1')
-                                        ->andWhere('tct.idEstado = ?2')
-                                        ->andWhere('t.idEstado = ?2')
-                                        ->orderBy('t.nombre', 'ASC')
+                                        ->leftJoin('App\\Entity\\Tenant\\CreditCardType', 'tct', 'WITH', 't.creditCardTypeId = tct.id')
+                                        ->where('tct.organizationId = ?1')
+                                        ->andWhere('tct.stateId = ?2')
+                                        ->andWhere('t.stateId = ?2')
+                                        ->orderBy('t.name', 'ASC')
                                         ->setParameter(1, $options['iEmpresa'])
                                         ->setParameter(2, $options['estado_activado']);
                                 }
@@ -172,7 +173,7 @@ class MediosPagoType extends AbstractType
                             )
                         )
                         ->add('banco_' . $idForm . '_' . $i, EntityType::class, array(
-                                'class' => Banco::class,
+                                'class' => Bank::class,
                                 'choice_label' => 'nombre',
                                 'required' => true,
                                 'mapped' => false,
@@ -180,15 +181,15 @@ class MediosPagoType extends AbstractType
                                 'placeholder' => 'Seleccionar Banco',
                                 'query_builder' => function (EntityRepository $repository) use ($options) {
                                     return $repository->createQueryBuilder('s')
-                                        ->where('s.idEmpresa = ?1')
-                                        ->andWhere('s.idEstado = ?2')
+                                        ->where('s.organizationId = ?1')
+                                        ->andWhere('s.stateId = ?2')
                                         ->setParameter(1, $options['iEmpresa'])
                                         ->setParameter(2, $options['estado_activado']);
                                 }
                             )
                         )
                         ->add('condicion_' . $idForm . '_' . $i, EntityType::class, array(
-                                'class' => CondicionPago::class,
+                                'class' => PaymentCondition::class,
                                 'choice_label' => 'nombre',
                                 'required' => true,
                                 'mapped' => false,
@@ -196,8 +197,8 @@ class MediosPagoType extends AbstractType
                                 'placeholder' => 'Seleccionar Condición',
                                 'query_builder' => function (EntityRepository $repository) use ($options) {
                                     return $repository->createQueryBuilder('s')
-                                        ->Where('s.idEstado = ?2')
-                                        ->andWhere('s.idEmpresa = ?1')
+                                        ->Where('s.stateId = ?2')
+                                        ->andWhere('s.organizationId = ?1')
                                         ->setParameter(1, $options['iEmpresa'])
                                         ->setParameter(2, $options['estado_activado']);
                                 }
@@ -240,7 +241,7 @@ class MediosPagoType extends AbstractType
 
                 $builder
                     ->add('TarjetaDebito__' . $idForm . '_' . $idCantidad, EntityType::class, array(
-                            'class' => Banco::class,
+                            'class' => Bank::class,
                             'choice_label' => 'nombre',
                             'required' => true,
                             'mapped' => false,
@@ -248,15 +249,15 @@ class MediosPagoType extends AbstractType
                             'placeholder' => 'Seleccionar Banco',
                             'query_builder' => function (EntityRepository $repository) use ($options) {
                                 return $repository->createQueryBuilder('s')
-                                    ->where('s.idEmpresa = ?1')
-                                    ->andWhere('s.idEstado = ?2')
+                                    ->where('s.organizationId = ?1')
+                                    ->andWhere('s.stateId = ?2')
                                     ->setParameter(1, $options['iEmpresa'])
                                     ->setParameter(2, $options['estado_activado']);
                             }
                         )
                     )
                     ->add('TarjetaCredito_' . $idForm . '_' . $idCantidad, EntityType::class, array(
-                            'class' => TarjetaCredito::class,
+                            'class' => CreditCard::class,
                             'choice_label' => 'nombre',
                             'required' => true,
                             'mapped' => false,
@@ -264,11 +265,11 @@ class MediosPagoType extends AbstractType
                             'placeholder' => 'Seleccionar Tarjeta',
                             'query_builder' => function (EntityRepository $repository) use ($options) {
                                 return $repository->createQueryBuilder('t')
-                                    ->join('t.idTarjetaCreditoTipo', 'tct')
-                                    ->where('tct.idEmpresa = ?1')
-                                    ->andWhere('tct.idEstado = ?2')
-                                    ->andWhere('t.idEstado = ?2')
-                                    ->orderBy('t.nombre', 'ASC')
+                                    ->leftJoin('App\\Entity\\Tenant\\CreditCardType', 'tct', 'WITH', 't.creditCardTypeId = tct.id')
+                                    ->where('tct.organizationId = ?1')
+                                    ->andWhere('tct.stateId = ?2')
+                                    ->andWhere('t.stateId = ?2')
+                                    ->orderBy('t.name', 'ASC')
                                     ->setParameter(1, $options['iEmpresa'])
                                     ->setParameter(2, $options['estado_activado']);
                             }
@@ -320,7 +321,7 @@ class MediosPagoType extends AbstractType
                         )
                     )
                     ->add('banco_' . $idForm . '_' . $idCantidad, EntityType::class, array(
-                            'class' => Banco::class,
+                            'class' => Bank::class,
                             'choice_label' => 'nombre',
                             'required' => true,
                             'mapped' => false,
@@ -328,15 +329,15 @@ class MediosPagoType extends AbstractType
                             'placeholder' => 'Seleccionar Banco',
                             'query_builder' => function (EntityRepository $repository) use ($options) {
                                 return $repository->createQueryBuilder('s')
-                                    ->where('s.idEmpresa = ?1')
-                                    ->andWhere('s.idEstado = ?2')
+                                    ->where('s.organizationId = ?1')
+                                    ->andWhere('s.stateId = ?2')
                                     ->setParameter(1, $options['iEmpresa'])
                                     ->setParameter(2, $options['estado_activado']);
                             }
                         )
                     )
                     ->add('condicion_' . $idForm . '_' . $idCantidad, EntityType::class, array(
-                            'class' => CondicionPago::class,
+                            'class' => PaymentCondition::class,
                             'choice_label' => 'nombre',
                             'required' => true,
                             'mapped' => false,
@@ -344,8 +345,8 @@ class MediosPagoType extends AbstractType
                             'placeholder' => 'Seleccionar Condición',
                             'query_builder' => function (EntityRepository $repository) use ($options) {
                                 return $repository->createQueryBuilder('s')
-                                    ->Where('s.idEstado = ?2')
-                                    ->andWhere('s.idEmpresa = ?1')
+                                    ->Where('s.stateId = ?2')
+                                    ->andWhere('s.organizationId = ?1')
                                     ->setParameter(1, $options['iEmpresa'])
                                     ->setParameter(2, $options['estado_activado']);
                             }
@@ -410,7 +411,7 @@ class MediosPagoType extends AbstractType
     public function getBlockPrefix()
     {
 
-        return 'rebsol_hermesbundle_MediosPagoType';
+        return 'rebsol_hermesbundle_PaymentMethodsType';
     }
 
 }

@@ -4,17 +4,24 @@ namespace App\Controller\Caja\Recaudacion;
 
 
 use Rebsol\AdmisionBundle\Form\Type\IdentificacionType;
-use App\Entity\Legacy\PersonaDomicilio;
+use App\Entity\Tenant\PersonAddress;
 use App\Controller\Caja\Recaudacion\render;
 use App\Controller\Caja\RecaudacionController;
 use App\Form\Recaudacion\Pago\BusquedaAvanzadaDirectorioPacienteType;
 use App\Form\Recaudacion\Pago\DiferenciaType;
-use App\Form\Recaudacion\Pago\MediosPagoType;
+use App\Form\Recaudacion\Pago\PaymentMethodsType;
 use App\Form\Recaudacion\Pago\PagoType;
 use App\Form\Recaudacion\Pago\PrestacionType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Process\Process;
+use App\Repository\MemberRepository;
+use App\Repository\CashierStationRepository;
+use App\Repository\SystemParameterRepository;
+use App\Repository\PaymentMethodRepository;
+use App\Repository\CashRegisterRepository;
+use App\Repository\AccountPaymentRepository;
+use App\Repository\DocumentBatchRepository;
+use App\Repository\OrganizationRepository;
 
 
 /**
@@ -28,9 +35,18 @@ class DefaultController extends RecaudacionController
     var $arrSessionVarName;
     var $em;
 
-    public function __construct(RequestStack $requestStack)
-    {
-        parent::__construct($requestStack);
+    public function __construct(
+        RequestStack $requestStack,
+        protected MemberRepository $memberRepository,
+        protected CashierStationRepository $cashierStationRepository,
+        SystemParameterRepository $systemParameterRepository,
+        protected PaymentMethodRepository $paymentMethodRepository,
+        CashRegisterRepository $cashRegisterRepository,
+        protected AccountPaymentRepository $accountPaymentRepository,
+        protected DocumentBatchRepository $documentBatchRepository,
+        OrganizationRepository $organizationRepository
+    ) {
+        parent::__construct($requestStack, $cashRegisterRepository, $accountPaymentRepository, $systemParameterRepository, $organizationRepository);
         
         $this->arrSessionVarName = array(
             'idPacienteGarantia',
@@ -78,7 +94,7 @@ class DefaultController extends RecaudacionController
         }
 
         $this->em = $this->getDoctrine()->getManager();
-        $domiclio = new PersonaDomicilio();
+        $domiclio = new PersonAddress();
         $Fecha = new \DateTime();
         $Fecha = $Fecha->format('Y-m-d');
         $idUser = $this->getUser();
@@ -95,20 +111,24 @@ class DefaultController extends RecaudacionController
         $arrPrestaciones = null;
         $this->setSession('from', 'caja');
         $this->setSession('esTratamiento', 0);
-        $process = new Process($this->clearSessionsVar(), $this->AnularDiferenciasAyer());
-        $process->run();
+        
+        // Ejecutar métodos de inicialización directamente
+        $this->clearSessionsVar();
+        $this->AnularDiferenciasAyer();
 
         $session = $request->getSession();
 
-        $SucursalUsuario = $this->em->getRepository('App\Entity\Legacy\UsuariosRebsol')->obtenerSucursalUsuario($this->getUser()->getId());
+        // Usar repositorio Tenant en lugar de Legacy
+        $SucursalUsuario = $this->memberRepository->obtenerSucursalUsuario($this->getUser()->getId());
 
-        $oUbicacionCajero = $this->em->getRepository('App\Entity\Legacy\RelUbicacionCajero')->findOneBy(array(
-                'idUsuario' => $idUser,
-                'idEstado' => $this->parametro('Estado.activo')
-            )
+        // Usar repositorio Tenant para CashierStation
+        $oUbicacionCajero = $this->cashierStationRepository->findOneByMemberAndState(
+            $idUser->getId(),
+            true // Estado activo
         );
 
-        $arrParametroHabilitarPaisExtranjero = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('HABILITAR_PAIS_NACIONALIDAD_EXTRANJERO');
+        // Usar repositorio Tenant para SystemParameter
+        $arrParametroHabilitarPaisExtranjero = $this->systemParameterRepository->obtenerParametro('HABILITAR_PAIS_NACIONALIDAD_EXTRANJERO');
         $habilitarPaisExtranjero = intval($arrParametroHabilitarPaisExtranjero['valor']);
 
 
@@ -128,12 +148,16 @@ class DefaultController extends RecaudacionController
             return $this->redirect($this->generateUrl('Dashboard_ingresar', array('idModulo' => $this->getParameter("caja.idModulo"))));
         }
 
-        $folioGlobal = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('FOLIO_GLOBAL');
-        $oTalonario = $this->em->getRepository('App\Entity\Legacy\Talonario')->findBy(
+        // Usar repositorio Tenant para SystemParameter
+        $folioGlobal = $this->systemParameterRepository->obtenerParametro('FOLIO_GLOBAL');
+        
+        // Usar repositorio Tenant para DocumentBatch
+        // Mock: El valor de cashierStationId se deja null por ahora ya que oUbicacionCajero es mock
+        $oTalonario = $this->documentBatchRepository->findBy(
             array(
-                'idUbicacionCaja' => $folioGlobal['valor'] === '0' ? $oUbicacionCajero->getidUbicacionCaja()->getid() : null,
-                'idEstado' => $this->parametro('Estado.activo'),
-                'idEstadoPila' => $this->getParameter('EstadoPila.activo')
+                'cashierStationId' => null, // Mock temporal, usar null hasta que CashierStation tenga ubicacionCaja
+                'statusId' => $this->parametro('Estado.activo'),
+                'stackStatusId' => $this->getParameter('EstadoPila.activo')
             )
         );
 
@@ -145,7 +169,7 @@ class DefaultController extends RecaudacionController
         }
 
 
-        $idFormaspago = $this->rFormaPago()->ObtieneFormaPago();
+        $idFormaspago = $this->paymentMethodRepository->ObtieneFormaPago();
 
         if ($idFormaspago) {
 
@@ -155,8 +179,8 @@ class DefaultController extends RecaudacionController
             }
         }
 
-        $ListadoMediosPago = $this->rFormaPago()->ListadoFormasDePagoParaMediosPago();
-        $ListadoOtrosMedios = $this->rFormaPago()->ListadoFormasDePagoParaOtrosMedios();
+        $ListadoMediosPago = $this->paymentMethodRepository->ListadoFormasDePagoParaMediosPago();
+        $ListadoOtrosMedios = $this->paymentMethodRepository->ListadoFormasDePagoParaOtrosMedios();
 
         if ($ListadoOtrosMedios) {
             foreach ($ListadoOtrosMedios as $id) {
@@ -179,11 +203,11 @@ class DefaultController extends RecaudacionController
         $form = $this->Forms($arrayParams);
         $datosCompletos = 0;
 
-        $habilitaAplicarDiferenciaIndividual = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('APLICAR_DIFERENCIA_INDIVIDUAL');
-        $habilitaAplicarDiferenciaSaldo = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('APLICAR_DIFERENCIA_SALDO');
-        $habilitaRestriccionesDePago = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('HABILITAR_RESTRICCIONES_DE_PAGO');
-        $imedUrl = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('IMED_URL_INTERFAZ_PROD');
-        $formasPagoBono = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('TIPO_FORMAS_PAGO_BONOS');
+        $habilitaAplicarDiferenciaIndividual = $this->systemParameterRepository->obtenerParametro('APLICAR_DIFERENCIA_INDIVIDUAL');
+        $habilitaAplicarDiferenciaSaldo = $this->systemParameterRepository->obtenerParametro('APLICAR_DIFERENCIA_SALDO');
+        $habilitaRestriccionesDePago = $this->systemParameterRepository->obtenerParametro('HABILITAR_RESTRICCIONES_DE_PAGO');
+        $imedUrl = $this->systemParameterRepository->obtenerParametro('IMED_URL_INTERFAZ_PROD');
+        $formasPagoBono = $this->systemParameterRepository->obtenerParametro('TIPO_FORMAS_PAGO_BONOS');
         $formasPagoBono = explode(',', $formasPagoBono['valor']);
 
         $arrayBonosFormasPago = array();
@@ -242,8 +266,8 @@ class DefaultController extends RecaudacionController
                 'tipoAtencion' => $TipoAtencion,
                 'reserva' => $reserva,
                 /** IDs desde Funciones o Repositorios */
-                'banco' => $this->rFormaPago()->ObtieneBancoCaja($this->parametro('Estado.activo'), $oEmpresa),
-                'cajero' => $this->rPagoCuenta()->GetCajeroByUser($idUser->getId()),
+                'banco' => $this->paymentMethodRepository->ObtieneBancoCaja($this->parametro('Estado.activo'), $oEmpresa),
+                'cajero' => $this->accountPaymentRepository->GetCajeroByUser($idUser->getId()),
                 'datosCompletos' => $datosCompletos,
                 'imedUrl' => $imedUrl['valor'],
                 'tipoPago' => $tipoPago
@@ -258,7 +282,7 @@ class DefaultController extends RecaudacionController
     {
 
         $this->em = $this->getDoctrine()->getManager();
-        $domiclio = new PersonaDomicilio();
+        $domiclio = new PersonAddress();
         $Fecha = new \DateTime();
         $Fecha = $Fecha->format("Y-m-d");
         $idUser = $this->getUser();
@@ -282,7 +306,7 @@ class DefaultController extends RecaudacionController
         $arrayFormasPago = array();
         $arrayOtrosFormasPago = array();
 
-        $arrParametroHabilitarPaisExtranjero = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('HABILITAR_PAIS_NACIONALIDAD_EXTRANJERO');
+        $arrParametroHabilitarPaisExtranjero = $this->systemParameterRepository->obtenerParametro('HABILITAR_PAIS_NACIONALIDAD_EXTRANJERO');
         $habilitarPaisExtranjero = intval($arrParametroHabilitarPaisExtranjero['valor']);
 
         /** Informacion API */
@@ -313,10 +337,10 @@ class DefaultController extends RecaudacionController
 
         $session = $request->getSession();
 
-        $oUbicacionCajero = $this->em->getRepository('App\Entity\Legacy\RelUbicacionCajero')->findOneBy(
+        $oUbicacionCajero = $this->cashierStationRepository->findOneBy(
             array(
-                'idUsuario' => $idUser->getId(),
-                'idEstado' => $this->parametro('Estado.activo')
+                'member' => $idUser->getId(),
+                'isActive' => true
             )
         );
 
@@ -329,18 +353,17 @@ class DefaultController extends RecaudacionController
             exit(-1);
         }
 
-        $folioGlobal = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('FOLIO_GLOBAL');
+        $folioGlobal = $this->systemParameterRepository->obtenerParametro('FOLIO_GLOBAL');
 
-        $oTalonario = $this->em->getRepository('App\Entity\Legacy\Talonario')->findBy(
+        $oTalonario = $this->documentBatchRepository->findBy(
             array(
-                'idUbicacionCaja' => $folioGlobal['valor'] === '0' ? $oUbicacionCajero->getidUbicacionCaja()->getid(): null,
-                'idEstado' => $this->parametro('Estado.activo'),
-                'idEstadoPila' => $this->getParameter('EstadoPila.activo')
+                'cashierStationId' => null, // Mock temporal
+                'statusId' => $this->parametro('Estado.activo'),
+                'stackStatusId' => $this->getParameter('EstadoPila.activo')
             )
         );
 
         if (!$oTalonario) {
-
             echo "<div class='alert alert-warning'><button type='button' class='close' data-dismiss='alert'> <i class='icon-remove'></i> </button>
 			<strong>Información: </strong> No se ha asignado Boleta a esta Caja. <br></div>";
             exit(-1);
@@ -383,7 +406,7 @@ class DefaultController extends RecaudacionController
             }
         }
 
-        $idFormaspago = $this->rFormaPago()->ObtieneFormaPago();
+        $idFormaspago = $this->paymentMethodRepository->ObtieneFormaPago();
 
         if ($idFormaspago) {
 
@@ -393,8 +416,8 @@ class DefaultController extends RecaudacionController
             }
         }
 
-        $ListadoMediosPago = $this->rFormaPago()->ListadoFormasDePagoParaMediosPago();
-        $ListadoOtrosMedios = $this->rFormaPago()->ListadoFormasDePagoParaOtrosMedios();
+        $ListadoMediosPago = $this->paymentMethodRepository->ListadoFormasDePagoParaMediosPago();
+        $ListadoOtrosMedios = $this->paymentMethodRepository->ListadoFormasDePagoParaOtrosMedios();
 
         if ($ListadoOtrosMedios) {
             foreach ($ListadoOtrosMedios as $id) {
@@ -493,11 +516,11 @@ class DefaultController extends RecaudacionController
                 ];
             }
         }
-        $habilitaRestriccionesDePago = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('HABILITAR_RESTRICCIONES_DE_PAGO');
-        $habilitaAplicarDiferenciaIndividual = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('APLICAR_DIFERENCIA_INDIVIDUAL');
-        $habilitaAplicarDiferenciaSaldo = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('APLICAR_DIFERENCIA_SALDO');
-        $imedUrl = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('IMED_URL_INTERFAZ_PROD');
-        $formasPagoBono = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('TIPO_FORMAS_PAGO_BONOS');
+        $habilitaRestriccionesDePago = $this->systemParameterRepository->obtenerParametro('HABILITAR_RESTRICCIONES_DE_PAGO');
+        $habilitaAplicarDiferenciaIndividual = $this->systemParameterRepository->obtenerParametro('APLICAR_DIFERENCIA_INDIVIDUAL');
+        $habilitaAplicarDiferenciaSaldo = $this->systemParameterRepository->obtenerParametro('APLICAR_DIFERENCIA_SALDO');
+        $imedUrl = $this->systemParameterRepository->obtenerParametro('IMED_URL_INTERFAZ_PROD');
+        $formasPagoBono = $this->systemParameterRepository->obtenerParametro('TIPO_FORMAS_PAGO_BONOS');
         $formasPagoBono = explode(',', $formasPagoBono['valor']);
 
         $arrayBonosFormasPago = array();
@@ -560,8 +583,8 @@ class DefaultController extends RecaudacionController
                 'IdFinanciador' => $oReservaAtencion->getIdPrevision()->getId(),
                 'FechaPagoAgenda' => $validacion['fechaPago'],
                 /** IDs desde Funciones o Repositorios */
-                'banco' => $this->rFormaPago()->ObtieneBancoCaja($this->parametro('Estado.activo'), $oEmpresa),
-                'cajero' => $this->rPagoCuenta()->GetCajeroByUser($idUser->getId()),
+                'banco' => $this->paymentMethodRepository->ObtieneBancoCaja($this->parametro('Estado.activo'), $oEmpresa),
+                'cajero' => $this->accountPaymentRepository->GetCajeroByUser($idUser->getId()),
                 /** si tiene garantia pendiente */
                 'datosPago' => $datosPago,
                 'historico' => $dhp,
@@ -814,7 +837,7 @@ class DefaultController extends RecaudacionController
         $arrTalonario[] = array();
         $subEmpresa[] = array();
         $arrTalonarioNumeroActual = array();
-        $oCajaFindByUser = $this->em->getRepository('App\Entity\Legacy\Caja')->findBy(array("idUsuario" => $idUser));
+        $oCajaFindByUser = $this->cashRegisterRepository->findBy(["member" => $idUser]);
 
         if ($oCajaFindByUser) {
             foreach ($oCajaFindByUser as $c) {
@@ -896,7 +919,7 @@ class DefaultController extends RecaudacionController
                 }
             }
         }
-        $folioGlobal = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('FOLIO_GLOBAL');
+        $folioGlobal = $this->systemParameterRepository->obtenerParametro('FOLIO_GLOBAL');
 
         if ($oCaja) {
 
@@ -921,16 +944,16 @@ class DefaultController extends RecaudacionController
                 return $this->redirect($this->generateUrl('Dashboard_ingresar', array('idModulo' => $this->getParameter("caja.idModulo"))));
             }
         } else {
-            $UbicacionCajero = $this->em->getRepository('App\Entity\Legacy\RelUbicacionCajero')->findOneBy(array(
-                "idEstado" => $this->parametro('Estado.activo'),
-                "idUsuario" => $idUser
+            $UbicacionCajero = $this->cashierStationRepository->findOneBy(array(
+                "member" => $idUser,
+                "isActive" => true
             ));
 
-            $oTalonario = $this->em->getRepository('App\Entity\Legacy\Talonario')->findBy(
+            $oTalonario = $this->documentBatchRepository->findBy(
                 array(
-                    'idUbicacionCaja' => $folioGlobal['valor'] === '0' ? $UbicacionCajero->getIdUbicacionCaja()->getid() : null,
-                    'idEstado' => $this->parametro('Estado.activo'),
-                    'idEstadoPila' => $this->getParameter('EstadoPila.activo')
+                    'cashierStationId' => null, // Mock temporal
+                    'statusId' => $this->parametro('Estado.activo'),
+                    'stackStatusId' => $this->getParameter('EstadoPila.activo')
                 )
             );
         }
@@ -940,31 +963,31 @@ class DefaultController extends RecaudacionController
             foreach ($oTalonario as $t) {
                 $arrAux = array();
                 $arrAux['id'] = $t->getId();
-                $arrAux['idNombreArray'] = $t->getIdSubEmpresa()->getId() . $t->getid() . $t->getIdRelEmpresaTipoDocumento()->getIdTipoDocumento()->getid();
-                $arrAux['idSubEmpresa'] = $t->getIdSubEmpresa()->getId();
-                $arrAux['idTipoDocumento'] = $t->getIdRelEmpresaTipoDocumento()->getIdTipoDocumento()->getid();
+                $arrAux['idNombreArray'] = $t->getSubCompanyId() . $t->getId() . $t->getDocumentTypeId();
+                $arrAux['idSubEmpresa'] = $t->getSubCompanyId();
+                $arrAux['idTipoDocumento'] = $t->getDocumentTypeId();
                 $arrAux['actual'] = $t->getNumeroActual();
                 $arrTalonarioId[] = $arrAux;
             }
 
-            $TalonarioNumeroActual = $this->rCaja()->GetNumeroActualSinAnulacionTalonario($arrTalonarioId,
+            $TalonarioNumeroActual = $this->cashRegisterRepository->GetNumeroActualSinAnulacionTalonario($arrTalonarioId,
                 $this->getParameter('EstadoDetalleTalonario.anulada'),
                 $this->em);
 
             foreach ($oTalonario as $t) {
 
-                if (array_key_exists($t->getIdSubEmpresa()->getId(), $subEmpresa)) {
-                    $subEmpresa[$t->getIdSubEmpresa()->getId()] = $t->getIdSubEmpresa()->getId();
+                if (array_key_exists($t->getSubCompanyId(), $subEmpresa)) {
+                    $subEmpresa[$t->getSubCompanyId()] = $t->getSubCompanyId();
                 } else {
-                    $subEmpresa[$t->getIdSubEmpresa()->getId()] = $t->getIdSubEmpresa()->getId();
+                    $subEmpresa[$t->getSubCompanyId()] = $t->getSubCompanyId();
                 }
-                if ($t->getnumeroActual() >= $t->getnumeroTermino()) {
+                if ($t->getNumeroActual() >= $t->getnumeroTermino()) {
                     $x = $x + 1;
                 } else {
-                    if ($t->getIdRelEmpresaTipoDocumento()->getIdTipoDocumento()->getid() == 1 || $t->getIdRelEmpresaTipoDocumento()->getIdTipoDocumento()->getid() == 3) {
+                    if ($t->getDocumentTypeId() == 1 || $t->getDocumentTypeId() == 3) {
                         $y = $y + 1;
                         /** genero requisitos minimos para la generacion de boletas. al menos 2 Boletas afectas y  exentas (por sus distintas subempresas) */
-                        if ($t->getIdRelEmpresaTipoDocumento()->getIdTipoDocumento()->getid() == 1 || $t->getIdRelEmpresaTipoDocumento()->getIdTipoDocumento()->getid() == 3) {
+                        if ($t->getDocumentTypeId() == 1 || $t->getDocumentTypeId() == 3) {
                             $af = $af + 1;
                         }
                     }
@@ -1017,9 +1040,9 @@ class DefaultController extends RecaudacionController
 
 
             if (!$oCaja) {
-                $oUbicacionCajero = $this->em->getRepository('App\Entity\Legacy\RelUbicacionCajero')->findOneBy(array(
-                    "idUsuario" => $idUser,
-                    "idEstado" => $this->parametro('Estado.activo')
+                $oUbicacionCajero = $this->cashierStationRepository->findOneBy(array(
+                    "member" => $idUser,
+                    "isActive" => true
                 ));
                 if (!$oUbicacionCajero || !$this->getUser()->getVerCaja()) {
                     $noCajero = 1;
@@ -1034,14 +1057,14 @@ class DefaultController extends RecaudacionController
 
             //////// Valida SubEmpresa para Talonarios ////////
             if ($noCajero != 1) {
-                if ($this->rCaja()->SubEmpresaDesdeCaja($arrTalonario, $arrPrestaciones)) {
+                if ($this->cashRegisterRepository->SubEmpresaDesdeCaja($arrTalonario, $arrPrestaciones)) {
                     $subEmpresaTalonarioPrestacion = 1;
                 }
             }
         }
 
         $parametroPagoTodosLosDias = $this->rParametro()->obtenerParametro('SOLO_PAGOS_DEL_DIA')['valor'];
-        $getPrestacionesCaja = $this->em->getRepository("App\Entity\Legacy\Parametro")
+        $getPrestacionesCaja = $this->systemParameterRepository
             ->obtenerParametro('BUSQUEDA_PRESTACION_CAJA');
         return array(
             'pagoTodosLosDias' => $parametroPagoTodosLosDias,
@@ -1073,10 +1096,11 @@ class DefaultController extends RecaudacionController
         $habilitarPaisExtranjero = isset($arrayParams['habilitarPaisExtranjero']) ? $arrayParams['habilitarPaisExtranjero'] : null;
 
         $em = $this->getDoctrine()->getManager();
-        $idTipoIdentificacionDefault = $em->getReference('App\Entity\Legacy\Empresa', $oEmpresa)->getIdTipoIdentificacionDefault();
+        // Mock: Organization no tiene idTipoIdentificacionDefault, usar valor por defecto
+        $idTipoIdentificacionDefault = null;
         $form = $this->createForm(BusquedaAvanzadaDirectorioPacienteType::class, null);
 
-        $mediosPagoform = $this->createForm(MediosPagoType::class, null,
+        $mediosPagoform = $this->createForm(PaymentMethodsType::class, null,
             array(
                 'validaform' => null,
                 'idFrom' => $arrayFormasPago,
@@ -1095,7 +1119,6 @@ class DefaultController extends RecaudacionController
                 'validaform' => null,
                 'iEmpresa' => $oEmpresa,
                 'estado_activado' => $this->parametro('Estado.activo'),
-                'database_default' => $this->obtenerEntityManagerDefault(),
                 'habilitarPaisExtranjero' => $habilitarPaisExtranjero
             )
         );
@@ -1103,8 +1126,7 @@ class DefaultController extends RecaudacionController
         $diferenciaform = $this->createForm(DiferenciaType::class, $domiclio,
             array(
                 'iEmpresa' => $oEmpresa,
-                'estado_activado' => $this->parametro('Estado.activo'),
-                'database_default' => $this->obtenerEntityManagerDefault()
+                'estado_activado' => $this->parametro('Estado.activo')
             )
         );
 
@@ -1119,8 +1141,7 @@ class DefaultController extends RecaudacionController
                 'validaform' => null,
                 'iEmpresa' => $oEmpresa,
                 'estado_activado' => $this->parametro('Estado.activo'),
-                'sucursal' => $SucursalUsuario,
-                'database_default' => $this->obtenerEntityManagerDefault()
+                'sucursal' => $SucursalUsuario
             )
         );
 
@@ -1149,12 +1170,18 @@ class DefaultController extends RecaudacionController
 
     protected function AnularDiferenciasAyer()
     {
+        // TODO: Implementar lógica con PaymentAdjustment cuando esté lista
+        // Por ahora retorna sin hacer nada para evitar error con rDiferencia() null
+        $rDiferencia = $this->rDiferencia();
+        if ($rDiferencia === null) {
+            return;
+        }
 
         $em = $this->getDoctrine()->getManager();
         $oUser = $this->getUser();
         $oFecha = new \DateTime("now");
 
-        $oDiferencias = $this->rDiferencia()->anularDiferenciasAyer($oFecha);
+        $oDiferencias = $rDiferencia->anularDiferenciasAyer($oFecha);
 
         if (count($oDiferencias) > 0) {
             foreach ($oDiferencias as $d) {
