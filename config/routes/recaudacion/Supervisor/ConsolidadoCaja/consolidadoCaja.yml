@@ -1,0 +1,58 @@
+#_Caja_Supervisor_ConsolidadoCaja:
+#    path:  /
+#    defaults: { _controller: CajaBundle:_Default/Supervisor/ConsolidadoCaja/ConsolidadoCaja:index }
+
+Caja_Supervisor_ConsolidadoCaja:
+    path:  /index
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/ConsolidadoCaja/ConsolidadoCaja:index }
+
+Caja_Supervisor_ConsolidadoCaja_Informe:
+    path:  /informe
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/ConsolidadoCaja/ConsolidadoCajaInforme:informe }
+
+Caja_Supervisor_ConsolidadoCaja_Informer:
+    path:  /Informer/
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/ConsolidadoCaja/ConsolidadoCajaInforme:informer }
+
+Caja_Supervisor_ConsolidadoCaja_Abrir:
+    path:  /{id}/AbrirCaja
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/ConsolidadoCaja/ConsolidadoCajaAbrir:abrir }
+    requirements: { id: \d+ }
+
+Caja_Gestion_CerrarCaja:
+    path:  /{id}/GestionCerrarCaja
+    defaults: { _controller: App\Controller\Caja\_Default/Recaudacion/GestionCaja/GestionCaja:GestionCerrarCaja }
+    requirements: { id: \d+ }
+
+Caja_Supervisor_ConsolidadoCaja_DescargarExcel:
+    path:  /{id}/GestionCajaExcel
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/ConsolidadoCaja/ConsolidadoCajaExcel:GestionInformeCaja }
+    requirements: { id: \d+ }
+    
+    # nuevo BOTON CONSOLIDADO
+Caja_Supervisor_ConsolidadoCaja_DescargarExcel2:
+   path:  /{id}/GestionCajaExcel2
+   defaults: { _controller: App\Controller\Caja\_Default/Supervisor/ConsolidadoCaja/ConsolidadoCajaExcel:GestionInformeCaja2 }
+   requirements: { id: \d+ }
+
+Caja_PostPago_PrintDetalleCaja_ImpresionPDF:
+    path:  /DetalleCajaPrinter
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/ConsolidadoCaja/ConsolidadoCajaInforme:InformeCajaPDF }
+    methods: [POST]
+
+Caja_Supervisor_ConsolidadoCaja_Editar:
+    path:  /{id}/Editar
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/ConsolidadoCaja/ConsolidadoCajaEditar:GestionInformeCajaEditar }
+    requirements: { id: \d+ }
+
+Caja_Supervisor_ConsolidadoCaja_EditaNumeroDeposito:
+    path:  /EditaNumeroDeposito
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/ConsolidadoCaja/ConsolidadoCajaEditar:editaNumeroDeposito }
+
+Caja_Supervisor_ConsolidadoCaja_EditarBono:
+    path:  /EditarBono/{idPago}/
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/ConsolidadoCaja/ConsolidadoCajaEditarBono:editarBono }
+
+Caja_Supervisor_ConsolidadoCaja_ActualizarBono:
+    path:  /ActualizarBono/{idPago}/
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/ConsolidadoCaja/ConsolidadoCajaEditarBono:actualizarBono }

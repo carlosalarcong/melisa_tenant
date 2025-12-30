@@ -1,0 +1,55 @@
+Caja_Verifica_UsuarioNuevo:
+    path:  /VerificaUsuarioNuevoAntiguo
+    controller: App\Controller\Caja\Servicios\BuscaUsuarioNuevoAntiguo\BuscaUsuarioNuevoAntiguoController::index  
+
+#Caja_PaisporRegion:
+#    path:  /PaisporRegion
+#    controller: App\Controller\Caja\Servicios\BuscaPaisporRegion\BuscaPaisporRegionController::index 
+
+Caja_ProvinciaporComuna:
+    path:  /ProvinciaporComuna
+    controller: App\Controller\Caja\Servicios\BuscaProvinciaporComuna\BuscaProvinciaporComunaController::index 
+
+#Caja_RegionporProvincia:
+#    path:  /RegionporProvincia
+#    controller: App\Controller\Caja\Servicios\BuscaRegionporProvincia\BuscaRegionporProvinciaController::index 
+
+Caja_getPrestacion:
+    path:  /CajagetPrestacion
+    controller: App\Controller\Caja\Servicios\BuscarPrestaciones\BuscarPrestacionesController::obtenerPrestacionJson 
+
+Caja_getPaquete:
+    path:  /CajagetPaquete
+    controller: App\Controller\Caja\Servicios\BuscarPaquete\BuscarPaqueteController::obtenerPaqueteJson 
+
+Caja_getPrestacionHonorarios:
+    path:  /CajagetPrestacionHonorarios
+    controller: App\Controller\Caja\Servicios\BuscarPrestaciones\BuscarPrestacionesController::obtenerPrestacionHonorariosJson 
+
+Caja_BuscarPrestacion:
+    path:  /CajabuscarPrestacion
+    controller: App\Controller\Caja\Servicios\BuscarPrestaciones\BuscarPrestacionesController::index 
+
+#Caja_BuscarPaquetePrestacion:
+#    path:  /CajabuscarPaquetePrestacion
+#    controller: App\Controller\Caja\Servicios\BuscarPrestaciones\BuscarPrestacionesController::buscarPaquetesPrestaciones 
+
+Caja_BuscarInsumos:
+    path:  /CajabuscarInsumos
+    controller: App\Controller\Caja\Servicios\BuscarInsumos\BuscarInsumosController::index 
+
+Caja_BuscarPaquete:
+    path:  /CajabuscarPaquete
+    controller: App\Controller\Caja\Servicios\BuscarPaquete\BuscarPaqueteController::index 
+
+Caja_getInsumo:
+    path:  /CajagetInsumos
+    controller: App\Controller\Caja\Servicios\BuscarInsumos\BuscarInsumosController::obtenerInsumosJson 
+
+Caja_reservarFolio:
+    path:  /CajareservarFolio
+    controller: App\Controller\Caja\Servicios\BuscarPrestaciones\BuscarPrestacionesController::reservarFolio 
+
+#Caja_disponibilizarFolio:
+#    path:  /CajadisponibilizarFolio
+#    controller: App\Controller\Caja\Servicios\BuscarPrestaciones\BuscarPrestacionesController::disponibilizarFolio 

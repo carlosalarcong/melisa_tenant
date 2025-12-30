@@ -2,7 +2,7 @@
 
 namespace App\Controller\Caja\Supervisor\UbicacionCaja;
 
-use App\Controller\Caja\_Default\Supervisor\SupervisorController;
+use App\Controller\Caja\Supervisor\SupervisorController;
 use App\Controller\Caja\Supervisor\UbicacionCaja\render;
 use Symfony\Component\HttpFoundation\Request;
 

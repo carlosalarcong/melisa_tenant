@@ -2,7 +2,7 @@
 
 namespace App\Controller\Caja\Supervisor\ReporteProduccion;
 
-use App\Controller\Caja\_Default\Supervisor\SupervisorController;
+use App\Controller\Caja\Supervisor\SupervisorController;
 use App\Form\Supervisor\ReporteProduccion\ReporteProduccionType;
 use Symfony\Component\HttpFoundation\Request;
 

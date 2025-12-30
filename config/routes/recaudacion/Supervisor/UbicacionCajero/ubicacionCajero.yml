@@ -1,0 +1,31 @@
+#_Caja_Supervisor_UbicacionCajero:
+#    path:  /
+#    defaults: { _controller: CajaBundle:_Default/Supervisor/UbicacionCajero/UbicacionCajero:index }
+
+Caja_Supervisor_UbicacionCajero:
+    path:  /listado
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/UbicacionCajero/UbicacionCajero:index }
+
+Caja_Supervisor_UbicacionCajero_show:
+    path:  /{id}/ver
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/UbicacionCajero/UbicacionCajeroVer:ver }
+
+Caja_Supervisor_UbicacionCajero_new:
+    path:  /nuevo
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/UbicacionCajero/UbicacionCajeroNuevo:nuevo }
+
+Caja_Supervisor_UbicacionCajero_create:
+    path:  /crear
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/UbicacionCajero/UbicacionCajeroNuevo:crear }
+
+Caja_Supervisor_UbicacionCajero_edit:
+    path:  /{id}/editar
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/UbicacionCajero/UbicacionCajeroEditar:editar }
+
+Caja_Supervisor_UbicacionCajero_update:
+    path:  /{id}/actualizar
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/UbicacionCajero/UbicacionCajeroEditar:actualizar }
+
+Caja_Supervisor_UbicacionCajero_delete:
+    path:  /{id}/eliminar
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/UbicacionCajero/UbicacionCajeroEliminar:eliminar }

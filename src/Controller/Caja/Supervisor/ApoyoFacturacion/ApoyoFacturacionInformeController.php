@@ -2,7 +2,7 @@
 
 namespace App\Controller\Caja\Supervisor\ApoyoFacturacion;
 
-use App\Controller\Caja\_Default\Supervisor\SupervisorController;
+use App\Controller\Caja\Supervisor\SupervisorController;
 use Symfony\Component\HttpFoundation\Request;
 
 

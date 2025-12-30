@@ -1,0 +1,19 @@
+#_Caja_Supervisor_AutorizacionDescuentos:
+#    path:  /
+#    defaults: { _controller: App\Controller\Caja\Supervisor/AutorizacionDescuentos/AutorizacionDescuentos:index }
+
+Caja_Supervisor_AutorizacionDescuentos:
+    path:  /index
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/AutorizacionDescuentos/AutorizacionDescuentos:index }
+
+Caja_Supervisor_AutorizacionDescuentosAprueba:
+    path:  /aprueba/{idDiferencia}
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/AutorizacionDescuentos/AutorizacionDescuentosAprueba:aprueba }
+
+Caja_Supervisor_AutorizacionDescuentosRechaza:
+    path:  /rechaza/{idDiferencia}
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/AutorizacionDescuentos/AutorizacionDescuentosRechaza:rechaza }
+
+Caja_Supervisor_AutorizacionDescuentosVer:
+    path:  /ver/{idDiferencia}
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/AutorizacionDescuentos/AutorizacionDescuentosVer:ver }

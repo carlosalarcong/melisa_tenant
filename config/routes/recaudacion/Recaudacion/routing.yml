@@ -1,0 +1,5 @@
+Caja_Recaudacion_Inicio_Recaudacion:
+  resource: 'recaudacion.yml'
+
+Caja_Recaudacion_Inicio_Servicio:
+  resource: 'servicio.yml'

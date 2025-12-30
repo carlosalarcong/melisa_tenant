@@ -1,7 +1,7 @@
 <?php
 namespace App\Controller\Caja\Supervisor\AsientoContable;
 
-use App\Controller\Caja\_Default\Supervisor\SupervisorController;
+use App\Controller\Caja\Supervisor\SupervisorController;
 use App\Controller\Caja\Supervisor\AsientoContable\render;
 use App\Form\Supervisor\AsientoContable\AsientoContableType;
 use Symfony\Component\HttpFoundation\Request;

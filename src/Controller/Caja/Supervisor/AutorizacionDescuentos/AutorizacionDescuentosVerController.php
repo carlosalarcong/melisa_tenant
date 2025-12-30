@@ -2,7 +2,7 @@
 
 namespace App\Controller\Caja\Supervisor\AutorizacionDescuentos;
 
-use App\Controller\Caja\_Default\Supervisor\SupervisorController;
+use App\Controller\Caja\Supervisor\SupervisorController;
 use App\Controller\Caja\Supervisor\AutorizacionDescuentos\render;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

@@ -4,7 +4,7 @@ namespace App\Controller\Caja\Supervisor\ReporteProduccion;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use App\Controller\Caja\_Default\Supervisor\SupervisorController;
+use App\Controller\Caja\Supervisor\SupervisorController;
 use Rebsol\RegistroClinicoHospitalarioBundle\Repository\TrasladoRepository;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 

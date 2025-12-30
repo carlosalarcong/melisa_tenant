@@ -10,7 +10,7 @@ use Rebsol\HermesBundle\Entity\Tratamiento;
 use Rebsol\HermesBundle\Entity\DetalleTratamiento;
 // use Rebsol\HermesBundle\Controller\Caja\Recaudacion\RecaudacionController;
 
-//use App\Controller\Caja\_Default\RecaudacionController;
+//use App\Controller\Caja\RecaudacionController;
 //use Rebsol\HermesBundle\Entity\Tratamiento;
 //use Rebsol\HermesBundle\Entity\DetalleTratamiento;
 

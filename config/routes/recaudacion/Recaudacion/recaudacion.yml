@@ -1,0 +1,466 @@
+recaudacion_recaudacion:
+    path:  /Recaudacion
+    controller: App\Controller\Caja\Recaudacion\Default\DefaultController::index 
+
+Caja_Recaudacion_Pago_ValRut:
+    path:  /BusquedaRut
+    controller: App\Controller\Caja\Recaudacion\Pago\Dependencias\Valrut\ValrutController::indexRut 
+
+Caja_Recaudacion_Pago_ValExtranjeros:
+    path:  /BusquedaExtranjero
+    controller: App\Controller\Caja\Recaudacion\Pago\Dependencias\Valrut\ValrutController::indexExtranjero 
+
+Caja_Recaudacion_Pago_ObtieneDomicilio:
+    path:  /ObtieneDomicilio
+    controller: App\Controller\Caja\Recaudacion\Pago\Dependencias\Avanzada\AvanzadaController::domicilio  
+
+Caja_Recaudacion_Pago_ObtieneDatosNUsuarios:
+    path:  /ObtieneDatosNUsuarios
+    controller: App\Controller\Caja\Recaudacion\Pago\Dependencias\Avanzada\AvanzadaController::obtieneDatosNUsuarios  
+
+Caja_Recaudacion_Pago_ObtieneDatosUnUsuario:
+    path:  /ObtieneDatosUnUsuario
+    controller: App\Controller\Caja\Recaudacion\Pago\Dependencias\Avanzada\AvanzadaController::obtieneDatosUnUsuario  
+
+Caja_Recaudacion_Pago_Avanzada:
+    path:  /BusquedaAvanzada
+    controller: App\Controller\Caja\Recaudacion\Pago\Dependencias\Avanzada\AvanzadaController::indexAdv 
+
+Caja_ActualizaPaciente:
+    path:  /actualizaPaciente
+    controller: App\Controller\Caja\Recaudacion\Pago\Pago\PagoController::actualizaPaciente 
+
+Caja_CreaPaciente:
+    path:  /creaPaciente
+    controller: App\Controller\Caja\Recaudacion\Pago\Pago\PagoController::creaPaciente 
+
+Caja_ConsultaPacienteIdPnatural:
+    path:  /consultaIpPnatural
+    controller: App\Controller\Caja\Recaudacion\Pago\Pago\PagoController::consultaPaciente 
+
+Caja_Consulta_Planes:
+    path:  /consulaPlanes
+    controller: App\Controller\Caja\Recaudacion\Pago\Pago\PagoController::consulaPlanes 
+
+Caja_Consulta_Profesionales:
+    path:  /consulaProfesionales
+    controller: App\Controller\Caja\Recaudacion\Pago\Pago\PagoController::consulaProfesionales 
+
+#Caja_Consulta_Externos:
+#    path:  /consulaExternos
+#    controller: App\Controller\Caja\Recaudacion\Pago\Pago\PagoController::busquedaExterno 
+
+#Caja_Obtiene_Externo:
+#    path:  /ObtieneExterno
+#    controller: App\Controller\Caja\Recaudacion\Pago\Pago\PagoController::obtieneExterno 
+
+Caja_Consulta_Origen:
+    path:  /consulaOrigen
+    controller: App\Controller\Caja\Recaudacion\Pago\Pago\PagoController::consulaOrigen 
+
+Caja_Recaudacion_vresultadoBusquedaAvanzadaPaciente:
+    path:  /PagoBusquedaAvanzadaPacientes
+    controller: App\Controller\Caja\Recaudacion\Pago\Dependencias\Avanzada\AvanzadaController::resultadoBusquedaAvanzadaPaciente 
+
+
+Caja_getNuevoFormDinamico:
+    path:  /Caja_getNuevoFormDinamico
+    controller: App\Controller\Caja\Recaudacion\Pago\MedioPago\MedioPagoController::nuevoFormDinamico
+
+#VALIDA SI YA SE HA OCUPADO UN BONO DE ACUERDO A SU CLASIFICACION
+Caja_Valida_Bono:
+    path:  /CajaValidaBono
+    controller: App\Controller\Caja\Recaudacion\Pago\MedioPago\MedioPagoController::validaBono
+
+#VALIDA VALORES POR PAGAR
+Caja_Valor_Pagar:
+    path:  /CajaValorPagar
+    controller: App\Controller\Caja\Recaudacion\Pago\MedioPago\MedioPagoController::cajaValorPagar
+    
+Caja_Valor_Pagar_Pago_Cuenta:
+    path:  /CajaValorPagarPagoCuenta
+    controller: App\Controller\Caja\Recaudacion\Pago\MedioPago\MedioPagoController::cajaValorPagarPagoCuenta
+
+#VALIDA VALORES POR PAGAR
+Caja_Valmacena_Total_Suma:
+    path:  /CajaValmacenaTotalSuma
+    controller: App\Controller\Caja\Recaudacion\Pago\MedioPago\MedioPagoController::cajaValmacenaTotalSuma
+
+#VALIDA VALORES POR PAGAR
+Caja_Valor_Pagar_Comparar_Tabs:
+    path:  /CajaValorPagarCompararTabs
+    controller: App\Controller\Caja\Recaudacion\Pago\MedioPago\MedioPagoController::cajaValorPagarCompararTabs
+
+#VALIDA VALORES POR PAGAR
+#Caja_CMPVP:
+#    path:  /CMPVP
+#    controller: App\Controller\Caja\Recaudacion\Pago\MedioPago\MedioPagoController::CMPVP
+
+Caja_CasePayApi:
+    path:  /CasePayApi
+    controller: App\Controller\Caja\Recaudacion\Pago\Pagar\PagarController::cajaPagarApi
+
+Caja_CasePay:
+    path:  /CasePay
+    controller: App\Controller\Caja\Recaudacion\Pago\Pagar\PagarController::setSessionCajaPagar 
+
+Caja_CasePayMediosPago:
+    path:  /CasePayMediosPago
+    controller: App\Controller\Caja\Recaudacion\Pago\Pagar\PagarController::cajaPagarMediosPago
+
+Caja_PeopleId:
+    path:  /PeopleId
+    controller: App\Controller\Caja\Recaudacion\Pago\Pagar\PagarController::persona
+
+#Caja_PostPago:
+#    path:  /PostPago
+#    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::index 
+
+Caja_PostPago_PrintDetallePago:
+    path:  /DetallePago/{id}
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::detallesPago 
+    requirements: { id: \d+ }
+
+Caja_PostPago_PrintDetalleAtencion:
+    path:  /{id}/DetalleAtencion
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::detallesAtencion 
+    requirements: { id: \d+ }
+
+Caja_PostPago_PrintDetalleBoleta:
+    path:  /{id}/DetalleBoleta
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::detallesBoleta 
+    requirements: { id: \d+ }
+
+Caja_PostPago_Historial:
+    path:  /PostPagoHistorial
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::historialPaciente 
+
+Caja_PostPago_PrintDetalleAtencion_ImpresionPDF:
+    path:  /DetalleAtencionPrinter
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::imprimirDetalleAtencion 
+
+Caja_PostPago_PrintDetallePago_ImpresionPDF:
+    path:  /DetallePagoPrinter
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::imprimirDetallePago 
+    methods: [POST]
+
+Caja_PostPago_PrintDetalleBoleta_ImpresionPDF:
+    path:  /DetalleBoletaPrinter
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::imprimirDetalleBoleta 
+    methods: [POST]
+
+Caja_PostPago_ReenviarDte:
+    path:  /ReenviarDte
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::reenviarDte 
+
+Caja_PostPago_PrintDetallesCaja_ImpresionPDF:
+    path:  /DetallesCajaPrinter
+    controller: App\Controller\Caja\Recaudacion\GestionCaja\GestionCaja\GestionCajaController::gestionInformeCajaImprimir 
+    methods: [POST]
+
+Caja_PostPago_Boleta:
+    path:  /postPagoBoleta
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::postPagoBoleta 
+
+Caja_Boleta_ModificaNumero:
+    path:  /ModificaBoleta
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::modificaBoleta 
+
+#Caja_Boleta_ModificaNumero_Manual:
+#    path:  /ModificaBoletaManual
+#    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::modificaBoletaManual 
+
+Caja_PostPago_AnulacionPagoAgenda:
+    path:   /AnulacionPagoAgenda
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::anulacionPagoAgenda 
+
+
+#Caja_PostPago_AnulacionPagoAgenda_Api1:
+#    path:   /AnulacionPagoAgendaApi1
+#    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::anulacionPagoAgendaApi1 
+
+Caja_PostPago_AnulacionPagoCaja:
+    path:  /{id}/AnulacionPagoCaja
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::anulacionPagoCaja 
+    requirements: { id: \d+ }
+
+Caja_PagoCuenta_AnulacionPagoCaja:
+    path:  /{id}/AnulacionPagoCajaPagoCuenta
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::anulacionPagoCajaPagoCuenta 
+    requirements: { id: \d+ }
+
+Caja_PostPago_PagoGarantia:
+    path:  /PagoGarantia
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::pagoGarantia 
+
+Caja_PostPago_PagoReserva:
+    path:  /PagoReserva
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::pagoReserva 
+
+Caja_PostPago_DocumentosPostPago:
+    path:  /DocumentosPostPago
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::documentosPostPago 
+
+Caja_PostPago_Boleta_Dte:
+    path:  /postPagoBoletaDte
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::postPagoBoletaDte 
+    
+Caja_PostPago_Regularizar_Garantia:
+    path:  /postRegularizarGarantia
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::regularizaGarantia 
+
+
+# GESTION CAJA
+Caja_Gestion_CerrarCaja:
+    path:  /{id}/GestionCerrarCaja
+    controller: App\Controller\Caja\Recaudacion\GestionCaja\GestionCaja\GestionCajaController::gestionCerrarCaja 
+    requirements: { id: \d+ }
+
+Caja_Gestion_CerrarCajaCerrado:
+    path:   /{id}/GestionCerrarCajaCerrado
+    controller: App\Controller\Caja\Recaudacion\GestionCaja\GestionCaja\GestionCajaController::gestionCerrarCajaCerrado 
+    requirements: { id: \d+ }
+
+Caja_Gestion_AbrirCaja:
+    path:  /GestionAbrirCaja
+    controller: App\Controller\Caja\Recaudacion\GestionCaja\GestionCaja\GestionCajaController::gestionAbrirCaja
+
+Caja_Gestion_InformesCajas:
+    path:   /{id}/InformeCajas
+    controller: App\Controller\Caja\Recaudacion\GestionCaja\GestionCaja\GestionCajaController::gestionInformeCajas
+    requirements: { id: \d+ }
+
+Caja_Gestion_InformeCaja:
+    path:   /{id}/InformeCaja
+    controller: App\Controller\Caja\Recaudacion\GestionCaja\GestionCaja\GestionCajaController::gestionInformeCaja
+    requirements: { id: \d+ }
+
+Caja_Gestion_InformesGarantias:
+    path:   /InformeGarantias
+    controller: App\Controller\Caja\Recaudacion\GestionCaja\GestionCaja\GestionCajaController::gestionInformeGrantias
+
+Caja_TraeCorrelativo:
+    path:  /TraeCorrelativo
+    controller: App\Controller\Caja\Recaudacion\GestionCaja\GestionCaja\GestionCajaController::traeCorrelativo
+
+Caja_Gestion_verificaCorrelativo:
+    path:   /verificaCorrelativo
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::verificaCorrelativo 
+
+Caja_GuardaFechaEnBaseDocumento:
+    path:   /GuardaFechaEnBaseDocumento
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::guardaFechaEnBaseDocumento 
+
+#Caja_Diferencia:
+#    path:  /Diferencia
+#    controller: App\Controller\Caja\Recaudacion\Pago\Pago\PagoController::diferencia 
+
+
+#Caja_Diferencia_ConsultaMotivoPorTipo:
+#    path:  /DiferenciaConsultaMotivoPorTipo
+#    controller: App\Controller\Caja\Recaudacion\Pago\Pago\PagoController::consultaMotivoPorTipo 
+
+#Caja_buscaPrestacionSubEmpresaDesdeAgenda:
+#    path:  /buscaPrestacionSubEmpresaDesdeAgenda
+#    controller: CajaBundle:_Default/Servicios/BuscarPrestaciones:buscaPrestacionSubEmpresaDesdeAgenda 
+
+# GARANTIA
+Caja_PostPago_PagoGarantia_BuscarPrestaciones:
+    path:   /PagoGarantiaBuscarPrestaciones
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::pagoGarantiaBuscarPrestaciones 
+
+Caja_PostPago_PagoGarantia_BuscarHonorario:
+    path:   /PagoGarantiaBuscarHonorario
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::pagoGarantiaBuscarHonorario 
+
+Caja_PostPago_PagoGarantia_BuscarArticulos:
+    path:   /PagoGarantiaBuscarArticulos
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::pagoGarantiaBuscarArticulos 
+
+Caja_PostPago_PagoGarantia_VerificaSubEmpresaActualCajero_PrestacionesInsumos:
+    path:   /VerificaSubEmpresaActualCajero_PrestacionesInsumos
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::reservaVerificaSubEmpresaActualCajeroPrestacionesInsumos 
+
+Caja_PostPago_PagoGarantia_BuscaOtrosMedios:
+    path:   /BuscaOtrosMedios
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::pagoGarantiaBuscaOtrosMedios 
+
+# RESERVA
+Caja_PostPago_PagoReserva_VerificaSubEmpresaActualCajero_PrestacionesInsumos:
+    path:   /ReservaVerificaSubEmpresaActualCajeroPrestacionesInsumos
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::reservaVerificaSubEmpresaActualCajeroPrestacionesInsumos 
+
+Caja_PostPago_PagoReserva_BuscarPrestaciones:
+    path:   /PagoReservaBuscarPrestaciones
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::pagoReservaBuscarPrestaciones 
+
+# I-MED
+Caja_Imed_Index:
+    path:   /CajaImedIndex
+    controller: App\Controller\Caja\Recaudacion\Imed\Imed\ImedController::index 
+
+Caja_Imed_Post_Trans_Auditoria:
+    path:   /PostTransAuditoria
+    controller: App\Controller\Caja\Recaudacion\Imed\Imed\ImedController::sendPostLogin 
+
+#@todo revisar este routing - function  verificaTalonarioPrestacion not exits in  Recaudacioncontroller
+#Caja_Imed_VerificaTalonarioPrestacion:
+#    path:   /VerificaTalonarioPrestacion
+#    controller: CajaBundle:_Default/Recaudacion/Imed/Imed:verificaTalonarioPrestacion 
+
+#Caja_Imed_Post_Trans_Auditoria:
+#    path:   /PostTransAuditoria
+#    controller: CajaBundle:_Default/Recaudacion/Imed/Imed:sendPostLogin 
+
+# Caja_Imed_Post_Trans_Auditoria_Prueba:
+#     path:   /PostTransAuditoriaPrueba
+#     controller: RebsolHermesBundle:Pruebas\Pruebas:Index 
+
+#Caja_Imed_SendGetObtBonInterfaz:
+#    path:   /SendGetObtBonInterfaz
+#    controller: CajaBundle:_Default/Recaudacion/Imed/Imed:sendGetObtBonInterfaz 
+
+# API
+Caja_ActualizaPaciente_Api1:
+    path:  /actualizaPacienteMascota
+    controller: App\Controller\Caja\Recaudacion\Pago\Pago\PagoController::actualizaPacienteApi1 
+
+Caja_CreaPacienteApi:
+    path:  /creaPacienteMascota
+    controller: App\Controller\Caja\Recaudacion\Pago\Pago\PagoController::CreaPacienteApi 
+
+Caja_Recaudacion_ConsultaMascotas:
+    path:  /BuscaMascotasPorDueno
+    controller: App\Controller\Caja\Recaudacion\Pago\Pago\PagoController::buscaMascotasPorDueno 
+
+#Caja_Guarda_IdPnaturalMascota:
+#    path:   /GuardaIdPnaturalMascota
+#    controller: App\Controller\Caja\Recaudacion\Pago\Pago\PagoController::guardaIdPnaturalMascota 
+
+#Caja_BuscaMascotas_Cliente:
+#    path:   /BuscaMascotasCliente
+#    controller: App\Controller\Caja\Recaudacion\Pago\Pago\PagoController::buscaMascotasCliente 
+
+# TRATAMIENTO
+Caja_Tratamiento_Crear:
+    path:   /Crear_tratamiento
+    controller: App\Controller\Caja\Recaudacion\Tratamiento\Tratamiento\TratamientoController::crearTratamiento 
+
+Caja_Tratamiento_Editar:
+    path:   /EditarTratamiento
+    controller: App\Controller\Caja\Recaudacion\Tratamiento\Tratamiento\TratamientoController::editarTratamiento 
+
+#Caja_Tratamiento_Crear_BuscarTratamiento_Pnatural:
+#    path:   /CrearBucarTratamientoPnatural
+#    controller: CajaBundle:_Default/Recaudacion/Tratamiento/Tratamiento:crearTratamientoBuscarPnatural 
+
+Caja_Tratamiento_Anulacion:
+    path:   /{id}/Anular_tratamiento
+    controller: App\Controller\Caja\Recaudacion\Tratamiento\Tratamiento\TratamientoController::anularTratamiento 
+    requirements: { id: \d+ }
+
+Caja_Tratamiento_Glosa:
+    path:  /Glosa_Tratamiento
+    controller: App\Controller\Caja\Recaudacion\Tratamiento\Tratamiento\TratamientoController::glosaTratamiento 
+
+Caja_Tratamiento_Get_Edit:
+    path:  /GetEdit_Tratamiento
+    controller: App\Controller\Caja\Recaudacion\Tratamiento\Tratamiento\TratamientoController::getEditartratamiento 
+
+# DIFERENCIA
+Caja_Diferencia_Generar:
+    path:   /GenerarDiferencia
+    controller: App\Controller\Caja\Recaudacion\Diferencia\Diferencia\DiferenciaController::generarDiferencia 
+
+Caja_DiferenciaSaldo_Generar:
+    path:   /GenerarDiferenciaSaldo
+    controller: App\Controller\Caja\Recaudacion\Diferencia\Diferencia\DiferenciaController::generarDiferenciaSaldo 
+
+Caja_Diferencia_GetMotivosDiferencia:
+    path:   /GetMotivosDiferencia
+    controller: App\Controller\Caja\Recaudacion\Diferencia\Diferencia\DiferenciaController::getMotivosDiferencia 
+
+Caja_Diferencia_GetTipoSentido:
+    path:   /GetTipoSentido
+    controller: App\Controller\Caja\Recaudacion\Diferencia\Diferencia\DiferenciaController::getTipoSentido 
+
+Caja_Diferencia_SendCountPrestacionArticulo:
+    path:   /SendCountPrestacionArticulo
+    controller: App\Controller\Caja\Recaudacion\Diferencia\Diferencia\DiferenciaController::countPrestacionesArticulos 
+
+Caja_Diferencia_SOlicitar:
+    path:   /Solicitar_diferencia
+    controller: App\Controller\Caja\Recaudacion\Diferencia\Diferencia\DiferenciaController::solicitarDiferencia 
+
+Caja_Diferencia_SOlicitar_Saldo:
+    path:   /Solicitar_diferencia_saldo
+    controller: App\Controller\Caja\Recaudacion\Diferencia\Diferencia\DiferenciaController::solicitarDiferenciaSaldo 
+
+Caja_Diferencia_Anular:
+    path:   /Anular_diferencia
+    controller: App\Controller\Caja\Recaudacion\Diferencia\Diferencia\DiferenciaController::anularDiferencia 
+
+Caja_Diferencia_Respuesta_SUpervisor:
+    path:   /Respuesta_SUpervisor_diferencia
+    controller: App\Controller\Caja\Recaudacion\Diferencia\Diferencia\DiferenciaController::respuestaSupervisorDiferencia 
+
+Caja_ActualizaPacienteSinRut:
+    path:  /ActualizaPacienteSinRut
+    controller: App\Controller\Caja\Recaudacion\Pago\Pago\PagoController::actualizaPacienteSinRut 
+
+Caja_Valida_Prevision_EsImed:
+    path:   /CajaImedValidaPrevisionEsImed
+    controller: App\Controller\Caja\Recaudacion\Imed\Imed\ImedController::cajaImedValidaPrevisionEsImed 
+
+Caja_Pregunta_Pago_esImed:
+    path:   /CajaAnulaPagoEsImed
+    controller: App\Controller\Caja\Recaudacion\Imed\Imed\ImedController::cajaAnulaPagoEsImed 
+
+############## SUBIR / ABRIR / ELIMINAR PDF ########
+Caja_PostPago_SubirPDF:
+    path:   /CajaPostPagoSubirPDF
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::subirPDF 
+    methods: [POST]
+
+Caja_PostPago_AbrirPDF:
+    path:   /CajaPostPagoAbrirPDF
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::abrirPDF 
+
+Caja_PostPago_EliminarPDF:
+    path:   /CajaPostPagoEliminarPDF
+    controller: App\Controller\Caja\Recaudacion\Pago\PostPago\PostPagoController::eliminarPDF 
+    methods: [POST]
+
+
+# RECAUDACION DESDE AGENDAMIENTO
+#Caja_Caja_Recaudacion_Agendamiento:
+#    path:  /{id}/Recaudacion
+#    controller: CajaBundle:_Default/Recaudacion/Recaudacion:indexPago 
+#    requirements: { id: \d+ }
+
+Caja_Diferencia_Aplicar:
+    path:   /Aplicar_diferencia
+    controller: App\Controller\Caja\Recaudacion\Diferencia\Diferencia\DiferenciaController::aplicarDiferencia 
+    methods: [POST]
+
+#Caja_Diferencia_Generar:
+#    path:   /GenerarDiferencia
+#    controller: CajaBundle:_Default/Recaudacion/Diferencia:generarDiferencia 
+
+###### VERIFICAR QUE EXISTE USUARIO INTEGRACIÓN
+Caja_ExisteUsuarioIntegracion:
+    path:  /consultaExisteUsuarioIntegracion
+    controller: App\Controller\Caja\ApiPV\Recaudacion\Recaudacion\RecaudacionController::existeUsuarioIntegracion 
+
+# pagos web
+Caja_Gestion_InformeCajaPagosWeb:
+    path:   /InformeCajaPagosWeb
+    controller: App\Controller\Caja\Recaudacion\GestionCaja\GestionCaja\GestionCajaController::gestionInformeCajaPagosWeb
+
+#Caja_Gestion_InformePDFCajaPagosWeb:
+#    path:   /InformeCajaPDFPagosWeb
+#    controller: CajaBundle:_Default/Recaudacion/GestionCaja/GestionCaja:gestionInformeCajaPagosWebImprimir
+
+Caja_Diferencia_GetTipoSentidoPorMotivoDiferencia:
+    path:   /GetTipoSentidoPorMotivoDiferencia
+    controller: App\Controller\Caja\Recaudacion\Diferencia\Diferencia\DiferenciaController::getTipoSentidoPorMotivoDiferencia 

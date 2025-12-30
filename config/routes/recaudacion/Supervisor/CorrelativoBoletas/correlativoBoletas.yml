@@ -1,0 +1,50 @@
+#_Caja_Supervisor_CorrelativoBoletas:
+#    path:  /
+#    defaults: { _controller: App\Controller\Caja\Supervisor/CorrelativoBoletas/CorrelativoBoletas:index }
+
+Caja_Supervisor_CorrelativoBoletas:
+    path:  /listado
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/CorrelativoBoletas/CorrelativoBoletas:index }
+
+Caja_Supervisor_CorrelativoBoletas_new:
+    path:  /nuevo
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/CorrelativoBoletas/CorrelativoBoletasNuevo:nuevo }
+
+Caja_Supervisor_CorrelativoBoletas_create:
+    path:  /crear
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/CorrelativoBoletas/CorrelativoBoletasNuevo:crear }
+
+# VER
+Caja_Supervisor_CorrelativoBoletas_show:
+    path:  /ver/{idTalonario}
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/CorrelativoBoletas/CorrelativoBoletasVer:ver }
+
+Caja_Supervisor_CorrelativoBoletas_show_informacion:
+    path:  /informacion/{idTalonario}
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/CorrelativoBoletas/CorrelativoBoletasInformacion:informacion }
+
+# EDITAR
+Caja_Supervisor_CorrelativoBoletas_show_editar:
+    path:  /editar/{idTalonario}
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/CorrelativoBoletas/CorrelativoBoletasEditar:editar }
+
+Caja_Supervisor_CorrelativoBoletas_show_actualizar:
+    path:  /actualizar/{idTalonario}
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/CorrelativoBoletas/CorrelativoBoletasEditar:actualizar }
+
+# ELIMINAR
+Caja_Supervisor_CorrelativoBoletas_delete:
+    path:  /eliminar/{idTalonario}
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/CorrelativoBoletas/CorrelativoBoletasEliminar:eliminar }
+
+# COMPROBACIONES JAVASCRIPT
+
+# OBTIENE EL NÚMERO DE PILA
+Caja_Supervisor_CorrelativoBoletas_numeroPila:
+    path:  /numeroPila
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/CorrelativoBoletas/CorrelativoBoletasNuevo:numeroPila }
+
+# OBTIENE EL NÚMERO DE INICIO AUTOMÁTICAMENTE
+Caja_Supervisor_CorrelativoBoletas_generaNumeroDeInicio:
+    path:  /numeroInicio
+    defaults: { _controller: App\Controller\Caja\_Default/Supervisor/CorrelativoBoletas/CorrelativoBoletasNuevo:generaNumeroDeInicio }

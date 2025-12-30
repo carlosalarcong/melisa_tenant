@@ -1,0 +1,44 @@
+Caja_Supervisor:
+  path:  /Inicio
+  controller: App\Controller\Caja\Supervisor\Supervisor\Supervisor\SupervisorController::index
+
+Rutas_Caja_Supervisor_UbicacionCaja:
+  resource: "UbicacionCaja/ubicacionCaja.yml"
+  prefix: /UbicacionCaja
+
+Rutas_Caja_Supervisor_UbicacionCajero:
+  resource: "UbicacionCajero/ubicacionCajero.yml"
+  prefix: /UbicacionCajero
+
+Rutas_Caja_Supervisor_CorrelativoBoletas:
+  resource: "CorrelativoBoletas/correlativoBoletas.yml"
+  prefix: /CorrelativoBoletas
+
+Rutas_Caja_Supervisor_AutorizacionDescuentos:
+  resource: "AutorizacionDescuentos/autorizacionDescuentos.yml"
+  prefix: /AutorizacionDescuentos
+
+Rutas_Caja_Supervisor_ConsolidadoCaja:
+  resource: "ConsolidadoCaja/consolidadoCaja.yml"
+  prefix: /ConsolidadoCaja
+
+Rutas_Caja_Supervisor_MantenedorFolios:
+  resource: "MantenedorFolios/mantenedorFolios.yml"
+  prefix: /MantenedorFolios
+
+Rutas_Caja_Supervisor_AsientoContable:
+  resource: "AsientoContable/asientoContable.yml"
+  prefix: /AsientoContable
+
+#Rutas_Caja_Supervisor_PepleSoft:
+#  resource: "PeopleSoft/peopleSoft.yml"
+#  prefix: /PeopleSoft
+
+Rutas_Caja_Supervisor_ReporteProduccion:
+  resource: "ReporteProduccion/reporteProduccion.yml"
+  prefix: /ReporteProduccion
+
+
+Rutas_Caja_Supervisor_ApoyoFacturacion:
+  resource: "ApoyoFacturacion/apoyoFacturacion.yml"
+  prefix: /ApoyoFacturacion

@@ -2,7 +2,7 @@
 
 namespace App\Controller\Caja\Supervisor\MantenedorFolios;
 
-use App\Controller\Caja\_Default\Supervisor\SupervisorController;
+use App\Controller\Caja\Supervisor\SupervisorController;
 use App\Controller\Caja\Supervisor\MantenedorFolios\render;
 use App\Form\Supervisor\MantenedorFolios\MantenedorFoliosType;
 use Symfony\Component\HttpFoundation\Request;

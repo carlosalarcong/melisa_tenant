@@ -7,5 +7,5 @@ recaudacion_index:
 
 # Importar rutas de sub-módulos
 recaudacion_servet:
-    resource: 'recaudacion/'
+    resource: 'recaudacion/servet.yml'
     prefix: /recaudacion
