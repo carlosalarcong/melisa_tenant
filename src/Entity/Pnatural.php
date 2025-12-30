@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Table(name="pnatural", indexes={@ORM\Index(name="IDX_PNATURAL_NOMBREPNATURAL", columns={"NOMBRE_PNATURAL"}), @ORM\Index(name="IDX_PNATURAL_APELLIDOPATERNO", columns={"APELLIDO_PATERNO"}), @ORM\Index(name="IDX_PNATURAL_APELLIDOMATERNO", columns={"APELLIDO_MATERNO"})})
  * @ORM\Entity
- * @ORM\Entity(repositoryClass="Rebsol\HermesBundle\Repository\PnaturalRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\PnaturalRepository")
  */
 class Pnatural
 {

@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="prevision_pnatural")
  * @ORM\Entity
- * @ORM\Entity(repositoryClass="Rebsol\HermesBundle\Repository\PrevisionPnaturalRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\PrevisionPnaturalRepository")
  */
 class PrevisionPnatural
 {

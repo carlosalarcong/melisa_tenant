@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="detalle_caja_cheque")
  * @ORM\Entity
- * @ORM\Entity(repositoryClass="Rebsol\HermesBundle\Repository\DetalleCajaChequeRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\DetalleCajaChequeRepository")
  */
 class DetalleCajaCheque
 {

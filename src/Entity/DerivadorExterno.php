@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="derivador_externo")
  * @ORM\Entity
- * @ORM\Entity(repositoryClass="Rebsol\HermesBundle\Repository\DerivadorExternoRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\DerivadorExternoRepository")
  */
 class DerivadorExterno
 {

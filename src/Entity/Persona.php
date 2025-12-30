@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="persona", indexes={@ORM\Index(name="IDX_PERSONA_IDENTIFICACIONEXTRANJERO", columns={"IDENTIFICACION_EXTRANJERO"})})
  * @ORM\Entity
- * @ORM\Entity(repositoryClass="Rebsol\HermesBundle\Repository\PersonaRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\PersonaRepository")
  */
 class Persona
 {

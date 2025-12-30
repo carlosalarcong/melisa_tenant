@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * DetalleTalonario
  *
  * @ORM\Table(name="detalle_talonario")
- * @ORM\Entity(repositoryClass="Rebsol\HermesBundle\Repository\DetalleTalonarioRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\DetalleTalonarioRepository")
  */
 class DetalleTalonario
 {

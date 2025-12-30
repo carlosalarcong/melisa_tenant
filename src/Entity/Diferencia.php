@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="diferencia")
  * @ORM\Entity
- * @ORM\Entity(repositoryClass="Rebsol\HermesBundle\Repository\DiferenciaRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\DiferenciaRepository")
  */
 class Diferencia
 {
