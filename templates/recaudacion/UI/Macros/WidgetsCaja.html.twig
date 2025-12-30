@@ -1,11 +1,7 @@
 {# Autor Osvaldo Valdenegro #}
 
 {% macro resources() %}
-    {% javascripts
-        '@RegistroClinicoHospitalarioBundle/Resources/public/js/notificaciones.js'
-    %}
-        <script src="{{ asset_url }}"></script>
-    {% endjavascripts %}
+    <script src="{{ asset('js/notificaciones.js') }}"></script>
 	<script type="text/javascript" src="{{ asset('js/uncompressed/Caja/Validate-keyup-customs.js') }}"></script>
 	<script type="text/javascript" src="{{ asset('js/uncompressed/Caja/Events-div-seek.js') }}"></script>
 	<script type="text/javascript" src="{{ asset('js/uncompressed/Caja/Events-rut-seek.js') }}"></script>

@@ -3,7 +3,7 @@
 namespace App\Controller\Caja\Recaudacion;
 
 
-use Rebsol\AdmisionBundle\Form\Type\IdentificacionType;
+// use Rebsol\AdmisionBundle\Form\Type\IdentificacionType;
 use App\Entity\Tenant\PersonAddress;
 use App\Controller\Caja\Recaudacion\render;
 use App\Controller\Caja\RecaudacionController;
@@ -22,6 +22,7 @@ use App\Repository\CashRegisterRepository;
 use App\Repository\AccountPaymentRepository;
 use App\Repository\DocumentBatchRepository;
 use App\Repository\OrganizationRepository;
+use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 
 
 /**
@@ -44,9 +45,10 @@ class DefaultController extends RecaudacionController
         CashRegisterRepository $cashRegisterRepository,
         protected AccountPaymentRepository $accountPaymentRepository,
         protected DocumentBatchRepository $documentBatchRepository,
-        OrganizationRepository $organizationRepository
+        OrganizationRepository $organizationRepository,
+        TenantEntityManager $tenantEntityManager
     ) {
-        parent::__construct($requestStack, $cashRegisterRepository, $accountPaymentRepository, $systemParameterRepository, $organizationRepository);
+        parent::__construct($requestStack, $cashRegisterRepository, $accountPaymentRepository, $systemParameterRepository, $organizationRepository, $tenantEntityManager);
         
         $this->arrSessionVarName = array(
             'idPacienteGarantia',
@@ -93,7 +95,7 @@ class DefaultController extends RecaudacionController
             }
         }
 
-        $this->em = $this->getDoctrine()->getManager();
+        $this->em = $this->tenantEntityManager;
         $domiclio = new PersonAddress();
         $Fecha = new \DateTime();
         $Fecha = $Fecha->format('Y-m-d');
@@ -220,10 +222,10 @@ class DefaultController extends RecaudacionController
         }
 //dump($arrayBonosFormasPago);
 //        exit;
-        return $this->render('RecaudacionBundle:Recaudacion:Base.html.twig', array(
+        return $this->render('recaudacion/Recaudacion/Base.html.twig', array(
                 /** Formularios Directorio Paciente */
                 'form' => $form['form1'],
-                'tipoIdentificacionExtranjeroForm' => $form['tipoIdentificacionExtranjeroForm']->createView(),
+                'tipoIdentificacionExtranjeroForm' => $form['tipoIdentificacionExtranjeroForm'] ? $form['tipoIdentificacionExtranjeroForm']->createView() : null,
                 'habilitarPaisExtranjero' => $habilitarPaisExtranjero,
                 /** Formularios Caja */
                 'pago_form' => $form['Pago'],
@@ -281,7 +283,7 @@ class DefaultController extends RecaudacionController
     public function indexPagoAction(request $request, $id, $tipoPago)
     {
 
-        $this->em = $this->getDoctrine()->getManager();
+        $this->em = $this->tenantEntityManager;
         $domiclio = new PersonAddress();
         $Fecha = new \DateTime();
         $Fecha = $Fecha->format("Y-m-d");
@@ -450,7 +452,7 @@ class DefaultController extends RecaudacionController
 
         if ($sincerrar || $sintalonario || $open || $subEmpresaTalonarioPrestacion || $close || $noCajero) {
 
-            return $this->render('RecaudacionBundle:Recaudacion:indexReserva.html.twig', array(
+            return $this->render('recaudacion/Recaudacion/indexReserva.html.twig', array(
                     /** Estados desde 'validacionComplementariaCaja */
                     'coreApi' => ($estadoApi === "core") ? 1 : 0,
                     'sincerrar' => $validacion['sincerrar'],
@@ -532,10 +534,10 @@ class DefaultController extends RecaudacionController
             }
         }
 
-        return $this->render('RecaudacionBundle:Recaudacion:indexReserva.html.twig', array(
+        return $this->render('recaudacion/Recaudacion/indexReserva.html.twig', array(
                 /** Formularios Caja */
                 'form' => $form['form1'],
-                'tipoIdentificacionExtranjeroForm' => $form['tipoIdentificacionExtranjeroForm']->createView(),
+                'tipoIdentificacionExtranjeroForm' => $form['tipoIdentificacionExtranjeroForm'] ? $form['tipoIdentificacionExtranjeroForm']->createView() : null,
                 'habilitarPaisExtranjero' => $habilitarPaisExtranjero,
                 'pago_form' => $form['Pago'],
                 'mediospago_form' => $form['MediosPago'],
@@ -620,7 +622,7 @@ class DefaultController extends RecaudacionController
 
         if ($oPago->getIdEstadoPago()->getId() == 1 && $fechaPago == 1) {
 
-            return $this->render('RecaudacionBundle:Recaudacion/PostPago:Exitoso.html.twig', array(
+            return $this->render('recaudacion/Recaudacion/PostPago/Exitoso.html.twig', array(
                     'datosPago' => $datosPago,
                     'historico' => $dhp,
                     'paciente' => $oPaciente,
@@ -634,7 +636,7 @@ class DefaultController extends RecaudacionController
         if ($oPago->getIdEstadoPago()->getId() == 1 && $fechaPago == 0) {
 
             // echo "<pre>"; \Doctrine\Common\Util\Debug::dump($this->ClienteDataGarantiaArray($oReservaAtencion)); exit(-1);
-            return $this->render('RecaudacionBundle:Recaudacion/PostPago:ExitosoInfoAnterior.html.twig', array(
+            return $this->render('recaudacion/Recaudacion/PostPago/ExitosoInfoAnterior.html.twig', array(
                 'datosPago' => $datosPago,
                 'historico' => $dhp,
                 'paciente' => $oPaciente,
@@ -751,19 +753,16 @@ class DefaultController extends RecaudacionController
         $countPlan = 0;
         $countProf = 0;
 
-        $oOrigen = $this->em->getRepository('App\Entity\Legacy\Origen')->findBy(array(
-            "idSucursal" => $SucursalUsuario,
-            "idEstado" => $estado));
-        $oRolProfesional = $this->em->getRepository('App\Entity\Legacy\RolProfesional')->findBy(array(
-            "idRol" => $this->getParameter('rol_medico'),
-            "idEstado" => $estado));
-        $oPrevision = $this->em->getRepository('App\Entity\Legacy\Prevision')->findBy(array(
-            "idEmpresa" => $oEmpresa,
-            "idEstado" => $estado));
-        $oTipoPrevision = $this->em->getRepository('App\Entity\Legacy\TipoPrevision')->findBy(array(
-            "idEmpresa" => $oEmpresa,
-            "esConvenio" => 1,
-            "idEstado" => $estado));
+        $oOrigen = $this->em->getRepository('App\Entity\Tenant\ReferralSource')->findBy(array(
+            "branchId" => $SucursalUsuario,
+            "isActive" => true));
+        $oRolProfesional = $this->em->getRepository('App\Entity\Tenant\ProfessionalRole')->findBy(array(
+            "roleId" => $this->getParameter('rol_medico'),
+            "isActive" => true));
+        $oPrevision = $this->em->getRepository('App\Entity\Tenant\HealthInsurance')->findBy(array(
+            "isActive" => true));
+        $oTipoPrevision = $this->em->getRepository('App\Entity\Tenant\HealthInsurance')->findBy(array(
+            "isActive" => true));
 
         if (!$oOrigen) {
             $failOrigen = "Origen";
@@ -793,10 +792,10 @@ class DefaultController extends RecaudacionController
 
         $auxRelSucPre = array();
         foreach ($oPrevision as $pr) {
-            $oRelSucursalPrevision = $this->em->getRepository('App\Entity\Legacy\RelSucursalPrevision')->findOneBy(array(
-                "idSucursal" => $SucursalUsuario,
-                "idPrevision" => $pr->getid(),
-                "idEstado" => $estado
+            $oRelSucursalPrevision = $this->em->getRepository('App\Entity\Tenant\BranchHealthInsurance')->findOneBy(array(
+                "branchId" => $SucursalUsuario,
+                "healthInsuranceId" => $pr->getid(),
+                "isActive" => true
             ));
 
             if ($oRelSucursalPrevision) {
@@ -1130,11 +1129,15 @@ class DefaultController extends RecaudacionController
             )
         );
 
+        // TODO: Crear IdentificacionType cuando sea necesario
+        $tipoIdentificacionExtranjeroForm = null;
+        /*
         $tipoIdentificacionExtranjeroForm = $this->createForm(IdentificacionType::class, null,
             array(
                 'idTipoIdentificacionDefault' =>  $idTipoIdentificacionDefault
             )
         );
+        */
 
         $prestacionform = $this->createForm(PrestacionType::class, $domiclio,
             array(

@@ -513,4 +513,15 @@ class Person
 
         return $this;
     }
+
+    // Alias Legacy para compatibilidad con Pnatural
+    public function getNombrePnatural(): string
+    {
+        return $this->name;
+    }
+
+    public function getIdPersona()
+    {
+        return (object)['id' => $this->id];
+    }
 }

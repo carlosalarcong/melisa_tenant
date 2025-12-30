@@ -2,8 +2,8 @@
 
 namespace App\Form\Recaudacion\Pago;
 
-use Rebsol\HermesBundle\Entity\MotivoDiferencia;
-use Rebsol\HermesBundle\Entity\TipoSentidoDiferencia;
+use App\Entity\Tenant\PaymentAdjustmentReason;
+use App\Entity\Tenant\PaymentAdjustmentDirection;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -32,16 +32,16 @@ class DiferenciaType extends AbstractType
         $builder
             ->add('tipoDiferencia', EntityType::class, array(
                     'label' => 'Tipo Diferencia',
-                    'class' => TipoSentidoDiferencia::class,
+                    'class' => PaymentAdjustmentDirection::class,
                     'choice_label' => 'nombre',
                     'required' => true,
                     'mapped' => false,
                     'placeholder' => 'Seleccionar Tipo',
                     'query_builder' => function (\Doctrine\ORM\EntityRepository $repository) use ($options) {
                         return $repository->createQueryBuilder('t')
-                            ->where('t.idEstado = ?2')
-                            ->orderBy('t.nombre', 'ASC')
-                            ->setParameter(2, $options['estado_activado']);
+                            ->where('t.isActive = :active')
+                            ->orderBy('t.name', 'ASC')
+                            ->setParameter('active', true);
                     },
                     'constraints' => array(
                         new validaform\NotBlank(array('message' => 'Debe definir un Tipo de Dferencia')),
@@ -50,18 +50,16 @@ class DiferenciaType extends AbstractType
             )
             ->add('motivoDiferencia', EntityType::class, array(
                     'label' => 'Motivo Diferencia',
-                    'class' => MotivoDiferencia::class,
+                    'class' => PaymentAdjustmentReason::class,
                     'choice_label' => 'nombre',
                     'required' => true,
                     'mapped' => false,
                     'placeholder' => 'Seleccionar Motivo',
                     'query_builder' => function (\Doctrine\ORM\EntityRepository $repository) use ($options) {
                         return $repository->createQueryBuilder('m')
-                            ->where('m.idEstado = ?2')
-                            ->andWhere('m.idEmpresa = ?1')
-                            ->orderBy('m.nombre', 'ASC')
-                            ->setParameter(1, $options['iEmpresa'])
-                            ->setParameter(2, $options['estado_activado']);
+                            ->where('m.isActive = :active')
+                            ->orderBy('m.name', 'ASC')
+                            ->setParameter('active', true);
                     },
                     'constraints' => array(
                         new validaform\NotBlank(array('message' => 'Debe definir un Motivo de Diferencia')),
@@ -70,19 +68,16 @@ class DiferenciaType extends AbstractType
             )
             ->add('motivoDiferenciaSaldo', EntityType::class, array(
                     'label' => 'Motivo Diferencia',
-                    'class' => MotivoDiferencia::class,
+                    'class' => PaymentAdjustmentReason::class,
                     'choice_label' => 'nombre',
                     'required' => true,
                     'mapped' => false,
-                    'em' => $options['database_default'],
                     'placeholder' => 'Seleccionar Motivo',
                     'query_builder' => function (\Doctrine\ORM\EntityRepository $repository) use ($options) {
                         return $repository->createQueryBuilder('m')
-                            ->where('m.idEstado = ?2')
-                            ->andWhere('m.idEmpresa = ?1')
-                            ->orderBy('m.nombre', 'ASC')
-                            ->setParameter(1, $options['iEmpresa'])
-                            ->setParameter(2, $options['estado_activado']);
+                            ->where('m.isActive = :active')
+                            ->orderBy('m.name', 'ASC')
+                            ->setParameter('active', true);
                     },
                     'constraints' => array(
                         new validaform\NotBlank(array('message' => 'Debe definir un Motivo de Diferencia')),

@@ -16,6 +16,7 @@ use App\Repository\CashRegisterRepository;
 use App\Repository\AccountPaymentRepository;
 use App\Repository\SystemParameterRepository;
 use App\Repository\OrganizationRepository;
+use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 
 
 class RecaudacionController extends DefaultController
@@ -25,7 +26,8 @@ class RecaudacionController extends DefaultController
         protected CashRegisterRepository $cashRegisterRepository,
         protected AccountPaymentRepository $accountPaymentRepository,
         protected SystemParameterRepository $systemParameterRepository,
-        protected OrganizationRepository $organizationRepository
+        protected OrganizationRepository $organizationRepository,
+        protected TenantEntityManager $tenantEntityManager
     ) {
     }
 
@@ -337,8 +339,8 @@ class RecaudacionController extends DefaultController
 
     protected function estado($var)
     {
-
-        $em = $this->getDoctrine()->getManager();
+        // Usar EntityManager del tenant actual via Hakam
+        $em = $this->tenantEntityManager;
 
         switch ($var) {
             case "EstadoPilaActiva":
@@ -348,10 +350,10 @@ class RecaudacionController extends DefaultController
                 return $em->getRepository('App\Entity\Legacy\EstadoPila')->find($this->getParameter('EstadoPila.inactivo'));
                 break;
             case "EstadoReaperturaCerrada":
-                return $em->getRepository('App\Entity\Legacy\EstadoReapertura')->find($this->getParameter('EstadoReapertura.cerrada'));
+                return $em->getRepository('App\Entity\Tenant\ReopeningState')->find($this->getParameter('EstadoReapertura.cerrada'));
                 break;
             case "EstadoReaperturaAbierta":
-                return $em->getRepository('App\Entity\Legacy\EstadoReapertura')->find($this->getParameter('EstadoReapertura.abierta'));
+                return $em->getRepository('App\Entity\Tenant\ReopeningState')->find($this->getParameter('EstadoReapertura.abierta'));
                 break;
             case "EstadoActivo":
                 return $em->getRepository('App\Entity\Legacy\Estado')->find($this->getParameter('Estado.activo'));

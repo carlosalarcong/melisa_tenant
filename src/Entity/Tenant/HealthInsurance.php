@@ -168,4 +168,31 @@ class HealthInsurance
 
         return $this;
     }
+
+    // Alias para compatibilidad Legacy
+    public function getNombre(): ?string
+    {
+        return $this->name;
+    }
+
+    public function getNombreAbreviado(): ?string
+    {
+        return $this->abbreviatedName;
+    }
+
+    public function getIdEstado()
+    {
+        return $this->isActive ? (object)['id' => 1] : (object)['id' => 2];
+    }
+
+    public function getIdEmpresa()
+    {
+        // Mock: retorna organización por defecto
+        return (object)['id' => 2];
+    }
+
+    public function getValorDefault(): ?bool
+    {
+        return $this->isDefaultValue;
+    }
 }
