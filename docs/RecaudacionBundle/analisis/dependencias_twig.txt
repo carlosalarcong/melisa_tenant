@@ -1,0 +1,5 @@
+/var/www/html/melisa_prod/src/../src/Rebsol/CajaBundle_legacy/Resources/views/_Default/Farmacia/GestionCaja/index.html.twig:	{% include 'RecaudacionBundle:Recaudacion/GestionCaja/EstadosCaja:Ultimaboleta.html.twig' %}
+/var/www/html/melisa_prod/src/../src/Rebsol/CajaBundle_legacy/Resources/views/_Default/Farmacia/GestionCaja/index.html.twig:	{% include 'RecaudacionBundle:Recaudacion/GestionCaja/EstadosCaja:sinCajaExistente.html.twig' %}
+/var/www/html/melisa_prod/src/../src/Rebsol/CajaBundle_legacy/Resources/views/Recaudacion/PostPago/index.html.twig:	{% include 'RecaudacionBundle:HistorialPagoPaciente:indexHistorial.html.twig' %}
+/var/www/html/melisa_prod/src/../src/Rebsol/AgendaBundle/Resources/views/ApiPV/DacionHoras/HorasMedicas/formularioPagarReservaAtencion.html.twig:{{ render(controller("RecaudacionBundle:_Default/Recaudacion/Default:indexPago", {'id': idReservaAtencion})) }}
+/var/www/html/melisa_prod/src/../src/Rebsol/AgendaBundle/Resources/views/_Default/DacionHoras/HorasMedicas/formularioPagarReservaAtencion.html.twig:{{ render(controller("RecaudacionBundle:_Default/Recaudacion/Default:indexPago", {'id': idReservaAtencion, 'tipoPago': tipoPago})) }}

@@ -1,0 +1,22 @@
+{
+  "fecha_analisis": "2025-12-30",
+  "bundle_path": "/var/www/html/melisa_prod/src/Rebsol/RecaudacionBundle",
+  "lineas_codigo": {
+    "php": 30599,
+    "yaml": 0,
+    "twig": 66612,
+    "total": 97211
+  },
+  "archivos": {
+    "controladores": 73,
+    "servicios": 28,
+    "repositorios": 7,
+    "formularios": 35,
+    "entidades": 0,
+    "templates": 187,
+    "routing_files": 32
+  },
+  "rutas_definidas": 258,
+  "servicios_registrados": 2,
+  "cobertura_docblocks": 60
+}

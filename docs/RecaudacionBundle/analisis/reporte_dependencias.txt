@@ -1,0 +1,31 @@
+===============================================
+  ANÁLISIS DE DEPENDENCIAS CRUZADAS
+  RecaudacionBundle
+===============================================
+Fecha: Tue Dec 30 10:26:26 -03 2025
+
+--- ARCHIVOS QUE DEPENDEN DE RecaudacionBundle ---
+
+PHP (use statements): 2 referencias
+  /var/www/html/melisa_prod/src/Rebsol/CajaBundle_legacy/Controller/_Default/Supervisor/UbicacionCajero/UbicacionCajeroController.php
+  /var/www/html/melisa_prod/src/Rebsol/DteBundle/Controller/DefaultController.php
+
+YAML (configuración): 3 referencias
+  /var/www/html/melisa_prod/src/../app/config/config.yml
+  /var/www/html/melisa_prod/src/../app/config/routing.yml
+
+TWIG (templates): 5 referencias
+  /var/www/html/melisa_prod/src/../src/Rebsol/AgendaBundle/Resources/views/ApiPV/DacionHoras/HorasMedicas/formularioPagarReservaAtencion.html.twig
+  /var/www/html/melisa_prod/src/../src/Rebsol/AgendaBundle/Resources/views/_Default/DacionHoras/HorasMedicas/formularioPagarReservaAtencion.html.twig
+  /var/www/html/melisa_prod/src/../src/Rebsol/CajaBundle_legacy/Resources/views/Recaudacion/PostPago/index.html.twig
+  /var/www/html/melisa_prod/src/../src/Rebsol/CajaBundle_legacy/Resources/views/_Default/Farmacia/GestionCaja/index.html.twig
+
+--- RESUMEN ---
+Archivos PHP dependientes: 2
+Archivos YAML dependientes: 2
+Archivos TWIG dependientes: 4
+
+⚠️  IMPORTANTE: Antes de eliminar código del RecaudacionBundle,
+    asegúrate de actualizar estos archivos dependientes.
+
+===============================================

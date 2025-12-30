@@ -1,0 +1,125 @@
+===============================================
+  ANÁLISIS CONTROLADORES Y TEMPLATES
+  RecaudacionBundle
+===============================================
+Fecha: Tue Dec 30 10:26:21 -03 2025
+
+--- CONTROLADORES ---
+Total de controladores: 73
+Controladores con rutas: 0
+Controladores SIN rutas: 73
+
+Controladores sin rutas (candidatos a eliminar):
+./Api/Caja/Recaudacion/RecaudacionController.php
+./Api/Unab/PagoCuenta/CuentaPacienteController.php
+./Api/Unab/PagoCuenta/PagoCuentaController.php
+./ApiPV/Recaudacion/RecaudacionController.php
+./ApiPV/Supervisor/ConsolidadoCajaPorProfesional/ConsolidadoCajaPorProfesionalController.php
+./ApiPV/Supervisor/ConsolidadoCajaPorProfesional/ConsolidadoCajaPorProfesionalInformeController.php
+./BusquedaPacienteController.php
+./DefaultController.php
+./GarantiaPacienteController.php
+./GestionCajaController.php
+./InformacionActualPacienteController.php
+./PagoCuenta/CuentaPacienteController.php
+./PagoCuenta/PagoCuentaController.php
+./PagoCuenta/RealizarPagoCuentaPacienteController.php
+./RecaudacionController.php
+./_Default/Recaudacion/BuscaProvinciaporComunaController.php
+./_Default/Recaudacion/DefaultController.php
+./_Default/Recaudacion/Diferencia/DiferenciaController.php
+./_Default/Recaudacion/GestionCaja/GestionCajaController.php
+./_Default/Recaudacion/Imed/ImedController.php
+./_Default/Recaudacion/Pago/Dependencias/AvanzadaController.php
+./_Default/Recaudacion/Pago/Dependencias/ValrutController.php
+./_Default/Recaudacion/Pago/MedioPagoController.php
+./_Default/Recaudacion/Pago/PagarController.php
+./_Default/Recaudacion/Pago/PagoController.php
+./_Default/Recaudacion/Pago/PostPagoController.php
+./_Default/Recaudacion/Tratamiento/TratamientoController.php
+./_Default/Servicios/BuscaProvinciaporComunaController.php
+./_Default/Servicios/BuscaUsuarioNuevoAntiguoController.php
+./_Default/Servicios/BuscarInsumosController.php
+./_Default/Servicios/BuscarPrestacionesController.php
+./_Default/Supervisor/ApoyoFacturacion/ApoyoFacturacionController.php
+./_Default/Supervisor/ApoyoFacturacion/ApoyoFacturacionInformeController.php
+./_Default/Supervisor/ApoyoFacturacion/DescargaController.php
+./_Default/Supervisor/AsientoContable/AsientoContableController.php
+./_Default/Supervisor/AsientoContable/AsientoContableInformeController.php
+./_Default/Supervisor/AsientoContable/AsientoContableUsuarioBySucursalController.php
+./_Default/Supervisor/AsientoContable/DescargaController.php
+./_Default/Supervisor/AutorizacionDescuentos/AutorizacionDescuentosApruebaController.php
+./_Default/Supervisor/AutorizacionDescuentos/AutorizacionDescuentosController.php
+./_Default/Supervisor/AutorizacionDescuentos/AutorizacionDescuentosRechazaController.php
+./_Default/Supervisor/AutorizacionDescuentos/AutorizacionDescuentosVerController.php
+./_Default/Supervisor/ConsolidadoCaja/ConsolidadoCajaAbrirController.php
+./_Default/Supervisor/ConsolidadoCaja/ConsolidadoCajaController.php
+./_Default/Supervisor/ConsolidadoCaja/ConsolidadoCajaEditarBonoController.php
+./_Default/Supervisor/ConsolidadoCaja/ConsolidadoCajaEditarController.php
+./_Default/Supervisor/ConsolidadoCaja/ConsolidadoCajaExcelController.php
+./_Default/Supervisor/ConsolidadoCaja/ConsolidadoCajaInformeController.php
+./_Default/Supervisor/CorrelativoBoletas/CorrelativoBoletasController.php
+./_Default/Supervisor/CorrelativoBoletas/CorrelativoBoletasEditarController.php
+./_Default/Supervisor/CorrelativoBoletas/CorrelativoBoletasEliminarController.php
+./_Default/Supervisor/CorrelativoBoletas/CorrelativoBoletasInformacionController.php
+./_Default/Supervisor/CorrelativoBoletas/CorrelativoBoletasNuevoController.php
+./_Default/Supervisor/CorrelativoBoletas/CorrelativoBoletasVerController.php
+./_Default/Supervisor/MantenedorFolios/MantenedorFoliosAnularController.php
+./_Default/Supervisor/MantenedorFolios/MantenedorFoliosAuditoriaController.php
+./_Default/Supervisor/MantenedorFolios/MantenedorFoliosController.php
+./_Default/Supervisor/MantenedorFolios/MantenedorFoliosEditarController.php
+./_Default/Supervisor/MantenedorFolios/MantenedorFoliosHabilitarController.php
+./_Default/Supervisor/MantenedorFolios/MantenedorFoliosVerController.php
+./_Default/Supervisor/ReporteProduccion/DescargaController.php
+./_Default/Supervisor/ReporteProduccion/ReporteProduccionController.php
+./_Default/Supervisor/SupervisorController.php
+./_Default/Supervisor/UbicacionCaja/UbicacionCajaController.php
+./_Default/Supervisor/UbicacionCaja/UbicacionCajaEditarController.php
+./_Default/Supervisor/UbicacionCaja/UbicacionCajaEliminarController.php
+./_Default/Supervisor/UbicacionCaja/UbicacionCajaNuevoController.php
+./_Default/Supervisor/UbicacionCaja/UbicacionCajaVerController.php
+./_Default/Supervisor/UbicacionCajero/UbicacionCajeroController.php
+./_Default/Supervisor/UbicacionCajero/UbicacionCajeroEditarController.php
+./_Default/Supervisor/UbicacionCajero/UbicacionCajeroEliminarController.php
+./_Default/Supervisor/UbicacionCajero/UbicacionCajeroNuevoController.php
+./_Default/Supervisor/UbicacionCajero/UbicacionCajeroVerController.php
+
+--- TEMPLATES ---
+Total de templates: 187
+Templates referenciados: 100
+Templates huérfanos: 31
+
+Templates huérfanos (candidatos a eliminar):
+Resources/views/FormasDePago/IndexImed.html.twig
+Resources/views/FormasDePago/FormaDePago_Efectivo.html.twig
+Resources/views/FormasDePago/DynamicControl.html.twig
+Resources/views/FormasDePago/OtrosMedios_CartaConvenioImed.html.twig
+Resources/views/FormasDePago/FormaDePago_TarjetaDebito.html.twig
+Resources/views/FormasDePago/ImedMensajeError.html.twig
+Resources/views/FormasDePago/FormaDePago_TarjetaCredito.html.twig
+Resources/views/FormasDePago/OtrosMedios_CartaConvenioLasik.html.twig
+Resources/views/FormasDePago/FormaDePago_BonoElectronico_IMED.html.twig
+Resources/views/FormasDePago/FormaDePago_Gratuidad.html.twig
+Resources/views/ApiPV/Recaudacion/GestionCaja/Informes/InformeMedioDePagoPDF.html.twig
+Resources/views/ApiPV/Recaudacion/GestionCaja/Informes/InformeMedioDePago.html.twig
+Resources/views/Supervisor/ConsolidadoCaja/InformeCajaEditar.html.twig
+Resources/views/Supervisor/ConsolidadoCaja/InformeCajaPDF.html.twig
+Resources/views/Supervisor/ConsolidadoCaja/InformeCajaVer.html.twig
+Resources/views/Supervisor/ConsolidadoCaja/InformeCajaEditarVacio.html.twig
+Resources/views/Supervisor/ConsolidadoCaja/InformeCajaEditar.html_1.twig
+Resources/views/Recaudacion/GestionCaja/Informes/InformeCajaPDF.html.twig
+Resources/views/Recaudacion/GestionCaja/Informes/InformeCajaPDFWeb.html.twig
+Resources/views/Recaudacion/GestionCaja/Informes/InformeCajaWeb.html.twig
+Resources/views/Recaudacion/GestionCaja/Informes/InformeMedioDePagoPDF.html.twig
+Resources/views/Recaudacion/GestionCaja/Informes/InformeMedioDePago.html.twig
+Resources/views/Recaudacion/Pago/FormasDePago/FormaDePago_Efectivo.html.twig
+Resources/views/Recaudacion/Pago/FormasDePago/OtrosMedios_CartaConvenioImed.html.twig
+Resources/views/Recaudacion/Pago/FormasDePago/FormaDePago_TarjetaDebito.html.twig
+Resources/views/Recaudacion/Pago/FormasDePago/FormaDePago_TarjetaCredito.html.twig
+Resources/views/Recaudacion/Pago/FormasDePago/OtrosMedios_CartaConvenioLasik.html.twig
+Resources/views/Recaudacion/Pago/FormasDePago/FormaDePago_Gratuidad.html.twig
+Resources/views/Recaudacion/PostPago/DetallePago/DetallePago.html.twig
+Resources/views/Recaudacion/PostPago/DetallePago/DetallePagoPDF.html.twig
+Resources/views/Recaudacion/pagoPaciente.html.twig
+
+===============================================
