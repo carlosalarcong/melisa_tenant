@@ -2,9 +2,9 @@
 
 namespace App\Controller\Caja\Recaudacion\GestionCaja;
 
-use Rebsol\HermesBundle\Entity\Caja;
-use Rebsol\HermesBundle\Entity\DetalleCaja;
-use Rebsol\HermesBundle\Entity\DetalleCajaCheque;
+use App\Entity\Caja;
+use App\Entity\DetalleCaja;
+use App\Entity\DetalleCajaCheque;
 use App\Controller\Caja\RecaudacionController;
 use App\Form\Recaudacion\Pago\CerrarCajaType;
 use Symfony\Component\HttpFoundation\Request;

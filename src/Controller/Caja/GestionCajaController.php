@@ -4,9 +4,9 @@ namespace App\Controller\Caja;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Rebsol\HermesBundle\Entity\Caja;
-use Rebsol\HermesBundle\Entity\DetalleCaja;
-use Rebsol\HermesBundle\Entity\DetalleCajaCheque;
+use App\Entity\Caja;
+use App\Entity\DetalleCaja;
+use App\Entity\DetalleCajaCheque;
 
 use  Rebsol\RecaudacionBundle\Form\Type\Recaudacion\Pago\CerrarCajaType;
 

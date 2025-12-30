@@ -2,8 +2,8 @@
 
 namespace App\Controller\Caja\Supervisor\CorrelativoBoletas;
 
-use Rebsol\HermesBundle\Entity\Talonario;
-use Rebsol\HermesBundle\Entity\TalonarioDetalle;
+use App\Entity\Talonario;
+use App\Entity\TalonarioDetalle;
 use App\Controller\Caja\Supervisor\SupervisorController;
 use App\Form\Supervisor\CorrelativoBoletas\CorrelativoBoletasType;
 use Symfony\Component\Form\FormError;

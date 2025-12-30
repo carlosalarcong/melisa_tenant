@@ -2,8 +2,8 @@
 
 namespace App\Controller\Caja\Recaudacion\Diferencia;
 
-use Rebsol\HermesBundle\Entity\Diferencia;
-use Rebsol\HermesBundle\Entity\PersonaDomicilio;
+use App\Entity\Diferencia;
+use App\Entity\PersonaDomicilio;
 use App\Controller\Caja\RecaudacionController;
 use App\Form\Recaudacion\Pago\DiferenciaType;
 use Symfony\Component\HttpFoundation\Request;

@@ -2,10 +2,10 @@
 
 namespace App\Controller\Caja\Recaudacion\Imed;
 
-use Rebsol\HermesBundle\Entity\BonoDetalle;
-use Rebsol\HermesBundle\Entity\BonoDetalleBonificacion;
-use Rebsol\HermesBundle\Entity\InterfazImed;
-use Rebsol\HermesBundle\Entity\PagoCuenta;
+use App\Entity\BonoDetalle;
+use App\Entity\BonoDetalleBonificacion;
+use App\Entity\InterfazImed;
+use App\Entity\PagoCuenta;
 use App\Controller\Caja\Recaudacion\Imed\Exception;
 use App\Controller\Caja\RecaudacionController;
 use Symfony\Component\HttpFoundation\Request;

@@ -2,7 +2,7 @@
 
 namespace App\Controller\Caja\Supervisor\UbicacionCaja;
 
-use Rebsol\HermesBundle\Entity\UbicacionCaja;
+use App\Entity\UbicacionCaja;
 use App\Controller\Caja\Supervisor\SupervisorController;
 use App\Form\Supervisor\UbicacionCaja\UbicacionCajaType;
 use Symfony\Component\HttpFoundation\Request;

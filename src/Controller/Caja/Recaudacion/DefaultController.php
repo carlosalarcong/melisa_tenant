@@ -4,7 +4,7 @@ namespace App\Controller\Caja\Recaudacion;
 
 
 use Rebsol\AdmisionBundle\Form\Type\IdentificacionType;
-use Rebsol\HermesBundle\Entity\PersonaDomicilio;
+use App\Entity\PersonaDomicilio;
 use App\Controller\Caja\Recaudacion\render;
 use App\Controller\Caja\RecaudacionController;
 use App\Form\Recaudacion\Pago\BusquedaAvanzadaDirectorioPacienteType;

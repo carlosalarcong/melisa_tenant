@@ -8,7 +8,7 @@ use App\Form\Recaudacion\Pago\BusquedaAvanzadaDirectorioPacienteType;
 use App\Form\Recaudacion\Pago\MediosPagoType;
 use App\Form\Recaudacion\Pago\PagoType;
 use App\Form\Recaudacion\Pago\PrestacionType;
-use Rebsol\HermesBundle\Entity\PersonaDomicilio;
+use App\Entity\PersonaDomicilio;
 use App\Controller\Legacy\DefaultController;
 use Symfony\Component\HttpFoundation\Request;
 

@@ -4,7 +4,7 @@ namespace App\Controller\Caja;
 
 use Rebsol\CajaBundle\Form\Type\Recaudacion\Pago\AdjuntoType;
 use Rebsol\CajaBundle\Form\Type\Recaudacion\Pago\PrestacionType;
-use Rebsol\HermesBundle\Entity\PersonaDomicilio;
+use App\Entity\PersonaDomicilio;
 use Symfony\Component\HttpFoundation\Request;
 
 class BusquedaPacienteController extends RecaudacionController

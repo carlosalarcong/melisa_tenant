@@ -2,7 +2,7 @@
 
 namespace App\Controller\Caja\Supervisor\MantenedorFolios;
 
-use Rebsol\HermesBundle\Entity\DetalleTalonario;
+use App\Entity\DetalleTalonario;
 use App\Controller\Caja\Supervisor\SupervisorController;
 use App\Controller\Caja\Supervisor\MantenedorFolios\render;
 use Symfony\Component\HttpFoundation\Request;

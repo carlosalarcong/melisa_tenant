@@ -6,13 +6,13 @@ use App\Controller\Caja\RecaudacionController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse as RedirectResponse;
-use Rebsol\HermesBundle\Entity\Tratamiento;
-use Rebsol\HermesBundle\Entity\DetalleTratamiento;
+use App\Entity\Tratamiento;
+use App\Entity\DetalleTratamiento;
 // use Rebsol\HermesBundle\Controller\Caja\Recaudacion\RecaudacionController;
 
 //use App\Controller\Caja\RecaudacionController;
-//use Rebsol\HermesBundle\Entity\Tratamiento;
-//use Rebsol\HermesBundle\Entity\DetalleTratamiento;
+//use App\Entity\Tratamiento;
+//use App\Entity\DetalleTratamiento;
 
  /**
  * @author ovaldenegro
