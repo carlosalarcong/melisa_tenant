@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Legacy;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -381,11 +381,11 @@ class CuentaPaciente
     /**
      * Set idPaciente.
      *
-     * @param \App\Entity\Paciente|null $idPaciente
+     * @param \App\Entity\Legacy\Legacy\Paciente|null $idPaciente
      *
      * @return CuentaPaciente
      */
-    public function setIdPaciente(\App\Entity\Paciente $idPaciente = null)
+    public function setIdPaciente(\App\Entity\Legacy\Legacy\Paciente $idPaciente = null)
     {
         $this->idPaciente = $idPaciente;
 
@@ -395,7 +395,7 @@ class CuentaPaciente
     /**
      * Get idPaciente.
      *
-     * @return \App\Entity\Paciente|null
+     * @return \App\Entity\Legacy\Legacy\Paciente|null
      */
     public function getIdPaciente()
     {
@@ -405,11 +405,11 @@ class CuentaPaciente
     /**
      * Set idEstadoCuenta.
      *
-     * @param \App\Entity\EstadoCuenta|null $idEstadoCuenta
+     * @param \App\Entity\Legacy\Legacy\EstadoCuenta|null $idEstadoCuenta
      *
      * @return CuentaPaciente
      */
-    public function setIdEstadoCuenta(\App\Entity\EstadoCuenta $idEstadoCuenta = null)
+    public function setIdEstadoCuenta(\App\Entity\Legacy\Legacy\EstadoCuenta $idEstadoCuenta = null)
     {
         $this->idEstadoCuenta = $idEstadoCuenta;
 
@@ -419,7 +419,7 @@ class CuentaPaciente
     /**
      * Get idEstadoCuenta.
      *
-     * @return \App\Entity\EstadoCuenta|null
+     * @return \App\Entity\Legacy\Legacy\EstadoCuenta|null
      */
     public function getIdEstadoCuenta()
     {
@@ -429,11 +429,11 @@ class CuentaPaciente
     /**
      * Set idUsuarioModificacion.
      *
-     * @param \App\Entity\UsuariosRebsol|null $idUsuarioModificacion
+     * @param \App\Entity\Legacy\Legacy\UsuariosRebsol|null $idUsuarioModificacion
      *
      * @return CuentaPaciente
      */
-    public function setIdUsuarioModificacion(\App\Entity\UsuariosRebsol $idUsuarioModificacion = null)
+    public function setIdUsuarioModificacion(\App\Entity\Legacy\Legacy\UsuariosRebsol $idUsuarioModificacion = null)
     {
         $this->idUsuarioModificacion = $idUsuarioModificacion;
 
@@ -443,7 +443,7 @@ class CuentaPaciente
     /**
      * Get idUsuarioModificacion.
      *
-     * @return \App\Entity\UsuariosRebsol|null
+     * @return \App\Entity\Legacy\Legacy\UsuariosRebsol|null
      */
     public function getIdUsuarioModificacion()
     {

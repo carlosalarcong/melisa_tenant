@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Legacy;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -119,11 +119,11 @@ class UbicacionCaja
     /**
      * Set idSucursal.
      *
-     * @param \App\Entity\Sucursal|null $idSucursal
+     * @param \App\Entity\Legacy\Legacy\Sucursal|null $idSucursal
      *
      * @return UbicacionCaja
      */
-    public function setIdSucursal(\App\Entity\Sucursal $idSucursal = null)
+    public function setIdSucursal(\App\Entity\Legacy\Legacy\Sucursal $idSucursal = null)
     {
         $this->idSucursal = $idSucursal;
 
@@ -133,7 +133,7 @@ class UbicacionCaja
     /**
      * Get idSucursal.
      *
-     * @return \App\Entity\Sucursal|null
+     * @return \App\Entity\Legacy\Legacy\Sucursal|null
      */
     public function getIdSucursal()
     {
@@ -143,11 +143,11 @@ class UbicacionCaja
     /**
      * Set idEstado.
      *
-     * @param \App\Entity\Estado|null $idEstado
+     * @param \App\Entity\Legacy\Legacy\Estado|null $idEstado
      *
      * @return UbicacionCaja
      */
-    public function setIdEstado(\App\Entity\Estado $idEstado = null)
+    public function setIdEstado(\App\Entity\Legacy\Legacy\Estado $idEstado = null)
     {
         $this->idEstado = $idEstado;
 
@@ -157,7 +157,7 @@ class UbicacionCaja
     /**
      * Get idEstado.
      *
-     * @return \App\Entity\Estado|null
+     * @return \App\Entity\Legacy\Legacy\Estado|null
      */
     public function getIdEstado()
     {

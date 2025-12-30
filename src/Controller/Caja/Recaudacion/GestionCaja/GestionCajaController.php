@@ -2,9 +2,9 @@
 
 namespace App\Controller\Caja\Recaudacion\GestionCaja;
 
-use App\Entity\Caja;
-use App\Entity\DetalleCaja;
-use App\Entity\DetalleCajaCheque;
+use App\Entity\Legacy\Caja;
+use App\Entity\Legacy\DetalleCaja;
+use App\Entity\Legacy\DetalleCajaCheque;
 use App\Controller\Caja\RecaudacionController;
 use App\Form\Recaudacion\Pago\CerrarCajaType;
 use Symfony\Component\HttpFoundation\Request;

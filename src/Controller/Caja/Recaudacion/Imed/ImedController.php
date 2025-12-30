@@ -2,10 +2,10 @@
 
 namespace App\Controller\Caja\Recaudacion\Imed;
 
-use App\Entity\BonoDetalle;
-use App\Entity\BonoDetalleBonificacion;
-use App\Entity\InterfazImed;
-use App\Entity\PagoCuenta;
+use App\Entity\Legacy\BonoDetalle;
+use App\Entity\Legacy\BonoDetalleBonificacion;
+use App\Entity\Legacy\InterfazImed;
+use App\Entity\Legacy\PagoCuenta;
 use App\Controller\Caja\Recaudacion\Imed\Exception;
 use App\Controller\Caja\RecaudacionController;
 use Symfony\Component\HttpFoundation\Request;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Legacy;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -191,11 +191,11 @@ class DerivadorExterno
     /**
      * Set idEmpresa.
      *
-     * @param \App\Entity\Empresa $idEmpresa
+     * @param \App\Entity\Legacy\Legacy\Empresa $idEmpresa
      *
      * @return DerivadorExterno
      */
-    public function setIdEmpresa(\App\Entity\Empresa $idEmpresa)
+    public function setIdEmpresa(\App\Entity\Legacy\Legacy\Empresa $idEmpresa)
     {
         $this->idEmpresa = $idEmpresa;
 
@@ -205,7 +205,7 @@ class DerivadorExterno
     /**
      * Get idEmpresa.
      *
-     * @return \App\Entity\Empresa
+     * @return \App\Entity\Legacy\Legacy\Empresa
      */
     public function getIdEmpresa()
     {
@@ -215,11 +215,11 @@ class DerivadorExterno
     /**
      * Set idEstado.
      *
-     * @param \App\Entity\Estado $idEstado
+     * @param \App\Entity\Legacy\Legacy\Estado $idEstado
      *
      * @return DerivadorExterno
      */
-    public function setIdEstado(\App\Entity\Estado $idEstado)
+    public function setIdEstado(\App\Entity\Legacy\Legacy\Estado $idEstado)
     {
         $this->idEstado = $idEstado;
 
@@ -229,7 +229,7 @@ class DerivadorExterno
     /**
      * Get idEstado.
      *
-     * @return \App\Entity\Estado
+     * @return \App\Entity\Legacy\Legacy\Estado
      */
     public function getIdEstado()
     {
@@ -239,11 +239,11 @@ class DerivadorExterno
     /**
      * Set idUsuarioCreacion.
      *
-     * @param \App\Entity\UsuariosRebsol $idUsuarioCreacion
+     * @param \App\Entity\Legacy\Legacy\UsuariosRebsol $idUsuarioCreacion
      *
      * @return DerivadorExterno
      */
-    public function setIdUsuarioCreacion(\App\Entity\UsuariosRebsol $idUsuarioCreacion)
+    public function setIdUsuarioCreacion(\App\Entity\Legacy\Legacy\UsuariosRebsol $idUsuarioCreacion)
     {
         $this->idUsuarioCreacion = $idUsuarioCreacion;
 
@@ -253,7 +253,7 @@ class DerivadorExterno
     /**
      * Get idUsuarioCreacion.
      *
-     * @return \App\Entity\UsuariosRebsol
+     * @return \App\Entity\Legacy\Legacy\UsuariosRebsol
      */
     public function getIdUsuarioCreacion()
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Legacy;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -148,11 +148,11 @@ class ReservaAtencionLog
     /**
      * Set idUsuarioModifica.
      *
-     * @param \App\Entity\UsuariosRebsol|null $idUsuarioModifica
+     * @param \App\Entity\Legacy\Legacy\UsuariosRebsol|null $idUsuarioModifica
      *
      * @return ReservaAtencionLog
      */
-    public function setIdUsuarioModifica(\App\Entity\UsuariosRebsol $idUsuarioModifica = null)
+    public function setIdUsuarioModifica(\App\Entity\Legacy\Legacy\UsuariosRebsol $idUsuarioModifica = null)
     {
         $this->idUsuarioModifica = $idUsuarioModifica;
 
@@ -162,7 +162,7 @@ class ReservaAtencionLog
     /**
      * Get idUsuarioModifica.
      *
-     * @return \App\Entity\UsuariosRebsol|null
+     * @return \App\Entity\Legacy\Legacy\UsuariosRebsol|null
      */
     public function getIdUsuarioModifica()
     {
@@ -172,11 +172,11 @@ class ReservaAtencionLog
     /**
      * Set idHorarioConsultaAntiguo.
      *
-     * @param \App\Entity\HorarioConsulta|null $idHorarioConsultaAntiguo
+     * @param \App\Entity\Legacy\Legacy\HorarioConsulta|null $idHorarioConsultaAntiguo
      *
      * @return ReservaAtencionLog
      */
-    public function setIdHorarioConsultaAntiguo(\App\Entity\HorarioConsulta $idHorarioConsultaAntiguo = null)
+    public function setIdHorarioConsultaAntiguo(\App\Entity\Legacy\Legacy\HorarioConsulta $idHorarioConsultaAntiguo = null)
     {
         $this->idHorarioConsultaAntiguo = $idHorarioConsultaAntiguo;
 
@@ -186,7 +186,7 @@ class ReservaAtencionLog
     /**
      * Get idHorarioConsultaAntiguo.
      *
-     * @return \App\Entity\HorarioConsulta|null
+     * @return \App\Entity\Legacy\Legacy\HorarioConsulta|null
      */
     public function getIdHorarioConsultaAntiguo()
     {
@@ -196,11 +196,11 @@ class ReservaAtencionLog
     /**
      * Set idHorarioConsultaNuevo.
      *
-     * @param \App\Entity\HorarioConsulta|null $idHorarioConsultaNuevo
+     * @param \App\Entity\Legacy\Legacy\HorarioConsulta|null $idHorarioConsultaNuevo
      *
      * @return ReservaAtencionLog
      */
-    public function setIdHorarioConsultaNuevo(\App\Entity\HorarioConsulta $idHorarioConsultaNuevo = null)
+    public function setIdHorarioConsultaNuevo(\App\Entity\Legacy\Legacy\HorarioConsulta $idHorarioConsultaNuevo = null)
     {
         $this->idHorarioConsultaNuevo = $idHorarioConsultaNuevo;
 
@@ -210,7 +210,7 @@ class ReservaAtencionLog
     /**
      * Get idHorarioConsultaNuevo.
      *
-     * @return \App\Entity\HorarioConsulta|null
+     * @return \App\Entity\Legacy\Legacy\HorarioConsulta|null
      */
     public function getIdHorarioConsultaNuevo()
     {
@@ -220,11 +220,11 @@ class ReservaAtencionLog
     /**
      * Set idReservaAtencion.
      *
-     * @param \App\Entity\ReservaAtencion|null $idReservaAtencion
+     * @param \App\Entity\Legacy\Legacy\ReservaAtencion|null $idReservaAtencion
      *
      * @return ReservaAtencionLog
      */
-    public function setIdReservaAtencion(\App\Entity\ReservaAtencion $idReservaAtencion = null)
+    public function setIdReservaAtencion(\App\Entity\Legacy\Legacy\ReservaAtencion $idReservaAtencion = null)
     {
         $this->idReservaAtencion = $idReservaAtencion;
 
@@ -234,7 +234,7 @@ class ReservaAtencionLog
     /**
      * Get idReservaAtencion.
      *
-     * @return \App\Entity\ReservaAtencion|null
+     * @return \App\Entity\Legacy\Legacy\ReservaAtencion|null
      */
     public function getIdReservaAtencion()
     {
@@ -244,11 +244,11 @@ class ReservaAtencionLog
     /**
      * Set idReservaTipoLog.
      *
-     * @param \App\Entity\ReservaAtencionTipoLog|null $idReservaTipoLog
+     * @param \App\Entity\Legacy\Legacy\ReservaAtencionTipoLog|null $idReservaTipoLog
      *
      * @return ReservaAtencionLog
      */
-    public function setIdReservaTipoLog(\App\Entity\ReservaAtencionTipoLog $idReservaTipoLog = null)
+    public function setIdReservaTipoLog(\App\Entity\Legacy\Legacy\ReservaAtencionTipoLog $idReservaTipoLog = null)
     {
         $this->idReservaTipoLog = $idReservaTipoLog;
 
@@ -258,7 +258,7 @@ class ReservaAtencionLog
     /**
      * Get idReservaTipoLog.
      *
-     * @return \App\Entity\ReservaAtencionTipoLog|null
+     * @return \App\Entity\Legacy\Legacy\ReservaAtencionTipoLog|null
      */
     public function getIdReservaTipoLog()
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Legacy;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -310,11 +310,11 @@ class DetalleTalonario
     /**
      * Set idPaciente.
      *
-     * @param \App\Entity\Paciente|null $idPaciente
+     * @param \App\Entity\Legacy\Legacy\Paciente|null $idPaciente
      *
      * @return DetalleTalonario
      */
-    public function setIdPaciente(\App\Entity\Paciente $idPaciente = null)
+    public function setIdPaciente(\App\Entity\Legacy\Legacy\Paciente $idPaciente = null)
     {
         $this->idPaciente = $idPaciente;
 
@@ -324,7 +324,7 @@ class DetalleTalonario
     /**
      * Get idPaciente.
      *
-     * @return \App\Entity\Paciente|null
+     * @return \App\Entity\Legacy\Legacy\Paciente|null
      */
     public function getIdPaciente()
     {
@@ -334,11 +334,11 @@ class DetalleTalonario
     /**
      * Set idCaja.
      *
-     * @param \App\Entity\Caja|null $idCaja
+     * @param \App\Entity\Legacy\Legacy\Caja|null $idCaja
      *
      * @return DetalleTalonario
      */
-    public function setIdCaja(\App\Entity\Caja $idCaja = null)
+    public function setIdCaja(\App\Entity\Legacy\Legacy\Caja $idCaja = null)
     {
         $this->idCaja = $idCaja;
 
@@ -348,7 +348,7 @@ class DetalleTalonario
     /**
      * Get idCaja.
      *
-     * @return \App\Entity\Caja|null
+     * @return \App\Entity\Legacy\Legacy\Caja|null
      */
     public function getIdCaja()
     {
@@ -358,11 +358,11 @@ class DetalleTalonario
     /**
      * Set idEstadoDetalleTalonario.
      *
-     * @param \App\Entity\EstadoDetalleTalonario $idEstadoDetalleTalonario
+     * @param \App\Entity\Legacy\Legacy\EstadoDetalleTalonario $idEstadoDetalleTalonario
      *
      * @return DetalleTalonario
      */
-    public function setIdEstadoDetalleTalonario(\App\Entity\EstadoDetalleTalonario $idEstadoDetalleTalonario)
+    public function setIdEstadoDetalleTalonario(\App\Entity\Legacy\Legacy\EstadoDetalleTalonario $idEstadoDetalleTalonario)
     {
         $this->idEstadoDetalleTalonario = $idEstadoDetalleTalonario;
 
@@ -372,7 +372,7 @@ class DetalleTalonario
     /**
      * Get idEstadoDetalleTalonario.
      *
-     * @return \App\Entity\EstadoDetalleTalonario
+     * @return \App\Entity\Legacy\Legacy\EstadoDetalleTalonario
      */
     public function getIdEstadoDetalleTalonario()
     {
@@ -382,11 +382,11 @@ class DetalleTalonario
     /**
      * Set idTalonario.
      *
-     * @param \App\Entity\Talonario $idTalonario
+     * @param \App\Entity\Legacy\Legacy\Talonario $idTalonario
      *
      * @return DetalleTalonario
      */
-    public function setIdTalonario(\App\Entity\Talonario $idTalonario)
+    public function setIdTalonario(\App\Entity\Legacy\Legacy\Talonario $idTalonario)
     {
         $this->idTalonario = $idTalonario;
 
@@ -396,7 +396,7 @@ class DetalleTalonario
     /**
      * Get idTalonario.
      *
-     * @return \App\Entity\Talonario
+     * @return \App\Entity\Legacy\Legacy\Talonario
      */
     public function getIdTalonario()
     {
@@ -406,11 +406,11 @@ class DetalleTalonario
     /**
      * Set idUsuarioAnulacion.
      *
-     * @param \App\Entity\UsuariosRebsol|null $idUsuarioAnulacion
+     * @param \App\Entity\Legacy\Legacy\UsuariosRebsol|null $idUsuarioAnulacion
      *
      * @return DetalleTalonario
      */
-    public function setIdUsuarioAnulacion(\App\Entity\UsuariosRebsol $idUsuarioAnulacion = null)
+    public function setIdUsuarioAnulacion(\App\Entity\Legacy\Legacy\UsuariosRebsol $idUsuarioAnulacion = null)
     {
         $this->idUsuarioAnulacion = $idUsuarioAnulacion;
 
@@ -420,7 +420,7 @@ class DetalleTalonario
     /**
      * Get idUsuarioAnulacion.
      *
-     * @return \App\Entity\UsuariosRebsol|null
+     * @return \App\Entity\Legacy\Legacy\UsuariosRebsol|null
      */
     public function getIdUsuarioAnulacion()
     {
@@ -430,11 +430,11 @@ class DetalleTalonario
     /**
      * Set idUsuarioDesanulacion.
      *
-     * @param \App\Entity\UsuariosRebsol|null $idUsuarioDesanulacion
+     * @param \App\Entity\Legacy\Legacy\UsuariosRebsol|null $idUsuarioDesanulacion
      *
      * @return DetalleTalonario
      */
-    public function setIdUsuarioDesanulacion(\App\Entity\UsuariosRebsol $idUsuarioDesanulacion = null)
+    public function setIdUsuarioDesanulacion(\App\Entity\Legacy\Legacy\UsuariosRebsol $idUsuarioDesanulacion = null)
     {
         $this->idUsuarioDesanulacion = $idUsuarioDesanulacion;
 
@@ -444,7 +444,7 @@ class DetalleTalonario
     /**
      * Get idUsuarioDesanulacion.
      *
-     * @return \App\Entity\UsuariosRebsol|null
+     * @return \App\Entity\Legacy\Legacy\UsuariosRebsol|null
      */
     public function getIdUsuarioDesanulacion()
     {
@@ -454,11 +454,11 @@ class DetalleTalonario
     /**
      * Set idUsuarioDetalleBoleta.
      *
-     * @param \App\Entity\UsuariosRebsol $idUsuarioDetalleBoleta
+     * @param \App\Entity\Legacy\Legacy\UsuariosRebsol $idUsuarioDetalleBoleta
      *
      * @return DetalleTalonario
      */
-    public function setIdUsuarioDetalleBoleta(\App\Entity\UsuariosRebsol $idUsuarioDetalleBoleta)
+    public function setIdUsuarioDetalleBoleta(\App\Entity\Legacy\Legacy\UsuariosRebsol $idUsuarioDetalleBoleta)
     {
         $this->idUsuarioDetalleBoleta = $idUsuarioDetalleBoleta;
 
@@ -468,7 +468,7 @@ class DetalleTalonario
     /**
      * Get idUsuarioDetalleBoleta.
      *
-     * @return \App\Entity\UsuariosRebsol
+     * @return \App\Entity\Legacy\Legacy\UsuariosRebsol
      */
     public function getIdUsuarioDetalleBoleta()
     {
@@ -478,11 +478,11 @@ class DetalleTalonario
     /**
      * Set idPagoCuenta.
      *
-     * @param \App\Entity\PagoCuenta|null $idPagoCuenta
+     * @param \App\Entity\Legacy\Legacy\PagoCuenta|null $idPagoCuenta
      *
      * @return DetalleTalonario
      */
-    public function setIdPagoCuenta(\App\Entity\PagoCuenta $idPagoCuenta = null)
+    public function setIdPagoCuenta(\App\Entity\Legacy\Legacy\PagoCuenta $idPagoCuenta = null)
     {
         $this->idPagoCuenta = $idPagoCuenta;
 
@@ -492,7 +492,7 @@ class DetalleTalonario
     /**
      * Get idPagoCuenta.
      *
-     * @return \App\Entity\PagoCuenta|null
+     * @return \App\Entity\Legacy\Legacy\PagoCuenta|null
      */
     public function getIdPagoCuenta()
     {
@@ -503,11 +503,11 @@ class DetalleTalonario
     /**
      * Set idFacturacion.
      *
-     * @param \App\Entity\Facturacion|null $idFacturacion
+     * @param \App\Entity\Legacy\Legacy\Facturacion|null $idFacturacion
      *
      * @return DetalleTalonario
      */
-    public function setIdFacturacion(\App\Entity\Facturacion $idFacturacion = null)
+    public function setIdFacturacion(\App\Entity\Legacy\Legacy\Facturacion $idFacturacion = null)
     {
         $this->idFacturacion = $idFacturacion;
 
@@ -517,7 +517,7 @@ class DetalleTalonario
     /**
      * Get idFacturacion.
      *
-     * @return \App\Entity\Facturacion|null
+     * @return \App\Entity\Legacy\Legacy\Facturacion|null
      */
     public function getIdFacturacion()
     {

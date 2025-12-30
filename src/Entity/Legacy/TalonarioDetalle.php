@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Legacy;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -209,11 +209,11 @@ class TalonarioDetalle
     /**
      * Set idPaciente.
      *
-     * @param \App\Entity\Paciente|null $idPaciente
+     * @param \App\Entity\Legacy\Legacy\Paciente|null $idPaciente
      *
      * @return TalonarioDetalle
      */
-    public function setIdPaciente(\App\Entity\Paciente $idPaciente = null)
+    public function setIdPaciente(\App\Entity\Legacy\Legacy\Paciente $idPaciente = null)
     {
         $this->idPaciente = $idPaciente;
 
@@ -223,7 +223,7 @@ class TalonarioDetalle
     /**
      * Get idPaciente.
      *
-     * @return \App\Entity\Paciente|null
+     * @return \App\Entity\Legacy\Legacy\Paciente|null
      */
     public function getIdPaciente()
     {
@@ -233,11 +233,11 @@ class TalonarioDetalle
     /**
      * Set idTalonario.
      *
-     * @param \App\Entity\Talonario|null $idTalonario
+     * @param \App\Entity\Legacy\Legacy\Talonario|null $idTalonario
      *
      * @return TalonarioDetalle
      */
-    public function setIdTalonario(\App\Entity\Talonario $idTalonario = null)
+    public function setIdTalonario(\App\Entity\Legacy\Legacy\Talonario $idTalonario = null)
     {
         $this->idTalonario = $idTalonario;
 
@@ -247,7 +247,7 @@ class TalonarioDetalle
     /**
      * Get idTalonario.
      *
-     * @return \App\Entity\Talonario|null
+     * @return \App\Entity\Legacy\Legacy\Talonario|null
      */
     public function getIdTalonario()
     {
@@ -257,11 +257,11 @@ class TalonarioDetalle
     /**
      * Set idEstadoTalonarioDetalle.
      *
-     * @param \App\Entity\EstadoTalonarioDetalle $idEstadoTalonarioDetalle
+     * @param \App\Entity\Legacy\Legacy\EstadoTalonarioDetalle $idEstadoTalonarioDetalle
      *
      * @return TalonarioDetalle
      */
-    public function setIdEstadoTalonarioDetalle(\App\Entity\EstadoTalonarioDetalle $idEstadoTalonarioDetalle)
+    public function setIdEstadoTalonarioDetalle(\App\Entity\Legacy\Legacy\EstadoTalonarioDetalle $idEstadoTalonarioDetalle)
     {
         $this->idEstadoTalonarioDetalle = $idEstadoTalonarioDetalle;
 
@@ -271,7 +271,7 @@ class TalonarioDetalle
     /**
      * Get idEstadoTalonarioDetalle.
      *
-     * @return \App\Entity\EstadoTalonarioDetalle
+     * @return \App\Entity\Legacy\Legacy\EstadoTalonarioDetalle
      */
     public function getIdEstadoTalonarioDetalle()
     {
@@ -281,11 +281,11 @@ class TalonarioDetalle
     /**
      * Set idUsuarioDetalleBoleta.
      *
-     * @param \App\Entity\UsuariosRebsol|null $idUsuarioDetalleBoleta
+     * @param \App\Entity\Legacy\Legacy\UsuariosRebsol|null $idUsuarioDetalleBoleta
      *
      * @return TalonarioDetalle
      */
-    public function setIdUsuarioDetalleBoleta(\App\Entity\UsuariosRebsol $idUsuarioDetalleBoleta = null)
+    public function setIdUsuarioDetalleBoleta(\App\Entity\Legacy\Legacy\UsuariosRebsol $idUsuarioDetalleBoleta = null)
     {
         $this->idUsuarioDetalleBoleta = $idUsuarioDetalleBoleta;
 
@@ -295,7 +295,7 @@ class TalonarioDetalle
     /**
      * Get idUsuarioDetalleBoleta.
      *
-     * @return \App\Entity\UsuariosRebsol|null
+     * @return \App\Entity\Legacy\Legacy\UsuariosRebsol|null
      */
     public function getIdUsuarioDetalleBoleta()
     {
@@ -305,11 +305,11 @@ class TalonarioDetalle
     /**
      * Set idPagoCuenta.
      *
-     * @param \App\Entity\PagoCuenta|null $idPagoCuenta
+     * @param \App\Entity\Legacy\Legacy\PagoCuenta|null $idPagoCuenta
      *
      * @return TalonarioDetalle
      */
-    public function setIdPagoCuenta(\App\Entity\PagoCuenta $idPagoCuenta = null)
+    public function setIdPagoCuenta(\App\Entity\Legacy\Legacy\PagoCuenta $idPagoCuenta = null)
     {
         $this->idPagoCuenta = $idPagoCuenta;
 
@@ -319,7 +319,7 @@ class TalonarioDetalle
     /**
      * Get idPagoCuenta.
      *
-     * @return \App\Entity\PagoCuenta|null
+     * @return \App\Entity\Legacy\Legacy\PagoCuenta|null
      */
     public function getIdPagoCuenta()
     {

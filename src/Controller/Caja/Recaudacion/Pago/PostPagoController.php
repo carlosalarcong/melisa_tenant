@@ -3,11 +3,11 @@
 namespace App\Controller\Caja\Recaudacion\Pago;
 
 use Rebsol\DteBundle\Services\DteAces\ConexionAces\Constant\ConexionAcesConstant;
-use App\Entity\AccionClinicaPacienteLog;
-use App\Entity\ArticuloPacienteLog;
-use App\Entity\CuentaPacienteLog;
-use App\Entity\DetalleTalonario;
-use App\Entity\ReservaAtencionLog;
+use App\Entity\Legacy\AccionClinicaPacienteLog;
+use App\Entity\Legacy\ArticuloPacienteLog;
+use App\Entity\Legacy\CuentaPacienteLog;
+use App\Entity\Legacy\DetalleTalonario;
+use App\Entity\Legacy\ReservaAtencionLog;
 use App\Controller\Caja\Pago\render;
 use App\Controller\Caja\RecaudacionController;
 use App\Form\Recaudacion\Pago\AdjuntoType;

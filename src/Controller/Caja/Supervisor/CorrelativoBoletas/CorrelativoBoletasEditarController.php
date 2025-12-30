@@ -2,7 +2,7 @@
 
 namespace App\Controller\Caja\Supervisor\CorrelativoBoletas;
 
-use App\Entity\TalonarioDetalle;
+use App\Entity\Legacy\TalonarioDetalle;
 use App\Controller\Caja\Supervisor\SupervisorController;
 use App\Form\Supervisor\CorrelativoBoletas\CorrelativoBoletasEditarType;
 use Symfony\Component\Form\FormError;

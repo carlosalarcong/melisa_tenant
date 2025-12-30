@@ -139,11 +139,11 @@ class PrevisionPnatural
     /**
      * Set idPaciente.
      *
-     * @param \App\Entity\Paciente|null $idPaciente
+     * @param \App\Entity\Legacy\Legacy\Paciente|null $idPaciente
      *
      * @return PrevisionPnatural
      */
-    public function setIdPaciente(\App\Entity\Paciente $idPaciente = null)
+    public function setIdPaciente(\App\Entity\Legacy\Legacy\Paciente $idPaciente = null)
     {
         $this->idPaciente = $idPaciente;
 
@@ -153,7 +153,7 @@ class PrevisionPnatural
     /**
      * Get idPaciente.
      *
-     * @return \App\Entity\Paciente|null
+     * @return \App\Entity\Legacy\Legacy\Paciente|null
      */
     public function getIdPaciente()
     {
@@ -163,11 +163,11 @@ class PrevisionPnatural
     /**
      * Set idPnatural.
      *
-     * @param \App\Entity\Legacy\Pnatural $idPnatural
+     * @param \App\Entity\Legacy\Legacy\Legacy\Pnatural $idPnatural
      *
      * @return PrevisionPnatural
      */
-    public function setIdPnatural(\App\Entity\Legacy\Pnatural $idPnatural)
+    public function setIdPnatural(\App\Entity\Legacy\Legacy\Legacy\Pnatural $idPnatural)
     {
         $this->idPnatural = $idPnatural;
 
@@ -177,7 +177,7 @@ class PrevisionPnatural
     /**
      * Get idPnatural.
      *
-     * @return \App\Entity\Legacy\Pnatural
+     * @return \App\Entity\Legacy\Legacy\Legacy\Pnatural
      */
     public function getIdPnatural()
     {
@@ -187,11 +187,11 @@ class PrevisionPnatural
     /**
      * Set idPrevision.
      *
-     * @param \App\Entity\Prevision $idPrevision
+     * @param \App\Entity\Legacy\Legacy\Prevision $idPrevision
      *
      * @return PrevisionPnatural
      */
-    public function setIdPrevision(\App\Entity\Prevision $idPrevision = null)
+    public function setIdPrevision(\App\Entity\Legacy\Legacy\Prevision $idPrevision = null)
     {
         $this->idPrevision = $idPrevision;
 
@@ -201,7 +201,7 @@ class PrevisionPnatural
     /**
      * Get idPrevision.
      *
-     * @return \App\Entity\Prevision
+     * @return \App\Entity\Legacy\Legacy\Prevision
      */
     public function getIdPrevision()
     {
@@ -211,11 +211,11 @@ class PrevisionPnatural
     /**
      * Set idConvenio.
      *
-     * @param \App\Entity\Prevision|null $idConvenio
+     * @param \App\Entity\Legacy\Legacy\Prevision|null $idConvenio
      *
      * @return PrevisionPnatural
      */
-    public function setIdConvenio(\App\Entity\Prevision $idConvenio = null)
+    public function setIdConvenio(\App\Entity\Legacy\Legacy\Prevision $idConvenio = null)
     {
         $this->idConvenio = $idConvenio;
 
@@ -225,7 +225,7 @@ class PrevisionPnatural
     /**
      * Get idConvenio.
      *
-     * @return \App\Entity\Prevision|null
+     * @return \App\Entity\Legacy\Legacy\Prevision|null
      */
     public function getIdConvenio()
     {

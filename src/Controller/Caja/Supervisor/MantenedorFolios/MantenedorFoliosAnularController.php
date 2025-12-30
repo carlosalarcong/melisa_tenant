@@ -2,7 +2,7 @@
 
 namespace App\Controller\Caja\Supervisor\MantenedorFolios;
 
-use App\Entity\DetalleTalonario;
+use App\Entity\Legacy\DetalleTalonario;
 use App\Controller\Caja\Supervisor\SupervisorController;
 use App\Controller\Caja\Supervisor\MantenedorFolios\render;
 use Symfony\Component\HttpFoundation\Request;

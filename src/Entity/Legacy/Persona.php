@@ -367,11 +367,11 @@ class Persona
     /**
      * Set idEmpresa.
      *
-     * @param \App\Entity\Empresa $idEmpresa
+     * @param \App\Entity\Legacy\Legacy\Empresa $idEmpresa
      *
      * @return Persona
      */
-    public function setIdEmpresa(\App\Entity\Empresa $idEmpresa)
+    public function setIdEmpresa(\App\Entity\Legacy\Legacy\Empresa $idEmpresa)
     {
         $this->idEmpresa = $idEmpresa;
 
@@ -381,7 +381,7 @@ class Persona
     /**
      * Get idEmpresa.
      *
-     * @return \App\Entity\Empresa
+     * @return \App\Entity\Legacy\Legacy\Empresa
      */
     public function getIdEmpresa()
     {
@@ -391,11 +391,11 @@ class Persona
     /**
      * Set idTipoIdentificacionExtranjero.
      *
-     * @param \App\Entity\TipoIdentificacionExtranjero|null $idTipoIdentificacionExtranjero
+     * @param \App\Entity\Legacy\Legacy\TipoIdentificacionExtranjero|null $idTipoIdentificacionExtranjero
      *
      * @return Persona
      */
-    public function setIdTipoIdentificacionExtranjero(\App\Entity\TipoIdentificacionExtranjero $idTipoIdentificacionExtranjero = null)
+    public function setIdTipoIdentificacionExtranjero(\App\Entity\Legacy\Legacy\TipoIdentificacionExtranjero $idTipoIdentificacionExtranjero = null)
     {
         $this->idTipoIdentificacionExtranjero = $idTipoIdentificacionExtranjero;
 
@@ -405,7 +405,7 @@ class Persona
     /**
      * Get idTipoIdentificacionExtranjero.
      *
-     * @return \App\Entity\TipoIdentificacionExtranjero|null
+     * @return \App\Entity\Legacy\Legacy\TipoIdentificacionExtranjero|null
      */
     public function getIdTipoIdentificacionExtranjero()
     {
@@ -415,7 +415,7 @@ class Persona
     /**
      * obtener objeto Pnatural relacionado a esta persona
      *
-     * @return \App\Entity\Legacy\Pnatural
+     * @return \App\Entity\Legacy\Legacy\Legacy\Pnatural
      */
     public function getIdPnatural($iNumeroHermanoGemelo = 0)
     {

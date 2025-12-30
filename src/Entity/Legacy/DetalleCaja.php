@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Legacy;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * DetalleCajaCheque
+ * DetalleCaja
  *
- * @ORM\Table(name="detalle_caja_cheque")
+ * @ORM\Table(name="detalle_caja")
  * @ORM\Entity
- * @ORM\Entity(repositoryClass="App\Repository\DetalleCajaChequeRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\DetalleCajaRepository")
  */
-class DetalleCajaCheque
+class DetalleCaja
 {
     /**
      * @var int
@@ -23,23 +23,16 @@ class DetalleCajaCheque
     private $id;
 
     /**
-     * @var int
+     * @var string|null
      *
-     * @ORM\Column(name="NUMERO_DEPOSITO", type="integer", nullable=false)
+     * @ORM\Column(name="NUMERO_DEPOSITO", type="string", length=25, nullable=true)
      */
     private $numeroDeposito;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="NUMERO_CHEQUE", type="integer", nullable=false)
-     */
-    private $numeroCheque;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="MONTO", type="decimal", precision=10, scale=2, nullable=false)
+     * @ORM\Column(name="MONTO", type="integer", nullable=false)
      */
     private $monto;
 
@@ -73,6 +66,16 @@ class DetalleCajaCheque
      */
     private $idCaja;
 
+    /**
+     * @var \FormaPago
+     *
+     * @ORM\ManyToOne(targetEntity="FormaPago")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="ID_FORMA_PAGO", referencedColumnName="ID")
+     * })
+     */
+    private $idFormaPago;
+
 
 
     /**
@@ -88,11 +91,11 @@ class DetalleCajaCheque
     /**
      * Set numeroDeposito.
      *
-     * @param int $numeroDeposito
+     * @param string|null $numeroDeposito
      *
-     * @return DetalleCajaCheque
+     * @return DetalleCaja
      */
-    public function setNumeroDeposito($numeroDeposito)
+    public function setNumeroDeposito($numeroDeposito = null)
     {
         $this->numeroDeposito = $numeroDeposito;
 
@@ -102,7 +105,7 @@ class DetalleCajaCheque
     /**
      * Get numeroDeposito.
      *
-     * @return int
+     * @return string|null
      */
     public function getNumeroDeposito()
     {
@@ -110,35 +113,11 @@ class DetalleCajaCheque
     }
 
     /**
-     * Set numeroCheque.
-     *
-     * @param int $numeroCheque
-     *
-     * @return DetalleCajaCheque
-     */
-    public function setNumeroCheque($numeroCheque)
-    {
-        $this->numeroCheque = $numeroCheque;
-
-        return $this;
-    }
-
-    /**
-     * Get numeroCheque.
-     *
-     * @return int
-     */
-    public function getNumeroCheque()
-    {
-        return $this->numeroCheque;
-    }
-
-    /**
      * Set monto.
      *
-     * @param string $monto
+     * @param int $monto
      *
-     * @return DetalleCajaCheque
+     * @return DetalleCaja
      */
     public function setMonto($monto)
     {
@@ -150,7 +129,7 @@ class DetalleCajaCheque
     /**
      * Get monto.
      *
-     * @return string
+     * @return int
      */
     public function getMonto()
     {
@@ -160,11 +139,11 @@ class DetalleCajaCheque
     /**
      * Set idCaja.
      *
-     * @param \App\Entity\Caja $idCaja
+     * @param \App\Entity\Legacy\Legacy\Caja $idCaja
      *
-     * @return DetalleCajaCheque
+     * @return DetalleCaja
      */
-    public function setIdCaja(\App\Entity\Caja $idCaja)
+    public function setIdCaja(\App\Entity\Legacy\Legacy\Caja $idCaja)
     {
         $this->idCaja = $idCaja;
 
@@ -174,7 +153,7 @@ class DetalleCajaCheque
     /**
      * Get idCaja.
      *
-     * @return \App\Entity\Caja
+     * @return \App\Entity\Legacy\Legacy\Caja
      */
     public function getIdCaja()
     {
@@ -184,11 +163,11 @@ class DetalleCajaCheque
     /**
      * Set idBanco.
      *
-     * @param \App\Entity\Banco $idBanco
+     * @param \App\Entity\Legacy\Legacy\Banco|null $idBanco
      *
-     * @return DetalleCajaCheque
+     * @return DetalleCaja
      */
-    public function setIdBanco(\App\Entity\Banco $idBanco)
+    public function setIdBanco(\App\Entity\Legacy\Legacy\Banco $idBanco = null)
     {
         $this->idBanco = $idBanco;
 
@@ -198,7 +177,7 @@ class DetalleCajaCheque
     /**
      * Get idBanco.
      *
-     * @return \App\Entity\Banco
+     * @return \App\Entity\Legacy\Legacy\Banco|null
      */
     public function getIdBanco()
     {
@@ -206,13 +185,37 @@ class DetalleCajaCheque
     }
 
     /**
+     * Set idFormaPago.
+     *
+     * @param \App\Entity\Legacy\Legacy\FormaPago $idFormaPago
+     *
+     * @return DetalleCaja
+     */
+    public function setIdFormaPago(\App\Entity\Legacy\Legacy\FormaPago $idFormaPago)
+    {
+        $this->idFormaPago = $idFormaPago;
+
+        return $this;
+    }
+
+    /**
+     * Get idFormaPago.
+     *
+     * @return \App\Entity\Legacy\Legacy\FormaPago
+     */
+    public function getIdFormaPago()
+    {
+        return $this->idFormaPago;
+    }
+
+    /**
      * Set idEstado.
      *
-     * @param \App\Entity\Estado $idEstado
+     * @param \App\Entity\Legacy\Legacy\Estado $idEstado
      *
-     * @return DetalleCajaCheque
+     * @return DetalleCaja
      */
-    public function setIdEstado(\App\Entity\Estado $idEstado)
+    public function setIdEstado(\App\Entity\Legacy\Legacy\Estado $idEstado)
     {
         $this->idEstado = $idEstado;
 
@@ -222,7 +225,7 @@ class DetalleCajaCheque
     /**
      * Get idEstado.
      *
-     * @return \App\Entity\Estado
+     * @return \App\Entity\Legacy\Legacy\Estado
      */
     public function getIdEstado()
     {

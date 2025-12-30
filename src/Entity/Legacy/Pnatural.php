@@ -625,11 +625,11 @@ class Pnatural
     /**
      * Set idTipoPnatural.
      *
-     * @param \App\Entity\TipoPnatural|null $idTipoPnatural
+     * @param \App\Entity\Legacy\Legacy\TipoPnatural|null $idTipoPnatural
      *
      * @return Pnatural
      */
-    public function setIdTipoPnatural(\App\Entity\TipoPnatural $idTipoPnatural = null)
+    public function setIdTipoPnatural(\App\Entity\Legacy\Legacy\TipoPnatural $idTipoPnatural = null)
     {
         $this->idTipoPnatural = $idTipoPnatural;
 
@@ -639,7 +639,7 @@ class Pnatural
     /**
      * Get idTipoPnatural.
      *
-     * @return \App\Entity\TipoPnatural|null
+     * @return \App\Entity\Legacy\Legacy\TipoPnatural|null
      */
     public function getIdTipoPnatural()
     {
@@ -649,11 +649,11 @@ class Pnatural
     /**
      * Set idDetalleNivelInstruccion.
      *
-     * @param \App\Entity\DetalleNivelInstruccion|null $idDetalleNivelInstruccion
+     * @param \App\Entity\Legacy\Legacy\DetalleNivelInstruccion|null $idDetalleNivelInstruccion
      *
      * @return Pnatural
      */
-    public function setIdDetalleNivelInstruccion(\App\Entity\DetalleNivelInstruccion $idDetalleNivelInstruccion = null)
+    public function setIdDetalleNivelInstruccion(\App\Entity\Legacy\Legacy\DetalleNivelInstruccion $idDetalleNivelInstruccion = null)
     {
         $this->idDetalleNivelInstruccion = $idDetalleNivelInstruccion;
 
@@ -663,7 +663,7 @@ class Pnatural
     /**
      * Get idDetalleNivelInstruccion.
      *
-     * @return \App\Entity\DetalleNivelInstruccion|null
+     * @return \App\Entity\Legacy\Legacy\DetalleNivelInstruccion|null
      */
     public function getIdDetalleNivelInstruccion()
     {
@@ -673,11 +673,11 @@ class Pnatural
     /**
      * Set idEstadoConyugal.
      *
-     * @param \App\Entity\EstadoConyugal|null $idEstadoConyugal
+     * @param \App\Entity\Legacy\Legacy\EstadoConyugal|null $idEstadoConyugal
      *
      * @return Pnatural
      */
-    public function setIdEstadoConyugal(\App\Entity\EstadoConyugal $idEstadoConyugal = null)
+    public function setIdEstadoConyugal(\App\Entity\Legacy\Legacy\EstadoConyugal $idEstadoConyugal = null)
     {
         $this->idEstadoConyugal = $idEstadoConyugal;
 
@@ -687,7 +687,7 @@ class Pnatural
     /**
      * Get idEstadoConyugal.
      *
-     * @return \App\Entity\EstadoConyugal|null
+     * @return \App\Entity\Legacy\Legacy\EstadoConyugal|null
      */
     public function getIdEstadoConyugal()
     {
@@ -697,11 +697,11 @@ class Pnatural
     /**
      * Set idOcupacion.
      *
-     * @param \App\Entity\Ocupacion|null $idOcupacion
+     * @param \App\Entity\Legacy\Legacy\Ocupacion|null $idOcupacion
      *
      * @return Pnatural
      */
-    public function setIdOcupacion(\App\Entity\Ocupacion $idOcupacion = null)
+    public function setIdOcupacion(\App\Entity\Legacy\Legacy\Ocupacion $idOcupacion = null)
     {
         $this->idOcupacion = $idOcupacion;
 
@@ -711,7 +711,7 @@ class Pnatural
     /**
      * Get idOcupacion.
      *
-     * @return \App\Entity\Ocupacion|null
+     * @return \App\Entity\Legacy\Legacy\Ocupacion|null
      */
     public function getIdOcupacion()
     {
@@ -721,11 +721,11 @@ class Pnatural
     /**
      * Set idPuebloOriginario.
      *
-     * @param \App\Entity\PuebloOriginario|null $idPuebloOriginario
+     * @param \App\Entity\Legacy\Legacy\PuebloOriginario|null $idPuebloOriginario
      *
      * @return Pnatural
      */
-    public function setIdPuebloOriginario(\App\Entity\PuebloOriginario $idPuebloOriginario = null)
+    public function setIdPuebloOriginario(\App\Entity\Legacy\Legacy\PuebloOriginario $idPuebloOriginario = null)
     {
         $this->idPuebloOriginario = $idPuebloOriginario;
 
@@ -735,7 +735,7 @@ class Pnatural
     /**
      * Get idPuebloOriginario.
      *
-     * @return \App\Entity\PuebloOriginario|null
+     * @return \App\Entity\Legacy\Legacy\PuebloOriginario|null
      */
     public function getIdPuebloOriginario()
     {
@@ -745,11 +745,11 @@ class Pnatural
     /**
      * Set idReligion.
      *
-     * @param \App\Entity\Religion|null $idReligion
+     * @param \App\Entity\Legacy\Legacy\Religion|null $idReligion
      *
      * @return Pnatural
      */
-    public function setIdReligion(\App\Entity\Religion $idReligion = null)
+    public function setIdReligion(\App\Entity\Legacy\Legacy\Religion $idReligion = null)
     {
         $this->idReligion = $idReligion;
 
@@ -759,7 +759,7 @@ class Pnatural
     /**
      * Get idReligion.
      *
-     * @return \App\Entity\Religion|null
+     * @return \App\Entity\Legacy\Legacy\Religion|null
      */
     public function getIdReligion()
     {
@@ -769,11 +769,11 @@ class Pnatural
     /**
      * Set idSexo.
      *
-     * @param \App\Entity\Sexo|null $idSexo
+     * @param \App\Entity\Legacy\Legacy\Sexo|null $idSexo
      *
      * @return Pnatural
      */
-    public function setIdSexo(\App\Entity\Sexo $idSexo = null)
+    public function setIdSexo(\App\Entity\Legacy\Legacy\Sexo $idSexo = null)
     {
         $this->idSexo = $idSexo;
 
@@ -783,7 +783,7 @@ class Pnatural
     /**
      * Get idSexo.
      *
-     * @return \App\Entity\Sexo|null
+     * @return \App\Entity\Legacy\Legacy\Sexo|null
      */
     public function getIdSexo()
     {
@@ -793,11 +793,11 @@ class Pnatural
     /**
      * Set idNacionalidad.
      *
-     * @param \App\Entity\Pais|null $idNacionalidad
+     * @param \App\Entity\Legacy\Legacy\Pais|null $idNacionalidad
      *
      * @return Pnatural
      */
-    public function setIdNacionalidad(\App\Entity\Pais $idNacionalidad = null)
+    public function setIdNacionalidad(\App\Entity\Legacy\Legacy\Pais $idNacionalidad = null)
     {
         $this->idNacionalidad = $idNacionalidad;
 
@@ -807,7 +807,7 @@ class Pnatural
     /**
      * Get idNacionalidad.
      *
-     * @return \App\Entity\Pais|null
+     * @return \App\Entity\Legacy\Legacy\Pais|null
      */
     public function getIdNacionalidad()
     {
@@ -817,11 +817,11 @@ class Pnatural
     /**
      * Set idRaza.
      *
-     * @param \App\Entity\Raza|null $idRaza
+     * @param \App\Entity\Legacy\Legacy\Raza|null $idRaza
      *
      * @return Pnatural
      */
-    public function setIdRaza(\App\Entity\Raza $idRaza = null)
+    public function setIdRaza(\App\Entity\Legacy\Legacy\Raza $idRaza = null)
     {
         $this->idRaza = $idRaza;
 
@@ -831,7 +831,7 @@ class Pnatural
     /**
      * Get idRaza.
      *
-     * @return \App\Entity\Raza|null
+     * @return \App\Entity\Legacy\Legacy\Raza|null
      */
     public function getIdRaza()
     {
@@ -841,11 +841,11 @@ class Pnatural
     /**
      * Set idEstadoReproductivo.
      *
-     * @param \App\Entity\EstadoReproductivo|null $idEstadoReproductivo
+     * @param \App\Entity\Legacy\Legacy\EstadoReproductivo|null $idEstadoReproductivo
      *
      * @return Pnatural
      */
-    public function setIdEstadoReproductivo(\App\Entity\EstadoReproductivo $idEstadoReproductivo = null)
+    public function setIdEstadoReproductivo(\App\Entity\Legacy\Legacy\EstadoReproductivo $idEstadoReproductivo = null)
     {
         $this->idEstadoReproductivo = $idEstadoReproductivo;
 
@@ -855,7 +855,7 @@ class Pnatural
     /**
      * Get idEstadoReproductivo.
      *
-     * @return \App\Entity\EstadoReproductivo|null
+     * @return \App\Entity\Legacy\Legacy\EstadoReproductivo|null
      */
     public function getIdEstadoReproductivo()
     {
@@ -865,11 +865,11 @@ class Pnatural
     /**
      * Set idPersona.
      *
-     * @param \App\Entity\Legacy\Persona $idPersona
+     * @param \App\Entity\Legacy\Legacy\Legacy\Persona $idPersona
      *
      * @return Pnatural
      */
-    public function setIdPersona(\App\Entity\Legacy\Persona $idPersona)
+    public function setIdPersona(\App\Entity\Legacy\Legacy\Legacy\Persona $idPersona)
     {
         $this->idPersona = $idPersona;
 
@@ -879,7 +879,7 @@ class Pnatural
     /**
      * Get idPersona.
      *
-     * @return \App\Entity\Legacy\Persona
+     * @return \App\Entity\Legacy\Legacy\Legacy\Persona
      */
     public function getIdPersona()
     {

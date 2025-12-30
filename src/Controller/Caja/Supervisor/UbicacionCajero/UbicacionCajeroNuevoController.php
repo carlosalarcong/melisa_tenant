@@ -2,7 +2,7 @@
 
 namespace App\Controller\Caja\Supervisor\UbicacionCajero;
 
-use App\Entity\RelUbicacionCajero;
+use App\Entity\Legacy\RelUbicacionCajero;
 use App\Controller\Caja\Supervisor\SupervisorController;
 use App\Form\Supervisor\UbicacionCajero\UbicacionCajeroType;
 use Symfony\Component\Form\FormError;
