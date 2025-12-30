@@ -1,0 +1,51 @@
+<table border="0">
+    <tr>
+        <td>
+            <b> Tipo de Identificación: </b>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {{ form_widget( tipoIdentificacionExtranjeroForm.tipoIdentificacion ) }}
+            <div class="input-append center-align center" style="margin: 0 auto;">
+                {{ form_widget(tipoIdentificacionExtranjeroForm.identificacion,{ 'attr': {'placeholder':'Identificación','class':'validacionRutJS limpiarCampos', 'maxlength':'12'} } ) }}
+                <span class="add-on dark-opaque">
+													<i class="icon-asterisk"></i>
+												</span>
+            </div>
+        </td>
+        <td align="left">
+            <div class="input-append left "
+                 style="padding: 0 10px 0 0; margin: 0 auto;">
+                <span style=" padding: 0 10px 0 0;"></span>
+                <a id="Buscar" class="btn btn-primary left" type="button"> {#onclick="busquedaBasica()"#}
+                    <i class="icon-search"></i> Buscar
+                </a>
+                <span style=" padding: 0 5px 0 0"></span>
+                <a id="limpiar" class="btn btn-primary left" type="button">
+                    <i class="icon-eraser"></i> limpiar
+                </a>
+            </div>
+        </td>
+    </tr>
+</table>
+<div class="clearfix "></div>
+<div class="alert alert-block alert-success alertaNoexiste hide">
+    <p>
+        <strong>
+            <i class="icon-warning-sign"></i>
+            No se han encontrado resultados.
+        </strong>
+        </br>
+        ¿Desea agregar nuevo paciente para continuar con Pago?.
+    </p>
+    <p>
+        <button class="btn btn-small btn-success agregarnuevo">Si, Agregar nuevo
+            paciente
+        </button>
+        <button class="btn btn-small noagregarnuevo">No, Buscar nuevamente</button>
+    </p>
+</div>
+<div id="errorrut" class="clearfix red hide ">
+    <i class="icon-remove"> </i> <span id="errormsjrut"></span>
+</div>

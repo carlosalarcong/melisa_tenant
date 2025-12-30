@@ -1,0 +1,91 @@
+<div class="table-header">
+	Mantenedor de Correlativo de Boletas
+</div>
+<br>
+{#Datatable que contiene toda la información de los artículos con sus valores#}
+<table id="table_report2" class="table table-bordered table-condensed table-hover">
+	<thead>
+		<tr>
+			<th>Número Pila</th>
+			<th>Fecha Entrega</th>
+			<th>Número Inicio</th>
+			<th>Número Término</th>
+			<th>Número Contador</th>
+			<th>Estado Pila</th>
+			<th>Fecha Estado</th>
+			<th class="sorting_disabled"></th>
+		</tr>
+	</thead>
+	{#Recorrido que genera dinámicamente la información del datatable#}
+	<tbody>
+		<tr>
+			<td>{{ oTalonario.numeroPila }}</td>
+			<td>{{ oTalonario.fechaEntrega|date('d-m-Y') }}</td>
+			<td>{{ oTalonario.numeroInicio }}</td>
+			<td>{{ oTalonario.numeroTermino }}</td>
+			<td>{{ oTalonario.numeroActual }}</td>
+			<td>{{ nombreEstado }}</td>
+			<td>{{ oTalonario.fechaEstadoPila|date('d-m-Y') }}</td>
+			<td class="span2">
+				<div class="btn-group">
+					<a class="btn btn-mini btn-warning editar" title="Editar" href="{{path('Caja_Supervisor_CorrelativoBoletas_show_editar', {'idTalonario': oTalonario.id })}}">
+						<i class="icon-edit"></i>
+					</a>
+					<a class="btn btn-mini btn-info auditoria" title="Informacion" href="{{path('Caja_Supervisor_CorrelativoBoletas_show_informacion', {'idTalonario': oTalonario.id })}}">
+						<i class="icon-eye-open"></i>
+					</a>
+				</div>
+			</td>
+		</tr>
+
+
+	</tbody>
+</table>
+<div class="modalVer hide"></div>
+
+{% block scripts -%}
+<script src="{{ asset('js/uncompressed/Caja/fnCommon.js') }}"></script>
+<script type="text/javascript">
+	$('#table_report2').dataTable({
+		"oLanguage": {
+			"sUrl": "{{ asset('js/datatables/dataTables.es.txt') }}"
+		}
+	});
+
+	{#Proporcionamos las medidas al datatable que aparecerá por bootbox#}
+	$('.modal').css({
+		width:'85%',
+		height:'85%',
+		left:'10%',
+		'margin-left': 'auto'});
+
+	$('.modal-body').css({
+		padding: '5px',
+		'max-height': '90%',
+		height: '90%'});
+
+	{#Botón que despliega un bootbox con la información de auditoría#}
+	$(".auditoria").on('click', function(e) {
+		e.preventDefault();
+		$.post($(this).attr('href'), null, function(response) {
+			var vistaHtml = response;
+			{#Llamamos a la función información del fn.common#}
+			auditoria(vistaHtml, '#new_form');
+		}).error(function(xhr,textResponse,errorThrown){
+			xhr.textResponse;
+		});
+	});
+
+	{#Botón que despliega la edición de talonario de boletas#}
+	$(".editar").on('click', function(e) {
+		e.preventDefault();
+		$.post($(this).attr('href'), null, function(response) {
+			var vistaHtml = response;
+			{#Llamamos a la función editar del fn.common#}
+			editar(vistaHtml, '#edit_form');
+		}).error(function(xhr,textResponse,errorThrown){
+			xhr.textResponse;
+		});
+	});
+</script>
+{% endblock %}

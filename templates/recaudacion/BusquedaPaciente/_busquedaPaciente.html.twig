@@ -1,0 +1,47 @@
+{#<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>#}
+{% import 'RebsolHermesBundle:UI/Macros/Caja:validadorDependencias.html.twig' as validador %}
+{#{% javascripts '@RecaudacionBundle/Resources/public/js/BusquedaPaciente/busquedaPaciente.js' %}
+    <script src="{{ asset_url }}"></script>
+{% endjavascripts %}#}
+<div class="table-header header-color-blue " style="text-align:left;">
+    <span class="white"><b>Pago Paciente</b></span>
+</div>
+<div class="alert alert-warning pacientefallecido  hide">
+    <strong>Usuario Fallecido</strong>
+    <div class="clearfix"></div>
+    El usuario ingresado, se encuentra registrado con fecha de defunción <span id="fechad"></span>.
+</div>
+
+<div id="busquedaPacientesForm">
+    <div class="table-header header-color-grey left left-align" style="text-align:left;">
+        <i class="icon-search icon-large text-left left left-align"> </i> Busqueda Pacientes
+    </div>
+    <div width="100%">
+        <div class="tabbable tabs-left">
+            <ul class="nav nav-tabs" id="TabBusqueda">
+                <li class="active">
+                    <a data-toggle="tab" href="#ssimple"  id="ssimplediv">
+                        <i class="grey icon-search bigger-110"></i>
+                        Busqueda Simple
+                    </a>
+                </li>
+                <li>
+                    <a data-toggle="tab" href="#sadv" id="sadvdiv">
+                        <i class="grey icon-search bigger-110"></i>
+                        Busqueda Avanzada
+                    </a>
+                </li>
+            </ul>
+            <div class="consultaBusqueda">
+                <div class="tab-content" style="min-height: 450px;">
+                    <div id="ssimple" class="tab-pane in active">
+                        {% include 'RecaudacionBundle:BusquedaPaciente:_busquedaBasica.html.twig' %}
+                    </div>
+                    <div id="sadv" class="tab-pane">
+                        {% include 'RecaudacionBundle:BusquedaPaciente:_busquedaAvanzada.html.twig' %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!--/span-->
+</div>

@@ -1,0 +1,80 @@
+{% extends 'RecaudacionBundle:Supervisor:layoutformulariosajax.html.twig' %}
+{% block body -%}
+<div class="table-header">
+	Editar Ubicación Cajero
+</div>
+<form id="edit_form" class="form-horizontal" action="{{ path('Caja_Supervisor_UbicacionCajero_update', { 'id': entity.id }) }}" method="post">
+	<input type="hidden" name="_method" value="post" />
+	<table class="table table-bordered table-condensed table-hover">
+		<tr>
+			<th>
+				{{ form_label(edit_form.idUbicacionCaja) }}</th>
+				<td>
+					{{ form_widget(edit_form.idUbicacionCaja) }}
+					<div class="clearfix"></div>
+					{% for error in edit_form.idUbicacionCaja.vars.errors %}
+					<span class="text-error">
+						{{ error.message }}
+					</span>
+					{% endfor %}
+				</td>
+			</tr>
+			<tr>
+				<th>
+					{{ form_label(edit_form.idUsuario) }}
+				</th>
+				<td>
+					{{ form_widget(edit_form.idUsuario) }}
+					<div class="clearfix"></div>
+					{% for error in edit_form.idUsuario.vars.errors %}
+					<span class="text-error">
+						{{ error.message }}
+					</span>
+					{% endfor %}
+				</td>
+			</tr>
+			<tr>
+				<th>
+					{{ form_label(edit_form.montoInicial) }}
+				</th>
+				<td>
+					{{ form_widget(edit_form.montoInicial) }}
+					<div class="clearfix"></div>
+					{% for error in edit_form.montoInicial.vars.errors %}
+					<span class="text-error">
+						{{ error.message }}
+					</span>
+					{% endfor %}
+				</td>
+			</tr>
+			<tr>
+				<th>
+					{{ form_label(edit_form.idEstado) }}
+				</th>
+				<td>
+					{{ form_widget(edit_form.idEstado) }}
+					<div class="clearfix"></div>
+					{% for error in edit_form.idEstado.vars.errors %}
+					<span class="text-error">
+						{{ error.message }}
+					</span>
+					{% endfor %}
+				</td>
+			</tr>
+		</table>
+		{{ form_rest(edit_form) }}
+		<script type="text/javascript">
+			{#Script que bloquea letras y símbolos, sólo permite números.#}
+			$("#rebsol_hermesbundle_ubicacioncajeroType_montoInicial").bind("keypress", function(event) {
+			   if (event.charCode !== 0) {
+				   var regex = new RegExp("^[0-9,]+$");
+				   var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+				   if (!regex.test(key)) {
+					   event.preventDefault();
+					   return false;
+				   }
+			   }
+		   });
+		</script>
+	</form>
+	{% endblock %}

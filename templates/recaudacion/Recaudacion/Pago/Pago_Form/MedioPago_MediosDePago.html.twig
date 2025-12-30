@@ -1,0 +1,89 @@
+<div id="saldototalpagar" class="alert alert-danger ">
+	<table width="30%">
+		<tr>
+			<th width="50%"><span class="black">Total Cuenta</span>
+			</th>
+			<td width="50%"><div align='right'><b><span>$</span><span class="sumaTotalMediosDePago" id='sumaTotalMediosDePago'></span></b></div></td>
+		</tr>
+		<tr>
+			<th><span class="black">Saldo Cuenta</th>
+			<td>
+				<div align='right'><b><span>$</span><span class="SaldoTotalMediosDePago" id='SaldoTotalMediosDePago'></span></b></div>
+			</td>
+		</tr>
+	</table>
+	<div class="alerta_exceso hide"></br>Porfavor, modifique valores, no puede ser un monto <u>Negativo</u> o genere una Diferencia.</div>
+	<div class="alerta_falta hide"></br>Porfavor, ingrese información en todos los campos requeridos</div>
+</div>
+
+<div id="infoDiferenciaSaldo" class="alert alert-warning hide">
+	<table>
+		<tr>
+			<th width="50%" >Diferencia <span id="infoDiferenciaDirecciónSaldo" ></span> Aplicada a Saldo: </th>
+			<th width="50%"><div align='right'><b><span id="infoDiferenciaMontoSaldo"></span></b></div>
+			</th>
+		</tr>
+	</table>
+	<br>
+</div>
+{% if habilitaAplicarDiferenciaSaldo == 1 %}
+	<button align='right' id="btn-diferencia-saldo" class="btn btn-block btn-yellow" type="button" href="{{ path('Caja_DiferenciaSaldo_Generar') }}"><i class='icon-sort'></i>Aplicar Diferencia a Saldo</button>
+{% endif %}
+{% if habilitaAplicarDiferenciaIndividual == 1 %}
+	<button align='right' id="btn-diferencia" class="btn btn-block btn-yellow " type="button" href="{{ path('Caja_Diferencia_Generar') }}"><i class='icon-sort'></i>Aplicar Diferencia Prestaciones</button>
+{% endif %}
+<form id="formMedios" method="POST" >
+	<table width="100%" cellpadding="10" cellpacing="10" id="Tabla_MediosPago_Tab">
+		{% set aux =0 %}
+		<tr>
+			{% for listadoMediosPago in listadoMediosPagos %}
+			{% set medioPago = 'medioPago_' ~ listadoMediosPago.id %}
+			{% set dinamico = 'dinamico_' ~ listadoMediosPago.id %}
+			{% set aux =aux+1%}
+			<td align="center" valign="top"width="50%">
+				<div class="table-header header-color-blue " style="text-align:left;">
+					{{listadoMediosPago.nombre}}
+					<div class="btn-group pull-right Input_checkbox_{{listadoMediosPago.id}}"  style=" padding: 8px 0 0 0" >
+						<label>
+							<input id="Input_checkbox_{{listadoMediosPago.id}}" class="ace ace-switch ace-switch-6 Input_checkbox Input_checkbox_{{listadoMediosPago.id}}" type="checkbox" data-tipo={% if listadoMediosPago.tipo == 3 %}"belectronico"{% elseif listadoMediosPago.tipo == 5 %}"bmanual"{% else %}"null"{% endif %}  onclick="javascript:showTablas('{{listadoMediosPago.id}}', {{listadoMediosPago.tipo }});"  data-listado-medios-pago="{{ listadoMediosPago.id }}" data-listado-medios-tipo="{{ listadoMediosPago.tipo }}">
+							<span class="lbl"></span>
+						</label>
+						<div class="hide checkhide">
+							{{ form_widget(mediospago_form[medioPago], {'attr': {'class': ' Input_checkbox_Bool'}} ) }}
+							{{ form_widget(mediospago_form[dinamico], {'attr': {'class': ' dinamico'}} ) }}
+						</div>
+					</div>
+				</div>
+				<div id="tabla_{{listadoMediosPago.id}}" class="hide tabla_{{listadoMediosPago.id}} tabla_{{listadoMediosPago.id}}_{{cantidad}} formularios_Pago">
+					{% include listadoMediosPago.ruta %}
+				</div>
+
+				<br>
+			</td>
+			{% if aux == 2 %}
+		</tr>
+		{% set aux = 0 %}
+		{% endif %}
+		{% endfor %}
+	</table>
+</form>
+<div id="agregar-botones" class="btn-group pull-right">
+	<button id="btn-pagar" class="btn btn-pagar btn-success hide ocultarDiv  spcb" type="button">
+		<i class='icon-usd'></i>Efectuar Pago
+	</button>
+	<button id="btn-pagar" class="btn btn-pagar btn-success hide ocultarDiv  realizar-pago-cuenta hide btn-mini" type="button">
+		<i class='icon-usd'></i>Efectuar Pago
+	</button>
+	{% if idReservaAtencion%}
+	{% else %}
+	<button id="cancelar-desde-mediopago" class="btn  btn-volver2 cancelar-desde-mediopago " type="button">
+		<i class='icon-arrow-left'></i>Cancelar
+	</button>
+	{% endif %}
+</div>
+<form id="form_IntefazImed" action="" target="_BLANK" method="POST" class="hide">
+	<input name="NroAuditoria" id="NroAuditoria" type="text" value="">
+	<input name="NumTransac" id="NumTransac" type="text" value="">
+	<input name="rut" id="Rut" type="text" value="">
+	<input name="lugar" id="Lugar" type="text" value="">
+</form>

@@ -1,0 +1,136 @@
+{% extends 'RecaudacionBundle:Supervisor:sublayout.html.twig' %}
+
+{% block contenedorMantenedor -%}
+<link rel="stylesheet" href="{{ asset('css/chosen.css') }}">
+<div id="listadoTalonarios">
+	<div class="table-header">
+		Mantenedor de Folios
+		<div class="btn-group pull-right div-chosen">
+			{{ form_widget(form.talonario) }}
+		</div>
+		<div id="div-volver" class="btn-group pull-right">
+			<a id="volverListado" class="btn btn-mini" href="{{ path('Caja_Supervisor') }}">
+				<i class="icon-arrow-left"></i> Volver
+			</a>
+		</div>
+	</div>
+	<div id="tablaTalonarios">
+		<table id="table_report" class="table table-bordered table-condensed table-hover">
+			<thead>
+				<tr>
+					<th> Pila </th>
+					<th> Centro </th>
+					<th> Ubicación </th>
+					<th> Estado </th>
+					<th> Número Inicio </th>
+					<th> Número Término </th>
+					<th class="sorting_disabled"></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for talonario in oTalonario %}
+				<tr>
+					<td> xxx </td>
+					<td> xxx </td>
+					<td> xxx </td>
+					<td> xxx </td>
+					<td> xxx </td>
+					<td> xxx </td>
+					<td></td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	<div id="verTalonarios" class="hide">
+	</div>
+	<div class="table-footer" id="footer-index">
+		<div class="btn-group pull-right">
+			<a class="btn btn-mini" href="{{ path('Caja_Supervisor') }}">
+				<i class="icon-arrow-left"></i> Volver
+			</a>
+		</div>
+	</div>
+	<div class="modalVer hide"></div>
+</div>
+{#% endif %#}
+{% endblock %}
+{% block scripts -%}
+<script src="{{ asset('js/bootbox.min.js') }}"></script>
+<script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('js/jquery.dataTables.bootstrap.js') }}"></script>
+<script src="{{ asset('js/uncompressed/Caja/fnCommon.js') }}"></script>
+<script src="{{ asset('js/chosen.jquery.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/uncompressed/Caja/router.js') }}"></script>
+<script type="text/javascript" src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
+<script type="text/javascript">
+	function quitarbarra () {
+		var  campoOcultar = $('#footer-table').is(":visible");
+
+		if (campoOcultar == true) {
+			$('#footer-index').hide();
+			$('.div-chosen').hide();
+			$('#div-volver').show();
+
+		}else{
+			$('#footer-index').show();
+			$('#div-volver').hide();
+			$('.div-chosen').show();
+
+		}
+	};
+
+	function quitarSelect(){
+		var  campoOcultar2= $('.verSolicitudesPendientes').is(":visible");
+		if (campoOcultar2 == true) {
+									// $('#footer-index').hide();
+									$('.div-chosen').hide();
+									$('#div-volver').show();
+
+								}else{
+									// $('#footer-index').show();
+									$('#div-volver').hide();
+									$('.div-chosen').show();
+								}
+							}
+							$(document).on('ready', function(){
+								$('.menuSUpervisor').removeClass('active');
+								$('#MantenedorFolios').addClass('active');
+
+								quitarbarra ();
+								quitarSelect();
+								$("#talonario_talonario").addClass("chosen-select");
+
+								$(".chosen-select").chosen({
+									width: "320px",
+									no_results_text: "No se ha encontrado Talonarios",
+									placeholder_text_single: "Seleccione opción",
+								});
+
+								$('.chzn-results').css('color', '#000');
+
+								$('#talonario_talonario').on('change',function(e){
+									e.preventDefault();
+									var idTalonario = $('#talonario_talonario').val();
+									cargarSolicitudes(idTalonario);
+								});
+				// crearDataTable('#table_report');
+				$('#table_report').dataTable({
+					"oLanguage": {
+						"sUrl": "{{ asset('js/datatables/dataTables.es.txt') }}"
+					}
+				});
+				$('#volverListado').on('click',function(e){
+				 if ($('.verTalonarios').is(":visible")==true) {
+					location.reload();
+				}else if($('#footer-table').is(":visible")==true){
+					e.preventDefault();
+					$('#verTalonarios').hide();
+					$('#tablaTalonarios').show();
+					quitarbarra ();
+					quitarSelect();
+				};
+			})
+			});
+</script>
+{% endblock %}

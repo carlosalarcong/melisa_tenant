@@ -1,0 +1,19 @@
+# CAJA RECAUDACION
+Rutas_Caja_Recaudacion_Default_Servet:
+  resource: "@RecaudacionBundle/Resources/config/routing/_Default/Servet/Recaudacion/routing.yml"
+  prefix: /Recaudacion
+
+# CAJA PAGO CUENTA
+#Rutas_Caja_Pago_Cuenta_Default_Servet:
+#  resource: "@RecaudacionBundle/Resources/config/routing/_Default/Servet/PagoCuenta/pagoCuenta.yml"
+#  prefix: /PagoCuenta
+
+# CAJA SUPERVISOR
+Rutas_Caja_Supervisor_Default_Servet:
+  resource: "@RecaudacionBundle/Resources/config/routing/_Default/Servet/Supervisor/supervisor.yml"
+  prefix: /Supervisor
+
+# CAJA FARMACIA
+#Rutas_Caja_Farmacia_Default_Servet:
+#  resource: "@RecaudacionBundle/Resources/config/routing/_Default/Servet/Farmacia/farmacia.yml"
+#  prefix: /Farmacia

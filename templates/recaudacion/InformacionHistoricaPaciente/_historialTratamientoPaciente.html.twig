@@ -1,0 +1,175 @@
+<table id="table_report_history_tratamiento" class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+        <th>Nombre Tratamiento</th>
+        <th>Fecha Creación</th>
+        <th>Estado Del Tratamiento</th>
+        <th class="sorting_disabled" width="75px"></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for individual in historicoTratamiento%}
+        <tr {%if individual.idEstado == 0 %} style=" background-color: #FFC"{% endif %} {%if individual.idEstado == 2 %} style=" background-color: #F6CECE"{% endif %}>
+            <td><span class="nombreTratamiento">{{ individual.nombre }}</span></td>
+            <td>{{ individual.fecha | date("m-d-Y H:i")}}</td>
+            <td>{{ individual.estado }}</td>
+            <td class="" width="75px">
+                <div class="btn-group">
+                    <a title="Cargar Tratamiento" class="btn btn-mini btn-info btn-Pago-Tratamiento pagarTratamiento detector-estado{{individual.tratamiento}}" data-from="1" data-estado="{{individual.idEstado}}" data-id="{{ individual.tratamiento }}">
+                        <i class="icon-align-justify icon-large"></i></a>
+                    {%if individual.idEstado != 1 %}
+                        <a class="btn btn-mini btn-light">
+                            <i class="icon-edit icon-large"></i>
+                        </a>
+                        <a class="btn btn-mini btn-light">
+                            <i class="icon-remove icon-large"></i>
+                        </a>
+                    {%else%}
+                        <a  title="Editar Tratamiento" class="btn btn-mini btn-warning editTratamiento btn-edit-Tratamiento detector-estado{{individual.tratamiento}}" data-from="0" data-estado="{{individual.idEstado}}" data-id="{{ individual.tratamiento }}" >
+                            <i class="icon-edit icon-large"></i>
+                        </a>
+                        <a  title="Anular Tratamiento" class="btn btn-mini btn-danger anularTratamiento"  href="{{ path('Caja_Tratamiento_Anulacion', { 'id':  individual.tratamiento }) }}">
+                            <i class="icon-remove icon-large"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% block scripts %}
+    <script>
+        $(document).ready(function(){
+
+            $(".btn-Pago-Tratamiento").on('click', function(e) {
+                idTratamiento = $(this).data('id');
+                var nombreTratamiento = $(this).parent().parent().parent().children().children().closest('span').text();
+                e.preventDefault();
+                bootbox.dialog("<div class='alert alert-block alert-success AvisoReservaCarga'>" +
+                    "    <p>" +
+                    "    <strong>¿Desea Cargar el Tratamiento: '"+nombreTratamiento+"'?</strong>" +
+                    "    </p>" +
+                    "</div>"
+                    , [{
+                        "label": "Cancelar",
+                        "class": "btn btn-mini",
+                        "callback": function() {
+                        }
+                    },
+                        {
+                            "label": "Cargar Tratamiento",
+                            "class": "btn btn-mini btn-success",
+                            "callback": function() {
+                                GetGlosaTratamiento(idTratamiento);
+                            }
+                        }
+                    ]);
+            });
+            $(".btn-edit-Tratamiento").on('click', function(e) {
+                idTratamiento = $(this).data('id');
+                var nombreTratamiento = $(this).parent().parent().parent().children().children().closest('span').text();
+                e.preventDefault();
+                bootbox.dialog("<div class='alert alert-block alert-success AvisoReservaCarga'>" +
+                    "    <p>" +
+                    "    <strong>¿Desea Cargar el Tratamiento: '"+nombreTratamiento+"' ?</strong>" +
+                    "    </p>" +
+                    "</div>"
+                    , [{
+                        "label": "Cancelar",
+                        "class": "btn btn-mini",
+                        "callback": function() {
+                        }
+                    },
+                        {
+                            "label": "Cargar Tratamiento",
+                            "class": "btn btn-mini btn-success",
+                            "callback": function() {
+                                GetGlosaTratamientoEdit(idTratamiento);
+                            }
+                        }
+                    ]);
+            });
+
+            // $("").on('click', function(e) {
+            //     idTratamiento = $(this).data('id');
+            //     var nombreTratamiento = $(this).parent().parent().parent().children().children().closest('span').text();
+            //     e.preventDefault();
+            //     bootbox.dialog("<div class='alert alert-block alert-success AvisoReservaCarga'>" +
+            //                                  "    <p>" +
+            //                                  "    <strong>¿Desea Cargar el Tratamiento: '"+nombreTratamiento+"' para Modificarlo?</strong>" +
+            //                                  "    </p>" +
+            //                                  "</div>"
+            //            , [{
+            //             "label": "Cancelar",
+            //             "class": "btn btn-mini",
+            //             "callback": function() {
+            //             }
+            //         },
+            //         {
+            //             "label": "Cargar Tratamiento",
+            //             "class": "btn btn-mini btn-success",
+            //             "callback": function() {
+
+
+            //             }
+            //         }
+            //     ]);
+            // });
+
+
+            $(".anularTratamiento").on('click', function(e) {
+                $(".modalAnular").html('');
+                e.preventDefault();
+                var href = $(this).attr('href');
+                bootbox.dialog(
+                    "<strong class='red'>Anulación de Tratamiento</strong>,<br><strong>Anulará Tratamiento seleccionado</strong>,<br>¿Está seguro de querer continuar?."
+                    , [
+                        {
+                            "label": "Cancelar",
+                            "class": "btn btn-mini",
+                            "callback": function() {
+                            }
+                        },
+                        {
+                            "label": "Anular Tratamiento",
+                            "class": "btn btn-mini btn-danger",
+                            "callback": function() {
+                                $.post(href, function(response) {
+                                    if(response == 1){
+                                        var div = "<div class='alert alert-block alert-success'><p><strong><i class='icon-ok'></i> Anulado Correctamente</strong></p>";
+                                        creaListaHistorica();
+                                    } else {
+                                        var div = "<div class='alert alert-block alert-danger'><p><strong><i class='icon-ok'></i> Se produjo un Error en Anulación</strong></p>";
+                                        creaListaHistorica();
+                                    }
+                                    bootbox.dialog(div, [
+                                        {
+                                            "label": "Ok",
+                                            "class": "btn btn-mini btn-info",
+                                            "callback": function() {
+                                                if (response == 1) {
+                                                    $(".modalAnular").html('');
+                                                    $("#tratamientosHistoricosDiv").removeClass("collapsed");
+                                                    $('.icon-list-historicoTratamiento').attr('class', function() {
+                                                        return $(this).attr('class').replace('icon-chevron-down', 'icon-chevron-up');
+                                                    }).delay(500);
+
+
+                                                    bootbox.hideAll();
+                                                }else{
+                                                    $(".modalAnular").html('');
+                                                    bootbox.hideAll();
+                                                }
+                                            }
+                                        }
+                                    ]);
+                                });
+                            }
+                        }
+                    ]);
+            });
+        });
+    </script>
+{% endblock %}

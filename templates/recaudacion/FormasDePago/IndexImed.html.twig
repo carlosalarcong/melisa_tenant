@@ -1,0 +1,52 @@
+{% block body %}
+{# option A
+<object type="text/html" data="http://interfaz.i-med.cl:8080/login.php" width=100% height=100%> </object>
+<iframe id='iFrameImed' style='margin:0px;padding:0px;height:100%;width:100%;border-style:none' src='http://interfaz.i-med.cl:8080/login.php'></iframe>#}
+
+<iframe id='iFrameImed' style='margin:0px;padding:0px;height:100%;width:100%;border-style:none' src='http://www.rebsol.cl/'></iframe>
+{#chrome-extension://hehijbfgiekmjfkfjpbkbammjbdenadd/u.htm#url=http://interfaz.i-med.cl:8080/login.php#}
+<script type='text/javascript'>
+  setTimeout(function(){
+	$('.modal').css({'width': '80%',
+		'left': '5%',
+		'height': '98%',
+		'margin-right': 'auto',
+		'margin-left': '5%'});
+	$('.modal-body').css({ 'padding': '1px',
+	   'max-height': '98%',
+	   'height': '92%',
+	   'overflow': 'hidden'});
+	$('.modal.fade.in').css({'top': '1%',
+		'height': '98%' });
+	$(".btn-aceptar-Imed").hide();
+
+	$("#uiFrame").hide();
+},500);
+</script>
+
+
+{# option B
+<div> COPIAR URL</div>
+<script type='text/javascript'>
+	setTimeout(function(){
+   $('.modal').css({'width': '80%',
+							   'left': '5%',
+							   'height': '98%',
+							   'margin-right': 'auto',
+							   'margin-left': '5%'});
+
+  $('.modal-body').css({ 'padding': '1px',
+										  'max-height': '98%',
+										  'height': '92%',
+										  'overflow': 'hidden'});
+
+ $('.modal.fade.in').css({'top': '1%',
+										   'height': '98%' });
+
+$(".btn-aceptar-Imed").hide();
+
+  $("#uiFrame").hide();
+								   },500);
+							   </script>#}
+
+							   {% endblock %}

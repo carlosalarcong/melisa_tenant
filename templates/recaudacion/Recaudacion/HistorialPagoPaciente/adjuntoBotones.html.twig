@@ -1,0 +1,56 @@
+	{% if individual.estadoPagoCuenta == 0 %}
+	<button  class="btn btn-light  btn-mini btn-mini-doc"  >
+		<i class="icon-paper-clip  icon-large"></i> Subír
+	</button>
+	<button  class="btn btn-light  btn-mini btn-mini-doc" >
+		<i class="icon-folder-open-alt   icon-large"></i> Abrir
+	</button>
+	{% else %}
+	<div class="clearfix"></div>
+	<div id="AdjuntoSuperior{{ individual.idPaciente }}" class="GrupoBotonesSuperiores">
+		{% if individual.ordenExamen %}
+		<button id="botonSubir{{ individual.idPaciente }}" title="Adjuntar" class="btn btn-mini ligth">
+			<i class="icon-paper-clip  icon-large"></i> Subír
+		</button>
+		<button id="botonAbrir{{ individual.idPaciente }}" title="Abrir" class="btn btn-mini btn-info" onclick="javascript:AbrirArchivo({{ individual.idPaciente }})">
+			<i class="icon-folder-open-alt   icon-large"></i> Abrir
+		</button>
+		{% else %}
+		<button id="botonSubir{{ individual.idPaciente }}" title="Adjuntar" class="btn btn-mini btn-success" onclick="javascript:SubirArchivo({{ individual.idPaciente }})">
+			<i class="icon-paper-clip  icon-large"></i> Subír
+		</button>
+		<button id="botonAbrir{{ individual.idPaciente }}" title="Abrir" class="btn btn-mini btn-ligth">
+			<i class="icon-folder-open-alt   icon-large"></i> Abrir
+		</button>
+		{% endif %}
+
+	</div>
+	<div class="clearfix"></div>
+	<div id="AdjuntoInferiorSubir{{ individual.idPaciente }}" class="hide" >
+		<button title="Buscar" class="btn btn-mini btn-info" onclick="$('#rebsol_hermesbundle_AdjuntoType_archivo').click();$('.mensajeAlerta').hide();" >
+			<i class="icon-folder-open-alt   icon-large"></i> Buscar
+		</button>
+		<button title="Subír" class="btn btn-mini btn-success" onclick="SubirArchivoServidor({{ individual.idPaciente }})">
+			<i class="icon-circle-arrow-up icon-large"></i> Subír
+		</button>
+		<button title="Cancelar" class="btn btn-mini btn-warning" onclick="javascript:CancelarAdjunto({{ individual.idPaciente }})">
+			<i class="icon-remove-circle icon-large"></i> Cancelar
+		</button>
+	</div>
+	<div class="clearfix"></div>
+	<div id="AdjuntoInferiorAbrir{{ individual.idPaciente }}" class="hide">
+		<button title="Abrir" class="btn btn-mini btn-info" onclick="javascript:AbrirAdjunto({{ individual.idPaciente }})">
+			<i class="icon-folder-open-alt   icon-large"></i> Abrir
+		</button>
+		<button title="Eliminar" class="btn btn-mini btn-danger" onclick="javascript:EliminarAdjunto({{ individual.idPaciente }})">
+			<i class="icon-remove-sign icon-large"></i> Eliminar
+		</button>
+		<button title="Cancelar" class="btn btn-mini btn-warning" onclick="javascript:CancelarAdjunto({{ individual.idPaciente }})">
+			<i class="icon-remove-circle icon-large"></i> Cancelar
+		</button>
+	</div>
+	<div class="clearfix"></div>
+	<div id="mensaje{{ individual.idPaciente }}" class="mensajeAlerta hide">
+	</div>
+	{% endif %}
+

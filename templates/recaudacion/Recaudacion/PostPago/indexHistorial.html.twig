@@ -1,0 +1,409 @@
+<script type="text/javascript"  src="{{ asset('bundles/hermes/acev12/js/jquery.easy-pie-chart.min.js') }}"></script>
+{% if ValidaDatos == false %}
+{% else %}
+{% import 'RebsolHermesBundle:UI/Macros:dependencias.html.twig' as macroDependencias %}
+
+<div class=" ">
+	{% if ValidaHistoricoPago == true %}
+	<div id="PagoHistoricosDiv" class="widget-box collapsed">
+		<div class="widget-header header-color-grey">
+			<div  style="text-align:left; vertical-align: middle" class="encabezadoDeListados">
+				<h8> <i class="icon-time icon-large text-left space"></i> Listado de Pagos Efectuados por {% if coreApi == 1 %}Paciente{%else%}Cliente{% endif %}
+				</h8>
+				<div class="clearfix"></div>
+			</div>
+			<div class="widget-toolbar">
+				<a href="#" data-action="collapse">
+					<i class="icon-chevron-down icon-list-historicoPago icon-list-historico"></i>
+				</a>
+			</div>
+		</div>
+
+		<div class="widget-body">
+			<div class="widget-main no-padding">
+				<div class="content">
+					<div id="table_report_wrapper" class="dataTables_wrapper">
+						{% include 'RecaudacionBundle:Recaudacion/HistorialPagoPaciente:indexHistorialPago.html.twig' %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+	{% if ValidaHistoricoGarantias == true %}
+		<div id="PagoHistoricosDiv" class="widget-box collapsed">
+			<div class="widget-header header-color-grey">
+				<div  style="text-align:left; vertical-align: middle" class="encabezadoDeListados">
+					<h8> <i class="icon-time icon-large text-left space"></i> Listado de Garantias por {% if coreApi == 1 %}Paciente{%else%}Cliente{% endif %}
+					</h8>
+					<div class="clearfix"></div>
+				</div>
+				<div class="widget-toolbar">
+					<a href="#" data-action="collapse">
+						<i class="icon-chevron-down icon-list-historicoPago icon-list-historico"></i>
+					</a>
+				</div>
+			</div>
+
+			<div class="widget-body">
+				<div class="widget-main no-padding">
+					<div class="content">
+						<div id="table_report_wrapper" class="dataTables_wrapper">
+							{% include 'RecaudacionBundle:Recaudacion/HistorialPagoPaciente:indexHistorialGarantias.html.twig' %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+	{# TEST EXÁMENES #}
+	{% if from is defined and from != 'agenda' %}
+		<div id="listadoExamenesDiv" class="widget-box collapsed">
+			<div class="widget-header header-color-grey">
+				<div style="text-align:left; vertical-align: middle" class="encabezadoDeListados">
+					<h8> <i class="icon-time icon-large text-left space"></i> Listado de Solicitudes de Imagenología y/o Laboratorio
+					</h8>
+					<div class="clearfix"></div>
+				</div>
+				<div class="widget-toolbar">
+					<a href="#" data-action="collapse">
+						<i class="icon-chevron-down icon-list-listadoExamenes icon-list-historico"></i>
+					</a>
+				</div>
+			</div>
+			<div class="widget-body">
+				<div class="widget-main no-padding">
+					<div class="content">
+						<div id="table_report_wrapper" class="dataTables_wrapper">
+							<table id="table_report_exams" class="table table-bordered table-condensed table-hover">
+								<thead>
+									<tr>
+										<th>Atención</th>
+										<th>Fecha Atención</th>
+										<th>Observación</th>
+										<th>Código</th>
+										<th>Examen</th>
+										<th>Tipo Prestación</th>
+										<th>Tipo Atención</th>
+										<th class="sorting_disabled span2" ></th>
+									</tr>
+								</thead>
+								<tbody>
+								{% for exam in arrayExamenPacienteFc %}
+									<tr>
+										<td>
+											{{exam.numeracion}}
+										</td>
+										<td>
+											{{exam.fechaSolicitud|date("d/m/Y")}}
+										</td>
+										<td>
+											{{exam.observacion}}
+										</td>
+										<td>
+											{% for oExamenPacienteFcDetalle in exam.arrExamenPacienteFcDetalle if oExamenPacienteFcDetalle.idAccionClinica is not null %}
+												{{oExamenPacienteFcDetalle.idAccionClinica.codigoFonasa}} <br>
+											{% endfor %}
+										</td>
+										<td>
+											{% for oExamenPacienteFcDetalle in exam.arrExamenPacienteFcDetalle %}
+												{{oExamenPacienteFcDetalle.textoAccionClinica}} <br>
+											{% endfor %}
+										</td>
+										<td>
+											{% for oExamenPacienteFcDetalle in exam.arrExamenPacienteFcDetalle if oExamenPacienteFcDetalle.idAccionClinica is not null %}
+												{% if oExamenPacienteFcDetalle.idAccionClinica.idTipoPrestacion.tipoTipoPrestacion == 'RIS'%}
+													Imagenología<br>
+												{% elseif oExamenPacienteFcDetalle.idAccionClinica.idTipoPrestacion.tipoTipoPrestacion == 'LIS'%}
+													Laboratorio<br>
+												{% else %}
+													-<br>
+												{% endif %}
+											{% endfor %}
+										</td>
+										<td>
+											{{exam.nombreTipoAtencion}}
+										</td>
+										<td>
+											<div class="btn-group">
+												{% if exam.tieneAccionClinica is defined %}
+													{% if exam.tieneAccionClinica %}
+														<a data-id="{{exam.idExamenPacienteFc}}" data-id-tipoatencion="{{exam.idTipoAtencion}}" title="Agregar a Pago" class="seleccionarExamen btn btn-mini btn-mini-doc btn-primary">
+															<i class="icon-dollar icon-large"></i>
+														</a>
+														{% else %}
+														<a title="No se puede realizar pago debido a que no tiene ninguna prestación a valorar" class="btn btn-mini btn-mini-doc btn-block">
+															<i class="icon-dollar icon-large"></i>
+														</a>
+													{% endif %}
+												{% endif %}
+											</div>
+										</td>
+									</tr>
+								{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+	{# END TEST EXÁMENES #}
+	{% if from !="agenda" %}
+	<div class="clearfix"></div>
+	{% if ValidaHistoricoReserva == true %}
+	<div id="reservasHistoricosDiv" class="widget-box collapsed">
+		<div class="widget-header header-color-grey">
+			<div  style="text-align:left; vertical-align: middle" class="encabezadoDeListados">
+				<h8> <i class="icon-time icon-large text-left space"></i>Listado Reservas Pendientes de {% if coreApi == 1%}Paciente{%else%}Cliente{%endif%}
+					<div class="clearfix"></div>
+				</h8>
+			</div>
+			<div class="widget-toolbar">
+				<a href="#" data-action="collapse" >
+					<i class="icon-chevron-down icon-list-historicoReserva icon-list-historico"></i>
+				</a>
+			</div>
+		</div>
+
+		<div class="widget-body">
+			<div class="widget-main no-padding">
+				<div class="content">
+					<div id="table_report_wrapper" class="dataTables_wrapper">
+						{% include 'RecaudacionBundle:Recaudacion/HistorialPagoPaciente:indexHistorialReserva.html.twig' %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+	{% endif %}
+	<div class="clearfix"></div>
+	{% if ValidaHistoricoTratamiento == true %}
+	<div id="tratamientosHistoricosDiv" class="widget-box collapsed">
+		<div class="widget-header header-color-grey">
+			<div  style="text-align:left; vertical-align: middle" class="encabezadoDeListados">
+				<h8> <i class="icon-time icon-large text-left space"></i> Listado Tratamientos en Proceso de Paciente
+					<div class="clearfix"></div>
+				</h8>
+			</div>
+			<div class="widget-toolbar">
+				<a href="#" data-action="collapse" >
+					<i class="icon-chevron-down icon-list-historicoTratamiento icon-list-historico"></i>
+				</a>
+			</div>
+		</div>
+
+		<div class="widget-body">
+			<div class="widget-main no-padding">
+				<div class="content">
+					<div id="table_report_wrapper" class="dataTables_wrapper">
+						{% include 'RecaudacionBundle:Recaudacion/HistorialPagoPaciente:indexHistorialTratamiento.html.twig' %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="mensajeEditTratamiento hide"></div>
+	{% endif %}
+</div>
+<script type='text/javascript'>
+	setTimeout(function() {
+		HistorialPagosPacienteTools();
+
+
+					$('#table_report_history, #table_report_history_reserva, #table_report_history_tratamiento, #table_report_history_garantia ').dataTable( {
+						"oLanguage": {
+							"sUrl": "{{ asset('js/datatables/dataTables.es.txt') }}"
+						},
+						"order": [[ 0, "desc" ]]
+					} );
+
+
+
+					// $('#table_report_history_tratamiento').dataTable( {
+					// 	"oLanguage": {
+					// 		"sUrl": "{{ asset('js/datatables/dataTables.es.txt') }}"
+					// 	},
+					// 	"order": [[ 1, "desc" ]]
+					// } );
+
+
+					// $('#table_report_history_reserva').dataTable( {
+					// 	"oLanguage": {
+					// 		"sUrl": "{{ asset('js/datatables/dataTables.es.txt') }}"
+					// 	},
+					// 	"order": [[ 1, "desc" ]]
+					// } );
+
+					if($("#tratamientosHistoricosDiv").is(":visible") == true){
+						if(cajaAgenda == 0){
+							$("#tratamientosHistoricosDiv").removeClass("collapsed");
+						}
+					}
+
+
+
+				}, 500);
+
+				$('.seleccionarExamen').on('click', function () {
+					var plan = $("#rebsol_hermesbundle_PrestacionType_plan").val();
+					if(plan == '' || !plan) {
+						var error = "" +
+							"<div class='alert alert-block alert-danger'>" +
+							"    <p>" +
+							"    <strong>Debe seleccionar un plan para agregar examen a listado.</strong>" +
+							"    </p>" +
+							"</div>";
+						bootbox.dialog(error, [{
+							"label": "Aceptar",
+							"class": "btn btn-mini btn-info",
+							"callback": function() {
+
+							}
+						}]);
+						return;
+					}
+					$(this).closest("tr").remove();
+					var idExamenPacienteFc = $(this).data('id');
+					var tipoAtencion = $(this).data('id-tipoatencion');
+					console.log(tipoAtencion);
+					console.log($("#rebsol_hermesbundle_PrestacionType_plan").val());
+					var data = {
+						idExamenPacienteFc: idExamenPacienteFc,
+						plan: plan,
+						TipoAtencion: TipoAtencion
+					};
+					$.ajax({
+						type: 'get',
+						url: "{{ path('Caja_getPrestacion') }}",
+						data: data,
+						async: false,
+						success: function(data) {
+							console.log(data);
+							var data = $.parseJSON(data);
+							data.forEach(element => {
+
+								if(element.idPaquetePrestacion) {
+									var tr = $("<tr data-id-paqueteprestacion="+ element.idPaquetePrestacion +" id='prestacion_" + element.id + "' name='" + element.id + "'></tr>");
+								} else {
+									var tr = $("<tr id='prestacion_" + element.id + "' name='" + element.id + "'></tr>");
+								}
+								
+								var td = $("<td id='codigoItem_" + element.id + "' class='codigo'>" + element.codigo + "-" + element.codigoFonasa + "</td>");
+								tr.append(td);
+
+								if (element.pabellon !== 0) {
+									var td = $("<td class='pabellon'>" + element.pabellon + "</td>");
+								} else {
+									var td = $("<td class='pabellon'><span class='label label-light'>No Aplica</span></td>");
+								}
+								tr.append(td);
+
+								var td = $("<td id='nombreItem_" + element.id + "' class='nombre'>" + element.nombre + "</td>");
+								tr.append(td);
+
+								var td = $("<td id='td" + element.id  + "' class='cantidad'><div id='div" + element.id  + "'><div class='ace-spinner'><div class='input-append btn-group btn-group-vertical'><input type='text' class='" + idExamenPacienteFc + " input-mini spinner-input cambioCantidad cantidadLista" + element.id + "'' id='" + idExamenPacienteFc + "'maxlength='3' style='width: 30px;' value=1></div></div></div><div align='right' class='spanResumen hide'><span id='spanResumen" + idExamenPacienteFc + "' class='hide spanResumen'></span></div></td>");
+								tr.append(td);
+
+								var precioItem = addCommas(element.precio);
+
+								var td = $("<td class='precio'><div align='right'><span>$</span><span id='precio" + element.id + "'>" + precioItem + "</span><span id='tipoDoc" + element.id + "' class='hide'>1</span></div></td>");
+								tr.append(td);
+
+								var td = $("<td class='preciocantidad'><div align='right'><b><span>$</span><span id='sumaCantidad" + idExamenPacienteFc + "'' class='sumaCantidad'>" + precioItem + "</span></b></div></td>");
+								tr.append(td);
+
+								var td = $("<td ></td>");
+
+								var input = $("<input type='hidden' id='rebsol_hermesbundle_PrestacionType_prestaciones_" + element.id + "' name='rebsol_hermesbundle_PrestacionType[prestaciones][" + element.id + "]' value='" + element.id + "' class='removePrestacion'>");
+
+								var inputExamen = $("<input type='hidden' id='examenPacienteFc" + element.id + "' name='examenPacienteFc[" + element.id + "]' value='" + idExamenPacienteFc + "' class='removePrestacion'>");
+
+								if(element.idPaquetePrestacion) {
+									if(element.id == element.idPaquetePrestacion) {
+										var ahref = $("<a data-id-paqueteprestacion="+ element.idPaquetePrestacion +" data-id='" + element.id + "' class='btn btn-app btn-danger btn-mini removePrestacion' onClick='eliminarPrestacion(this)'><i class='icon-trash'></i></a>");
+									}
+								} else {
+									var ahref = $("<a data-id='" + element.id + "' class='btn btn-app btn-danger btn-mini removePrestacion' onClick='eliminarPrestacion(this)'><i class='icon-trash'></i></a>");
+								}
+
+								td.append(input);
+								td.append(inputExamen);
+								td.append(ahref);
+								tr.append(td);
+
+								$('#prestacionesTable').append(tr);
+
+								if ($('#trDiferencia').length >= 1) {
+									if ($('#trDiferencia').is(':visible')) {
+										$('#trDiferencia').empty();
+										$('#prestacionesTable').find('#trDiferencia').remove();
+									} else {
+										$('#trDiferencia').empty();
+										$('#prestacionesTable').find('#trDiferencia').remove();
+										var trDiferencia = $("<tr id='trDiferencia' style='text-align:right; background-color: #F2F5A9' class='hidden hide'></tr>");
+										var td = $("<td colspan='5' style='text-align:right;' ><span><b>Diferencia Aplicada:</b></span></td>");
+										trDiferencia.append(td);
+										var td = $("<td style=' font-size: medium; padding:0 0 0 0;' ><div align='right'><b><span>$</span><span id='diferenciaTotal'></span></b></div></td>");
+										trDiferencia.append(td);
+										var td = $("<td ></td>");
+										var ahref = $("<a id='anularDiferencia' class='btn btn-app btn-danger btn-mini removePrestacion' onClick='anularDiferencia()'><i class='icon-trash'></i></a>");
+										trDiferencia.append(td);
+										td.append(ahref);
+										$('#prestacionesTable').append(trDiferencia);
+									}
+								} else {
+									var trDiferencia = $("<tr id='trDiferencia' style='text-align:right; background-color: #F2F5A9' class='hidden hide'></tr>");
+									var td = $("<td colspan='5' style='text-align:right;' ><span><b>Diferencia Aplicada:</b></span></td>");
+									trDiferencia.append(td);
+									var td = $("<td style=' font-size: medium; padding:0 0 0 0;' ><div align='right'><b><span>$</span><span id='diferenciaTotal'></span></b></div></td>");
+									trDiferencia.append(td);
+									var td = $("<td ></td>");
+									var ahref = $("<a id='anularDiferencia' class='btn btn-app btn-danger btn-mini removePrestacion' onClick='anularDiferencia()'><i class='icon-trash'></i></a>");
+									trDiferencia.append(td);
+									td.append(ahref);
+									$('#prestacionesTable').append(trDiferencia);
+								}
+
+								if ($('#prestacionesTable').find('#total').length == 0) {
+									var trtotal = $("<tr id='total' style='text-align:right; background-color: whitesmoke'></tr>");
+									var td = $("<td colspan='5' style='text-align:right;' ><span><b>Total Cuenta:</b></span></td>");
+									trtotal.append(td);
+									var td = $("<td colspan='2' style=' font-size: medium; padding:0 45px 0 0;' ><div align='right'><b><span>$</span><span id='sumaTotal'></span></b></div></td>");
+									trtotal.append(td);
+									$('#prestacionesTable').append(trtotal);
+									//captura el Input si cambia, toma su id, del id su valor en TEXT y lo envia a funcion para Multiplicar su valor
+
+									SumarColumna();
+
+								} else {
+									$('#total').empty();
+									$('#prestacionesTable').find('#total').remove();
+									var trtotal = $("<tr id='total' style='text-align:right; background-color: whitesmoke'></tr>");
+									var td = $("<td colspan='5' style='text-align:right;' ><span><b>Total Cuenta:</b></span></td>");
+									trtotal.append(td);
+									var td = $("<td colspan='2' style=' font-size: medium; padding:0 45px 0 0;' ><div align='right'><b><span>$</span><span id='sumaTotal'></span></b></div></td>");
+									trtotal.append(td);
+									$('#prestacionesTable').append(trtotal);
+									SumarColumna();
+								}
+
+								$('#prestaciones').show();
+								if (tratamiento == 0) {
+									$('.btn-pre-pagar').show();
+								}
+							})
+						}
+					});
+					$('.removePrestacion').css('zoom', '0.75');
+					{# agregarPrestacion($(this).data('id'));  ESTA ES LA FUNCIÓN QUE ESTOY REPLICANDO #}
+				});
+
+
+</script>
+<script src="{{ asset('js/ace.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/uncompressed/bootbox.js') }}"></script>
+{{ macroDependencias.datetime() }}
+{% endif %}

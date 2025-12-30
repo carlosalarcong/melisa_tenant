@@ -1,0 +1,25 @@
+{% if ValidaHistoricoPago is defined and ValidaHistoricoPago == true %}
+    <div id="PagoHistoricosDiv" class="widget-box ">{#collapsed#}
+        <div class="widget-header header-color-grey">
+            <div  style="text-align:left; vertical-align: middle" class="encabezadoDeListados">
+                <h8> <i class="icon-time icon-large text-left space"></i> Listado de Pagos Efectuados por Paciente</h8>
+                <div class="clearfix"></div>
+            </div>
+            <div class="widget-toolbar">
+                <a href="" data-action="collapse">
+                    <i class="icon-chevron-down icon-list-historicoPago icon-list-historico"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="widget-body">
+            <div class="widget-main no-padding">
+                <div class="content">
+                    <div id="table_report_wrapper" class="dataTables_wrapper">
+                        {% include 'RecaudacionBundle:InformacionHistoricaPaciente:_historialPagoPaciente.html.twig' %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}

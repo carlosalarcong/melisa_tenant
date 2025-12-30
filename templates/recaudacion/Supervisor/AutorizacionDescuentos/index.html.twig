@@ -1,0 +1,199 @@
+{% extends 'RecaudacionBundle:Supervisor:sublayout.html.twig' %}
+{% block contenedorMantenedor -%}
+	<div class="table-header">
+		Autorización de Descuentos
+		<div class="btn-group pull-right">
+			<a class="btn btn-mini" href="{{ path('Caja_Supervisor') }}">
+				<i class="icon-arrow-left"></i> Volver
+			</a>
+		</div>
+	</div>
+
+	{# Pestaña que muestra el plan vigente, planes futuros y planes no vigentes #}
+	<div class="tabbable">
+		<ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab4">
+			<li class="active">
+				<a data-toggle="tab" href="#home4">Diferencias En Espera</a>
+			</li>
+			<li class="">
+				<a data-toggle="tab" href="#profile4">Diferencias Rechazadas</a>
+			</li>
+			<li class="">
+				<a data-toggle="tab" href="#dropdown14">Diferencias Aprobadas</a>
+			</li>
+			<li class="">
+				<a data-toggle="tab" href="#sinautorizacion">Diferencias no requieren Autorización</a>
+			</li>
+		</ul>
+		<div class="tab-content">
+			<div id="home4" class="tab-pane active">
+				<table id="table_report" class="table table-bordered table-condensed table-hover">
+					<thead>
+						<tr>
+							<th>Fecha de Solicitud</th>
+							<th>Cajero</th>
+							<th>Total Cuenta</th>
+							<th>Total Descuento</th>
+							<th>Total Cuenta con Descuento</th>
+							<th class="sorting_disabled"></th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for espera in enEspera %}
+							<tr>
+								<td><small class="hide">{{ espera.fechaSolicitud|date('Ymd')}}</small>{{ espera.fechaSolicitud|date('d-m-Y') }}</td>
+								<td>{{ espera.idUsuarioSolicitud.nombreUsuario }}</td>
+								<td>${{ espera.totalCuenta | number_format ( 0 ,  ',' ,  '.' ) }}</td>
+								<td>${{ espera.totalDescuento | number_format ( 0 ,  ',' ,  '.' ) }}</td>
+								<td>${{ espera.totalCuentaConDescuento | number_format ( 0 ,  ',' ,  '.' ) }}</td>
+								<td class="span2">
+									<div class="btn-group">
+										<a class="btn btn-mini btn-success aprueba" title="Autorizar Descuento" href="{{ path('Caja_Supervisor_AutorizacionDescuentosAprueba', {'idDiferencia': espera.id }) }}">
+											<i class="icon-check-sign"></i>Si
+										</a>
+
+										<a class="btn btn-mini btn-danger rechaza" title="No Autorizar Descuento" href="{{ path('Caja_Supervisor_AutorizacionDescuentosRechaza', {'idDiferencia': espera.id }) }}">
+											<i class="icon-remove-sign"></i>No
+										</a>
+									</div>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+
+			<div id="profile4" class="tab-pane">
+				<table id="table_report2" class="table table-bordered table-condensed table-hover">
+					<thead>
+						<tr>
+							<th>Fecha Anulación</th>
+							<th>Cajero</th>
+							<th>Total Cuenta</th>
+							<th>Total Descuento</th>
+							<th>Total Cuenta con Descuento</th>
+							<th class="sorting_disabled"></th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for rechazada in rechazadas %}
+							<tr class="error">
+								<td><small class="hide">{{ rechazada.fechaAnulacion|date('Ymd')}}</small>{{ rechazada.fechaAnulacion|date('d-m-Y') }}</td>
+								<td>{{ rechazada.idUsuarioAnulacion.nombreUsuario }}</td>
+								<td>${{ rechazada.totalCuenta | number_format ( 0 ,  ',' ,  '.' ) }}</td>
+								<td>${{ rechazada.totalDescuento | number_format ( 0 ,  ',' ,  '.' ) }}</td>
+								<td>${{ rechazada.totalCuentaConDescuento | number_format ( 0 ,  ',' ,  '.' ) }}</td>
+								<td class="span2">
+									<div class="btn-group">
+										<a class="btn btn-mini btn-info show" title="Información" href="{{ path('Caja_Supervisor_AutorizacionDescuentosVer', {'idDiferencia': rechazada.id }) }}">
+											<i class="icon-eye-open"></i>
+										</a>
+										<a class="btn btn-mini btn-success aprueba" title="Autorizar Descuento" href="{{ path('Caja_Supervisor_AutorizacionDescuentosAprueba', {'idDiferencia': rechazada.id }) }}">
+											<i class="icon-check-sign"></i>Si
+										</a>
+									</div>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+
+			<div id="dropdown14" class="tab-pane">
+				<table id="table_report3" class="table table-bordered table-condensed table-hover">
+					<thead>
+						<tr>
+							<th>Fecha Autorización</th>
+							<th>Cajero</th>
+							<th>Total Cuenta</th>
+							<th>Total Descuento</th>
+							<th>Total Cuenta con Descuento</th>
+							<th class="sorting_disabled"></th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for autorizada in autorizadas %}
+							<tr class="success">
+								<td><small class="hide">{{ autorizada.fechaAutorizacion|date('Ymd')}}</small>{{ autorizada.fechaAutorizacion|date('d-m-Y') }}</td>
+								<td>{{ autorizada.idUsuarioAutorizacion.nombreUsuario }}</td>
+								<td>${{ autorizada.totalCuenta | number_format ( 0 ,  ',' ,  '.' ) }}</td>
+								<td>${{ autorizada.totalDescuento | number_format ( 0 ,  ',' ,  '.' ) }}</td>
+								<td>${{ autorizada.totalCuentaConDescuento | number_format ( 0 ,  ',' ,  '.' ) }}</td>
+								<td class="span2">
+									<div class="btn-group">
+										<a class="btn btn-mini btn-info show" title="Información" href="{{ path('Caja_Supervisor_AutorizacionDescuentosVer', {'idDiferencia': autorizada.id }) }}">
+											<i class="icon-eye-open"></i>
+										</a>
+									</div>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+
+			<div id="sinautorizacion" class="tab-pane">
+				<table id="table_report3" class="table table-bordered table-condensed table-hover">
+					<thead>
+						<tr>
+							<th>Fecha Autorización</th>
+							<th>Cajero</th>
+							<th>Total Cuenta</th>
+							<th>Total Descuento</th>
+							<th>Total Cuenta con Descuento</th>
+							<th class="sorting_disabled"></th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for autorizada in sinAutorizacion %}
+							<tr class="success">
+								<td><small class="hide">{{ autorizada.fechaAutorizacion|date('Ymd')}}</small>{{ autorizada.fechaAutorizacion|date('d-m-Y') }}</td>
+								<td>{{ autorizada.idUsuarioSolicitud.nombreUsuario }}</td>
+								<td>${{ autorizada.totalCuenta | number_format ( 0 ,  ',' ,  '.' ) }}</td>
+								<td>${{ autorizada.totalDescuento | number_format ( 0 ,  ',' ,  '.' ) }}</td>
+								<td>${{ autorizada.totalCuentaConDescuento | number_format ( 0 ,  ',' ,  '.' ) }}</td>
+								<td class="span2">
+									<div class="btn-group">
+										<a class="btn btn-mini btn-info show" title="Información" href="{{ path('Caja_Supervisor_AutorizacionDescuentosVer', {'idDiferencia': autorizada.id }) }}">
+											<i class="icon-eye-open"></i>
+										</a>
+										<a class="btn btn-mini btn-danger rechaza" title="Anular Descuento" href="{{ path('Caja_Supervisor_AutorizacionDescuentosRechaza', {'idDiferencia': autorizada.id }) }}">
+											<i class="icon-remove-sign"></i>Cancelar
+										</a>
+									</div>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="table-footer">
+		<div class="btn-group pull-right">
+			<a class="btn btn-mini" href="{{ path('Caja_Supervisor') }}">
+				<i class="icon-arrow-left"></i> Volver
+			</a>
+		</div>
+	</div>
+
+	<div class="modalVer hide"></div>
+{% endblock %}
+{% block scripts -%}
+	<script src="{{ asset('js/bootbox.min.js') }}"></script>
+	<script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
+	<script src="{{ asset('js/jquery.dataTables.bootstrap.js') }}"></script>
+	<script src="{{ asset('js/uncompressed/Caja/fnCommon.js') }}"></script>
+	<script type="text/javascript">
+	$(document).on('ready', function(){
+		$('.menuSUpervisor').removeClass('active');
+		$('#AutorizacionDescuentos').addClass('active');
+
+		$('#table_report, #table_report2, #table_report3').dataTable({
+			"oLanguage": {
+				"sUrl": "{{ asset('js/datatables/dataTables.es.txt') }}"
+			}
+		});
+	});
+	</script>
+{% endblock %}

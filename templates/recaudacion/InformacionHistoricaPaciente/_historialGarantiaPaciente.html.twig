@@ -1,0 +1,740 @@
+{{ form_start(adjuntoForm, {"attr": {"id": "form", "class": "form-Adjunto"}}) }}
+<table id="table_report_history" class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+        <th>Atención</th>
+        {#{% if coreApi == 0 %}
+                <th>Nombre Paciente</th>
+            {% endif %}#}
+        <th>Fecha Atención</th>
+        <th>Financiador</th>
+        <th>Estado Cuenta</th>
+        <th>Tipo Atención
+            <div class="hide"> {{ VarCajaHoy }}</div>
+        </th>
+        {#            {% if coreApi == 1 %}#}
+        <th width="250px" class="remove-botones-index-historial-pago">Adjunto</th>
+        {#            {% endif %}#}
+        <th class="sorting_disabled span2"></th>
+    </tr>
+    </thead>
+    <tbody>
+
+    {% for individual in historico if  individual.estadoPagoCuenta != 0 and individual.estadoPagoCuenta != 3 %}
+        {% if individual.idboleta is null %}
+            {% if individual.estadoPagoCuenta == 2 %}
+                <tr style=" background-color: #FFC">
+            {% else %}
+                <tr>
+            {% endif %}
+            <td>{{ individual.evento }}</td>
+            {#{% if coreApi == 0 %}
+                    <td>{% if individual.nombreMascota is null %}<em>No
+                            Mascota</em>{% else %}{{ individual.nombreMascota }}{% endif %}</td>
+                {% endif %}#}
+            <td>
+                <div class="hidden">{{ individual.fechaIngreso | date("m-d-Y H:i") }}</div> {{ individual.fechaIngreso | date("d-m-Y H:i") }}
+            </td>
+            <td> {{ individual.prevision }}  {% if individual.convenio %} &nbsp;/&nbsp;{{ individual.convenio }} {% endif %}  </td>
+            {% if individual.estadoPagoCuenta == 2 %}
+                <td> {{ individual.nombrePagoCuenta }} </td>
+            {% else %}
+                <td> {{ individual.estadoCuenta }} </td>
+            {% endif %}
+            <td> {{ individual.tipoAtencion }} </td>
+            {#                {% if coreApi == 1 %}#}
+            <td width="250px" class="remove-botones-index-historial-pago">
+                {% include 'CajaBundle:HistorialPagoPaciente:adjuntoBotones.html.twig' %}
+            </td>
+            {#                {% endif %}#}
+            <td class="span2">
+                <div class="btn-group">
+                    <a title="Ver Detalle Atención" class="btn btn-mini btn-mini-doc Print-Detalle-Atencion"
+                       href="{{ path("Caja_PostPago_PrintDetalleAtencion", { 'id': individual.idPaciente }) }}">
+                        <i class="icon-stethoscope icon-large"></i>
+                    </a>
+
+                    <a title="Ver Detalle Pago" class="btn btn-mini btn-mini-doc btn-primary Print-Detalle-Pago"
+                       href="{{ path('Caja_PostPago_PrintDetallePago', { 'id':  individual.idPago }) }}">
+                        <i class="icon-dollar icon-large"></i>
+                    </a>
+
+                    {% if individual.urlDte is not null or individual.dataPendiente is not null %}
+                        <a onclick="javascript:enviarAImprimirBoleta({{ individual|json_encode }})" role="button"
+                           class="btn btn-mini btn-light"
+                           title="Descargar Documentos Electrónicos">
+                            {% if individual.dataPendiente|length > 0 %}
+                                <i class="icon-file-text icon-large" id="boton{{ individual.evento }}" style="color: red"></i>
+                            {% else %}
+                                <i class="icon-file-text icon-large" id="boton{{ individual.evento }}" style="color: green"></i>
+                            {% endif %}
+                        </a>
+                    {% endif %}
+
+                    {% if individual.estadoPagoCuenta != 2 %}
+
+                        <a class="btn btn-mini btn-light" >
+                            <i class=" icon-ok-sign icon-large"></i>
+                        </a>
+                        {% if VarCajaHoy ==  individual.idCaja %}
+                            {% if app.user.tienePerfil('CAJA_ANULAR_PAGO') and individual.fechaAtencion == null %}
+                                <a title="Anular Pago" class="btn btn-mini btn-danger anular"
+                                   data-id="{{ individual.idPaciente }}"
+                                   href="{{ path('Caja_PostPago_AnulacionPagoCaja', { 'id':  individual.idPago }) }}">
+                                    <i class="icon-remove icon-large"></i>
+                                </a>
+                            {% else %}
+                                {% if individual.fechaAtencion != null %}
+                                    <a title="Atención realizada el {{ individual.fechaAtencion | date("m-d-Y") }} a las {{individual.fechaAtencion | date ('H:i ')}}" class="btn btn-mini btn-light">
+                                        <i class="icon-remove icon-large"></i>
+                                    </a>
+                                {% else %}
+                                    <a class="btn btn-mini btn-light">
+                                        <i class="icon-remove icon-large"></i>
+                                    </a>
+                                {% endif %}
+                            {% endif %}
+                        {% else %}
+                            <a class="btn btn-mini btn-light">
+                                <i class="icon-remove icon-large"></i>
+                            </a>
+                        {% endif %}
+                    {% endif %}
+
+                </div>
+            </td>
+
+            </tr>
+        {% endif %}
+    {% endfor %}
+
+    {% for individual in historico if  individual.estadoPagoCuenta == 0 %}
+        {% if individual.idboleta is null %}
+
+            <tr class="alert alert-danger">
+
+                <td>{{ individual.evento }}</td>
+                {#{% if coreApi == 0 %}
+                    <td>{% if individual.nombreMascota is null %}<em>No
+                            Mascota</em>{% else %}{{ individual.nombreMascota }}{% endif %}</td>
+                {% endif %}#}
+                <td>
+                    <div class="hidden">{{ individual.fechaIngreso | date("m-d-Y H:i") }}</div> {{ individual.fechaIngreso | date("d-m-Y H:i") }}
+                </td>
+                <td> {{ individual.prevision }}  {% if individual.convenio %} &nbsp/&nbsp{{ individual.convenio }} {% endif %}  </td>
+                {% if individual.estadoPagoCuenta == 2 %}
+                    <td> {{ individual.nombrePagoCuenta }} </td>
+                {% else %}
+                    <td> {{ individual.estadoCuenta }} </td>
+                {% endif %}
+                <td> {{ individual.tipoAtencion }} </td>
+{#                {% if coreApi == 1 %}#}
+                    <td width="250px" class="remove-botones-index-historial-pago">
+                        {% include 'CajaBundle:HistorialPagoPaciente:adjuntoBotones.html.twig' %}
+                    </td>
+{#                {% endif %}#}
+                <td class="span2">
+                    <div class="btn-group">
+
+                        <a title="Ver Detalle Atención"
+                           class="btn btn-mini btn-mini-doc Print-Detalle-Atencion remove-botones-index-historial-pago"
+                           href="{{ path("Caja_PostPago_PrintDetalleAtencion", { 'id': individual.idPaciente }) }}">
+                            <i class="icon-stethoscope icon-large"></i>
+                        </a>
+
+                        <a title="Ver Detalle Pago" class="btn btn-mini btn-mini-doc btn-primary Print-Detalle-Pago"
+                           href="{{ path('Caja_PostPago_PrintDetallePago', { 'id':  individual.idPago }) }}">
+                            <i class="icon-dollar icon-large"></i>
+                        </a>
+                        <a class="btn btn-mini btn-light ">
+                            <i class="icon-file-text icon-large"></i>
+                        </a>
+                        <a class="btn btn-mini btn-light ">
+                            <i class="icon-file-text icon-large"></i>
+                        </a>
+                        <a class="btn btn-mini btn-light ">
+                            <i class="icon-file-text icon-large"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        {% endif %}
+    {% endfor %}
+
+    {% for individual in historicoConBoleta if individual.estadoPagoCuenta is defined and individual.estadoPagoCuenta != 0 and individual.estadoPagoCuenta != 3 %}
+        <tr>
+            <td>{{ individual.evento }}</td>
+            {% if coreApi == 0 %}
+                <td>{% if individual.nombreMascota is null %}<em>No
+                        Mascota</em>{% else %}{{ individual.nombreMascota }}{% endif %}</td>
+            {% endif %}
+            <td>
+                <div class="hidden">{{ individual.fechaIngreso | date("m-d-Y H:i") }}</div> {{ individual.fechaIngreso | date("d-m-Y H:i") }}
+            </td>
+            <td> {{ individual.prevision }}  {% if individual.convenio %} &nbsp/&nbsp{{ individual.convenio }} {% endif %}  </td>
+            <td> {{ individual.estadoCuenta }} </td>
+            <td> {{ individual.tipoAtencion }} </td>
+            {% if coreApi == 1 %}
+                <td width="250px" class="remove-botones-index-historial-pago">
+                    {% include 'CajaBundle:HistorialPagoPaciente:adjuntoBotones.html.twig' %}
+                </td>
+            {% endif %}
+            <td class="span2">
+                <div class="btn-group">
+                    <a title="Ver Detalle Atención"
+                       class="btn btn-mini  btn-mini-doc Print-Detalle-Atencion remove-botones-index-historial-pago"
+                       href="{{ path("Caja_PostPago_PrintDetalleAtencion", { 'id': individual.idPaciente }) }}">
+                        <i class="icon-stethoscope icon-large"></i>
+                    </a>
+                    <a title="Ver Detalle Pago" class="btn btn-mini btn-mini-doc btn-primary Print-Detalle-Pago"
+                       href="{{ path('Caja_PostPago_PrintDetallePago', { 'id':  individual.idPago }) }}">
+                        <i class="icon-dollar icon-large"></i>
+                    </a>
+                    <a title="Ver Comprobante de Pago"
+                       class="btn btn-mini btn-mini-doc btn-info Print-Detalle-Boleta"
+                       href="{{ path("Caja_PostPago_PrintDetalleBoleta", { 'id': individual.idPaciente }) }}">
+                        <i class="icon-file-text icon-large"></i>
+                    </a>
+                    {% if individual.dataPendiente is defined %}
+                        {% if individual.urlDte is not null or individual.dataPendiente is not null %}
+                            <a href="#myModal_urlDte{{ individual.evento }}" role="button"
+                               class="btn btn-mini btn-light"
+                               data-toggle="modal"
+                               title="Descargar Boletas">
+
+                                {% if individual.dataPendiente|length > 0 %}
+                                    <i class="icon-file-text icon-large" id="boton{{ individual.evento }}" style="color: red"></i>
+                                {% else %}
+                                    <i class="icon-file-text icon-large" id="boton{{ individual.evento }}" style="color: green"></i>
+                                {% endif %}
+                            </a>
+
+
+                            <div id="myModal_urlDte{{ individual.evento }}" class="modal fade" tabindex="-1"
+                                 role="dialog"
+                                 data-backdrop="false">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header table-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                                ×
+                                            </button>
+                                            <h5 class="modal-title">Descargar Documentos Electrónicos</h5>
+                                        </div>
+                                        <div class="modal-body">
+
+                                            <table class="table table-striped" style="font-size: 13px">
+                                                <tbody>
+                                                {% set i = ( i | default(0) ) + 1 %}
+                                                {% for urlDte in individual.urlDte if urlDte is not null %}
+                                                    <tr>
+                                                        <th>Boleta {{ i }}</th>
+                                                        <td><a title="Descargar Documento Electrónico"
+                                                               class="btn btn-mini btn-light "
+                                                               href="{{ urlDte }}" target="_blank">
+                                                                <i class="icon-file-text icon-large"
+                                                                   style="color:green"></i>
+                                                            </a></td>
+                                                    </tr>
+                                                {% endfor %}
+                                                {% for dataPendiente in individual.dataPendiente if dataPendiente is not null %}
+                                                    <tr>
+                                                        <th>Documento Electrónico {{ i }}</th>
+                                                        <td><a title="Reenviar Documento Electrónico"
+                                                               class="btn btn-mini btn-light "
+                                                               onclick="javascript:ReenviarDte({{ dataPendiente }}, {{ historicoConBoleta.idEmpresa }}, {{ individual.evento }})"
+                                                               id="a_pagoCuentaDetalle_{{ dataPendiente }}">
+                                                                <i class="icon-file-text icon-large" style="color:red"
+                                                                   id="i_pagoCuentaDetalle_{{ dataPendiente }}"></i>
+                                                            </a></td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-mini btn-secondary"
+                                                    data-dismiss="modal">
+                                                Cerrar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if individual.estadoPagoCuenta == 2 %}
+                        <a class="btn btn-mini btn-success ">
+                            <i class=" icon-ok-sign icon-large"></i>
+                        </a>
+                    {% else %}
+                        <a class="btn btn-mini btn-light">
+                            <i class=" icon-ok-sign icon-large"></i>
+                        </a>
+                    {% endif %}
+
+                    {% if VarCajaHoy ==  individual.idCaja %}
+                        {% if app.user.tienePerfil('CAJA_ANULAR_PAGO') %}
+                            <a title="Anular Pago" class="btn btn-mini btn-danger anular"
+                               data-id="{{ individual.idPaciente }}"
+                               href="{{ path('Caja_PostPago_AnulacionPagoCaja', { 'id':  individual.idPago }) }}">
+                                <i class="icon-remove icon-large"></i>
+                            </a>
+                        {% else %}
+                            <a class="btn btn-mini btn-light">
+                                <i class="icon-remove icon-large"></i>
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <a class="btn btn-mini btn-light">
+                            <i class="icon-remove icon-large"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+    {% endfor %}
+    {% for individual in historicoConBoleta if individual.estadoPagoCuenta is defined and individual.estadoPagoCuenta == 0 %}
+        <tr class="alert alert-danger">
+            <td>{{ individual.evento }}</td>
+            {% if coreApi == 0 %}
+                <td>{% if individual.nombreMascota is null %}<em>No
+                        Mascota</em>{% else %}{{ individual.nombreMascota }}{% endif %}</td>
+            {% endif %}
+            <td>
+                <div class="hidden">{{ individual.fechaIngreso | date("m-d-Y H:i") }}</div> {{ individual.fechaIngreso | date("d-m-Y H:i") }}
+            </td>
+            <td> {{ individual.prevision }}  {% if individual.convenio %} &nbsp/&nbsp{{ individual.convenio }} {% endif %}  </td>
+            <td> {{ individual.estadoCuenta }} </td>
+            <td> {{ individual.tipoAtencion }} </td>
+            {% if coreApi == 1 %}
+                <td width="250px" class="remove-botones-index-historial-pago">
+                    {% include 'CajaBundle:HistorialPagoPaciente:adjuntoBotones.html.twig' %}
+                </td>
+            {% endif %}
+            <td class="span2">
+                <div class="btn-group">
+                    <a title="Ver Detalle Atención" class="btn btn-mini  btn-mini-doc Print-Detalle-Atencion"
+                       href="{{ path("Caja_PostPago_PrintDetalleAtencion", { 'id': individual.idPaciente }) }}">
+                        <i class="icon-stethoscope icon-large"></i>
+                    </a>
+                    <a title="Ver Detalle Pago" class="btn btn-mini btn-mini-doc btn-primary Print-Detalle-Pago"
+                       href="{{ path('Caja_PostPago_PrintDetallePago', { 'id':  individual.idPago }) }}">
+                        <i class="icon-dollar icon-large"></i>
+                    </a>
+                    <a title="Ver Boleta de Pago" class="btn btn-mini btn-mini-doc btn-info Print-Detalle-Boleta"
+                       href="{{ path("Caja_PostPago_PrintDetalleBoleta", { 'id': individual.idPaciente }) }}">
+                        <i class="icon-file-text icon-large"></i>
+                    </a>
+
+                    <a class="btn btn-mini btn-light">
+                        <i class=" icon-ok-sign icon-large"></i>
+                    </a>
+                    <a class="btn btn-mini btn-light">
+                        <i class=" icon-ok-sign icon-large"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<div class="modalAnular hide"></div>
+<div class="modalVerAA hide"></div>
+<div class="hide">{{ form_widget(adjuntoForm.archivo) }}</div>
+<div class="hide">{{ form_widget(adjuntoForm.idPaciente) }}</div>
+{{form_end(adjuntoForm)}}
+
+{% block scripts %}
+    <script type="text/javascript" src="{{ asset('bundles/hermes/js/Agenda/DacionHoras/fnReenviarDte.js') }}"></script>
+    <script>
+        var idPacientePreSubir = null;
+        var archivo;
+        var countErrorInt = 0;
+        var countError = null;
+        var arrStringMensajes = {
+            cargando: 'Cargando...',
+            eliminando: 'Eliminando...',
+            exitoSubido: 'Archivo Guardado Exitosamente.',
+            exitoEliminado: 'Archivo Eliminado Exitosamente.',
+            mensajeCampoVacio: 'Debe adjuntar un Archivo.',
+            mensajeErrorTamano: 'Tamaño No Valido, Valide Archivo.',
+            mensajeErrorFormato: 'Formato No Valido, Valide Archivo.',
+            mensajeErrorSubida: 'Ocurrio un Error en guardar Archivo, Intente Nuevamente.',
+            mensajeErrorEliminado: 'Ocurrio un Error mientras eliminaba Archivo, Intente Nuevamente.',
+            mensajeErrorAbrir: 'Ocurrio un Error mientras abría Archivo, Intente Nuevamente.'
+        };
+
+        function mostrarMensaje(tipo) {
+            if (!countError) {
+                $('.mensajeAlerta').hide();
+                $('.mensajeAlerta').html('');
+            }
+            var saltoLinea = '';
+            var codeHtml = '';
+
+            switch (tipo) {
+                case 'cargando':
+                    codeHtml = construyeMensaje('cargando', arrStringMensajes.cargando);
+                    $('#mensaje' + idPacientePreSubir).html(codeHtml).show();
+                    countError = null;
+                    break;
+                case 'eliminando':
+                    codeHtml = construyeMensaje('cargando', arrStringMensajes.eliminando);
+                    $('#mensaje' + idPacientePreSubir).html(codeHtml).show();
+                    countError = null;
+                    break;
+                case 'exitoSubido':
+                    codeHtml = construyeMensaje('exito', arrStringMensajes.exitoSubido);
+                    $('#mensaje' + idPacientePreSubir).html(codeHtml).show();
+                    countError = null;
+                    break;
+                case 'exitoEliminado':
+                    codeHtml = construyeMensaje('exito', arrStringMensajes.exitoEliminado);
+                    $('#mensaje' + idPacientePreSubir).html(codeHtml).show();
+                    countError = null;
+                    break;
+                case 'mensajeCampoVacio':
+                    codeHtml = construyeMensaje('error', arrStringMensajes.mensajeCampoVacio);
+                    $('#mensaje' + idPacientePreSubir).html(codeHtml).show();
+                    countError = null;
+                    break;
+                case 'mensajeErrorFormato':
+                    codeHtml = construyeMensaje('error', arrStringMensajes.mensajeErrorFormato)
+                    $('#mensaje' + idPacientePreSubir).html(codeHtml).show();
+                    countError = arrStringMensajes.mensajeErrorFormato;
+                    break;
+                case 'mensajeErrorTamano':
+                    if (countError) {
+                        var saltoLinea = mensajeErrorFormato + "<div class='clearfix'></div>";
+                    }
+                    codeHtml = construyeMensaje('error', saltoLinea + arrStringMensajes.mensajeErrorTamano);
+                    $('#mensaje' + idPacientePreSubir).html(codeHtml).show();
+                    countError = null;
+                    break;
+                case 'errorSubida':
+                    codeHtml = construyeMensaje('error', arrStringMensajes.errorSubida);
+                    $('#mensaje' + idPacientePreSubir).html(codeHtml).show();
+                    countError = null;
+                    break;
+                case 'errorEliminado':
+                    codeHtml = construyeMensaje('error', arrStringMensajes.errorEliminado);
+                    $('#mensaje' + idPacientePreSubir).html(codeHtml).show();
+                    countError = null;
+                    break;
+                case 'mensajeErrorAbrir':
+                    codeHtml = construyeMensaje('error', arrStringMensajes.mensajeErrorAbrir);
+                    $('#mensaje' + idPacientePreSubir).html(codeHtml).show();
+                    countError = null;
+                    break;
+
+            }
+        }
+
+        function construyeMensaje(tipo, mensaje) {
+            switch (tipo) {
+                case 'cargando':
+                    return "<i class ='icon-spinner icon-spin blue icon-large'> </i><span class='blue'> " + mensaje + "</span>";
+                case 'exito':
+                    return "<i class='icon-ok green icon-large'></i> <span class='green'> " + mensaje + "</span>";
+                case 'error':
+                    return "<i class='icon-info-sign red icon-large''> </i><span class='red'> " + mensaje + "</span>";
+            }
+        }
+
+        $(document).ready(function () {
+            {% if app.user.tienePerfil('CAJA_ANULAR_PAGO') %}
+            $(".anular").on('click', function (e) {
+                $(".modalAnular").html('');
+                e.preventDefault();
+                var href = $(this).attr('href');
+                var ruta = Routing.generate("Caja_Pregunta_Pago_esImed");
+                var data = {paciente: $(this).data('id')};
+                $.ajax({
+                    type: 'get',
+                    url: ruta,
+                    data: data,
+                    success: function (datar) {
+                        if (datar == 0) {
+                            var tipoMensaje = "el Pago seleccionado";
+                            var tipoboton = "Anular Pago";
+                            console.log(datar);
+                            $(this).closest('.modal').modal('hide');
+                            anulacionPago(href, tipoMensaje, tipoboton);
+                        } else {
+                            var tipoMensaje = "un Pago que registra un Bono Electrónico IMED, esto anulará a su vez el Bono Generado";
+                            var tipoboton = "Anular Pago y Bono Electrónico";
+                            console.log(datar);
+                            $(this).closest('.modal').modal('hide');
+                            anulacionPago(href, tipoMensaje, tipoboton);
+                        }
+                    }
+                });
+            });
+            {% endif %}
+
+        });
+
+        function anulacionPago(href, tipomensaje, tipoboton) {
+            bootbox.dialog(
+                "<div class='alert alert-block alert-danger loadAnulaPago'>" +
+                "<br><strong>Anulará " + tipomensaje + "</strong>,<br>¿Está seguro de querer continuar?." +
+                "</div>"
+                , [
+                    {
+                        "label": "Cancelar",
+                        "class": "btn btn-mini",
+                        "callback": function () {
+                        }
+                    },
+                    {
+                        "label": tipoboton,
+                        "class": "btn btn-mini btn-danger",
+                        "callback": function () {
+                            $(this).closest('.modal').modal('hide');
+                            bootbox.dialog(
+                                "<div class='alert alert-block alert-success loadAnulaPago'>" +
+                                "<div id='cargando'><br><br><br><center><h3><i class='icon-spinner icon-spin icon-large icon-4x'></i><div class='clearfix'></div><br><strong> Eliminando</strong></h3></center></div>" +
+                                "</div>");
+
+                            $.post(href, function (response) {
+                                var response = $.parseJSON(response);
+                                if (response.done == 1) {
+                                    $(this).closest('.modal').modal('hide');
+                                    var div = "<div class='alert alert-block alert-success'><p><strong><i class='icon-ok'></i> Anulado Correctamente</strong></p>";
+                                    creaListaHistorica();
+                                } else {
+                                    $(this).closest('.modal').modal('hide');
+                                    var div = "<div class='alert alert-block alert-danger'><p><strong><i class='icon-ok'></i> Se produjo un Error en Anulación</strong></p>";
+                                    creaListaHistorica();
+                                }
+                                $(this).closest('.modal').modal('hide');
+                                bootbox.dialog(div, [
+                                    {
+                                        "label": "Ok",
+                                        "class": "btn btn-mini btn-info",
+                                        "callback": function () {
+                                            if (response == 1) {
+                                                $(".modalAnular").html('');
+                                                $(".widget-box").removeClass("collapsed");
+                                                $('.icon-list-historico').attr('class', function () {
+                                                    return $(this).attr('class').replace('icon-chevron-down', 'icon-chevron-up');
+                                                }).delay(500);
+                                                bootbox.hideAll();
+                                            } else {
+                                                $(".modalAnular").html('');
+                                                bootbox.hideAll();
+                                            }
+                                        }
+                                    }
+                                ]);
+                            });
+                        }
+                    }
+                ]);
+        }
+
+
+        //Funciones para subir archivo PDF
+        $('#rebsol_hermesbundle_AdjuntoType_archivo').on('change', prepareUpload);
+
+        function SubirArchivo(idPaciente) {
+            $("#AdjuntoSuperior" + idPaciente).hide();
+            $("#AdjuntoInferiorSubir" + idPaciente).show();
+            $(".GrupoBotonesSuperiores").children().attr('disabled', true);
+        }
+
+        function AbrirArchivo(idPaciente) {
+            $("#AdjuntoSuperior" + idPaciente).hide();
+            $("#AdjuntoInferiorAbrir" + idPaciente).show();
+            $(".GrupoBotonesSuperiores").children().attr('disabled', true);
+        }
+
+        function CancelarAdjunto(idPaciente) {
+            $("#AdjuntoSuperior" + idPaciente).show();
+            $("#AdjuntoInferiorAbrir" + idPaciente + ", #AdjuntoInferiorSubir" + idPaciente + ", .mensajeAlerta").hide();
+            $(".GrupoBotonesSuperiores").children().attr('disabled', false);
+            idPacientePreSubir = null;
+        }
+
+        function prepareUpload(event) {
+            archivo = event.target.archivo;
+        }
+
+        function SubirArchivoServidor(idPaciente) {
+            idPacientePreSubir = idPaciente;
+            $('#rebsol_hermesbundle_AdjuntoType_idPaciente').val(idPaciente);
+            $('#rebsol_hermesbundle_AdjuntoType_archivo').submit();
+        }
+
+        function validaArchivo() {
+            if ($('#AdjuntoInferiorSubir' + idPacientePreSubir).is(':visible')) {
+                if ($('#rebsol_hermesbundle_AdjuntoType_archivo').val() == null || $('#rebsol_hermesbundle_AdjuntoType_archivo').val() == "") {
+                    mostrarMensaje('mensajeCampoVacio');
+                    countErrorInt = countErrorInt + 1;
+                } else {
+                    var file = $('#rebsol_hermesbundle_AdjuntoType_archivo')[0].files[0];
+
+                    if (comprueba_extension($('#rebsol_hermesbundle_AdjuntoType_archivo').val()) == false) {
+                        mostrarMensaje('mensajeErrorFormato');
+                        countErrorInt = countErrorInt + 1;
+                    }
+
+                    if (file.size > 400000000) {
+                        mostrarMensaje('mensajeErrorTamaño');
+                        countErrorInt = countErrorInt + 1;
+                    }
+                }
+
+                if (countErrorInt == 0) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+
+        }
+
+        function comprueba_extension(archivo) {
+            extensiones_permitidas = new Array(".doc", ".pdf");
+            extension = (archivo.substring(archivo.lastIndexOf("."))).toLowerCase();
+            //compruebo si la extensión está entre las permitidas
+            permitida = false;
+            for (var i = 0; i < extensiones_permitidas.length; i++) {
+                if (extensiones_permitidas[i] == extension) {
+                    permitida = true;
+                    break;
+                }
+            }
+            return permitida;
+        }
+
+        $('#form').on('submit', (function (event) {
+            if (validaArchivo() == false) {
+                countErrorInt = 0;
+                return false;
+            }
+            event.stopPropagation();
+            event.preventDefault();
+            $('#AdjuntoInferiorSubir' + idPacientePreSubir).children().attr('disabled', true);
+            $('#table_report_history_paginate').children().find('li').hide();
+            $(".GrupoBotonesInferiorSubir").hide();
+            mostrarMensaje('cargando');
+            formData = new FormData();
+            formData.append("idPaciente", $(form).find('#rebsol_hermesbundle_AdjuntoType_idPaciente').val());
+            formData.append("archivo", $(form).find('#rebsol_hermesbundle_AdjuntoType_archivo')[0].files[0]);
+
+            $.ajax({
+                url: $('#form').attr('action'),
+                type: "POST",
+                data: formData,
+                async: true,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (data) {
+                    var respuesta = $.parseJSON(data);
+                    if (respuesta.error == 0) {
+                        BotonesPostSubirArchivo();
+                        mostrarMensaje('exitoSubido');
+                        setTimeout(function () {
+                            $('#AdjuntoInferiorSubir' + idPacientePreSubir).children().attr('disabled', false);
+                            $('#table_report_history_paginate').children().find('li').show();
+                            CancelarAdjunto(idPacientePreSubir)
+                        }, 2000);
+                    } else {
+                        $('#AdjuntoInferiorSubir' + idPacientePreSubir).children().attr('disabled', false);
+                        $('#table_report_history_paginate').children().find('li').show();
+                        mostrarMensaje('errorSubida');
+                    }
+                    $('#rebsol_hermesbundle_AdjuntoType_idPaciente, #rebsol_hermesbundle_AdjuntoType_archivo').val('');
+                }
+            });
+        }));
+
+        function EliminarAdjunto(idPaciente) {
+            bootbox.dialog(
+                "<div class='alert alert-block alert-danger loadAnulaPago'>" +
+                "<strong>Eliminará el Archivo Actual, </strong>,<br>¿Está seguro?." +
+                "</div>"
+                , [
+                    {
+                        "label": "Cancelar",
+                        "class": "btn btn-mini",
+                        "callback": function () {
+                        }
+                    },
+                    {
+                        "label": "Aceptar",
+                        "class": "btn btn-mini btn-danger",
+                        "callback": function () {
+                            idPacientePreSubir = idPaciente;
+                            $('#AdjuntoInferiorAbrir' + idPacientePreSubir).children().attr('disabled', true);
+                            $('#table_report_history_paginate').children().find('li').hide();
+                            mostrarMensaje('eliminando');
+                            var ruta = Routing.generate("Caja_PostPago_EliminarPDF");
+                            var data = {idPaciente: idPacientePreSubir};
+                            $.ajax({
+                                type: 'POST',
+                                url: ruta,
+                                data: data,
+                                success: function (data) {
+                                    var respuesta = $.parseJSON(data);
+                                    if (respuesta.error == 0) {
+                                        BotonesPostEliminarArchivo();
+                                        mostrarMensaje('exitoEliminado');
+                                        $('#rebsol_hermesbundle_AdjuntoType_idPaciente, #rebsol_hermesbundle_AdjuntoType_archivo').val('');
+                                        setTimeout(function () {
+                                            $('#AdjuntoInferiorAbrir' + idPacientePreSubir).children().attr('disabled', false);
+                                            $('#table_report_history_paginate').children().find('li').show();
+                                            CancelarAdjunto(idPacientePreSubir)
+                                        }, 2000);
+                                    } else {
+                                        $('#AdjuntoInferiorAbrir' + idPacientePreSubir).children().attr('disabled', false);
+                                        $('#table_report_history_paginate').children().find('li').show();
+                                        mostrarMensaje('errorEliminado');
+                                    }
+                                }
+                            });
+                        }
+                    }
+                ]);
+        }
+
+        function AbrirAdjunto(idPaciente) {
+            idPacientePreSubir = idPaciente;
+            mostrarMensaje('cargando');
+            var ruta = Routing.generate("Caja_PostPago_AbrirPDF");
+            var data = {idPaciente: idPacientePreSubir};
+            $.ajax({
+                type: 'GET',
+                url: ruta,
+                data: data,
+                success: function (data) {
+                    var respuesta = $.parseJSON(data);
+                    if (respuesta.error == 0) {
+                        window.open(respuesta.url, '_blank');
+                        $('.mensajeAlerta').hide();
+                        $('.mensajeAlerta').html('');
+                    } else {
+                        mostrarMensaje('errorAbrir');
+                    }
+                }
+            });
+        }
+
+        function BotonesPostSubirArchivo() {
+            $('#botonSubir' + idPacientePreSubir).attr('onclick', null).removeClass('btn-success').addClass('btn-ligth');
+            $('#botonAbrir' + idPacientePreSubir).attr('onclick', 'javascript:AbrirArchivo(' + idPacientePreSubir + ')').removeClass('btn-ligth').addClass('btn-info');
+        }
+
+        function BotonesPostEliminarArchivo() {
+            $('#botonSubir' + idPacientePreSubir).attr('onclick', 'javascript:SubirArchivo(' + idPacientePreSubir + ')').removeClass('btn-ligth').addClass('btn-success');
+            $('#botonAbrir' + idPacientePreSubir).attr('onclick', null).removeClass('btn-info').addClass('btn-ligth');
+        }
+
+    </script>
+{% endblock %}

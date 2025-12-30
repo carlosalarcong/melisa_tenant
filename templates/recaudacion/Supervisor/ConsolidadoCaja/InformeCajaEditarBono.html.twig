@@ -1,0 +1,227 @@
+{#% extends 'RebsolHermesBundle::Comercial/layoutformulariosajax.html.twig' %#}
+{# {% extends 'CajaBundle:Supervisor:layoutformulariosajax.html.twig' %} #}
+{# {% block body - %} #}
+	<style>
+		.tabla-formaPago {
+			background-color: #B6B6B6;
+			color: #FFF;
+			font-size: 14px;
+			line-height: 38px;
+			padding-left: 12px;
+			margin-bottom: 1px;
+		}
+		.input_text_error {
+			width:148px;
+			height:20px;
+			line-height:20px;
+			border:2px solid #FF0000;
+			color:#FF0000;
+		}
+		body .modal{
+			width: 36%;
+			margin-left: 30%;
+		}
+		body .modal-body{
+			padding: 3px;
+			max-height: 92%;
+			height: 92%;
+		}
+		body .modal.fade.in {
+			top: 4%;
+			bottom: 4%;
+		}
+	</style>
+	{% if informacionPaciente is not empty %}
+		{% set dia = informacionPaciente[0].fecha|date('l') %}
+		{% if dia == "Monday" %}
+			{% set dia = "Lunes" %}
+		{% elseif dia == "Tuesday" %}
+			{% set dia = "Martes" %}
+		{% elseif dia == "Wednesday" %}
+			{% set dia = "Miercoles" %}
+		{% elseif dia == "Thursday" %}
+			{% set dia = "Jueves" %}
+		{% elseif dia == "Friday" %}
+			{% set dia = "Viernes" %}
+		{% elseif dia == "Saturday" %}
+			{% set dia = "Sabado" %}
+		{% elseif dia == "Sunday" %}
+			{% set dia = "Domingo" %}
+		{% endif %}
+	{% endif %}
+	{% if informacionPaciente is not empty %}
+		{% set mes = informacionPaciente[0].fecha|date('F') %}
+		{% if mes == "January" %}
+			{% set mes = "Enero" %}
+		{% elseif mes == "February" %}
+			{% set mes = "Febrero" %}
+		{% elseif mes == "March" %}
+			{% set mes = "Marzo" %}
+		{% elseif mes == "April" %}
+			{% set mes = "Abril" %}
+		{% elseif mes == "May" %}
+			{% set mes = "Mayo" %}
+		{% elseif mes == "June" %}
+			{% set mes = "Junio" %}
+		{% elseif mes == "July" %}
+			{% set mes = "Julio" %}
+		{% elseif mes == "August" %}
+			{% set mes = "Agosto" %}
+		{% elseif mes == "September" %}
+			{% set mes = "Septiembre" %}
+		{% elseif mes == "October" %}
+			{% set mes = "Octubre" %}
+		{% elseif mes == "November" %}
+			{% set mes = "Noviembre" %}
+		{% elseif mes == "December" %}
+			{% set mes = "Diciembre" %}
+		{% endif %}
+	{% endif %}
+	<div class="table-header">
+		Caja {% if informacionPaciente[0] is defined %} {{  informacionPaciente[0].nombreCajero|title }} {{  informacionPaciente[0].apellidoPaternoCajero|title }} {{  informacionPaciente[0].apellidoMaternoCajero|title }} {% endif %}
+		- Día {% if dia is defined %} {{  dia }} {% endif %}  {% if informacionPaciente[0] is defined %} {{  informacionPaciente[0].fecha|date('d') }} de {{  mes }} de  {{  informacionPaciente[0].fecha|date('Y') }} {% endif %}
+	</div>
+	<form id="edit_form" class="form-horizontal" action="{{  path('Caja_Supervisor_ConsolidadoCaja_ActualizarBono', { 'idPago': idPago }) }}" method="post">
+		<input type="hidden" name="_method" value="post" />
+		<div class="tablaInformacion">
+			<table class="table">
+				<tr>
+					<th>
+						{% if informacionPaciente[0] is defined %} {{ informacionPaciente[0].nombreDocumento }} {% endif %} {% if coreApi == 1 %}
+						Paciente
+					{% else %}
+						Cliente
+					{% endif %}
+				</th>
+				<td>
+					{% if informacionPaciente[0] is defined %} {{ informacionPaciente[0].identificacionExtranjero }}  {% endif %}
+				</td>
+			</tr>
+			{% if coreApi == 0 %}
+				<tr>
+					<th>Nombre Cliente</th>
+					<td>
+						{% if informacionPaciente[0] is defined %} {{ informacionPaciente[0].nombreCliente|title }} {% endif %}
+					</td>
+				</tr>
+			{% endif %}
+			<tr>
+				<th>Nombre Paciente</th>
+				<td>
+					{% if informacionPaciente[0] is defined %} {{ informacionPaciente[0].nombrePaciente|title }} {% endif %}
+				</td>
+			</tr>
+			<tr>
+				<th>Monto</th>
+				<td>
+					{% if informacionPaciente[0] is defined %} {{ informacionPaciente[0].monto }} {% endif %}
+				</td>
+			</tr>
+			<tr>
+				<th>Financiador</th>
+				<td>
+					{% if informacionPaciente[0] is defined %} {{ informacionPaciente[0].prevision|title }} {% endif %}
+				</td>
+			</tr>
+			<tr>
+				<th>Médico</th>
+				<td>
+					{% if informacionPaciente[0] is defined %}
+						{{ informacionPaciente[0].nombreProfesional|title }} {{ informacionPaciente[0].apellidoPaternoProfesional|title }} {{ informacionPaciente[0].apellidoMaternoProfesional|title }}
+					{% endif %}
+				</td>
+			</tr>
+		</table>
+	</div>
+	<br>
+	<div class="table-header">
+		Formas de Pago
+	</div>
+	<table>
+		{% if Lasik == 0 and Imed == 0 %}
+			<tr>
+				{% for listadoMediosPago in listadoMediosPagos %}
+					<div class="tabla-formaPago">
+						{{ listadoMediosPago.nombre|title }}
+					</div>
+					{% if (ChequeFecha >= 2) and (listadoMediosPago.id == 7) %}
+						{% for cantidad in cantidades7 %}
+							<div>
+								{% include listadoMediosPago.ruta %}
+							</div>
+						{% endfor %}
+					{% elseif (ChequeDia >= 2) and (listadoMediosPago.id == 8) %}
+						{% for cantidad in cantidades8 %}
+							<div>
+								{% include listadoMediosPago.ruta %}
+							</div>
+						{% endfor %}
+					{% elseif (BonoElectronico >= 2) and (listadoMediosPago.id == 3) %}
+						{% for cantidad in cantidades3 %}
+							<div>
+								{% include listadoMediosPago.ruta %}
+							</div>
+						{% endfor %}
+					{% elseif (BonoManual >= 2) and (listadoMediosPago.id == 5) %}
+						{% for cantidad in cantidades5 %}
+							<div>
+								{% include listadoMediosPago.ruta %}
+							</div>
+						{% endfor %}
+					{% else %}
+						<div>
+							{% include listadoMediosPago.ruta %}
+						</div>
+					{% endif %}
+				{% endfor %}
+			</tr>
+		{% else %}
+			{% for listadoMediosPago in listadoOtrosMedios %}
+				<div class="tabla-formaPago">
+					{{ listadoMediosPago.nombre|title }}
+				</div>
+				<div>
+					{% include listadoMediosPago.ruta %}
+				</div>
+			{% endfor %}
+		{% endif %}
+	</table>
+	<script type="text/javascript">
+		{#Script que bloquea letras y símbolos, sólo permite números.#}
+		$('.Input_num').on("keypress", function(event) {
+			apareceGrabar();
+			if (event.charCode !== 0) {
+				var regex = new RegExp("^[0-9]+$");
+				var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+				if (!regex.test(key)) {
+					event.preventDefault();
+					return false;
+				}
+			}
+		});
+		$('.Input_num, .Input_text').keyup(function() {
+			apareceGrabar();
+		});
+		function apareceGrabar(){
+			var x = 0;
+			$('.obligatorioConsolidado').each(function() {
+				if($(this).val().length < 1) {
+					x = x-1;
+				}else{
+					x = x+1;
+				}
+			});
+			var largoclass = $(".obligatorioConsolidado").length;
+			if(x == largoclass){
+				$(".btn-guardar-edit").show();
+			}else{
+				$(".btn-guardar-edit").hide();
+			}
+		}
+		{#Asignamos atributos a algunas clases y escondemos algunos#}
+		$(".saldoMedio").attr('readonly', true);
+		$(".readOnlyConsolidado").attr('disabled', true);
+		$(".hideConsolidado").hide();
+	</script>
+</form>
+{# {% endblock %} #}

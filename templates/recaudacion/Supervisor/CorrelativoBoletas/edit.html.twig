@@ -1,0 +1,160 @@
+{% extends 'RecaudacionBundle:Supervisor:layoutformulariosajax.html.twig' %}
+{% block body -%}
+<div class="table-header">
+	Editar Talonario de Boletas
+</div>
+<form id="edit_form" class="form-horizontal" action="{{ path('Caja_Supervisor_CorrelativoBoletas_show_actualizar', {'idTalonario': oTalonario.id }) }}" method="post">
+	<table class="table table-bordered table-condensed table-hover">
+		<tr>
+			<th>Sucursal</th>
+			<td>
+				{{ oTalonario.idSucursal.nombreSucursal }}
+			</td>
+		</tr>
+		<tr>
+			<th>Sub Empresa</th>
+			<td>
+				{{ form_widget(edit_form.idSubEmpresa) }}
+				<div class="clearfix"></div>
+				{% for error in edit_form.idSubEmpresa.vars.errors %}
+				<span class="text-error">{{ error.message }}</span>
+				{% endfor %}
+			</td>
+		</tr>
+		{% if talonario.idUbicacionCaja.nombre is defined %}
+		<tr>
+			<th>Ubicación</th>
+			<td>
+				{{ oTalonario.idUbicacionCaja.nombre }}
+			</td>
+		</tr>
+		{% endif %}
+		<tr>
+			<th>Tipo de Documento</th>
+			<td>
+				{{ oTalonario.idRelEmpresaTipoDocumento.nombre }}
+			</td>
+		</tr>
+		<tr>
+			<th>Número de Pila</th>
+			<td>
+				{{ oTalonario.numeroPila }}
+			</td>
+		</tr>
+		<tr>
+			<th>Estado de Pila</th>
+			<td id='numeroPila'>
+				{{ form_widget(edit_form.idEstadoPila) }}
+				<div class="clearfix"></div>
+				{% for error in edit_form.idEstadoPila.vars.errors %}
+				<span class="text-error">{{ error.message }}</span>
+				{% endfor %}
+			</td>
+		</tr>
+		<tr>
+			<th>Fecha de Entrega</th>
+			{% if oTalonario.numeroInicio != oTalonario.numeroActual %}
+			<td>
+				{{ oTalonario.fechaEntrega|date('d-m-Y') }}
+			</td>
+			{% else %}
+			<td>
+				{{ form_widget(edit_form.fechaEntrega) }}
+				<div class="clearfix"></div>
+				{% for error in edit_form.fechaEntrega.vars.errors %}
+				<span class="text-error">
+					{{ error.message }}
+				</span>
+				{% endfor %}
+			</td>
+			{% endif %}
+		</tr>
+		<tr>
+			<th>Número de Inicio</th>
+			{% if oTalonario.numeroInicio != oTalonario.numeroActual %}
+			<td>
+				{{ oTalonario.numeroInicio }}
+			</td>
+			{% else %}
+			<td>
+				{{ form_widget(edit_form.numeroInicio) }}
+				<div class="clearfix"></div>
+				{% for error in edit_form.numeroInicio.vars.errors %}
+				<span class="text-error">
+					{{ error.message }}
+				</span>
+				{% endfor %}
+			</td>
+			{% endif %}
+		</tr>
+		<tr>
+			<th>Número de Término</th>
+			<td>
+				{{ form_widget(edit_form.numeroTermino) }}
+				<div class="clearfix"></div>
+				{% for error in edit_form.numeroTermino.vars.errors %}
+				<span class="text-error">
+					{{ error.message }}
+				</span>
+				{% endfor %}
+			</td>
+		</tr>
+		<tr>
+			<th>Número Contador</th>
+			<td>
+				{{ form_widget(edit_form.numeroActual) }}
+				<div class="clearfix"></div>
+				{% for error in edit_form.numeroActual.vars.errors %}
+				<span class="text-error">
+					{{ error.message }}
+				</span>
+				{% endfor %}
+			</td>
+		</tr>
+	</table>
+	<div class="hide" >
+		{{ form_rest(edit_form) }}
+	</div>
+	<div class="well well-small">
+		<i class="icon-asterisk"></i> Campos Obligatorios.
+	</div>
+</form>
+{% endblock %}
+{% block scripts -%}
+{{ macroDependencias.datetime() }}
+<script type="text/javascript">
+	{#Carga función suma y funcion calculaPorcentaje#}
+	$('#rebsol_hermesbundle_CorrelativoBoletasEditarType_numeroInicio, \n\
+		#rebsol_hermesbundle_CorrelativoBoletasEditarType_numeroTermino, \n\
+		#rebsol_hermesbundle_CorrelativoBoletasEditarType_numeroActual').focus(function(){
+			blockkeyalfa($(this));
+		});
+		{#Este solo permite numeros, tampoco permite simbolos.#}
+		function blockkeyalfa(elemento){
+			elemento.bind("keypress", function(event) {
+				if (event.charCode !== 0) {
+					var regex = new RegExp("^[0-9,]+$");
+					var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+					if (!regex.test(key)) {
+						event.preventDefault();
+						return false;
+					}
+				}
+			});}
+			var numeroTerminoOriginal = $("#rebsol_hermesbundle_CorrelativoBoletasEditarType_numeroTermino").val();
+			var numeroActualOriginal = $("#rebsol_hermesbundle_CorrelativoBoletasEditarType_numeroActual").val();
+			{#Detecta algún cambio en la fecha#}
+			$("#rebsol_hermesbundle_CorrelativoBoletasEditarType_idEstadoPila").change(function(){
+				if(($("#rebsol_hermesbundle_CorrelativoBoletasEditarType_idEstadoPila").val() == "0") && ($("#rebsol_hermesbundle_CorrelativoBoletasEditarType_numeroActual").val() != $("#rebsol_hermesbundle_CorrelativoBoletasEditarType_numeroInicio").val())){
+					$("#rebsol_hermesbundle_CorrelativoBoletasEditarType_numeroTermino").val($("#rebsol_hermesbundle_CorrelativoBoletasEditarType_numeroActual").val());
+					$("#rebsol_hermesbundle_CorrelativoBoletasEditarType_numeroActual").val($("#rebsol_hermesbundle_CorrelativoBoletasEditarType_numeroTermino").val());
+						//$("#rebsol_hermesbundle_CorrelativoBoletasEditarType_numeroActual").attr('disabled', "disabled");
+					}else{
+						$("#rebsol_hermesbundle_CorrelativoBoletasEditarType_numeroTermino").val(numeroTerminoOriginal);
+						//$("#rebsol_hermesbundle_CorrelativoBoletasEditarType_numeroActual").val(numeroActualOriginal);
+						//$("#rebsol_hermesbundle_CorrelativoBoletasEditarType_numeroActual").removeAttr('disabled');
+						//$("#rebsol_hermesbundle_CorrelativoBoletasEditarType_numeroActual").val();
+					}
+				});
+</script>
+{% endblock %}

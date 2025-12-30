@@ -1,0 +1,415 @@
+{% extends 'RebsolHermesBundle::layoutformulariosajax.html.twig' %}
+{% import 'RecaudacionBundle:UI/Macros:WidgetsCaja.html.twig' as WidgetCaja %}
+{% block Content %}
+	{% block body %}
+		{% if FechaPagoAgenda == 0 %}
+			{% if  PagoEfectuado == 1 %}
+				{#PAGO SOLO HOY #}
+				{% if pagoTodosLosDias == 1 %}
+					<div class="alert alert-warning CajaCerrada">
+						<strong>Alerta: Fecha de Pago</strong>
+						<div class="clearfix"></div>
+						Solo está autorizado a pagar reservas de el día de hoy y regularizar garantías previamente generadas.
+					</div>
+				{% else %}
+					{#PAGO CUALQUIER FECHA#}
+					{% if noCajero == 1 %}
+						<div class="alert alert-warning CajaCerrada">
+							<strong>Sin Acceso a Caja</strong>
+							<div class="clearfix"></div>
+							Ud. no es Cajero, para efectuar pago, debe ser Cajero.
+						</div>
+					{% else %}
+						{% if sintalonario == 1 %}
+							{% if sincerrar == 1 %}
+								{% if abierta == 1 %}
+									{% if cerrada == 0 %}
+										<div class="alert alert-warning CajaCerrada">
+											<strong>Caja Cerrada</strong>
+											<div class="clearfix"></div>
+											La caja para hoy ha sido cerrada, contacte al supervisor si desea una Reapertura de Caja.
+										</div>
+									{% else %}
+										{% if subEmpresaTalonarioPrestacion == 1 %}
+											{% if PagoesGarantia == 1 %}
+												<div id="ExitosoGarantia">
+													{% include 'RecaudacionBundle:Recaudacion/PostPago:ExitosoGarantia.html.twig' %}
+												</div>
+											{% endif %}
+											<div id="PagoIndex">
+												{% include 'RecaudacionBundle:Recaudacion/Pago:index.html.twig' %}
+											</div>
+										{% else %}
+											<div class="alert alert-warning CajaCerrada">
+												<i class="icon-warning-sign text-left space"> </i><strong>La prestación que intenta pagar, no corresponde a los talonarios que tiene asociados</strong>
+												<div class="clearfix"></div>
+												Debe ponerse en contacto con el Supervisor para regularizar la situación.
+											</div>
+										{% endif %}
+									{% endif %}
+								{% else %}
+									<div class="alert alert-warning CajaCerrada">
+										<strong>Caja Cerrada</strong>
+										<div class="clearfix"></div>
+										Debe Abrir una Nueva Caja.
+									</div>
+								{% endif %}
+							{% else %}
+								<div class="alert alert-warning CajaCerrada">
+									<i class="icon-warning-sign text-left space"> </i><strong>Caja Abierta sin Cerrar</strong>
+									<div class="clearfix"></div>
+									Debe Cerrar Caja anterior que se encuentra actualmente sin Cerrar.
+								</div>
+							{% endif %}
+						{% else %}
+							{% if sintalonarioAE == 0 %}
+								<div class="alert alert-warning CajaCerrada">
+									<strong>No cuenta con Documentos requeridos mínimos para generar pagos.</strong>
+									<div class="clearfix"></div>
+									Debe Contactar a Supervisor para generar Talonario:<div class="clearfix"></div>
+									{% set a = 0 %}
+									{% set b = 0 %}
+									{% for talonario in talonarios %}
+										{% if  talonario.idRelEmpresaTipoDocumento.idTipoDocumento.id == 1 %}
+											{% set a = a +1 %}
+										{% endif %}
+										{% if talonario.idRelEmpresaTipoDocumento.idTipoDocumento.id == 3 %}
+											{% set b = b +1 %}
+										{% endif %}
+									{% endfor %}
+									{% if a < 1 %}
+										- Boleta Afecta<div class="clearfix"></div>
+									{% endif %}
+									{% if b < 1 %}
+										- Boleta Exenta<div class="clearfix"></div>
+									{% endif %}
+								</div>
+							{% else %}
+								<div class="alert alert-warning CajaCerrada">
+									<strong>Se ha excedido limite de número de Boleta</strong>
+									<div class="clearfix"></div>
+									Debe Contactar a Supervisor para iniciar nuevo Talonario
+								</div>
+							{% endif %}
+						{% endif %}
+					{% endif %}
+				{% endif %}
+			{% endif %}
+			{% if PagoesGarantia == 1 %}
+				{% if PagoesGarantia == 1 %}
+					<div id="ExitosoGarantia">
+						{% include 'RecaudacionBundle:Recaudacion/PostPago:ExitosoGarantia.html.twig' %}
+					</div>
+				{% endif %}
+				<div id="PagoIndex">
+					{% include 'RecaudacionBundle:Recaudacion/Pago:index.html.twig' %}
+				</div>
+			{% endif %}
+		{% else %}
+			{% if caja %}
+				{% if noCajero == 1 %}
+					<div class="alert alert-warning CajaCerrada">
+						<strong>Sin Acceso a Caja</strong>
+						<div class="clearfix"></div>
+						Ud. no es Cajero, para efectuar pago, debe ser Cajero.
+					</div>
+				{% else %}
+					{% if sintalonario == 1 %}
+						{% if sincerrar == 1 %}
+							{% if abierta == 1 %}
+								{% if cerrada == 0 %}
+									<div class="alert alert-warning CajaCerrada">
+										<strong>Caja Cerrada</strong>
+										<div class="clearfix"></div>
+										La caja para hoy ha sido cerrada, contacte al supervisor si desea una Reapertura de Caja.
+									</div>
+								{% else %}
+									{% if subEmpresaTalonarioPrestacion == 1 %}
+										{% if PagoesGarantia == 1 %}
+											<div id="ExitosoGarantia">
+												{% include 'RecaudacionBundle:Recaudacion/PostPago:ExitosoGarantia.html.twig' %}
+											</div>
+										{% endif %}
+										<div id="PagoIndex">
+											{% include 'RecaudacionBundle:Recaudacion/Pago:index.html.twig' %}
+										</div>
+									{% else %}
+										<div class="alert alert-warning CajaCerrada">
+											<i class="icon-warning-sign text-left space"> </i><strong>La prestación que intenta pagar, no corresponde a los talonarios que tiene asociados</strong>
+											<div class="clearfix"></div>
+											Debe ponerse en contacto con el Supervisor para regularizar la situación.
+										</div>
+									{% endif %}
+								{% endif %}
+							{% else %}
+								<div class="alert alert-warning CajaCerrada">
+									<strong>Caja Cerrada</strong>
+									<div class="clearfix"></div>
+									Debe Abrir una Nueva Caja.
+								</div>
+							{% endif %}
+						{% else %}
+							<div class="alert alert-warning CajaCerrada">
+								<i class="icon-warning-sign text-left space"> </i><strong>Caja Abierta sin Cerrar</strong>
+								<div class="clearfix"></div>
+								Debe Cerrar Caja anterior que se encuentra actualmente sin Cerrar.
+							</div>
+						{% endif %}
+					{% else %}
+						{% if sintalonarioAE == 0 %}
+							<div class="alert alert-warning CajaCerrada">
+								<strong>No cuenta con Documentos requeridos mínimos para generar pagos.</strong>
+								<div class="clearfix"></div>
+								Debe Contactar a Supervisor para generar Talonario:<div class="clearfix"></div>
+								{% set a = 0 %}
+								{% set b = 0 %}
+								{% for talonario in talonarios %}
+									{% if  talonario.idRelEmpresaTipoDocumento.idTipoDocumento.id == 1%}
+										{% set a = a +1 %}
+									{% endif %}
+									{% if talonario.idRelEmpresaTipoDocumento.idTipoDocumento.id == 3 %}
+										{% set b = b +1%}
+									{% endif %}
+								{% endfor %}
+								{% if a < 1%}
+									- Boleta Afecta<div class="clearfix"></div>
+								{% endif %}
+								{% if b < 1 %}
+									- Boleta Exenta<div class="clearfix"></div>
+								{% endif %}
+							</div>
+						{% else %}
+							<div class="alert alert-warning CajaCerrada">
+								<strong>Se ha excedido limite de número de Boleta</strong>
+								<div class="clearfix"></div>
+								Debe Contactar a Supervisor para iniciar nuevo Talonario
+							</div>
+						{% endif %}
+					{% endif %}
+				{% endif %}
+			{% else %}
+				{% if noCajero == 1 %}
+					<div class="alert alert-warning CajaCerrada">
+						<strong>Sin Acceso a Caja</strong>
+						<div class="clearfix"></div>
+						Ud. no es Cajero, para efectuar pago, debe ser Cajero.
+					</div>
+				{% else %}
+					<div class="alert alert-warning CajaCerrada">
+						<strong>Caja Cerrada</strong>
+						<div class="clearfix"></div>
+						Debe Abrir una Nueva Caja.
+					</div>
+				{% endif %}
+			{% endif %}
+		{% endif %}
+		{% if sincerrar == 1 and
+			sintalonario  == 1 and
+			abierta == 1 and
+			cerrada == 1 and
+			subEmpresaTalonarioPrestacion == 1 and
+			noCajero == 0
+			%}
+
+			<input type="hidden" id="rutdv" value="{{ datosPacienteVista['dv'] }}">
+
+			<script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
+			<script src="{{ asset('js/jquery.dataTables.bootstrap.js') }}"></script>
+			<script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+			<script type="text/javascript" src="{{ asset('js/fuelux/fuelux.spinner.min.js') }}"></script>
+			<script type="text/javascript" src="{{ asset('js/jquery-ui-1.10.3.custom.min.js') }}"></script>
+			<script type="text/javascript" src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
+			<script type="text/javascript"  src="{{ asset('bundles/hermes/acev12/js/jquery.easy-pie-chart.min.js') }}"></script>
+			<script src="{{ asset('js/tipped/spinners.min.js') }}"></script>
+			<script src="{{ asset('js/tipped/tipped.js') }}"></script>
+			<script src="{{ asset('js/chosen.jquery.min.js') }}"></script>
+			<script src="{{ asset('js/ace.min.js') }}"></script>
+			<script type="text/javascript" src="{{ asset('js/uncompressed/bootbox.js') }}"></script>
+
+			{{ WidgetCaja.resources() }}
+			{{ macroDependencias.datetime() }}
+			{{ WidgetCaja.PagoGarantia() }}
+			{{ WidgetCaja.FormPrestacion() }}
+			{{ WidgetCaja.EventosDivBusqueda() }}
+			{{ WidgetCaja.BusquedaRutDv() }}
+			{{ WidgetCaja.Diferencia() }}
+
+			<script language="javascript" type="text/javascript">
+				var habilitarPaisExtranjero = {{ habilitarPaisExtranjero }};
+				if (arrayBonosFormasPago === undefined) {
+					var arrayBonosFormasPago = {{ arrayBonosFormasPago|json_encode|raw }};
+				}
+				if (habilitaRestriccionesDePago === undefined) {
+					var habilitaRestriccionesDePago  = {{ habilitaRestriccionesDePago }};
+				}
+				$('.date-picker').datepicker({
+					format: "dd-mm-yyyy",
+					weekStart: 1,
+					todayBtn: true,
+					language: "es",
+					todayHighlight: true,
+					autoclose: true
+				});
+
+				$('.date-picker').mask('99-99-9999');
+
+				window.onbeforeunload = function() {
+
+					if($('.AlertImedMedioPago').is(':visible')){
+
+						$('.AlertImedMedioPago').parent().parent().find('.btn-group').show();
+						$('.AlertImedMedioPago').hide();
+						var numAux = $('.AlertImedMedioPago').parent().parent().find('.formularios_Pago').attr('id').replace('tabla_','')
+
+						$('#exedente_'+numAux).hide();
+						$('#rebsol_hermesbundle_MediosPagoType_exedente_'+numAux).val('');
+						$(".Input_checkbox_"+numAux).click();
+						$(".bElectronico").prop('readonly', false);
+
+						bootbox.dialog(
+							"<div class='alert alert-block alert-warning'>" +
+								"<br><i class='icon-warning-sign '></i><strong>Operación Cancelada</strong>,<br>Se ha anulado Correctamente Bono Electrónico IMED."+
+							"</div>"
+							, [
+							{
+								"label": "Aceptar",
+								"class": "btn btn-mini",
+								"callback": function() {
+								}
+							}
+							]);
+						var ruta = Routing.generate("Caja_Cierre_Anula_Imed");
+						$.ajax({type: 'get',
+							url: ruta,
+							async: false
+						});
+						return 'Ud, a elegido no terminar el Pago en Caja, y se registra venta de Bono Electónico Imed Activa, Por Precaución, el Bono ha sido Anulado, si decide no salir y continuar, deberá volver a realizar la venta del Bono Electrónico IMED.';
+					}
+				}
+				var d                            = 0;
+				var rut                          = $.trim("{{ datosPacienteVista['rut'] }}");
+				var dv                           = $.trim("{{ datosPacienteVista['dv'] }}");
+				var rut1                         = "{{ datosPacienteVista['rut'] }}";
+				var dv1                          = "{{ datosPacienteVista['dv'] }}";
+				var idFinanciador                = $.trim("{{ datosPacienteVista['financiador'] }}");
+				var idCovenio                    = $.trim("{{ datosPacienteVista['covenio'] }}");
+				var idReservaAtencion            = $.trim("{{ datosPacienteVista['id'] }}");
+				var extranjero                   = $.trim("{{ datosPacienteVista['extranjero'] }}");
+				var idSucursal                   = $.trim("{{ sucursal }}");
+				var cajaAgenda                   = 0;
+				var tratamiento                  = 0;
+				var nuevoTratamiento             = 0;
+				var editTratamiento              = 0;
+				var esTratamiento                = 0;
+				var esDiferencia                 = 0;
+				var esDiferenciaSaldo            = 0;
+				var garantia                     = 0;
+				var garantiaAuxPrestacion        = 0;
+				var TratamientoArray             = [];
+				var ListaDetallesDiferencia      = [];
+				var ListaInformacionDiferencia   = [];
+				var ListaInformacionDiferenciaSaldo = [];
+				var esTratamientoAgenda          = $.trim("{{ datosPacienteVista['esTratamiento'] }}");
+				var tratamientoCreadoDesdeAgenda = 0;
+				var idTratamiento                = null;
+				var idDerivadoExterno = null;
+				var verificaRutDocumentoExtranjeroexiste = 0;
+				var crearUsuarioSinRut           = 0;
+				var bonoTipo                     = 0;
+				var datosCompletos               = $.trim("{{ datosCompletos }}");
+				{% if caja%}
+					var idCaja           = $.trim("{{ caja.id }}");
+				{% endif %}
+				var nombre1          = "{{ datosPacienteVista['nombre'] }}";
+				var apep1            = "{{ datosPacienteVista['ApellidoPaterno'] }}";
+				var apem1            = "{{ datosPacienteVista['ApellidoMaterno'] }}";
+
+				if ("{{ datosPacienteVista['fechaNacimiento']|date() }}") {
+					var fechanacimiento1     = "{{ datosPacienteVista['fechaNacimiento']|date('d-m-Y') }}";
+				}
+
+				var sexo1            = $.trim("{{ datosPacienteVista['sexoId'] }}");
+				var mail11           = "{{ datosPacienteVista['correoElectronico'] }}";
+				var celu1            = "{{ datosPacienteVista['telefonoMovil'] }}";
+				var fijo1            = "{{ datosPacienteVista['telefonoFijo'] }}";
+				var trabajo1         = "{{ datosPacienteVista['telefonoContacto'] }}";
+				var direccion1       = "{{ datosPacienteVista['direccion'] }}";
+				var numero1          = "{{ datosPacienteVista['numero'] }}";
+				var resto1           = "{{ datosPacienteVista['restoDireccion'] }}";
+				var idComuna1        = $.trim("{{ datosPacienteVista['idComuna'] }}");
+				var idPais1          = $.trim("{{ datosPacienteVista['idPais'] }}");
+				var usuario1         = $.trim("{{ datosPacienteVista['usuario'] }}");
+				var TipoAtencion     = $.trim("{{ tipoAtencion }}");
+				var identificacion   = "{{ datosPacienteVista['identificacion']  }}";
+				var garantias        = $.trim("{{ datosPacienteVista['garantias']  }}");
+				var nombreDocumento  = "{{datosPacienteVista['nombreDocumento']  }}";
+				var empresaSolicitante  = "{{datosPacienteVista['empresaSolicitante']  }}";
+				var PagoEsGarantia   = "{{PagoesGarantia}}";
+				var coreApi          = $.trim("{{coreApi}}");
+				var imedUrl          = $.trim("{{ imedUrl }}");
+				var idPersona        = $.trim("{{ datosPacienteVista['idPersona'] }}");
+
+
+				$("#limpiar, #limpiaradv,  .text-error, .ocultarDiv, #busquedaPacientesForm, .btn-salvar-edit, .btn-salvar").hide();
+
+	            $('#buscarPaciente_tipoIdentificacion').val('{{ datosPacienteVista["idTipoIdentificacionExtranjero"].id }}');
+            	$('#buscarPaciente_identificacion').val('{{ datosPacienteVista["identificacionExtranjero"] }}');
+
+				$('#rebsol_hermesbundle_PrestacionType_prevision').val(idFinanciador);
+				if (idCovenio) {
+					$('#rebsol_hermesbundle_PrestacionType_convenio').val(idCovenio);
+				}
+				$("#limpiar, #limpiaradv,  .text-error, .ocultarDiv").removeClass('hide');
+				var Listaprestaciones = new Array();
+				if (PagoEsGarantia == 1) {
+					$("#PagoIndex").hide();
+				} else {
+					if(esTratamientoAgenda == 0){
+						{% for prestacion in prestaciones %}
+							{% if prestacion %}
+								var prestacion = $.trim("{{ prestacion }}");
+								Listaprestaciones['{{ loop.index }}'] = prestacion;
+							{% endif %}
+						{% endfor %}
+					}
+					if(esTratamientoAgenda == 1){
+						$(".AlertEsTratamiento").show();
+					}
+				}
+				var FechaPagoAgenda = "{{FechaPagoAgenda}}";
+				loadScriptvalidakeyup();
+				loadScriptEventosDivBusqueda();
+				loadScriptBusquedaRutDv();
+				loadScriptEventosDivBusquedaMacro();
+				ValidaRut();
+				loadScriptBusquedaAvanzada();
+				cargaDatos(idFinanciador);
+				const habilitarPaisComuna = (tipoIdentificacion) => {
+					if (habilitarPaisExtranjero && (tipoIdentificacion == 2 || tipoIdentificacion == 4)) {
+						$('#vistaComunaTh').hide();
+						$('#vistaComunaTd').hide();
+						$('#vistaPaisTh').show();
+						$('#vistaPaisTd').show();
+					} else {
+						$('#vistaPaisTh').hide();
+						$('#vistaPaisTd').hide();
+						$('#vistaComunaTh').show();
+						$('#vistaComunaTd').show();
+					}
+				}
+				habilitarPaisComuna($('#rebsol_hermesbundle_PagoType_documento').val());
+			</script>
+			<style type="text/css">
+				.imedFace {
+					display:block;
+					-webkit-transform: rotate(90deg);
+					-moz-transform: rotate(90deg);
+					filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+					font-family:  initial;
+					font-weight: 200;
+					color: #FFF;
+				}
+			</style>
+		{% endif %}
+	{% endblock %}
+{% endblock %}

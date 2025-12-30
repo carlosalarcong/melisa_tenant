@@ -1,0 +1,4 @@
+{% extends 'RecaudacionBundle:Supervisor:layoutformulariosajax.html.twig' %}
+{% block body %}
+    {{ render(controller("RecaudacionBundle:_Default/Supervisor/Supervisor:obtenerAuditoriaDeDiferencias", { 'oEntidad': diferencia })) }}
+{% endblock %}

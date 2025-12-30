@@ -1,0 +1,36 @@
+{% if idReservaAtencion %}
+    <div align="center" class="alert alert-block alert-success alertaExisteFullDatos hide ocultarDiv">
+        <p>
+            <strong>
+                <i class="icon-ok"></i>
+                Datos Personales de Paciente.
+            </strong>
+            </br>
+            ¿Se encuentran los datos del paciente ingresados correctamente?.
+        </p>
+        <p>
+        <div align="center">
+            <button class="btn btn-small btn-success btn-salvarAgenda">
+                Si, Guardar y Continuar
+            </button>
+        </div>
+        </p>
+    </div>
+{% else %}
+    <div class="alert alert-block alert-success alertaExisteFullDatos hide ocultarDiv">
+        <p>
+            <strong>
+                <i class="icon-ok"></i>
+                Paciente con Datos completos.
+            </strong>
+            </br>
+            ¿Usuario se encuentra con todos los datos necesarios ingresados en Sistema, Desea continuar con
+            Pago?.
+        </p>
+        <p>
+            <button class="btn btn-small btn-success continuarPasoUno">Si, Continuar con Pago</button>
+            <button class="btn btn-small actualizarPasoUno">No, Actualizar datos de Usuario</button>
+            <button class="btn btn-small btn-volverExiste" type="button">Volver Búsqueda</button>
+        </p>
+    </div>
+{% endif %}

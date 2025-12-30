@@ -1,0 +1,4 @@
+{% extends 'RebsolHermesBundle::layoutformulariosajax.html.twig' %}
+{% block body %}
+{{ render(controller("RecaudacionBundle:Supervisor/Supervisor:obtenerAuditoriaDeFolios", {'oEntidad': oDetalleBoleta})) }}
+{% endblock %}

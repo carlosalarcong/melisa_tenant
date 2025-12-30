@@ -1,0 +1,37 @@
+{% extends 'RecaudacionBundle:Supervisor:layoutformulariosajax.html.twig' %}
+{% block body %}
+<div class="tablaInformacion">
+	<div class="table-header">
+		Ubicación Cajero
+	</div>
+	<table class="table">
+		<tbody>
+			<tr>
+				<th>Cajero</th>
+				<td>
+					{{ entity.idUsuario.idPersona.idPnatural.getNombrePorOrden(9) }}
+				</td>
+			</tr>
+			<tr>
+				<th>Ubicación Caja</th>
+				<td>
+					{{ entity.idUbicacionCaja.nombre }}
+				</td>
+			</tr>
+			<tr>
+				<th>Sucursal</th>
+				<td>
+					{{ entity.idUbicacionCaja.idSucursal.nombreSucursal }}
+				</td>
+			</tr>
+			<tr>
+				<th>Monto Inicial</th>
+				<td>
+					{{ obtenerMonto(entity.montoInicial) }}
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+{{ render(controller("RecaudacionBundle:_Default/Supervisor/Supervisor:obtenerAuditoriaDeEntidad", {'oEntidad': entity})) }}
+{% endblock %}

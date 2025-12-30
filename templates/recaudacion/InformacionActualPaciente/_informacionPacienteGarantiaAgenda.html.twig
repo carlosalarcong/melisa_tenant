@@ -1,0 +1,54 @@
+<div class="alert alert-block alert-success actualizado hide">
+    <button type="button" class="close" data-dismiss="alert">
+        <i class="icon-remove"></i>
+    </button>
+    <strong>
+        <i class="icon-ok"></i>
+        El Usuario se ha Actualizado exitosamente
+    </strong>    <div class="clearfix"></div>
+    Ahora puede continuar con los datos de Prestación.
+</div>
+<div class="table-header-grey" style="text-align:left;">
+    <i class="icon-user icon-large text-left"> </i> Información Paciente
+    <div class="btn-group pull-right ">
+        <button title="Editar" id="btneditDatosPaciente" class="btn btn-small btn-warning  btn-edit-paciente " type="button"><i class='icon-edit icon-large'></i>Editar</button>
+    </div>
+</div>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-condensed  grey">
+    <tr >
+        <th width="20%" style=" background-color: whitesmoke ">Rut:</th>
+        <td colspan="3" width="20%">
+            <span  id="rutspanG" ></span>
+        </td>
+        <th width="10%" style=" background-color: whitesmoke ">Nombre:</th>
+        <td width="50%">
+            <span  id="nombrespanG" ></span>
+        </td>
+    </tr>
+    <tr >
+        <th width="10%" style=" background-color: whitesmoke ">Fecha Nacimiento:</th>
+        <td width="10%">
+            <span  id="fechanspanG" ></span>
+        </td>
+        <th width="10%" style=" background-color: whitesmoke ">Edad:</th>
+        <td width="10%">
+            <span  id="edadspanG" ></span>
+        </td>
+        <th  width="10%" style=" background-color: whitesmoke ">Apellidos:</th>
+        <td  width="50%">
+            <span  id="apepspanG" ></span>&nbsp<span  id="apemspanG" ></span>
+        </td>
+    </tr>
+</table>
+{% if from == 'caja'%}
+    <div class="alert alert-block alert-success AlertEsTratamiento hide">
+        <button type="button" class="close" data-dismiss="alert">
+            <i class="icon-remove"></i>
+        </button>
+        <strong>
+            <i class="icon-ok"></i>
+            La Reserva Seleccionada, corresponde a un Tratamiento.
+        </strong>    <div class="clearfix"></div>
+        Deberá Agregar un nuevo Tratamiento para este Paciente, o continuar alguno que se encuentre en proceso actualmente.
+    </div>
+{% endif %}

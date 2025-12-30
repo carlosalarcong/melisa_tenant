@@ -1,0 +1,382 @@
+<style>
+	#divPrestacionBuscar{
+		height: 200px;
+		min-height: 20px;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+	.seleccionarPrestacion {
+		color: #4C8FBD;
+	}
+	.seleccionarPrestacion:hover {
+		color: #707070!important;
+		text-decoration: underline;
+		cursor: pointer;
+	}
+
+	#divInsumoBuscar{
+		height: 200px;
+		min-height: 20px;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+	.seleccionarInsumo {
+		color: #4C8FBD;
+	}
+	.seleccionarInsumo:hover {
+		color: #707070!important;
+		text-decoration: underline;
+		cursor: pointer;
+	}
+
+
+	.bloque {
+		background-color: #629B58!important;
+	}
+	.ok {
+		background-color: #629B58!important;
+		color: #fff;
+		font-size: 1.4em;
+	}
+	.middle {
+		vertical-align: middle!important;
+	}
+	.table-header-width {
+		width: 10%;
+	}
+</style>
+
+<div class="hide">{{form_widget(prestacion_form.archivo)}}</div>
+
+<form id="formPrestaciones" method="post">
+
+	<div id="formprestador">
+		<div class="table-header-grey" style="text-align:left;">
+			<i class="icon-hospital  icon-large text-left space"></i> Datos Prestación
+		</div>
+		<table width="100%" border="0" cellspacing="10" cellpadding="10" class="table table-bordered table-condensed table-hover grey">
+			<tr >
+				<th width="15%" >Financiador</th><td width="25%">{{ form_widget(prestacion_form.prevision, {'attr':{ 'class':'PlanSelect'} }) }}</td>
+				<th width="15%">Origen:</th><td width="45%">
+				<div style="float:left" id="origenSelect">{{ form_widget(prestacion_form.origenSelect) }} </div>
+				<span style="cursor:pointer;" class="btn ocultarDiv" onclick="javascript:limpiarCampo('')" >
+				  <i class="icon-eraser"></i></span>
+			  </div>
+		  </td>
+	  </tr>
+	  <tr>
+		<th> Convenio:</th>
+		<td>
+
+			<div id="ConvenioSelect" class="input-append">
+				{{ form_widget(prestacion_form.convenio, {'attr':{ 'class':'PlanSelect'} }) }}
+				<span style="cursor:pointer;" data-tooltip-id="tooltipborrarconvenio" class="btn LimpiarConvenioSelect  tooltip-from-element ocultarDiv">
+				  <i class="icon-eraser"></i></span>
+			  </div>
+		  </td>
+
+		  <th rowspan="2" >Derivado por:</th>
+		  <td rowspan="2">
+			<div style="float:left" class="derivadoSelect">{{ form_widget(prestacion_form.derivadoSelect) }} </div>
+			<div style="float:left" class="derivadoSelect"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+			<span  style="float:left"class="ExternoField"><b>Derivado Externo: </b>&nbsp;&nbsp;</span><div style="float:left" class="ExternoField">{{ form_widget(prestacion_form.derivadoCheck) }} </div>
+			<div class="clearfix"></div>
+			<table class="derivadoExterno hide ocultarDiv table table-bordered table-condensed table-hover grey" width="100%">
+				<tr>
+					<td>
+						Rut :{# <span id="rutExterno" class="hide"></span><span id="textoExterno">Buscar :</span> #}
+					</td>
+					<td id="busquedaExternoField" >
+						<div id="alertInputExternosGroupColor" class="input-append control-group">
+							<span class="input-icon input-icon-right">
+								{{ form_widget(prestacion_form.derivadoExternoRut) }}
+							</span>
+							<span class="add-on"><i id="iconExternoBuscar" class="icon-question-sign"></i></span>
+						</div>
+						<div class="clearfix"></div>
+						<span class="hide" id="alertInputExternosMensajeNo">No Existen Registros, Ingrese Nombre Completo para Registrar</span>
+						<span class="hide" id="alertInputExternosMensajeNoValido"> Rut No valido. </span>
+					</td>
+				</tr>
+				<tr id="divExternoBuscar" class="hide">
+					<td colspan="2">
+						<div id="resultadoExternosBuscar">
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td >
+						Nombre Completo :
+					</td>
+					<td>
+						{{ form_widget(prestacion_form.derivadoExterno, {'attr':{'disabled':'true', 'class':'span3'} }) }}
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<th >Plan:</th><td >
+		<div id="selectplan"> {{ form_widget(prestacion_form.plan, {'attr':{ 'class':'PlanSelect planupdate'} }) }}</div>
+
+		<div class="alertaSinDatos red hide ocultarDiv">
+			<i class="icon-remove"></i>
+			No se encontró Planes.
+			<br>
+		</div>
+	</td>
+
+</tr>
+</table>
+</div>
+
+<div class="hide datosTratamiento">
+ {% include 'RecaudacionBundle:Recaudacion/Pago/Pago_Form:Tratamiento.html.twig' %}
+</div>
+
+<div id="formPrestaciones">
+	<div id="agregar-prestacion-insumo-paquete" class="hide ocultarDiv">
+		<div class="table-header-grey" style="text-align:left;">
+			<i class="icon-plus-sign  icon-large text-left space"></i> Agregar<span class="hide datosTratamiento"> Items para Tratamiento</span>
+		</div>
+		<table width="100%" align="center">
+			<tr>
+
+				<td id="busquedaPrestacionesField" valign="top" width="50%"
+				{% if from == 'caja'  and getPrestacionesCaja ==  0 %}
+				class="hidden"
+				{% endif %}>
+				<table width="100%" border="0" cellspacing="10" cellpadding="10" class="table table-bordered table-condensed table-hover grey">
+					<tr>
+						<th>
+							Prestación
+						</th>
+						<td>
+							<div class="input-append">
+								<input id="inputPrestacionBuscar" type="text">
+								<span class="add-on"><i id="iconPrestacionBuscar" class="icon-asterisk"></i></span>
+								<a id="btnPrestacionBuscar" class="btn btn-info"><i class="white icon-search"></i> Buscar</a>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</td>
+
+			<td id="busquedaPaqueteField" valign="top" width="50%">
+				<table width="100%" border="0" cellspacing="10" cellpadding="10" class="table table-bordered table-condensed table-hover  grey">
+					<tr>
+						<th {% if from == 'caja' and getPrestacionesCaja ==  0 %}width="25%"{% endif %}>
+							Paquetes Artículos
+						</th>
+						<td>
+						 <div class="input-append">
+							<input id="inputPaqueteBuscar" type="text">
+							<span class="add-on"><i id="iconPaqueteBuscar" class="icon-asterisk"></i></span>
+							<a id="btnPaqueteBuscar" class="btn btn-info"><i class="white icon-search"></i> Buscar</a>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</td>
+				<td id="busquedaPaquetesPrestacionesField" valign="top" width="50%" {% if from == 'caja'  and getPrestacionesCaja ==  0 %} class="hidden"{% endif %}>
+					<table width="100%" border="0" cellspacing="10" cellpadding="10" class="table table-bordered table-condensed table-hover grey">
+				<tr>
+					<th>
+						Paquetes Prestaciones
+					</th>
+					<td>
+					 <div class="input-append">
+						 <input id="inputPaquetePrestacionBuscar" type="text">
+						 <span class="add-on"><i id="iconPaquetePrestacionBuscar" class="icon-asterisk"></i></span>
+						 <a id="btnPaquetePrestacionBuscar" class="btn btn-info"><i class="white icon-search"></i> Buscar</a>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</td>
+</tr>
+<tr>
+	{#<td id="busquedaInsumosField" valign="top" width="50%">
+			<table width="100%" border="0" cellspacing="10" cellpadding="10" class="table table-bordered table-condensed table-hover  grey">
+			<tr>
+				<th {% if from == 'caja' and getPrestacionesCaja ==  0 %}width="25%"{% endif %}>
+						Insumos y Fármacos
+				</th>
+				<td>
+					<div class="input-append">
+						<input id="inputInsumoBuscar" type="text">
+						<span class="add-on"><i id="iconInsumoBuscar" class="icon-asterisk"></i></span>
+						<a id="btnInsumoBuscar" class="btn btn-info"><i class="white icon-search"></i> Buscar</a>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</td>#}
+</tr>
+<tr>
+	<td colspan="4">
+	  <div class="clearfix"></div>
+	  <div>
+		<div id="divPrestacionBuscar" class="hide">
+			<div id="resultadoPrestacionBuscar">
+			</div>
+		</div>
+		<div id="divInsumoBuscar" class="hide">
+			<div id="resultadoInsumoBuscar">
+			</div>
+		</div>
+		<div id="divPaqueteBuscar" class="hide">
+			<div id="resultadoPaqueteBuscar">
+			</div>
+		</div>
+	</div>
+</td>
+</tr>
+</table>
+</div>
+
+<div id="formRisLis" class="hide">
+	<div class="table-header-grey" style="text-align:left;">
+		{% if datosProfesionalDefecto is defined and datosProfesionalDefecto is not null %}
+			Datos utilizado a creación de solicitud RIS/LIS
+		{% else %}
+			Datos a completar para solicitud de exámenes
+		{% endif %}
+	</div>
+	<table width="100%" align="center">
+		<tr>
+			<td id="runProfesionalRisLisField" valign="top">
+				<table width="100%" border="0" cellspacing="10" cellpadding="10" class="table table-bordered table-condensed table-hover grey">
+					<tr>
+						<th>
+							RUN Profesional
+						</th>
+						<td>
+							<div class="input-append">
+								<input id="inputRutProfesionalRisLis" type="text" maxlength="12" {% if datosProfesionalDefecto is defined and datosProfesionalDefecto is not null %} value="{{datosProfesionalDefecto['rutDefecto']}}" {% endif %}>
+								<span class="add-on"><i id="iconRut" class="icon-asterisk grey"></i></span>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</td>
+			<td id="nombresProfesionalRisLisField" valign="top">
+				<table width="100%" border="0" cellspacing="10" cellpadding="10" class="table table-bordered table-condensed table-hover  grey">
+					<tr>
+						<th>
+							Nombres
+						</th>
+						<td>
+							<div class="input-append">
+								<input id="inputNombresProfesionalRisLis" type="text" {% if datosProfesionalDefecto is defined and datosProfesionalDefecto is not null %} value="{{datosProfesionalDefecto['nombreDefecto']}}" {% endif %}>
+								<span class="add-on"><i class="icon-asterisk"></i></span>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</td>
+			<td id="apellidoPatProfesionalRisLisField" valign="top">
+				<table width="100%" border="0" cellspacing="10" cellpadding="10" class="table table-bordered table-condensed table-hover  grey">
+					<tr>
+						<th>
+							Ap. Paterno
+						</th>
+						<td>
+							<div class="input-append">
+								<input id="inputApellidoPatProfesionalRisLis" type="text" {% if datosProfesionalDefecto is defined and datosProfesionalDefecto is not null %} value="{{datosProfesionalDefecto['apellidoPaternoDefecto']}}" {% endif %}>
+								<span class="add-on"><i class="icon-asterisk"></i></span>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td id="apellidoMatProfesionalRisLisField" valign="top">
+				<table width="100%" border="0" cellspacing="10" cellpadding="10" class="table table-bordered table-condensed table-hover  grey">
+					<tr>
+						<th>
+							Ap. Materno
+						</th>
+						<td>
+							<div class="input-append">
+								<input id="inputApellidoMatProfesionalRisLis" type="text" {% if datosProfesionalDefecto is defined and datosProfesionalDefecto is not null %} value="{{datosProfesionalDefecto['apellidoMaternoDefecto']}}" {% endif %}>
+								<span class="add-on"><i class="icon-asterisk"></i></span>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</td>
+			<td id="observacionlRisLisField" valign="top">
+				<table width="100%" border="0" cellspacing="10" cellpadding="10" class="table table-bordered table-condensed table-hover  grey">
+					<tr>
+						<th>
+							Observación
+						</th>
+						<td>
+							<div class="input-append">
+								<input id="inputObservacionRisLis" type="text" {% if datosProfesionalDefecto is defined and datosProfesionalDefecto is not null %} value="{{datosProfesionalDefecto['observacionDefecto']}}" {% endif %}>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<div id="prestaciones" class="hide">
+	<div class="table-header-grey" style="text-align:left;">
+		<i class="icon-align-justify  icon-large text-left space"> </i> Listado Servicios Pago <b><span id="tituloTratamientoListadoServicio"></span></b>
+		<div id="btneditListaPrestacionesDiv"class="btn-group pull-right  btn-edit-lista-prestaciones ">
+			<button title="Editar" id="btneditListaPrestaciones" class="btn btn-small btn-warning  btn-edit-lista-prestaciones  hide ocultarDiv" type="button"><i class='icon-edit icon-large'></i>Editar</button>
+		</div>
+	</div>
+	<table id='tablePrestacionHeader' class='table table-bordered table-condensed table-hover'>
+		<thead>
+			<th>Código</th>
+			<th>Pabellón</th>
+			<th>Nombre</th>
+			<th>Cantidad</th>
+			<th>Valor</th>
+			<th>Total</th>
+			<th width="30"></th>
+		</thead>
+		<tbody id="prestacionesTable">
+		</tbody>
+	</table>
+</div>
+</div>
+<div class="clearfix " ></div>
+<div class="hide datosTratamiento">
+	{% include 'RecaudacionBundle:Recaudacion/Pago/Pago_Form:Tratamiento_botones.html.twig' %}
+</div>
+</form>
+<div class="clearfix"></div>
+<div class="btn-group pull-right">
+	{# <button id="btn-descuentos" class="btn btn-pre-pagar btn-success hide ocultarDiv hide" type="button"><span>-</span><i class='icon-usd'></i>Seleccionar Diferencia</button> #}
+		{#% if idReservaAtencion%}
+		{% else %#}
+		{% if coreApi == 1%}
+		<button id='btn-Carga-DatosTratamiento-Edit' class='btn btn-warning  opcionCargaTratamientoEdit hiden hidden'> Modificar Tratamiento</button>
+		<button id='btn-Cancelar-DatosTratamiento-Edit' class='btn opcionCargaTratamientoEdit hiden hidden' onclick='javascript:cancelarEdicionTratamiento();'>Cancelar Modificación</button>
+		<button id="btn-Carga-DatosTratamiento" class="btn btn-info opcionCargaTratamiento hiden hidden" type="button"><i class='icon-align-justify'></i>Cargar Datos de Tratamiento</button>
+		<button id="btn-tratamiento" class="btn btn-info opcionTratamiento hide" type="button"><i class='icon-align-justify'></i>Crear Tratamiento</button>
+
+
+		{% endif %}
+		{% if from == 'caja'%}
+		<button id="btn-PagoNormal" class="btn btn-success opcionTratamiento hide" type="button"><i class='icon-usd'></i>Continuar Pago Normal</button>
+		{% endif %}
+		{#% endif %#}
+
+		<button id="btn-pre-pagar" class="btn btn-pre-pagar btn-success hide ocultarDiv " type="button"><i class='icon-usd'></i>Seleccionar Medio de Pago</button>
+		{% if idReservaAtencion%}
+		{% else %}
+		<button id="cancelar-desde-prestador" class="btn btn-pre-pagar btn-volver2 cancelar-desde-prestador " type="button"><i class='icon-arrow-left'></i>Cancelar </button>
+		{% endif %}
+	</div>
+	<div id="saltosTeporales">
+	</br> <div class="clearfix"></div></br> <div class="clearfix"></div></br><div class="clearfix"></div></br><div class="clearfix"></div></br>
+</div>
+<div class="mensajeErrorModal hide"></div>

@@ -1,0 +1,261 @@
+{% block body %}
+</br>
+<table width="100%">
+	<tr>
+	 <td width="50%" style="padding-left: 10px;">
+		 <a class="brand" href="#">
+			<img class="logo_empresa" src="{{ obtenerRecurso(hermesImagesLogosEmpresas ~ app.session.get('logoDocumentoPorDefecto')) | imagine_filter('imagen_logo_empresa') }}?{{"now"|date("YmdHis")}}" alt="Logo" />
+		</a>
+		<div class="clearfix " ></div>
+	</td>
+	<td style="padding-right: 5px;">
+		<div style="text-align:right;"><strong>Fecha : {{ "now"|date("d-m-Y") }}</strong><br><strong>Hora   : {{ "now"|date("H:i") }}</strong> </div>
+	</td>
+</tr>
+</table >
+</br>
+<div style="text-align:center;"><h4><b>DETALLE ATENCIÓN</b></h4></div>
+<div class="clearfix " ></div>
+<div style="text-align:left;">Con Fecha  {{ "now"|date("d-m-Y") }}, Hemos recibido de:</div>
+</br>
+<table border="1"  width="100%" bordercolor="#CED3D5">
+	{% if coreApi == 0%}
+	<tr height="30px">
+		<td style=" background-color: whitesmoke; padding-left: 5px; font-weight: bold " width="20%">NOMBRE PACIENTE</td>
+		<td style="padding-left: 5px " width="30%" >{{detalles.nombrePersona|upper}} </td>
+		<td style=" background-color: whitesmoke; padding-left: 5px; font-weight: bold " width="20%">RAZA-ESPECIE</td>
+		<td style="padding-left: 5px " width="30%" colspan="2">{{detalles.raza|upper}}-{{detalles.especie|upper}}</td>
+	</tr>
+	<tr height="30px">
+		<td style=" background-color: whitesmoke; padding-left: 5px; font-weight: bold " width="20%">NOMBRE CLIENTE</td>
+		<td  style="padding-left: 5px " width="30%">{{detalles.nombreCliente|upper}} {{detalles.aPaterno|upper}} {{detalles.aMaterno|upper}}</td>
+		<td style=" background-color: whitesmoke;  padding-left: 5px ; font-weight: bold" width="20%">R.U.T.</td>
+		<td style="padding-left: 5px " width="30%" colspan="2">{{detalles.rut}}-{{detalles.dv}}</td>
+	</tr>
+	{%else%}
+	<tr height="30px">
+		<td style=" background-color: whitesmoke; padding-left: 5px; font-weight: bold " width="20%">Paciente</td>
+		<td style="padding-left: 5px " width="30%">{{detalles.nombrePersona|title}} {{detalles.aPaterno|title}} {{detalles.aMaterno|title}}</td>
+		<td style=" background-color: whitesmoke;  padding-left: 5px ; font-weight: bold" width="20%">Edad</td>
+		<td style="padding-left: 5px " width="30%" colspan="2"><div><span class="edadEmision"> {{detalles.edad}} </span></div></td>
+	</tr>
+	{% endif %}
+	<tr height="30px">
+		<td style=" background-color: whitesmoke;  padding-left: 5px; font-weight: bold">Financiador</td>
+		<td style="padding-left: 5px " colspan="5">{{ detalles.prevision }}  {% if detalles.convenio %} &nbsp/&nbsp{{ detalles.convenio }} {% endif %}</td>
+	</tr>
+	<tr height="30px">
+		<td style=" background-color: whitesmoke;  padding-left: 5px; font-weight: bold ">Profesional</td>
+		<td style="padding-left: 5px "> {% if detalles.esExterno == 0 %}
+			{{detalles.nombreProfesional|title}} {{detalles.aPaternoProfesional|title}} {{detalles.aMaternoProfesional|title}}
+			{% else %}
+			{{detalles.profesionalExterno|upper}}
+			{% endif %}
+			{% if detalles.aPaternoProfesional == null and detalles.profesionalExterno == null %}
+			Sin Profesional Registrado
+			{% endif %}
+		</td>
+		<td style=" background-color: whitesmoke;  padding-left: 5px; font-weight: bold "  colspan="2">Rut Profesional</td>
+		<td style="padding-left: 5px "  colspan="2">
+			{% if detalles.aPaternoProfesional == null and detalles.profesionalExterno == null %}
+			Sin Rut Profesional
+			{% else %}
+			{{ detalles.rutProfesional }}-{{ detalles.dvProfesional }}
+			{% endif %}
+		</td>
+	</tr>
+	<tr height="30px">
+		<td style=" background-color: whitesmoke;  padding-left: 5px; font-weight: bold ">Fecha Atención</td>
+		<td style="padding-left: 5px ">{{detalles.fechaPago|date("d-m-Y")}}<span id="fechaEmision" class="hide">{{detalles.fechaPago|date("Y-m-d")}}</span><span id="fechaN" class="hide">{{detalles.fechaN|date("d-m-Y")}}</span></td>
+		<td style=" background-color: whitesmoke;  padding-left: 5px; font-weight: bold "  colspan="2">Hora Atención</td>
+		<td style="padding-left: 5px "  colspan="2">{{detalles.fechaPago|date("H:i")}} hrs.</td>
+	</tr>
+	<tr>
+		<td colspan="6"  width="100%" >
+			<table  border="0" width="100%">
+				<tr height="25px">
+				 <td width="15%" style=" font-weight: bold; padding-left: 5px; font-size:  smaller "><b>CÓDIGO</b><br></td>
+				 <td width="50%" style=" font-weight: bold; padding-left: 5px; font-size:  smaller "><b>NOMBRE</b><br></td>
+				 <td width="15%" style=" font-weight: bold; padding-left: 5px; font-size:  smaller; text-align: right  "><b>CANTIDAD</b><br></td>
+				 <td width="20%" style=" font-weight: bold; padding-left: 5px; font-size:  smaller; text-align: right  "><b>TOTAL</b><br></td>
+			 </tr>
+			 <tr>
+				<td colspan="4" height="3px">
+					<div style="height: 2px; border-style: none; background-color: #CED3D5; color: #CED3D5;"></div>
+				</td>
+			</tr>
+			{% for atencione in atenciones %}
+			{%if atencione.codigo is not null%}
+			<tr height="25px">
+			 <td  style=" font-weight: bold; padding-left: 5px; font-size:  smaller ">{{atencione.codigo}}</td>
+			 <td style=" font-weight: bold; padding-left: 5px; font-size:  smaller ">{{atencione.nombre}}</td>
+			 <td  style=" font-weight: bold; padding-left: 5px; font-size:  smaller; text-align: right ">{{atencione.cantidad}}</td>
+			 <td   style="  text-align: right; font-size:  smaller; ">
+				 {#{%if atencione.precioCobrado != 0%}#} {{ obtenerMonto(atencione.precioCobrado) }} {#{%endif%}#}
+			 </td>
+		 </tr>  {%endif%}
+		 {% endfor %}
+		 {% for atencione in atencionesA %}
+		 {%if atencione.codigoA is not null%}
+		 <tr height="25px">
+			 <td  style=" font-weight: bold; padding-left: 5px ">{{atencione.codigoA}}</td>
+			 <td style=" font-weight: bold; padding-left: 5px ">{{atencione.nombreA}}</td>
+			 <td  style=" font-weight: bold; padding-left: 5px">{{atencione.cantidadA}}</td>
+			 <td   style="  text-align: right; font-size:  larger;  padding-right: 50px ">
+					{{ obtenerMonto(atencione.precioCobradoA) }}
+			</td>
+		</tr>
+		{% endif %}
+		{% endfor %}
+		<tr>
+			<td colspan="4" height="3px">
+				<div style="height: 2px; border-style: none; background-color: #CED3D5; color: #CED3D5;"></div>
+			</td>
+		</tr>
+		{% if diferencia.totalDescuento is not null %}
+	</tr>
+	<tr height="25px" style='background-color: #F2F5A9'>
+	 <td colspan="3" width="50%" style=" font-weight: bold; padding-left: 20%"><h5><b>Diferencia Aplicada</b></h5></td>
+	 <td  width="50%"  style="  text-align: right; padding-right: 50px">
+		 <h4> {{ obtenerMonto(diferencia.totalDescuento) }} </h4>
+	 </td>
+ </tr>
+ {% endif %}
+
+ <tr height="25px">
+	 <td colspan="3" width="50%" style=" font-weight: bold; text-align: right; font-size: small "><b>Total</b></td>
+	 <td  width="50%"  style="  text-align: right; font-size: small; ">
+		 <b> {{ obtenerMonto(detalles.totalCuenta) }}  </b>
+	 </td>
+ </tr>
+</table>
+</td>
+</tr>
+	{% set imprimeUsuario = false %}
+	{% if detalles.idTipoAtencion == 1  %}
+		{% if detalleUsuarios.nombreRegistro is defined and detalleUsuarios.nombreRegistro is not null %}
+			{% set imprimeUsuario = true %}
+			<tr height="30px">
+				<td style=" background-color: whitesmoke;  padding-left: 5px; font-weight: bold ">USUARIO</td>
+				<td colspan="5" style="padding-left: 5px ">{{detalleUsuarios.nombreRegistro|title}} {{detalleUsuarios.aPaternoRegistro|title}} {{detalleUsuarios.aMaternoRegistro|title}}</td>
+			</tr>
+		{% endif %}
+		{% if detalleUsuarios.nombreConfirmacion is defined and detalleUsuarios.nombreConfirmacion is not null %}
+			<tr height="30px">
+				<td style=" background-color: whitesmoke;  padding-left: 5px; font-weight: bold ">{% if not imprimeUsuario %}USUARIO{% endif %}</td>
+				<td colspan="5" style="padding-left: 5px ">{{detalleUsuarios.nombreConfirmacion|title}} {{detalleUsuarios.aPaternoConfirmacion|title}} {{detalleUsuarios.aMaternoConfirmacion|title}}</td>
+				{% if not imprimeUsuario %}{% set imprimeUsuario = true %}{% endif %}
+			</tr>
+		{% endif %}
+		{% if detalleUsuarios.nombrePago is defined and detalleUsuarios.nombrePago is not null %}
+			<tr height="30px">
+				<td style=" background-color: whitesmoke;  padding-left: 5px; font-weight: bold ">{% if not imprimeUsuario %}USUARIO{% endif %}</td>
+				<td colspan="5" style="padding-left: 5px ">{{detalleUsuarios.nombrePago|title}} {{detalleUsuarios.aPaternoPago|title}} {{detalleUsuarios.aMaternoPago|title}}</td>
+				{% if not imprimeUsuario %}{% set imprimeUsuario = true %}{% endif %}
+			</tr>
+		{% endif %}
+		{% if detalleUsuarios.nombreConsulta is defined and detalleUsuarios.nombreConsulta is not null %}
+			<tr height="30px">
+				<td style=" background-color: whitesmoke;  padding-left: 5px; font-weight: bold ">{% if not imprimeUsuario %}USUARIO{% endif %}</td>
+				<td colspan="5" style="padding-left: 5px ">{{detalleUsuarios.nombreConsulta|title}} {{detalleUsuarios.aPaternoConsulta|title}} {{detalleUsuarios.aMaternoConsulta|title}}</td>
+				{% if not imprimeUsuario %}{% set imprimeUsuario = true %}{% endif %}
+			</tr>
+		{% endif %}
+		{% if detalleUsuarios.nombreAtencion is defined and detalleUsuarios.nombreAtencion is not null %}
+			<tr height="30px">
+				<td style=" background-color: whitesmoke;  padding-left: 5px; font-weight: bold ">{% if not imprimeUsuario %}USUARIO{% endif %}</td>
+				<td colspan="5" style="padding-left: 5px ">{{detalleUsuarios.nombreAtencion|title}} {{detalleUsuarios.aPaternoAtencion|title}} {{detalleUsuarios.aMaternoAtencion|title}}</td>
+				{% if not imprimeUsuario %}{% set imprimeUsuario = true %}{% endif %}
+			</tr>
+		{% endif %}
+	{% else %}
+		<tr height="30px">
+			<td style=" background-color: whitesmoke;  padding-left: 5px; font-weight: bold ">USUARIO</td>
+			<td colspan="5" style="padding-left: 5px ">{{detalleUsuarios.nombreUsuarioIngreso|title}} {{detalleUsuarios.apellidoPaternoUsuarioIngreso|title}} {{detalleUsuarios.apellidoMaternoUsuarioIngreso|title}}</td>
+		</tr>
+		{% if detalleUsuarios.nombreUsuarioIngresoEnfermeria is defined and detalleUsuarios.nombreUsuarioIngresoEnfermeria is not null %}
+			<tr height="30px">
+				<td style=" background-color: whitesmoke;  padding-left: 5px; font-weight: bold "></td>
+				<td colspan="5" style="padding-left: 5px ">{{detalleUsuarios.nombreUsuarioIngresoEnfermeria|title}} {{detalleUsuarios.apellidoPaternoUsuarioIngresoEnfermeria|title}} {{detalleUsuarios.apellidoMaternoUsuarioIngresoEnfermeria|title}}</td>
+			</tr>
+		{% endif %}
+		{% if detalleUsuarios.usuariosPago|length > 0 %}
+			{% for usuario in detalleUsuarios.usuariosPago %}
+				<tr height="30px">
+					<td style=" background-color: whitesmoke;  padding-left: 5px; font-weight: bold "></td>
+					<td colspan="5" style="padding-left: 5px ">{{usuario.nombrePago|title}} {{usuario.aPaternoPago|title}} {{usuario.aMaternoPago|title}}</td>
+				</tr>
+			{% endfor %}
+
+		{% endif %}
+	{% endif %}
+</table>
+</br>
+<div style="text-align:left;  font-size:  smaller"><b>{{detalles.nombreSucursal}}</b></div>
+<div class="clearfix " ></div>
+<div style="text-align:left; font-size:  smaller">{{detalles.direccionSucursal}}</div>
+<div class="clearfix " ></div>
+<div style="text-align:left; font-size:  smaller">{{detalles.telefonoFijo}}</div>
+<div class="clearfix " ></div>
+<div style="text-align:left; font-size:  smaller">{{detalles.telefonoMovil}}</div>
+</br>
+
+<form id="formAtencion" method="POST" class="form-horizontal hide" action="{{ path("Caja_PostPago_PrintDetalleAtencion_ImpresionPDF") }}" method="post" target="_blank" >
+	<input id ="valoridPaciente" type="text" name="valoridPaciente"  value="{{ idPaciente }}"><br>
+</form>
+<script type='text/javascript'>
+
+
+	setTimeout(function(){
+
+		$('.modal').css({'width': '70%',
+			'left': '10%',
+			'height': '90%',
+			'margin-right': 'auto',
+			'margin-left': '5%'});
+
+		$('.modal-body').css({ 'padding': '5px',
+		 'max-height': '90%',
+		 'height': '90%' });
+
+		$('.modal.fade.in').css({'top': '5%',
+			'height': '90%' });
+
+	},500);
+
+	/*var fechan =  $("#fechaN").text();
+	var fechaEmision =  $("#fechaEmision").text();
+	var anio_nacim = fechan.substr(6, 4);
+	var mes_nacim = fechan.substr(3, 2);
+	var dia_nacim = fechan.substr(0, 2);
+
+	$(".edadEmision").html(calcular_edad_FechaEmicionDos(dia_nacim, mes_nacim, anio_nacim, fechaEmision));
+	function calcular_edad_FechaEmicionDos(dia_nacim, mes_nacim, anio_nacim, fechaEmision)
+	{
+		var fechaEmision = new Date(fechaEmision);
+
+		var anio_emision = fechaEmision.getYear();
+		var mes_emision = fechaEmision.getMonth();
+		var dia_emision = fechaEmision.getDate();
+
+		var edad = (anio_emision + 1900) - anio_nacim;
+		if (mes_emision < (mes_nacim - 1))
+		{
+			edad--;
+		}
+		if (((mes_nacim - 1) == mes_emision) && ( dia_emision < dia_nacim))
+		{
+			edad--;
+		}
+		if (edad > 1900)
+		{
+			edad -= 1900;
+		}
+		var ruta = Routing.generate("Caja_GuardaFechaEnBaseDocumento");
+		var data = { edad : edad };
+		$.ajax({type: 'get',  url: ruta, data: data,success: function(datar) {   } });
+
+		return edad;
+	}*/
+</script>
+{% endblock %}

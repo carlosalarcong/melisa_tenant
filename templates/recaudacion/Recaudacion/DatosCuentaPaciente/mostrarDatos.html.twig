@@ -1,0 +1,59 @@
+<style type="text/css">
+    .modificar-bootbox {
+        left: 19.3%;
+        width: 98%;
+    }
+    .modificar-bootbox.fade.in {
+        top: 1%;
+    }
+    .body-hidden {
+        overflow: hidden;
+    }
+    .color-blue-head {
+        background-color: #307ECC;
+        color: #FFF;
+        font-size: 14px;
+        line-height: 38px;
+        padding-left: 12px;
+        padding-right: 12px;
+        margin-bottom: 1px;
+    }
+</style>
+{% import 'RecaudacionBundle:UI/Macros:WidgetsCaja.html.twig' as WidgetCaja %}
+{% include 'RecaudacionBundle:PagoPaciente:_tablaPagoCuentaPaciente.html.twig' %}
+{% if datosCuentaPagoPacienteTutor  is not empty %}
+    {% include 'RecaudacionBundle:PagoPaciente:_tablaPagoCuentaTutor.html.twig' %}
+{% endif %}
+
+<div id="adicional-informacion" class="hide">
+    {% include 'RecaudacionBundle:PagoPaciente:_informacionPagoPaciente.html.twig' %}
+    {% include 'RecaudacionBundle:PagoPaciente:_resguardoFinancieroPaciente.html.twig' %}
+    {% include 'RecaudacionBundle:PagoPaciente:_servicioPaquetizadoPaciente.html.twig' %}
+    {% include 'RecaudacionBundle:PagoPaciente:_tablaListaServicioPago.html.twig' %}
+    <div id="datosprestador" ></div>
+    <div class="clearfix" > </div>
+    <input type="hidden" id="input-id-dato-ingreso"> </input>
+    <input type="hidden" id="input-monto"> </input>
+</div>
+
+<script type="text/javascript">
+    var URL_DATATABLES = "{{ asset('js/datatables/dataTables.es.txt') }}";
+    /* se comenta código de validación para anular pago multiple
+       en standby */
+    {#var CAJA_ANULAR_PAGO_PAGO_CUENTA_MULTIPLE = false;#}
+    {#{% if app.user.tienePerfil('CAJA_ANULAR_PAGO_PAGO_CUENTA_MULTIPLE') %}#}
+    {#var CAJA_ANULAR_PAGO_PAGO_CUENTA_MULTIPLE = true;#}
+    {#{% endif %}#}
+    verificarPagosPendientePagoCuenta();
+</script>
+<script src="{{ asset('bundles/fichaurgencia/js/moment.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('bundles/fichaurgencia/js/datetime-moment.js') }}" type="text/javascript"></script>
+
+{% javascripts '@RecaudacionBundle/Resources/public/js/_default/pago.cuenta/pago.cuenta.js' %}
+    <script type="text/javascript" src="{{ asset_url }}">
+    </script>
+{% endjavascripts %}
+{% javascripts 'bundles/hermes/js/Agenda/DacionHoras/fnReenviarDte.js' %}
+    <script type="text/javascript" src="{{ asset_url }}">
+    </script>
+{% endjavascripts %}

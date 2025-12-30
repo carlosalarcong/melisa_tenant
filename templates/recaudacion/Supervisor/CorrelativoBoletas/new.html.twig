@@ -1,0 +1,224 @@
+{% extends 'RecaudacionBundle:Supervisor:layoutformulariosajax.html.twig' %}
+{% block body -%}
+<div class="table-header">
+	Nuevo Talonario de Boletas
+</div>
+<form id="new_form" class="form-horizontal" action="{{ path('Caja_Supervisor_CorrelativoBoletas_create') }}" method="post">
+	<table class="table table-bordered table-condensed table-hover">
+		<tr>
+			<th>Sucursal</th>
+			<td>
+				{{ form_widget(form.idSucursal) }}
+				<div class="clearfix"></div>
+				{% for error in form.idSucursal.vars.errors %}
+				<span class="text-error">
+					{{ error.message }}
+				</span>
+				{% endfor %}
+			</td>
+		</tr>
+		<tr>
+			<th>Sub Empresa</th>
+			<td>
+				{{ form_widget(form.idSubEmpresa) }}
+				<div class="clearfix"></div>
+				{% for error in form.idSubEmpresa.vars.errors %}
+				<span class="text-error">
+					{{ error.message }}
+				</span>
+				{% endfor %}
+			</td>
+		</tr>
+
+		{% if (folio_global == '0') %}
+		<tr>
+			<th>Ubicación</th>
+			<td>
+				{{ form_widget(form.idUbicacionCaja) }}
+				<div class="clearfix"></div>
+				{% for error in form.idUbicacionCaja.vars.errors %}
+				<span class="text-error">
+					{{ error.message }}
+				</span>
+				{% endfor %}
+			</td>
+		</tr>
+		{% endif %}
+		<tr>
+			<th>Documento</th>
+			<td>
+				{{ form_widget(form.idRelEmpresaTipoDocumento) }}
+				<div class="clearfix"></div>
+				{% for error in form.idRelEmpresaTipoDocumento.vars.errors %}
+				<span class="text-error">
+					{{ error.message }}
+				</span>
+				{% endfor %}
+			</td>
+		</tr>
+		<tr>
+			<th>Número de Pila</th>
+			<td>
+				{{ form_widget(form.numeroPila) }}
+				<div class="clearfix"></div>
+				{% for error in form.numeroPila.vars.errors %}
+				<span class="text-error">
+					{{ error.message }}
+				</span>
+				{% endfor %}
+			</td>
+		</tr>
+		<tr>
+			<th>Estado de Pila</th>
+			<td id='numeroPila'>
+				{{ form_widget(form.idEstadoPila) }}
+				<div class="clearfix"></div>
+				{% for error in form.idEstadoPila.vars.errors %}
+				<span class="text-error">
+					{{ error.message }}
+				</span>
+				{% endfor %}
+			</td>
+		</tr>
+		<tr>
+			<th>Fecha de Entrega</th>
+			<td>
+				{{ form_widget(form.fechaEntrega) }}
+				<div class="clearfix"></div>
+				{% for error in form.fechaEntrega.vars.errors %}
+				<span class="text-error">
+					{{ error.message }}
+				</span>
+				{% endfor %}
+			</td>
+		</tr>
+		<tr>
+			<th>Número de Inicio</th>
+			<td>
+				{{ form_widget(form.numeroInicio) }}
+				<div class="clearfix"></div>
+				{% for error in form.numeroInicio.vars.errors %}
+				<span class="text-error">
+					{{ error.message }}
+				</span>
+				{% endfor %}
+			</td>
+		</tr>
+		<tr>
+			<th>Número de Término</th>
+			<td>
+				{{ form_widget(form.numeroTermino) }}
+				<div class="clearfix"></div>
+				{% for error in form.numeroTermino.vars.errors %}
+				<span class="text-error">
+					{{ error.message }}
+				</span>
+				{% endfor %}
+			</td>
+		</tr>
+		<tr>
+			<th>Número Contador</th>
+			<td>
+				{{ form_widget(form.numeroActual) }}
+				<div class="clearfix"></div>
+				{% for error in form.numeroActual.vars.errors %}
+				<span class="text-error">
+					{{ error.message }}
+				</span>
+				{% endfor %}
+			</td>
+		</tr>
+	</table>
+	{{ form_rest(form) }}
+</form>
+{% endblock %}
+{% block scripts -%}
+{#Para generar calendario en el formato de la macro#}
+{{ macroDependencias.datetime() }}
+
+<script type="text/javascript">
+
+
+	function obtieneNumeroDeInicio(){
+		{#Variables que contienen los id de la sucursal, subempresa y la relación de la empresa con el tipo de documento#}
+		var data = {
+		  idSucursal               : $('#rebsol_hermesbundle_CorrelativoBoletasType_idSucursal').val(),
+		  idSubEmpresa             : $('#rebsol_hermesbundle_CorrelativoBoletasType_idSubEmpresa').val(),
+		  idRelEmpresaTipoDocumento: $('#rebsol_hermesbundle_CorrelativoBoletasType_idRelEmpresaTipoDocumento').val()
+	  };
+
+	  {#Envia por ajax los id para que genere el número de inicio#}
+	  $.ajax({
+		type: 'get',
+		url: "{{ path('Caja_Supervisor_CorrelativoBoletas_generaNumeroDeInicio') }}",
+		data: data,
+		success: function(data) {
+			data = $.parseJSON(data);
+			if(data != null){
+			 $('#rebsol_hermesbundle_CorrelativoBoletasType_numeroInicio').val(data);
+			 $('#rebsol_hermesbundle_CorrelativoBoletasType_numeroActual').val(data);
+		 }
+	 }
+ });
+  }
+  function validaCombobox(){
+	{#Variable data que contiene el tipo de documento#}
+	var data = {
+	  RelEmpresaTipoDocumento: $('#rebsol_hermesbundle_CorrelativoBoletasType_idRelEmpresaTipoDocumento').val(),
+	  SubEmpresa             : $('#rebsol_hermesbundle_CorrelativoBoletasType_idSubEmpresa').val()
+  };
+
+  {#Envia por ajax la variable data que contiene el tipo de documento que genere el nuevo número de pila#}
+  $.ajax({
+	type: 'get',
+	url: "{{ path('Caja_Supervisor_CorrelativoBoletas_numeroPila') }}",
+	data: data,
+	success: function(data) {
+		data = $.parseJSON(data);
+		if(data != null){
+		 $('#rebsol_hermesbundle_CorrelativoBoletasType_numeroPila').val(data);
+	 }
+ }
+});
+}
+
+{#Detecta algún cambio en el combobox tipo de documento#}
+$("#rebsol_hermesbundle_CorrelativoBoletasType_idRelEmpresaTipoDocumento, #rebsol_hermesbundle_CorrelativoBoletasType_idSubEmpresa").change(function(){
+	validaCombobox();
+});
+
+{#Detecta algún cambio en el combobox tipo de documento#}
+$("#rebsol_hermesbundle_CorrelativoBoletasType_numeroInicio").keyup(function(){
+	$("#rebsol_hermesbundle_CorrelativoBoletasType_numeroActual").val($("#rebsol_hermesbundle_CorrelativoBoletasType_numeroInicio").val());
+});
+
+{#Carga función suma y funcion calculaPorcentaje#}
+$('#rebsol_hermesbundle_CorrelativoBoletasType_numeroInicio, #rebsol_hermesbundle_CorrelativoBoletasType_numeroTermino').focus(function(){
+  blockkeyalfa($(this));
+});
+
+
+{#PARA OBTENER NÚMERO DE INICIO POR DEFECTO#}
+$('#rebsol_hermesbundle_CorrelativoBoletasType_idSucursal, \n\
+	#rebsol_hermesbundle_CorrelativoBoletasType_idSubEmpresa,\n\
+	#rebsol_hermesbundle_CorrelativoBoletasType_idUbicacionCaja,\n\
+	#rebsol_hermesbundle_CorrelativoBoletasType_idRelEmpresaTipoDocumento').change(function(){
+
+		if($('#rebsol_hermesbundle_CorrelativoBoletasType_idSucursal').val() != null && $('#rebsol_hermesbundle_CorrelativoBoletasType_idSubEmpresa').val() != null && $('#rebsol_hermesbundle_CorrelativoBoletasType_idRelEmpresaTipoDocumento').val() != null){
+			obtieneNumeroDeInicio();
+		}
+	});
+	{#Este solo permite numeros, tampoco permite simbolos.#}
+	function blockkeyalfa(elemento){
+		elemento.bind("keypress", function(event) {
+			if (event.charCode !== 0) {
+				var regex = new RegExp("^[0-9,]+$");
+				var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+				if (!regex.test(key)) {
+					event.preventDefault();
+					return false;
+				}
+			}
+		});}
+	</script>
+	{% endblock %}

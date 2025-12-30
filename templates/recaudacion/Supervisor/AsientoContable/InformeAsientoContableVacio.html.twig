@@ -1,0 +1,55 @@
+<style>
+    body .modal {
+        width: 98%;
+        left: 1%;
+        height: 90%;
+        margin-right: auto;
+        margin-left: 0%;
+    }
+
+    body .modal-body {
+        padding: 1px;
+        max-height: 92%;
+        height: 92%;
+    }
+
+    body .modal.fade.in {
+        top: 5%;
+        bottom: 5%;
+    }
+</style>
+
+<div class="table-header header-color-blue " style="text-align:left;">
+    <span class="white"><b>ASIENTOS CONTABLES:</b></span>
+</div>
+
+<br/>
+<div id="detallePagosCajeros">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0"
+           class="table table-bordered table-condensed  grey zoom-pagos">
+        <tr style=" background-color: #f5f5f5">
+            <th> Cuenta</th>
+            <th> Glosa</th>
+            <th> Debe</th>
+            <th> Haber</th>
+            <th> Sub.Cuenta</th>
+            <th> Documento</th>
+            <th> Fecha de Emisión</th>
+            <th> Fecha de Vencimiento</th>
+        </tr>
+        <tbody>
+            <tr>
+                <td colspan="8">SIN DATOS QUE MOSTRAR</td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+</div>
+<link rel="stylesheet" href="{{ asset('bundles/hermes/acev12/css/ui.jqgrid.css') }}"/>
+<link rel="stylesheet" href="{{ asset('bundles/hermes/acev12/css/uncompressed/jqgrid-informes.css') }}"/>
+<script src="{{ asset('bundles/hermes/acev12/js/jqGrid/i18n/grid.locale-es.js') }}" type="text/javascript"></script>
+<script src="{{ asset('bundles/hermes/acev12/js/jqGrid/jquery.jqGrid.min.js') }}" type="text/javascript"></script>
+<script type="text/javascript">
+    $('.zoom-pagos').css('zoom', '0.9');
+    $('.btn-print').hide()
+</script>

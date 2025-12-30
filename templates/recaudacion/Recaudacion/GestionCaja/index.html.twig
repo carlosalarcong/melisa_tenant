@@ -1,0 +1,176 @@
+{% import 'RebsolHermesBundle:UI/Macros/Caja:validadorDependencias.html.twig' as validador %}
+<div class="table-header header-color-blue " style="text-align:left;">
+	<span class="white"><b>Apertura Cierre Caja</b></span>
+</div>
+{% if caja %}
+<span id="idCajaAbierta"  class="hide">{{caja.id}} </span>
+{% endif %}
+<div id="contenidoGestion">
+	{% if sintalonario == 0 %}
+	{% if caja %}
+	{% if sintalonarioAE == 0 %}
+	<div class="alert alert-warning CajaCerrada">
+		<strong>No cuenta con Documentos requeridos mínimos para generar pagos.</strong>
+		<div class="clearfix"></div>
+		Debe Contactar a Supervisor para generar Talonario:<div class="clearfix"></div>
+		{% set a = 0 %}
+		{% for talonario in talonarios %}
+		{% if  talonario.idRelEmpresaTipoDocumento.idTipoDocumento.id == 1 %}
+		{% set a = a +1 %}
+		{% endif %}
+		{% endfor %}
+		{% if a < 1 %}
+		- Boleta Afecta<div class="clearfix"></div>
+		{% endif %}
+	</div>
+	{% else %}
+	<div class="alert alert-warning CajaCerrada">
+		<strong>Se ha excedido limite de número de Boleta</strong>
+		<div class="clearfix"></div>
+		Debe Contactar a Supervisor para iniciar nuevo Talonario
+	</div>
+	{% endif %}
+	{% else %}
+	<div class="alert alert-warning CajaCerrada">
+		<strong>Caja Cerrada</strong>
+		<div class="clearfix"></div>
+		Debe Abrir una Nueva Caja.
+	</div>
+	{% endif %}
+	<div class="table-header-grey" style="text-align:left;">
+		<i class="icon-user text-left space"> </i> Información Cajero
+	</div>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-condensed  grey">
+		<tr >
+			<th width="6%" style=" background-color: whitesmoke ">Rut:</th>
+			<td width="14%">
+				<span >{{cajero.rut}}-{{cajero.dv}}</span>
+			</td>
+			<th width="10%" style=" background-color: whitesmoke ">Nombre:</th>
+			<td width="25%">
+				<span  >{{cajero.nombreUser}}</span>
+			</td>
+			<th  width="10%" style=" background-color: whitesmoke ">Apellidos:</th>
+			<td width="35%">
+				<span  >{{cajero.apellidoP}} {{cajero.apellidoM}}</span>
+			</td>
+		</tr>
+	</table>
+	<div class="table-header-grey" style="text-align:left;">
+		<i class="icon-usd text-left space"> </i> Información Caja
+	</div>
+	{% if caja%}
+	{% include 'RecaudacionBundle:Recaudacion/GestionCaja/EstadosCaja:Ultimaboleta.html.twig' %}
+	{% else %}
+	{% include 'RecaudacionBundle:Recaudacion/GestionCaja/EstadosCaja:sinCajaExistente.html.twig' %}
+	{% endif %}
+	{% else %}
+	{% if caja %}
+	{% if sincerrar == 1%}
+	{% if abierta == 1 %}
+	{% if cerrada == 0 %}
+	<div class="alert alert-warning CajaCerrada">
+		<strong>Caja Cerrada</strong>
+		<div class="clearfix"></div>
+		La caja para hoy ha sido cerrada, contacte al supervisor si desea una Reapertura de Caja.
+	</div>
+	{% else %}
+	<div class="alert alert-success CajaCerrada">
+		<strong>Caja Abierta Actualmente</strong>
+	</div>
+	{% endif %}
+	{% else %}
+	<div class="alert alert-warning CajaCerrada">
+		<strong>Caja Cerrada</strong>
+		<div class="clearfix"></div>
+		Debe Abrir una Nueva Caja.
+	</div>
+	{% endif %}
+	{% else %}
+	<div class="alert alert-warning CajaCerrada">
+		<i class="icon-warning-sign text-left space"> </i><strong>Caja Abierta sin Cerrar</strong>
+		<div class="clearfix"></div>
+		Debe Cerrar Caja anterior que se encuentra actualmente sin Cerrar.
+	</div>
+	{% endif %}
+	<div class="btn-gestionCaja-AbrirCerrar hide">
+		{% if sincerrar == 1%}
+		{% if abierta == 1 %}
+		{# NO VA NADA #}
+		{% if cerrada == 0 %}
+		<a title="Abrir Caja" class="btn btn-large btn-success btn-gestionCaja-AbrirCerrar abrirCaja hide " onmouseover="javascript:activarAbrirCerrar($(this), 1)" onmouseout="javascript:desactivarAbrirCerrar($(this), 1)"  href="{{ path('Caja_Gestion_AbrirCaja', {'tipoPago': tipoPago}) }}">
+			<i class="icon-lock  bigger-125"></i><b>Abrir Caja</b></a>
+			{% else %}
+			<a title="Cerrar Caja" class="btn btn-large  btn-danger btn-gestionCaja-AbrirCerrar cerrarCaja hide " onmouseover="javascript:activarAbrirCerrar($(this), 0)" onmouseout="javascript:desactivarAbrirCerrar($(this), 0)" href="{{ path('Caja_Gestion_CerrarCaja', { 'id': caja.id }) }}">
+				<i class="icon-unlock bigger-125"></i><b> Cerrar Caja</b></a>
+				{% endif %}
+				{% else %}
+				<a title="Abrir Caja" class="btn btn-large btn-success btn-gestionCaja-AbrirCerrar abrirCaja hide " onmouseover="javascript:activarAbrirCerrar($(this), 1)" onmouseout="javascript:desactivarAbrirCerrar($(this), 1)" href="{{ path('Caja_Gestion_AbrirCaja', {'tipoPago': tipoPago}) }}">
+					<i class="icon-lock bigger-125"></i><b>Abrir Caja</b></a>
+					{% endif %}
+					{% else %}
+					<a title="Cerrar Caja" class="btn btn-large   btn-danger btn-gestionCaja-AbrirCerrar cerrarCaja hide " onmouseover="javascript:activarAbrirCerrar($(this), 0)" onmouseout="javascript:desactivarAbrirCerrar($(this), 0)"  href="{{ path('Caja_Gestion_CerrarCaja', { 'id': caja.id }) }}">
+						<i class="icon-unlock bigger-125"></i><b>Cerrar Caja</b></a>
+						{% endif %}
+					</div>
+					<div class="clearfix"></div>
+				</br>
+				<div class="table-header-grey" style="text-align:left;">
+					<i class="icon-user text-left space"> </i> Información Cajero
+				</div>
+				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-condensed  grey">
+					<tr >
+						<th width="6%" style=" background-color: whitesmoke ">{{ cajero.nombreDocumento }}:</th>
+						<td width="14%">
+							<span >{{ cajero.identificacionExtranjero }}</span>
+						</td>
+						<th width="10%" style=" background-color: whitesmoke ">Nombre:</th>
+						<td width="25%">
+							<span  >{{cajero.nombreUser}}</span>
+						</td>
+						<th  width="10%" style=" background-color: whitesmoke ">Apellidos:</th>
+						<td width="35%">
+							<span  >{{cajero.apellidoP}} {{cajero.apellidoM}}</span>
+						</td>
+					</tr>
+				</table>
+				<div class="table-header-grey" style="text-align:left;">
+					<i class="icon-usd text-left space"> </i> Información Caja
+				</div>
+				{% if sincerrar == 1%}
+				{% if abierta == 1 %}
+				{% if cerrada == 0 %}
+				{% include 'RecaudacionBundle:Recaudacion/GestionCaja/EstadosCaja:Cerrada.html.twig' %}
+				{% else %}
+				{% include 'RecaudacionBundle:Recaudacion/GestionCaja/EstadosCaja:Abierta.html.twig' %}
+				{% endif %}
+				{% else %}
+				{% include 'RecaudacionBundle:Recaudacion/GestionCaja/EstadosCaja:Cerrada.html.twig' %}
+				{% endif %}
+				{% else %}
+				{% include 'RecaudacionBundle:Recaudacion/GestionCaja/EstadosCaja:sinCerrar.html.twig' %}
+				{% endif %}
+				{% else %}
+				{% include 'RecaudacionBundle:Recaudacion/GestionCaja/EstadosCaja:sinCajaExistente.html.twig' %}
+				{% endif %}
+				{% endif %}
+			</div>
+			<div class="modalInformeCaja hide"></div>
+			<script type='text/javascript'>
+				function activarAbrirCerrar(d, a){
+					if(a == 1){
+						d.find("i").removeClass("icon-lock").addClass("icon-unlock");
+					}else if(a == 0){
+						d.find("i").removeClass("icon-unlock").addClass("icon-lock");
+					}
+
+				}
+
+				function desactivarAbrirCerrar(d, a){
+					if(a == 1){
+						d.find("i").removeClass("icon-unlock").addClass("icon-lock");
+					}else if(a == 0){
+						d.find("i").removeClass("icon-lock").addClass("icon-unlock");
+					}
+				}
+			</script>

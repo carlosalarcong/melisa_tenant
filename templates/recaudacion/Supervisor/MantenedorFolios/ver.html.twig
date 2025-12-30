@@ -1,0 +1,254 @@
+{% extends 'RecaudacionBundle:Supervisor:sublayout.html.twig' %}
+
+{% block contenedorMantenedor -%}
+    <link rel="stylesheet" href="{{ asset('css/chosen.css') }}">
+    <div id="listadoTalonarios">
+        <div class="tablaInformacion">
+            <div class="table-header">
+                Detalle de Folio
+                <div id="div-volver" class="btn-group pull-right">
+                    <a id="volverListado" class="btn btn-mini" href="{{ path('Caja_Supervisor_MantenedorFolios') }}">
+                        <i class="icon-arrow-left"></i> Volver
+                    </a>
+                </div>
+            </div>
+            <table class="table">
+                <tr>
+                    <th>Sucursal</th>
+                    <td>
+                        {{ oTalonario[0].idSucursal.nombreSucursal|title }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Sub-Empresa</th>
+                    <td>
+                        {{ oTalonario[0].idSubEmpresa.nombre|title }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Tipo de Documento</th>
+                    <td>
+                        {{ oTalonario[0].idRelEmpresaTipoDocumento.nombre|title }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Pila Número</th>
+                    <td>
+                        {{ oTalonario[0].numeroPila }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Ubicación</th>
+                    <td>
+                        {% if oTalonario[0].idUbicacionCaja.nombre is defined %}
+                            {{ oTalonario[0].idUbicacionCaja.nombre|title }}
+                        {% else %}
+                            Talonario Global
+
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Número Inicio</th>
+                    <td>
+                        {{ oTalonario[0].numeroInicio }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Número Término</th>
+                    <td>
+                        {{ oTalonario[0].numeroTermino }}
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <table id="table_report" class="table table-bordered table-condensed table-hover">
+            <thead>
+            <tr>
+                <th> Folio</th>
+                <th> Monto</th>
+                <th> Fecha</th>
+                <th> Cajero</th>
+                <th> Estado</th>
+                {% if boletas is defined %}
+                    <th class="sorting_disabled"></th>
+                {% endif %}
+            </tr>
+            </thead>
+
+            {% if boletas is defined %}
+                <tbody>
+                {% for boleta in boletas %}
+                    <tr>
+                        {% for detalle in oDetalleBoleta if detalle.numeroDocumento == boleta %}
+                            <td>
+                                {{ detalle.numeroDocumento }}
+                            </td>
+                            <td>
+                                {{ obtenerMonto(detalle.monto) }}
+                            </td>
+                            {% if detalle.idUsuarioDetalleBoleta == null %}
+                                <td></td>
+                            {% else %}
+                                <td>
+                                    {{ detalle.fechaDetalleBoleta|date('d-m-Y') }}
+                                </td>
+                            {% endif %}
+                            {% if detalle.idUsuarioDetalleBoleta == null %}
+                                <td></td>
+                            {% else %}
+                                <td>
+                                    {{ detalle.idUsuarioDetalleBoleta.nombreUsuario }}
+                                </td>
+                            {% endif %}
+                            <td>
+                                {{ detalle.idEstadoDetalleTalonario.nombre }}
+                            </td>
+                            <td class="span2">
+                                {% if detalle.idEstadoDetalleTalonario.id == '1' %}
+                                    <div class="btn-group">
+                                        <a class="btn btn-mini btn-danger anula" title="Anular Boleta"
+                                           href="{{ path('Caja_Supervisor_MantenedorFolios_Anular', {'idDetalleTalonario': detalle.id}) }}">
+                                            <i class="icon-minus-sign"></i>
+                                        </a>
+                                        <a class="btn btn-mini btn-warning edit" title="Cambiar Boleta"
+                                           href="{{ path('Caja_Supervisor_MantenedorFolios_editar', {'idDetalleTalonario': detalle.id}) }}">
+                                            <i class="icon-edit"></i>
+                                        </a>
+                                    </div>
+                                {% elseif detalle.idEstadoDetalleTalonario.id == '2' %}
+                                    <div class="btn-group">
+                                        <a class="btn btn-mini btn-success habilita" title="Habilitar Boleta"
+                                           href="{{ path('Caja_Supervisor_MantenedorFolios_Habilitar', {'idDetalleTalonario': detalle.id}) }}">
+                                            <i class="icon-check-sign"></i>
+                                        </a>
+                                        <a class="btn btn-mini btn-info show" title="Información Auditoría"
+                                           href="{{ path('Caja_Supervisor_MantenedorFolios_Auditoria', {'idDetalleTalonario': detalle.id}) }}">
+                                            <i class="icon-eye-open"></i>
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </td>
+                        {% else %}
+                            {% set classBoleta = boleta %}
+                            {% set idTalonario = idTalonario %}
+                            <td>
+					<span class="{{ classBoleta }}">
+                        {{ boleta }}
+					</span>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td> POR EMITIR</td>
+                            <td class="span2">
+                                <div class="btn-group">
+                                    <a class="btn btn-mini btn-danger" title="Anular Boleta"
+                                       onclick="anulaPorEmitir({{ classBoleta }}, {{ idTalonario }})">
+                                        <i class="icon-minus-sign"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            {% else %}
+                <tbody>
+                {% for talonarioDetalle in oTalonarioDetalles %}
+                    <tr>
+                        <td>{{ talonarioDetalle.numeroDocumento }}</td>
+                        <td>{{ talonarioDetalle.monto }}</td>
+                        <td>{{ talonarioDetalle.fechaDetalleBoleta|date('d-m-Y') }}</td>
+                        <td>
+                            {% if talonarioDetalle.idUsuarioDetalleBoleta.nombreUsuario is defined %}
+                                {{ talonarioDetalle.idUsuarioDetalleBoleta.nombreUsuario }}
+                            {% endif %}
+                        </td>
+                        <td>{{ talonarioDetalle.idEstadoTalonarioDetalle.nombre }}</td>
+                        {% if boletas is defined %}
+                            <td></td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            {% endif %}
+        </table>
+        <div class="table-footer" id="footer-index">
+            <div class="btn-group pull-right">
+                <a class="btn btn-mini" href="{{ path('Caja_Supervisor_MantenedorFolios') }}">
+                    <i class="icon-arrow-left"></i> Volver
+                </a>
+            </div>
+        </div>
+        <div class="modalVer hide"></div>
+    </div>
+    {# % endif % #}
+{% endblock %}
+{% block scripts -%}
+    <script src="{{ asset('js/bootbox.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.dataTables.bootstrap.js') }}"></script>
+    <script src="{{ asset('js/uncompressed/Caja/fnCommon.js') }}"></script>
+
+    <script type="text/javascript">
+        function anulaPorEmitir(num, idTalonario) {
+
+            bootbox.dialog("<span id='span-msg-delete'>¿Está seguro de anular el documento? </span>", [
+                {
+                    "label": "Cancelar",
+                    "class": "btn btn-mini",
+                    "callback": function () {
+                    }
+                },
+                {
+                    "label": "Anular",
+                    "class": "btn btn-mini btn-danger",
+                    "callback": function () {
+                        var numeroBoleta = {numeroBoleta: num, idTalonario: idTalonario};
+                        $.ajax({
+                            type: 'get',
+                            url: "{{ path('Caja_Supervisor_MantenedorFolios_AnularPorEmitir') }}",
+                            data: numeroBoleta,
+                            success: function (data) {
+                                if (data) {
+                                    var div = "<div class='alert alert-block alert-success'><p><strong><i class='icon-ok'></i> " + data + "</strong></p>";
+                                } else {
+                                    var div = "<div class='alert alert-block alert-danger'><p><strong><i class='icon-ok'></i>Error</strong></p>";
+                                }
+                                bootbox.dialog(div, [
+                                    {
+                                        "label": "Ok",
+                                        "class": "btn btn-mini btn-info",
+                                        "callback": function () {
+                                            location.reload();
+                                            $('#divEliminandoObjeto').hide();
+                                            $('#table_report').show();
+                                            $('#table_report_wrapper').show();
+                                        }
+                                    }
+                                ]);
+                            }
+                        });
+                    }
+                }]);
+
+        }
+
+        $(document).on('ready', function () {
+            // crearDataTable('#table_report');
+            $('#table_report').dataTable({
+                "oLanguage": {
+                    "sUrl": "{{ asset('js/datatables/dataTables.es.txt') }}"
+                },
+                "order": [[ 0, "desc" ]],
+                "aoColumnDefs": [
+                    { "sType": "numeric", "aTargets": [ 0 ] }
+                ]
+            });
+
+
+        });
+    </script>
+{% endblock %}

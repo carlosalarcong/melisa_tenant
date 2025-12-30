@@ -1,0 +1,106 @@
+<div class="table-header-grey" style="text-align:left;">
+    <i class="icon-usd text-left space"></i> Pago - Cuenta Paciente
+</div>
+<table id="mostrar-datos-cuenta-pago-paciente" class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+        <th>N°</th>
+        <th>Fecha Admisión</th>
+        <th>Total Cuenta</th>
+        <th>Saldo Cuenta</th>
+        <th>Estado Pago</th>
+        <th>Tutor</th>
+        <th> </th>
+        <th> </th>
+        <th> </th>
+    </tr>
+    </thead>
+    <tbody id="div-mostrar-cuenta-pago">
+    {% if datosCuentaPagoPaciente is defined and datosCuentaPagoPaciente is not null %}
+        {% for cuentaPago in datosCuentaPagoPaciente %}
+            <tr>
+                <td>{{ cuentaPago.idDatoIngreso }}</td>
+                <td>
+                    {{ cuentaPago.fechaIngreso|hermes_datetime_format() }}
+                </td>
+                <td>{{ obtenerMonto(cuentaPago.totalCuenta) }}</td>
+                <td>{{ obtenerMonto(cuentaPago.saldoCuenta) }}</td>
+                <td>{{ cuentaPago.nombreEstadoPago }}</td>
+                <td>
+                    {% if cuentaPago.nombreTutor is not null %}
+                        [<b>{{ cuentaPago.rutTutor }}</b>] {{ cuentaPago.nombreTutor }} {{ cuentaPago.apellidoPaternoTutor }} {{ cuentaPago.apellidoMaternoTutor }}
+                    {% else %}
+                        Sin Tutor
+                    {% endif %}
+                </td>
+                <td  style="text-align: center;">
+                    {% if cuentaPago.saldoCuenta is not null %}
+                        {% set saldoCuenta = cuentaPago.saldoCuenta %}
+                    {% else %}
+                        {% set saldoCuenta = 0 %}
+                    {% endif %}
+                    {% set datosAdicionalesCuenta =  {
+                        'idDatoIngreso': cuentaPago.idDatoIngreso,
+                        'idCuentaPaciente': cuentaPago.idCuentaPaciente,
+                        'idPaciente': cuentaPago.idPaciente,
+                        'fechaEstadoCuentaLog': cuentaPago.fechaEstadoCuentaLog|hermes_datetime_format(),
+                        'nombreEstadoCuentaPaciente': cuentaPago.nombreEstadoCuentaPaciente,
+                        'totalCuenta': cuentaPago.totalCuenta,
+                        'saldoCuenta': saldoCuenta,
+                        'idPagoCuenta': cuentaPago.idPagoCuenta,
+                        'nombreTipoCuenta': cuentaPago.nombreTipoCuenta,
+                        'totalCuentaPaquetizado': cuentaPago.totalCuentaPaquetizado,
+                        'idTipoCuenta': cuentaPago.idTipoCuenta,
+                        'idEstadoPagoCuenta': cuentaPago.idEstadoPagoCuenta,
+                        'esTutor': false,
+                    } %}
+                    <input id="datos-adicionales" type="hidden" value="{{ datosAdicionalesCuenta|json_encode }}">
+                    {% if cuentaPago.idEstadoPagoCuenta == hermesObtenerParametro('EstadoPago.pendientePago')%}
+                        <a id="btn-pre-pagar" class="btn-pre-pagar btn btn-mini btn-success  pagar-cuenta-pago"> Realizar Pago </a>
+                    {% else %}
+                    <div class="btn-group">
+                        <a title="Ver Detalle Pago" class="btn btn-mini btn-mini-doc btn-primary Print-Detalle-Pago"
+                           href="{{ path('Caja_PostPago_PrintDetallePago', { 'id':  cuentaPago.idPagoCuenta }) }}"
+                        >
+                            <i class="icon-dollar icon-large"></i>
+                        </a>
+
+                        {% if app.user.tienePerfil('CAJA_ANULAR_PAGO_PAGO_CUENTA_INDIVIDUAL') and cuentaPago.idEstadoPagoCuenta == hermesObtenerParametro('EstadoPago.pagadoNormal') and VarCajaHoy == cuentaPago.idCaja %}
+                            <a title="Anular Pago" class="btn btn-mini btn-danger anular"
+                               data-id="{{ cuentaPago.idPaciente }}"
+                               href="{{ path('Caja_PagoCuenta_AnulacionPagoCaja', { 'id':  cuentaPago.idPagoCuenta }) }}">
+                                <i class="icon-remove icon-large"></i>
+                            </a>
+                        {% else %}
+                            <a class="btn btn-mini btn-light">
+                                <i class="icon-remove icon-large"></i>
+                            </a>
+                        {% endif %}
+                       {#  se comenta código de validación para anular pago multiple
+                          en standby#}
+{#                        {% if app.user.tienePerfil('CAJA_ANULAR_PAGO_PAGO_CUENTA_MULTIPLE') %}
+                            <a><input type="checkbox" id="checkBoxId" name="checkBoxAnularId_{{ cuentaPago.idPagoCuenta }}_{{ cuentaPago.idDatoIngreso }}" style="opacity: 1;" ></a>
+                        {% endif %}#}
+                    </div>
+                    {% endif %}
+                    {% if cuentaPago.urlDte is not null or cuentaPago.dataPendiente is not null %}
+                        <a onclick="javascript:enviarAImprimirBoleta({{ cuentaPago|json_encode }})" role="button"
+                           class="btn btn-mini btn-light"
+                           title="Descargar Documentos Electrónicos">
+                            {% if cuentaPago.dataPendiente|length > 0 %}
+                                <i class="icon-file-text icon-large" id="boton{{ cuentaPago.evento }}" style="color: red"></i>
+                            {% else %}
+                                <i class="icon-file-text icon-large" id="boton{{ cuentaPago.evento }}" style="color: green"></i>
+                            {% endif %}
+                        </a>
+                    {% endif %}
+                </td>
+                <td>{{ cuentaPago.idPaciente }}  </td>
+                <td>{{ cuentaPago.idEstadoDetalleTalonario }}  </td>
+            </tr>
+        {% endfor %}
+    {% endif %}
+    </tbody>
+</table>
+<div class="clearfix" > </div>
+<div class="modalAnular hide"></div>

@@ -1,0 +1,11 @@
+# Rutas de Recaudación - Migrado desde RecaudacionBundle
+# Solo incluye rutas de _Default (Servet) - Otras APIs eliminadas
+
+recaudacion_index:
+    path: /recaudacion
+    controller: App\Controller\Caja\Recaudacion\DefaultController::index
+
+# Importar rutas de sub-módulos
+recaudacion_servet:
+    resource: 'recaudacion/'
+    prefix: /recaudacion

@@ -1,0 +1,102 @@
+<style>
+	#divPrestacionBuscar{
+		height: 200px;
+		min-height: 20px;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+	.seleccionarPrestacion {
+		color: #4C8FBD;
+	}
+	.seleccionarPrestacion:hover {
+		color: #707070!important;
+		text-decoration: underline;
+		cursor: pointer;
+	}
+
+	#divInsumoBuscar{
+		height: 200px;
+		min-height: 20px;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+	.seleccionarInsumo {
+		color: #4C8FBD;
+	}
+	.seleccionarInsumo:hover {
+		color: #707070!important;
+		text-decoration: underline;
+		cursor: pointer;
+	}
+
+
+	.bloque {
+		background-color: #629B58!important;
+	}
+	.ok {
+		background-color: #629B58!important;
+		color: #fff;
+		font-size: 1.4em;
+	}
+	.middle {
+		vertical-align: middle!important;
+	}
+	.table-header-width {
+		width: 10%;
+	}
+</style>
+
+	<span id="idFinanciador" class="hide">{{IdFinanciador}}</span>
+	<span id="idPacientePagoCuenta" class="hide"></span>
+	<div id="formprestador">
+		<div class="table-header" style="text-align:left;">
+			<i class="icon-hospital  icon-large text-left space"></i> Datos Prestación
+		</div>
+		<table width="100%" border="0" cellspacing="10" cellpadding="10" class="table table-bordered table-condensed table-hover grey">
+			<tr >
+				<th width="18%" >Financiador</th><td width="25%">{{ form_widget(prestacion_form.prevision, {'attr':{ 'class':'PlanSelect'} }) }}</td>
+				<th width="22%">Origen:</th><td width="35%">
+				<div style="float:left" id="origenSelect">{{ form_widget(prestacion_form.origenSelect ) }} </div>
+			</td>
+		</tr>
+		<tr>
+			<th> Convenio:</th>
+			<td>
+
+				<div id="ConvenioSelect" class="input-append">
+					{{ form_widget(prestacion_form.convenio, {'attr':{ 'class':'PlanSelect'} }) }}
+					<span style="cursor:pointer;" data-tooltip-id="tooltipborrarconvenio" class="btn LimpiarConvenioSelect  tooltip-from-element ocultarDiv">
+					  <i class="icon-eraser"></i></span>
+				  </div>
+			  </td>
+
+			  <th >Derivado por:</th>
+			  <td>
+				<div style="float:left" id="derivadoSelect">{{ form_widget(prestacion_form.derivadoSelect) }} </div>
+				<div  style="float:left" id="derivadoExterno"  class="hide ocultarDiv">{{ form_widget(prestacion_form.derivadoExterno) }}</div>
+				<div style="float:left"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+				<div style="float:left">{{ form_widget(prestacion_form.derivadoCheck) }} </div>
+			</td>
+		</tr>
+		<tr>
+			<th >Plan:</th><td >
+			<div id="selectplan"> {{ form_widget(prestacion_form.plan, {'attr':{ 'class':'PlanSelect planupdate'} }) }}</div>
+
+			<div class="alertaSinDatos red hide ocultarDiv">
+				<i class="icon-remove"></i>
+				No se encontró Planes.
+				<br>
+			</div>
+		</td>
+		<th ></th>
+		<td >                            </td>
+	</tr>
+</table>
+</div>
+
+<div class="clearfix"></div>
+
+
+
+
+

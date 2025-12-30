@@ -1,0 +1,28 @@
+{% if ValidaHistoricoTratamiento is defined and ValidaHistoricoTratamiento == true %}
+    <div id="tratamientosHistoricosDiv" class="widget-box ">{#collapsed#}
+        <div class="widget-header header-color-grey">
+            <div  style="text-align:left; vertical-align: middle" class="encabezadoDeListados">
+                <h8> <i class="icon-time icon-large text-left space"></i> Listado Tratamientos en Proceso de Paciente
+                    <div class="clearfix"></div>
+                </h8>
+            </div>
+            <div class="widget-toolbar">
+                <a href="#" data-action="collapse" >
+                    <i class="icon-chevron-down icon-list-historicoTratamiento icon-list-historico"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="widget-body">
+            <div class="widget-main no-padding">
+                <div class="content">
+                    <div id="table_report_wrapper" class="dataTables_wrapper">
+{#                        {% include 'CajaBundle:HistorialPagoPaciente:indexHistorialTratamiento.html.twig' %}#}
+                        {% include 'RecaudacionBundle:InformacionHistoricaPaciente:_historialTratamientoPaciente.html.twig' %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mensajeEditTratamiento hide"></div>
+{% endif %}

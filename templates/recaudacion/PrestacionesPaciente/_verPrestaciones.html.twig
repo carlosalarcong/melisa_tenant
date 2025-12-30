@@ -1,0 +1,38 @@
+    <div class="table-header header-color-grey " style="text-align:left;">
+        <span class="white"><b> Listado Prestaciones</b></span>
+    </div>
+    <table id="table_prestaciones" class="table table-striped table-bordered table-hover">
+        <thead>
+            <th> Código </th>
+            <th> Nombre </th>
+        </thead>
+        <tbody>
+            {% for oPrestacion in oPrestaciones %}
+                <tr class="seleccionarPrestacion" data-id="{{ oPrestacion.id }}">
+                    <td>{{ oPrestacion.codigoAccionClinica }}</td>
+                    <td>{{ oPrestacion.nombreAccionClinica }}</td>
+                </tr>
+                {% set countPrestaciones = oPrestaciones|length%}
+                {% if countPrestaciones == 1%}
+                <style> #divPrestacionBuscar{ height: 150px; } </style>
+            {% endif %}
+            {% if countPrestaciones == 2%}
+            <style> #divPrestacionBuscar{ height: 300px; } </style>
+        {% endif %}
+        {% if countPrestaciones == 3%}
+        <style> #divPrestacionBuscar{ height: 450px; } </style>
+    {% endif %}
+    {% else %}
+    <tr>
+        <td colspan="2" >No se encontraron resultados</td>
+    </tr>
+    <style> #divPrestacionBuscar{ height: 115px; } </style>
+{% endfor %}
+</tbody>
+</table>
+<script type="text/javascript">
+
+    $('.seleccionarPrestacion').on('click', function () {
+        agregarPrestacion($(this).data('id'));  
+    });
+</script>

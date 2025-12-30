@@ -1,0 +1,157 @@
+{% extends 'RecaudacionBundle::sublayout.html.twig' %}
+{% block body %}
+<div class="well">
+	<div class="container-fluid" style="width: 100%; /*padding-right: 20px; */ padding-left: 0;">
+		<h3 class="grey lighter smaller pull-left">
+			Módulo de Caja
+		</h3>
+		{% if esCajero == 'false' and esUbicacionCajero == 'true' %}
+		<div class="pull-right">
+			<a title="Cambiar Ubicacion Caja" class="btn btn-small btn-info" onClick="formularioCajero();">
+				<i class="icon-exchange"></i> Cambio de Ubicacion Caja
+			</a>
+		</div>
+		{% endif %}
+	</div>
+	<hr>
+	<div class="row-fluid">
+		{% if app.user.tienePerfil('CAJA_RECAUDACION') %}
+		<div class="span4 well well-small well-moduloRebsol">
+			<div class="row-fluid">
+				<div class="span12">
+{#					<a href="{{ path('Caja_Recaudacion') }}">#}
+					<a href="{{ path('recaudacion_recaudacion', {'tipoPago': 'Recaudacion'}) }}">
+						<h3><i class="icon-usd"></i> Recaudación</h3>
+					</a>
+					<span>
+						Pagos por paciente (opción de creación de pacientes) y Apertura y/o Cierre de Cajas
+					</span>
+				</div>
+			</div>
+		</div>
+		{% endif %}
+		{% if app.user.tienePerfil('CAJA_SUPERVISOR') %}
+		<div class="span4 well well-small well-moduloRebsol">
+			<div class="row-fluid">
+				<div class="span12">
+					<a href="{{ path('Caja_Supervisor') }}">
+						<h3><i class="icon-usd"></i> Supervisor</h3>
+					</a>
+					<span>
+						Supervisor de Cajas
+					</span>
+				</div>
+			</div>
+		</div>
+		{% endif %}
+		{% if app.user.tienePerfil('CAJA_FARMACIA') %}
+		<div class="span4 well well-small well-moduloRebsol"  style="display: run-in;">
+			<div class="row-fluid">
+				<div class="span12">
+					<a href="{{ path('Rutas_Caja_Farmacia_Default_Servet') }}">
+						<h3><i class="icon-usd"></i> Caja Farmacia</h3>
+					</a>
+					<span>
+						HSJDD
+					</span>
+				</div>
+			</div>
+		</div>
+		{% endif %}
+		{% if app.user.tienePerfil('CAJA_PAGO_CUENTA') %}
+		<div class="span4 well well-small well-moduloRebsol" {#style="margin: 0;"#}>
+			<div class="row-fluid">
+				<div class="span12">
+{#					<a href="{{ path('Caja_PagoCuenta_Inicio') }}">#}
+					<a href="{{ path('recaudacion_recaudacion', {'tipoPago': 'PagoCuenta'}) }}">
+						<h3><i class="icon-usd"></i> Pago Cuenta</h3>
+					</a>
+					<span>
+						Pagos por paciente, Apertura y/o Cierre de Caja
+					</span>
+				</div>
+			</div>
+		</div>
+		{% endif %}
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="{{ asset('js/uncompressed/bootbox.js') }}"></script>
+<script type='text/javascript'>
+
+	{% for flashMessage in app.session.flashbag.get('errorCajaRecaudacion') %}
+	var mensajeErrorFichaClinica = ""+
+	"<div class='alert alert-block alert-error'>"+
+	"    <p>"+
+	"    <strong><i class='icon-error'></i> {{ flashMessage }}</strong>"+
+	"    </p>"+
+	"</div>";
+	bootbox.dialog(mensajeErrorFichaClinica, [
+	{
+		"label" : "Ok",
+		"class" : "btn btn-mini btn-info",
+	}
+	]);
+	{% endfor %}
+
+	{% for flashMessage in app.session.flashbag.get('errorCajaRecaudacionSinDOcumento') %}
+	var mensajeErrorFichaClinica = ""+
+	"<div class='alert alert-block alert-error'>"+
+	"    <p>"+
+	"    <strong><i class='icon-error'></i> {{ flashMessage }}</strong>"+
+	"    </p>"+
+	"</div>";
+	bootbox.dialog(mensajeErrorFichaClinica, [
+	{
+		"label" : "Ok",
+		"class" : "btn btn-mini btn-info",
+	}
+	]);
+	{% endfor %}
+
+
+	function formularioCajero() {
+		$.ajax({
+			type: 'post',
+			url: "{{ path('Dashboard_formularioCajero') }}",
+			success: function(datar) {
+				bootbox.dialog(datar, [{
+					"label": "<i class='icon-save'></i> Continuar",
+					"class": "btn btn-mini btn-success",
+					"callback": function(event) {
+						envioFormularioCajero();
+						return false;
+
+					}
+				}, ])
+			}
+		});
+	}
+
+	function envioFormularioCajero() {
+		$.ajax({
+			type: 'post',
+			data: $('#formularioActializaSucursales').serializeArray(),
+			url: "{{ path('Dashboard_actualizaCajeroUbicacion') }}",
+			success: function(datar) {
+				if ($.trim(datar) == 'cambiado') {
+					location.reload();
+				}
+			}
+		});
+	}
+
+	function mostrarFormularioCajero(esCajero){
+		if(esCajero == 'true'){
+			formularioCajero();
+		}
+	}
+
+	$(document).ready(function(){
+		mostrarFormularioCajero('{{ esCajero }}');
+	});
+
+</script>
+{% endblock %}

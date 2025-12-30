@@ -1,0 +1,185 @@
+{% extends 'RecaudacionBundle:Supervisor:sublayout.html.twig' %}
+{% block contenedorMantenedor -%}
+
+    <div class="table-header">
+        Búsqueda de Asientos Contables por fecha
+        <div id="div-volver" class="btn-group pull-right">
+            <a id="volverListado" class="btn btn-mini" href="{{ path('Caja_Supervisor') }}">
+                <i class="icon-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+    <br>
+<div id="filtro">
+    <table align='center' width="60%">
+        <tr>
+            <th align="left" width="90">Fecha Inicio</th>
+            <td style=" padding: 10px 0 0 0">{{ form_widget(form.fechaIni, { 'attr': {'class': 'span3', 'readonly':'readonly'} }) }}</td>
+            <th align="left" width="70">Fecha Fin</th>
+            <td style=" padding: 10px 0 0 0">{{ form_widget(form.fechaFin, { 'attr': {'class': 'span3', 'readonly':'readonly'} }) }}</td>
+        </tr>
+        <tr>
+            <th align="left" width="70">Sucursal</th>
+            <td style=" padding: 10px 0 0 0">{{ form_widget(form.idSucursal, { 'attr': {'class': 'span3'} }) }}</td>
+            <td>
+                <div style="text-align: end;"> <span id="loading" class="hide"><i class='icon-spinner blue icon-spin icon-5x'></i></span></div>
+            </td>
+        </tr>
+        <tr>
+            <th align="left" width="70">Cajero</th>
+            <td style=" padding: 10px 0 0 0">{{ form_widget(form.idUsuario, { 'attr': {'class': 'span3'} }) }}</td>
+        </tr>
+        <tr>
+            <td colspan="2"><br>
+                <div style="width:350px" align="center">{{ form_rest(form) }}</div>
+            </td>
+        </tr>
+    </table>
+    {# Pie de página #}
+    <div class="table-footer">
+        <div class="btn-group pull-right">
+            <a class="btn btn-mini" href="{{ path('Caja_Supervisor') }}">
+                <i class="icon-arrow-left"></i> Volver
+            </a>
+            <a class="btn btn-mini btn-info btn-excel informacion btn1" id="formInfoExcel"
+               onclick="busquedaAsientoContableInforme();">
+                <i class="icon-eye-open"></i> Asientos contables
+            </a>
+        </div>
+    </div>
+</div>
+    <div class="modalSinCerrar hide"></div>
+    <div class="modalVer hide" id="modalVer"></div>
+
+{% endblock %}
+{% block scripts -%}
+{#    {{ macroDependencias.datetime() }}#}
+    <script src="{{ asset('js/bootbox.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.dataTables.bootstrap.js') }}"></script>
+    <script src="{{ asset('js/uncompressed/Caja/fnCommon.js') }}"></script>
+    <script src="{{ asset('bundles/hermes/acev12/js/table2excel/jquery.table2excel.js') }}" type="text/javascript"></script>
+    <link href="{{ asset('css/datepicker.css') }}" rel="stylesheet">
+    <script src="{{ asset('js/bootstrap-datepicker.min.js') }}"></script>
+    <script src="{{ asset('js/date-time/locales/bootstrap-datepicker.es.js') }}" charset="UTF-8"></script>
+    <script type="text/javascript">
+        function busquedaAsientoContableInforme() {
+            var datos = {
+                fechaIni: $("#asiento_contable_type_fechaIni").val(),
+                fechaFin: $("#asiento_contable_type_fechaFin").val(),
+                idSucursal: $("#asiento_contable_type_idSucursal").val(),
+                idUsuario: $("#asiento_contable_type_idUsuario").val()
+            };
+
+            $('#loading').show();
+
+            $.ajax({
+                    type: "get",
+                    url: "{{ path('Caja_Supervisor_AsientoContable_Informe') }}",
+                    data: datos,
+                    success: function (data) {
+                            modalAsientoContableInforme(data);
+                            $('#loading').hide();
+                    }
+                }
+            )
+        }
+
+        function modalAsientoContableInforme(response) {
+            $(".modalVer").html('');
+            bootbox.dialog(response, [{
+                "label": "<i class='icon-arrow-left'></i> Volver",
+                "class": "btn btn-mini"
+            }, {
+                "label": "<i class='icon-download-alt'></i> Imprimir Excel",
+                "class": "btn btn-mini btn-success btn-print"
+            }
+            ]);
+        }
+
+        $(document).on('ready', function(){
+            maximoDias= {{ maximoDias }};
+            $('#asiento_contable_type_fechaIni').datepicker({
+                startDate: '-'+maximoDias+'d',
+                endDate: '0',
+                format: "dd-mm-yyyy",
+                weekStart: 1,
+                todayBtn: true,
+                language: "es",
+                todayHighlight: true,
+                autoclose: true
+            });
+            $('#asiento_contable_type_fechaFin').datepicker({
+                startDate: '-'+maximoDias+'d',
+                endDate: '0',
+                format: "dd-mm-yyyy",
+                weekStart: 1,
+                todayBtn: true,
+                language: "es",
+                todayHighlight: true,
+                autoclose: true
+            });
+            {# Ocultamos el botón de aceptar mientras no se hayan seleccionado la fecha y la sucursal #}
+			$('.btn1').hide();
+			{# Detecta algún cambio en la fecha #}
+			$("#asiento_contable_type_fechaIni").change(function(){
+				ValidaEntrada();
+			});
+			$("#asiento_contable_type_fechaFin").change(function(){
+				ValidaEntrada();
+			});
+			{# Detecta algún cambio en el combobox sucursal #}
+			$("#asiento_contable_type_idSucursal").change(function(){
+				ValidaEntrada();
+			});
+			{# Detecta algún cambio en el combobox caja #}
+			$("#asiento_contable_type_idUsuario").change(function(){
+				ValidaEntrada();
+			});
+
+			function ValidaEntrada(){
+				if(($("#asiento_contable_type_fechaIni").val() != "") &&
+						($("#asiento_contable_type_fechaFin").val() != "") &&
+						($("#asiento_contable_type_idSucursal").val() != null)  &&
+                        ($("#asiento_contable_type_idUsuario").val() != null)) {
+					muestraBoton()
+				}
+			}
+
+			{# Función que muestra el botón aceptar una vez que el usuario haya seleccionado la fecha y la sucursal #}
+			function muestraBoton(){
+				$('.btn1').show();
+			}
+
+			$("#asiento_contable_type_idSucursal").change(function(){
+				ajaxSucursal("#asiento_contable_type_idSucursal");
+			});
+
+		});
+
+		function ajaxSucursal (element) {
+			var append = $(element).closest(".input-append").children('span').children('i');
+			append.removeClass('icon-asterisk');
+			append.addClass('icon-spinner icon-spin');
+			var data = {
+				idSucursal: $(element).val()
+			};
+			$.ajax({
+				type: 'get',
+				url: "{{ path('Caja_Supervisor_UbicacionUsuario_BySucursal') }}",
+				data: data,
+				success: function(data) {
+					data = $.parseJSON(data);
+    				var options = '<option value="" disabled="disabled" selected="selected">Seleccionar Cajero</option>';
+
+					for (var i = 0; i < data.length; i++) {
+						options += "<option value="+data[i].idUsuario+">"+data[i].nombreCajero+'</option>';
+					}
+					$('#asiento_contable_type_idUsuario').html(options);
+					append.removeClass('icon-spinner icon-spin');
+					append.addClass('icon-asterisk');
+				}
+			});
+		}
+    </script>
+{% endblock %}

@@ -1,0 +1,30 @@
+<div class="table-header-grey color-blue-head" style="text-align:left;">
+    <i class="icon-usd  icon-large text-left space"></i>&nbsp;Información de Pago
+</div>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-condensed  grey">
+    <tbody>
+    <tr>
+        <th width="25%" style=" background-color: whitesmoke "> N° de Admisión: </th>
+        <td width="25%">
+            <span id="agregar-numero-admision"></span>
+        </td>
+        <th width="25%" style=" background-color: whitesmoke "> Fecha: </th>
+        <td width="25%">
+            <span id="agregar-fecha-cuenta"></span>
+        </td>
+    </tr>
+    <tr>
+        <th width="25%" style=" background-color: whitesmoke "> Estado de Cuenta: </th>
+        <td width="25%">
+            <span id="agregar-estado-cuenta"></span>
+        </td>
+        <th width="25%" style=" background-color: whitesmoke "> Total Cuenta: </th>
+        <td width="25%">
+            <span id="agregar-total-cuenta">
+                {{ obtenerMonto(0) }}
+            </span>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<div class="clearfix " > </div>

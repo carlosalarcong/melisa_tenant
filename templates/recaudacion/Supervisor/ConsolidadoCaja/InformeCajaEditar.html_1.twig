@@ -1,0 +1,1079 @@
+{% set cajaExiste = 0 %}
+{% for c in cajac %}
+{% set cajaExiste = cajaExiste + 1 %}
+{% endfor %}
+{% for c in cajaAnul %}
+{% set cajaExiste = cajaExiste + 1 %}
+{% endfor %}
+{% for c in caja %}
+{% set cajaExiste = cajaExiste + 1 %}
+{% endfor %}
+{% set cajagExiste = 0 %}
+{% for c in cajag %}
+{% set cajagExiste = cajagExiste + 1 %}
+{% endfor %}
+{% for c in cajaAnulg %}
+{% set cajagExiste = cajagExiste + 1 %}
+{% endfor %}
+{% if cajaExiste > 0 or cajagExiste > 0 %}
+<style>
+	body .modal {
+		width: 98%;
+		left: 1%;
+		height: 90%;
+		margin-right: auto;
+		margin-left: 0%;
+	}
+	body .modal-body{
+
+		padding: 1px;
+		max-height: 92%;
+		height: 92%;
+	}
+
+	body .modal.fade.in {
+		top: 5%;
+		bottom: 5%;
+	}
+</style>
+{% else %}
+<style>
+	body .modal {
+		width: 98%;
+		left: 1%;
+		height: 40%;
+		margin-right: auto;
+		margin-left: 0%;
+	}
+	body .modal-body{
+
+		padding: 1px;
+		max-height: 82%;
+		height: 82%;
+	}
+
+	body .modal.fade.in {
+		top: 20%;
+
+	}
+</style>
+{% endif %}
+<div class="table-header header-color-blue " style="text-align:left;">
+	<span class="white">
+		<b>INFORME DE CAJA:</b>
+	</span>
+</div>
+<div class="table-header-grey" style="text-align:left;">
+	<i class="icon-user text-left space"> </i> Información Cajero
+</div>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-condensed  grey">
+	<th width="6%" style=" background-color: whitesmoke ">Rut:</th>
+	<td width="10%">
+		<span >
+			{{ cajero.rut }}-{{ cajero.dv }}</span>
+		</td>
+		<th width="8%" style=" background-color: whitesmoke ">Cajero:</th>
+		<td width="36%">
+			<span  >
+				{{ cajero.nombreUser }} {{ cajero.apellidoP }} {{ cajero.apellidoM }}
+			</span>
+		</td>
+		<th  width="8%" style=" background-color: whitesmoke ">Fecha Caja:</th>
+		<td width="12%">
+			{{ datosCaja.fechaApertura|date('d-m-Y') }}
+		</td>
+		<th  width="10%" style=" background-color: whitesmoke ">Estado Caja:</th>
+		<td width="10%">
+			{% if  datosCaja.fechaCierre %}
+			Cerrada
+			{% else %}
+			{% if  datosCaja.idRe ==  estadoReapertura %}
+			Reapertura
+			{% else %}
+			Abierta
+			{% endif %}
+			{% endif %}
+		</td>
+	</tr>
+</table>
+{% if cajaExiste > 0 %}
+<div class="table-header-grey" style="text-align:left;">
+	<i class="icon-dollar text-left space"> </i> Pagos
+</div>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-condensed  grey zoom-pagos">
+	<tr >
+		<th colspan="11" width="47%" style=" background-color: cornsilk; font-size: larger ">Pagos:</th>
+		<th colspan="7" width="47%" style=" background-color: azure; font-size: larger  "class="hide">Detalle Copagos y Particulares:</th>
+		<th width="6%" class="hide"></th>
+	</tr>
+	<tr style=" background-color: #f5f5f5">
+		<th> Rut P. </th>
+		<th> Paciente </th>
+		<th> Monto </th>
+		<th> F.Pago </th>
+		<th> Financiador </th>
+		<th> N° Bono </th>
+		<th> Bonif. </th>
+		<th> Seguro </th>
+		<th> Copago </th>
+		<th  width="4%" class="hide"> Boleta </th>
+		<th class="hide"> N° Doc </th>
+		<th class="hide"> Efectivow </th>
+		<th class="hide"> Chequew </th>
+		<th class="hide"> T. Crédito </th>
+		<th class="hide"> T. Débito </th>
+		<th class="hide"> Gratuidad </th>
+		<th class="hide"> Profesional </th>
+		<th> Médico </th>
+		<th> Acción </th>
+	</tr>
+	<tbody>
+		{% set sumaTotal = 0 %}
+		{% set sumaBonificacion = 0 %}
+		{% set sumaSeguro = 0 %}
+		{% set sumaCopago = 0 %}
+		{% set sumaEfectivo = 0 %}
+		{% set sumaCheque = 0 %}
+		{% set sumaChequeD = 0 %}
+		{% set sumaChequeF = 0 %}
+		{% set sumaTCredito = 0 %}
+		{% set sumaTDebito = 0 %}
+		{% set sumaGratuidad = 0 %}
+		{% for c in caja %}
+		{# DIFERENCIAR SI TIENE BOLETA Y VALIDAR QUE SEA UNA BOLETA ACTIVA #}
+		{#t TIENE BOLETA ACTIVA#}
+		<tr>
+			<td>{{ c.rut }}-{{ c.dv }}
+			</td>
+			<td>{{ c.apellidoP }} {{ c.nombre[1] ~ '...' }}<span>.</span>
+			</td>
+			<td >
+				<div style=" text-align: right ">
+					{{ obtenerMonto(c.monto) }}
+				</div>
+			</td>
+			<td>
+				{% for fp in formaPago %}
+				{% if c.idPaciente == fp.idPaciente and c.idPagoCuenta == fp.idPagoCuenta %}
+				{% if fp.nombreForma %}
+				{{ fp.nombreForma }} <div class="clearfix"></div>
+				{% endif %}
+				{% endif %}
+				{% endfor %}
+			</td>
+			<td>
+				{% if c.convenio %} {{ c.convenio }}{% else %}{{ c.financiador }}  {% endif %}
+			</td>
+			<td>
+				{% for fp in formaPago %}
+				{% if c.idPaciente == fp.idPaciente and c.idPagoCuenta == fp.idPagoCuenta %}
+				{% if  fp.idFormaPago != 5 and fp.idFormaPago != 3  %}
+				-<div class="clearfix"></div>
+				{% endif %}
+				{% if  fp.idFormaPago == 5 %}
+				{{ fp.numeroDocumentoManual }}
+				<div class="clearfix"></div>
+				{% endif %}
+				{% if fp.idFormaPago == 3 %}
+				{{ fp.numeroDocumentoElectronico }}
+				<div class="clearfix"></div>
+				{% endif %}
+				{% endif %}
+				{% endfor %}
+			</td>
+			<td>
+				{% for fp in formaPago %}
+				{% if c.idPaciente == fp.idPaciente and c.idPagoCuenta == fp.idPagoCuenta %}
+				{% if   fp.idFormaPago != 3  %}
+				-<div class="clearfix"></div>
+				{% endif %}
+				{% if fp.idFormaPago == 3 %}
+				<div style=" text-align: right ">
+					{{ obtenerMonto(fp.montoBonoElectronico) }}
+				</div>
+				<div class="clearfix">
+				</div>
+				{% set sumaBonificacion = sumaBonificacion + fp.montoBonoElectronico %}
+				{% endif %}
+				{% endif %}
+				{% endfor %}
+			</td>
+			<td>
+				{% for fp in formaPago %}
+				{% if c.idPaciente == fp.idPaciente and c.idPagoCuenta == fp.idPagoCuenta %}
+				{% if   fp.idFormaPago != 3  %}
+				-<div class="clearfix"></div>
+				{% endif %}
+				{% if fp.idFormaPago == 3 %}
+				<div style=" text-align: right ">
+					{{ obtenerMonto(fp.seguroComplementario) }}
+				</div><div class="clearfix"></div>
+				{% set sumaSeguro = sumaSeguro + fp.seguroComplementario %}
+				{% endif %}
+				{% endif %}
+				{% endfor %}
+			</td>
+			<td>
+				{% for fp in formaPago %}
+				{% if c.idPaciente == fp.idPaciente and c.idPagoCuenta == fp.idPagoCuenta %}
+				{% if   fp.idFormaPago != 3  %}
+				-<div class="clearfix"></div>
+				{% endif %}
+				{% if fp.idFormaPago == 3 %}
+				<div style=" text-align: right ">
+					{{ obtenerMonto(fp.copagoImed) }}
+				</div><div class="clearfix">
+			</div>
+			{% set sumaCopago = sumaCopago + fp.copagoImed %}
+			{% endif %}
+			{% endif %}
+			{% endfor %}
+		</td>
+		{# FIN PAGOS #}
+		{# COPAGO Y PARTICULARES #}
+		<td class="hide">
+			{% if c.boleta %}
+			{{ c.boleta }}
+			{% else %}
+			<em>Sin Boleta</em>
+			{% endif %}
+		</td>
+		<td class="hide">
+			{% for d in documentos %}
+			{% if c.idPagoCuenta == d.idPagoCuenta %}
+			{% if d.documento %}
+			{{ d.documento }}
+			<div class="clearfix"></div>
+			{% else %}
+			-<div class="clearfix"></div>
+			{% endif %}
+			{% endif %}
+			{% endfor %}
+		</td>
+		<td class="hide">
+			{% for fp in formaPago %}
+			{% if c.idPaciente == fp.idPaciente and c.idPagoCuenta == fp.idPagoCuenta %}
+			{% if   fp.idFormaPago != 1  %}
+			-<div class="clearfix"></div>
+			{% endif %}
+			{% if fp.idFormaPago == 1 %}
+			{% set sumaEfectivo = sumaEfectivo + fp.monto %}
+			<div style=" text-align: right ">
+				{{ obtenerMonto(fp.monto) }}
+			</div>
+			<div class="clearfix"></div>
+			{% endif %}
+			{% endif %}
+			{% endfor %}
+		</td>
+		<td class="hide">
+			{% for fp in formaPago %}
+			{% if c.idPaciente == fp.idPaciente and c.idPagoCuenta == fp.idPagoCuenta %}
+			{% if  fp.idFormaPago != 7 and fp.idFormaPago != 8  %}
+			-<div class="clearfix"></div>
+			{% endif %}
+			{% if  fp.idFormaPago == 7 %}
+			<div style=" text-align: right ">
+				{{ obtenerMonto(fp.montoCheques) }}
+			</div>
+			<div class="clearfix"></div>
+			{% set sumaCheque = sumaCheque + fp.montoCheques %}
+			{% set sumaChequeF = sumaChequeF + fp.montoCheques %}
+			{% endif %}
+			{% if fp.idFormaPago == 8 %}
+			{% set sumaCheque = sumaCheque + fp.montoCheques %}
+			{% set sumaChequeD = sumaChequeD + fp.montoCheques %}
+			<div style=" text-align: right ">
+				{{ obtenerMonto(fp.montoCheques) }}
+			</div>
+			<div class="clearfix"></div>
+			{% endif %}
+			{% endif %}
+			{% endfor %}
+		</td>
+		<td class="hide">
+			{% for fp in formaPago %}
+			{% if c.idPaciente == fp.idPaciente and c.idPagoCuenta == fp.idPagoCuenta %}
+			{% if   fp.idFormaPago != 4  %}
+			-<div class="clearfix"></div>
+			{% endif %}
+			{% if fp.idFormaPago == 4 %}
+			{% set sumaTCredito = sumaTCredito + fp.monto %}
+			<div style=" text-align: right ">
+				{{ obtenerMonto(fp.monto) }}
+			</div>
+			<div class="clearfix"></div>
+			{% endif %}
+			{% endif %}
+			{% endfor %}
+		</td>
+		<td class="hide">
+			{% for fp in formaPago %}
+			{% if c.idPaciente == fp.idPaciente and c.idPagoCuenta == fp.idPagoCuenta %}
+			{% if   fp.idFormaPago != 6  %}
+			-<div class="clearfix"></div>
+			{% endif %}
+			{% if fp.idFormaPago == 6 %}
+			{% set sumaTDebito = sumaTDebito + fp.monto %}
+			<div style=" text-align: right ">
+				{{ obtenerMonto(fp.monto) }}
+			</div>
+			<div class="clearfix"></div>
+			{% endif %}
+			{% endif %}
+			{% endfor %}
+		</td>
+		<td class="hide"> {% for fp in formaPago %}
+			{% if c.idPaciente == fp.idPaciente and c.idPagoCuenta == fp.idPagoCuenta %}
+			{% if   fp.idFormaPago != 2  %}
+			-<div class="clearfix"></div>
+			{% endif %}
+			{% if fp.idFormaPago == 2 %}
+			{% set sumaGratuidad = sumaGratuidad + fp.monto %}
+			<div style=" text-align: right ">
+				{{ obtenerMonto(fp.monto) }}
+			</div>
+			<div class="clearfix"></div>
+			{% endif %}
+			{% endif %}
+			{% endfor %}
+		</td>
+		{# FIN COPAGO Y PARTICULARES #}
+		{# DIFERENCIA #}
+		{#<td>xx</td>#}
+		{#<td><a class="btn btn-mini btn-warning btn-block editar" title="Editar N°Bono" href="{{ path("Caja_Supervisor_ConsolidadoCaja_EditarBono", {'idPago':c.idPagoCuenta}) }}">Editar</a></td>#}
+		<td class="hide">
+			{% if c.esExterno == 0 %}
+			{{ c.apellidoPaternoMedico }} {{ c.nombreMedico[1] ~ '...' }}
+			<span>.</span>
+			{% else %}
+			{{ c.profesionalExterno }}
+			{% endif %}
+		</td>
+		{# FIN DIFERENCIA #}
+	</tr>
+	{# FIN TIENE BOLETA ACTIVA#}
+	{% set sumaTotal = sumaTotal + c.monto %}
+	{% endfor %}
+	{% for c in cajaAnul %}
+	<tr style=" background-color: red">
+		<td>
+			<font color="white">
+				{{ c.rut }}-{{ c.dv }}
+			</font>
+		</td>
+		<td>
+			<font color="white">
+				{{ c.apellidoP }} {{ c.nombre[1] ~ '...'}}
+				<span>.</span>
+			</font>
+		</td>
+		<td ><div style=" text-align: right ">
+			<font color="white">
+				{{ obtenerMonto(c.monto) }}
+			</font>
+		</div>
+	</td>
+	<td>
+		{% for fp in formaPago %}
+		{% if c.idPaciente == fp.idPaciente and c.idPagoCuenta == fp.idPagoCuenta %}
+		{% if fp.nombreForma %}
+		<font color="white">
+			<b>{{ fp.nombreForma }}</b>
+		</font>
+		<div class="clearfix"></div>
+		{% endif %}
+		{% endif %}
+		{% endfor %}
+	</td>
+	<td> {% if c.convenio %}
+		<font color="white">
+			{{ c.convenio }}
+		</font>
+		{% else %}
+		<font color="white">
+			{{ c.financiador }}
+		</font>  {% endif %}
+	</td>
+	<td colspan ="6">
+		<div style="text-align: center; font-weight: bolder">
+			<em>
+				<font color="white">
+					<b>PAGO ANULADO</b>
+				</font>
+			</em>
+		</div>
+	</td>
+</tr>
+{% endfor %}
+{% for c in caja %}
+{% if c.estadoBoleta != estadoBoletaActiva %}
+{% endif %}
+{% else %}
+<tr class="hide">
+	<td>
+		{{ c.rut }}-{{ c.dv }}
+	</td>
+	<td>
+		{{ c.apellidoP }} {{ c.nombre[1] ~ '...' }}<span>.</span>
+	</td>
+	<td >
+		<div style=" text-align: right ">
+		{{ obtenerMonto( c.monto ) }}
+		</div>
+	</td>
+	<td>
+		{% for fp in formaPago %}
+		{% if c.idPaciente == fp.idPaciente and c.idPagoCuenta == fp.idPagoCuenta %}
+		{% if fp.nombreForma %}
+		{{ fp.nombreForma }}
+		<div class="clearfix"></div>
+		{% endif %}
+		{% endif %}
+		{% endfor %}
+	</td>
+	<td> {% if c.convenio %} {{ c.convenio }}{% else %}{{ c.financiador }}  {% endif %}  </td>
+	<td>
+		{% for fp in formaPago %}
+		{% if c.idPaciente == fp.idPaciente and c.idPagoCuenta == fp.idPagoCuenta %}
+		{% if  fp.idFormaPago != 5 and fp.idFormaPago != 3  %}
+		-<div class="clearfix"></div>
+		{% endif %}
+		{% if  fp.idFormaPago == 5 %}
+		{{ fp.numeroDocumentoManual }}
+		<div class="clearfix"></div>
+		{% endif %}
+		{% if fp.idFormaPago == 3 %}
+		{{ fp.numeroDocumentoElectronico }}
+		<div class="clearfix"></div>
+		{% endif %}
+		{% endif %}
+		{% endfor %}
+	</td>
+	<td>  {% for fp in formaPago %}
+		{% if c.idPaciente == fp.idPaciente and c.idPagoCuenta == fp.idPagoCuenta %}
+		{% if   fp.idFormaPago != 3  %}
+		-<div class="clearfix"></div>
+		{% endif %}
+		{% if fp.idFormaPago == 3 %}
+		<div style=" text-align: right ">
+		{{ obtenerMonto( fp.montoBonoElectronico ) }}
+		</div>
+		<div class="clearfix"></div>
+		{% set sumaBonificacion = sumaBonificacion + fp.montoBonoElectronico %}
+		{% endif %}
+		{% endif %}
+		{% endfor %}
+	</td>
+	<td> {% for fp in formaPago %}
+		{% if c.idPaciente == fp.idPaciente and c.idPagoCuenta == fp.idPagoCuenta %}
+		{% if   fp.idFormaPago != 3  %}
+		-<div class="clearfix"></div>
+		{% endif %}
+		{% if fp.idFormaPago == 3 %}
+		<div style=" text-align: right ">
+			{{ obtenerMonto( fp.seguroComplementario ) }}
+		</div>
+		<div class="clearfix"></div>
+		{% set sumaSeguro = sumaSeguro + fp.seguroComplementario %}
+		{% endif %}
+		{% endif %}
+		{% endfor %}
+	</td>
+	<td>{% for fp in formaPago %}
+		{% if c.idPaciente == fp.idPaciente and c.idPagoCuenta == fp.idPagoCuenta %}
+		{% if   fp.idFormaPago != 3  %}
+		-<div class="clearfix"></div>
+		{% endif %}
+		{% if fp.idFormaPago == 3 %}
+		<div style=" text-align: right ">
+			{{ obtenerMonto(fp.copagoImed) }}
+		</div>
+		<div class="clearfix"></div>
+		{% set sumaCopago = sumaCopago + fp.copagoImed %}
+		{% endif %}
+		{% endif %}
+		{% endfor %}
+	</td>
+	<td>
+		{{ c.nombreMedico }} {{ c.apellidoPaternoMedico }} {{ c.apellidoMaternoMedico }}
+	</td>
+	<td>
+		<a class="btn btn-mini btn-warning btn-block editar" title="Editar N°Bono" href="{{ path("Caja_Supervisor_ConsolidadoCaja_EditarBono", {'idPago':c.idPagoCuenta}) }}">
+			<i class="icon-edit"></i> Editar
+		</a>
+	</td>
+	{# FIN PAGOS #}
+	{# COPAGO Y PARTICULARES #}
+	<td>     {% if c.boleta %}
+		{{ c.boleta }}
+		{% else %}
+		<em>Sin Boleta</em>
+		{% endif %}
+	</td>
+	<td>
+		{% for d in documentos %}
+		{% if c.idPagoCuenta == d.idPagoCuenta %}
+		{% if d.documento %}
+		{{ d.documento }} <div class="clearfix"></div>
+		{% else %}
+		-<div class="clearfix"></div>
+		{% endif %}
+		{% endif %}
+		{% endfor %}
+	</td>
+	<td>
+		{% for fp in formaPago %}
+		{% if c.idPaciente == fp.idPaciente and c.idPagoCuenta == fp.idPagoCuenta %}
+		{% if   fp.idFormaPago != 1  %}
+		-<div class="clearfix"></div>
+		{% endif %}
+		{% if fp.idFormaPago == 1 %}
+		{% set sumaEfectivo = sumaEfectivo + fp.monto %}
+		<div style=" text-align: right ">
+			{{ obtenerMonto(fp.monto) }}
+		</div>
+		<div class="clearfix"></div>
+		{% endif %}
+		{% endif %}
+		{% endfor %}
+	</td>
+	<td>
+		{% for fp in formaPago %}
+		{% if c.idPaciente == fp.idPaciente and c.idPagoCuenta == fp.idPagoCuenta %}
+		{% if  fp.idFormaPago != 7 and fp.idFormaPago != 8  %}
+		-<div class="clearfix"></div>
+		{% endif %}
+		{% if  fp.idFormaPago == 7 %}
+		<div style=" text-align: right ">
+			{{ obtenerMonto(fp.montoCheques) }}
+		</div>
+		<div class="clearfix"></div>
+		{% set sumaCheque = sumaCheque + fp.montoCheques %}
+		{% set sumaChequeF = sumaChequeF + fp.montoCheques %}
+		{% endif %}
+		{% if fp.idFormaPago == 8 %}
+		{% set sumaCheque = sumaCheque + fp.montoCheques %}
+		{% set sumaChequeD = sumaChequeD + fp.montoCheques %}
+		<div style=" text-align: right ">
+			{{ obtenerMonto(fp.montoCheques) }}
+		</div><div class="clearfix"></div>
+		{% endif %}
+		{% endif %}
+		{% endfor %}
+	</td>
+	<td>  {% for fp in formaPago %}
+		{% if c.idPaciente == fp.idPaciente and c.idPagoCuenta == fp.idPagoCuenta %}
+		{% if   fp.idFormaPago != 4  %}
+		-<div class="clearfix"></div>
+		{% endif %}
+		{% if fp.idFormaPago == 4 %}
+		{% set sumaTCredito = sumaTCredito + fp.monto %}
+		<div style=" text-align: right ">
+			{{ obtenerMonto(fp.monto) }}
+		</div>
+		<div class="clearfix"></div>
+		{% endif %}
+		{% endif %}
+		{% endfor %}
+	</td>
+	<td> {% for fp in formaPago %}
+		{% if c.idPaciente == fp.idPaciente and c.idPagoCuenta == fp.idPagoCuenta %}
+		{% if   fp.idFormaPago != 6  %}
+		-<div class="clearfix"></div>
+		{% endif %}
+		{% if fp.idFormaPago == 6 %}
+		{% set sumaTDebito = sumaTDebito + fp.monto %}
+		<div style=" text-align: right ">
+			{{ obtenerMonto(fp.monto) }}
+		</div><div class="clearfix"></div>
+		{% endif %}
+		{% endif %}
+		{% endfor %}
+	</td>
+	<td> {% for fp in formaPago %}
+		{% if c.idPaciente == fp.idPaciente and c.idPagoCuenta == fp.idPagoCuenta %}
+		{% if   fp.idFormaPago != 2  %}
+		-<div class="clearfix"></div>
+		{% endif %}
+		{% if fp.idFormaPago == 2 %}
+		{% set sumaGratuidad = sumaGratuidad + fp.monto %}
+		<div style=" text-align: right ">
+			{{ obtenerMonto(fp.monto) }}
+		</div>
+		<div class="clearfix"></div>
+		{% endif %}
+		{% endif %}
+		{% endfor %}
+	</td>
+	{# FIN COPAGO Y PARTICULARES #}
+	{# DIFERENCIA #}
+	<td>
+		{% if c.esExterno == 0 %}
+		{{ c.apellidoPaternoMedico }} {{ c.nombreMedico[1] ~ '...' }}
+		<span>.</span>
+		{% else %}
+		{{ c.profesionalExterno }}
+		{% endif %}
+	</td>
+	{# FIN DIFERENCIA #}
+</tr>
+{# FIN SI ES BOLETA Y ACTIVA #}
+{% set sumaTotal = sumaTotal + c.monto %}
+{% endfor %}
+<tr>
+	<th colspan="2" style=" background-color: cornsilk; font-size: larger ">Total:</th>
+	<th colspan="1" style=" background-color: cornsilk; font-size: larger  ">
+		<div style=" text-align: right ">
+			{{ obtenerMonto(sumaTotal) }}
+		</div>
+	</th>
+	<th colspan ="3" ></th>
+	<th colspan="1" style=" background-color: cornsilk; ">
+		<div style=" text-align: right ">
+			{{ obtenerMonto(sumaBonificacion) }}
+		</div>
+	</th>
+	<th colspan="1" style=" background-color: cornsilk; ">
+		<div style=" text-align: right ">
+			{{ obtenerMonto(sumaSeguro) }}
+		</div>
+	</th>
+	<th colspan="1" style=" background-color: cornsilk; ">
+		<div style=" text-align: right ">
+			{{ obtenerMonto(sumaCopago) }}
+		</div>
+	</th>
+	<th colspan="2" class="hide"></th>
+	<th colspan="1" class="hide" style=" background-color: azure; ">
+		<div style=" text-align: right ">
+			{{ obtenerMonto(sumaEfectivo) }}
+		</div>
+	</th>
+	<th colspan="1" class="hide" style=" background-color: azure; ">
+		<div style=" text-align: right ">
+			{{ obtenerMonto(sumaCheque) }}
+		</div>
+	</th>
+	<th colspan="1" class="hide" style=" background-color: azure; ">
+		<div style=" text-align: right ">
+			{{ obtenerMonto(sumaTCredito) }}
+		</div>
+	</th>
+	<th colspan="1" class="hide" style=" background-color: azure; ">
+		<div style=" text-align: right ">
+			{{ obtenerMonto(sumaTDebito) }}
+		</div>
+	</th>
+	<th colspan="1" class="hide" style=" background-color: azure; ">
+		<div style=" text-align: right ">
+			{{ obtenerMonto(sumaGratuidad) }}
+		</div>
+	</th>
+	<th colspan="2"></th>
+
+</tr>
+</tbody>
+</table>
+{% endif %}
+{% if cajagExiste > 0 %}
+<div class="table-header-grey" style="text-align:left;">
+	<i class="icon-dollar text-left space"> </i> Garantias
+</div>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-condensed  grey zoom-pagos">
+	<tr >
+		<th colspan="2" width="50%" style=" background-color: cornsilk; font-size: larger ">Garantias:</th>
+	</tr>
+	<tr style=" background-color: #f5f5f5">
+		<th> Rut P. </th>
+		<th> Paciente </th>
+		<th> Monto </th>
+		<th> F.Pago </th>
+	</tr>
+	<tbody>
+		{% set sumaTotalG = 0 %}
+		{% set sumaGarantia = 0 %}
+		{% set sumaGarantiaL = 0 %}
+		{% set sumaGarantiaI = 0 %}
+		{% for c in cajag %}
+		{% if c.boleta %}
+		{#t TIENE BOLETA ACTIVA#}
+		{# GARANTIAS #}
+		<tr>
+			<td>{{ c.rut }}-{{ c.dv }}
+			</td>
+			<td>
+				{{ c.apellidoP }} {{ c.nombre[1] ~ '...' }}
+				<span>.</span>
+			</td>
+			<td >
+				<div style=" text-align: right ">
+					{{ obtenerMonto(c.monto) }}
+				</div>
+			</td>
+			<td>
+				{% for fp in formaPagog %}
+				{% if c.idPaciente == fp.idPaciente and c.idPagoCuenta == fp.idPagoCuenta %}
+				{% if fp.nombreForma %}
+				{{ fp.nombreForma }}
+				<div class="clearfix"></div>
+				{% endif %}
+				{% endif %}
+				{% endfor %}
+			</td>
+			{# FIN GARANTIAS #}
+		</tr>
+		{# FIN TIENE BOLETA ACTIVA#}
+		{% endif %}
+		{% set sumaTotalG = sumaTotalG + c.monto %}
+		{% endfor %}
+		<tr>
+			<th colspan="2" style=" background-color: cornsilk; font-size: larger ">Total:</th>
+			<th colspan="1" style=" background-color: cornsilk; font-size: larger  ">
+				<div style=" text-align: right ">
+					{{ obtenerMonto(sumaTotalG) }}
+				</div>
+			</th>
+			<th colspan ="3" ></th>
+		</tr>
+	</tbody>
+</table>
+{% endif %}
+{% if cajaExiste > 0 or cajagExiste > 0 %}
+<br>
+<div class="clearfix"></div>
+<div class="table-header-grey" style="text-align:left;">
+	<i class="icon-bar-chart text-left space"> </i> Cuadratura Caja
+</div>
+<table align="center" width="100%" class="table table-striped table-condensed table-bordered">
+	{# TODOS LOS MEDIOS DE PAGO #}
+	{% set auxVar = 0 %}
+	{% for dct in detallesMontosTipos %}
+	{% set auxVar = auxVar + 1 %}
+	{% endfor %}
+	{% if auxVar > 0 %}
+	{% set auxVar = 0 %}
+	<tr>
+		<td  colspan="4"  style=" background-color: #DDDDDD"><b>Todos los  Medios de Pago</b>
+		</td>
+	</tr>
+	<tr>
+		<td width="50%"   colspan="2" style=" background-color: #FAFAFA">
+			<b> Medio de Pago</b>
+		</td>
+		<td width="25%" style=" background-color: #FAFAFA"><div style=" text-align:  center">
+			<b> Monto</b>
+		</div>
+	</td>
+</tr>
+{% for dct in detallesMontosTipos %}
+<tr>
+	<td colspan="2" >
+		{{ dct.nombreForma }}
+	</td>
+	{# MONTO EFECTIVO#}
+	{% if dct.idFormaPago == 1 %}
+	<td ><div style=" text-align: right ">
+		{{ obtenerMonto(sumaEfectivo) }}
+	</div>
+</td>
+{% endif %}
+{# MONTO GRATUIDAD#}
+{% if dct.idFormaPago == 2 %}
+<td ><div style=" text-align: right ">
+	{{ obtenerMonto(sumaGratuidad) }}
+</div>
+</td>
+{% endif %}
+{# MONTO T.CREDITO#}
+{% if dct.idFormaPago == 4 %}
+<td ><div style=" text-align: right ">
+	{{ obtenerMonto(sumaTCredito) }}
+</div>
+</td>
+{% endif %}
+{# MONTO T.DEBIDO#}
+{% if dct.idFormaPago == 6 %}
+<td ><div style=" text-align: right ">
+	{{ obtenerMonto(sumaTDebito) }}
+</div>
+</td>
+{% endif %}
+{# MONTO BONO ELECTRONICO  #}
+{% if dct.idFormaPago == 3 %}
+<td ><div style=" text-align: right ">
+	{% set sumaMontoElectronico = dct.montoBonoElectronico|number_format + dct.montoBonoElectronicoSeguro|number_format %}
+	{{ obtenerMonto(sumaMontoElectronico) }}
+</div>
+</td>
+{% endif %}
+{# MONTO BONO MANUAL #}
+{% if dct.idFormaPago == 5 %}
+<td ><div style=" text-align: right ">
+	{{ obtenerMonto(dct.montoBono) }}
+</div>
+</td>
+{% endif %}
+{# MONTO CHEQUE #}
+{% if dct.idFormaPago == 7 %}
+<td ><div style=" text-align: right ">
+	{{ obtenerMonto(sumaChequeF) }}
+</div>
+</td>
+{% endif %}
+{% if dct.idFormaPago == 8 %}
+<td ><div style=" text-align: right ">
+	{{ obtenerMonto(sumaChequeD) }}
+</div>
+</td>
+{% endif %}
+</tr>
+{% endfor %}
+{% endif %}
+{# FIN TODOS LOS MEDIOS DE PAGO #}
+{# TODOS LOS BONOS #}
+{% for mbm in detallesMontosBonosManuales %}
+{% set auxVar = auxVar + 1 %}
+{% endfor %}
+{% if auxVar > 0 %}
+{% set auxVar = 0 %}
+<tr  >
+	<td  colspan="4"  style=" background-color: #DDDDDD">
+		<b>Bonos</b>
+	</td>
+</tr>
+{# TODOS LOS BONOS MANUALES #}
+{% for mbm in detallesMontosBonosManuales %}
+{% if mbm.idFormaPago == 5 %}
+<tr  >
+	<td  colspan="4"  style=" background-color: #FFF8DC">
+		<i class="icon-level-down text-left space"> </i>
+		<b>Bonos Manuales</b>
+	</td>
+</tr>
+<tr  >
+	<td width="40%"    style=" background-color: #FAFAFA">
+		<b>Financiador</b>
+	</td>
+	<td width="10%"   style=" background-color: #FAFAFA">
+		<b> Cantidad</b>
+	</td>
+	<td width="25%" style=" background-color: #FAFAFA">
+		<div style=" text-align:  center">
+			<b> Monto</b>
+		</div>
+	</td>
+</tr>
+<tr>
+	<td>
+		{{ mbm.prevision }}
+		{% if mbm.convenio %}
+		&nbsp/&nbsp{{ mbm.convenio }}
+		{% endif %}
+	</td>
+	<td>
+		{{ mbm.cantidad }}
+	</td>
+	<td >
+		<div style=" text-align: right ">
+			{{ obtenerMonto( mbm.monto ) }}
+		</div>
+	</td>
+</tr>
+{% endif %}
+{# FIN TODOS LOS BONOS MANUALES  #}
+{#  TODOS LOS BONOS ELECTRONICOS  #}
+{% if mbm.idFormaPago == 3 %}
+<tr  >
+	<td  colspan="4"  style=" background-color: #FFF8DC">
+		<i class="icon-level-down text-left space"> </i>
+		<b>Bonos Electronicos</b>
+	</td>
+</tr>
+<tr  >
+	<td width="40%"    style=" background-color: #FAFAFA">
+		<b>Financiador</b>
+	</td>
+	<td width="10%"   style=" background-color: #FAFAFA">
+		<b> Cantidad</b>
+	</td>
+	<td width="25%" style=" background-color: #FAFAFA">
+		<div style=" text-align:  center">
+			<b> Monto</b>
+		</div>
+	</td>
+</tr>
+<tr>
+	<td>
+		{{ mbm.prevision }} {% if mbm.convenio %} &nbsp/&nbsp{{ mbm.convenio }} {% endif %}
+	</td>
+	<td>
+		{{ mbm.cantidad }}
+	</td>
+	<td >
+		<div style=" text-align: right ">
+			{% set sumaMontoElectronico2 = mbm.montoBonoElectronico|number_format + mbm.montoBonoElectronicoSeguro|number_format %}
+			{{ obtenerMonto( sumaMontoElectronico2 ) }}
+		</div>
+	</td>
+</tr>
+{% endif %}
+{% endfor %}
+{# FIN TODOS LOS BONOS ELECTRONICOS  #}
+{% endif %}
+{# FIN TODOS LOS BONOS  #}
+{# TODOS LOS DEPOSITOS #}
+{% set auxVar = 0 %}
+{% for dmd in detalleMontosDeposito %}
+{% set auxVar = auxVar + 1 %}
+{% endfor %}
+{% if auxVar > 0 %}
+{% set auxVar = 0 %}
+<tr>
+	<td  colspan="4"  style=" background-color: #DDDDDD">
+		<b>Todos los  Depósitos</b>
+	</td>
+</tr>
+<tr>
+	<td width="25%"  style=" background-color: #FAFAFA">
+		<b> Medio de Pago</b>
+	</td>
+	<td width="25%"  style=" background-color: #FAFAFA">
+		<b> Número Depósito</b>
+	</td>
+	<td width="25%" style=" background-color: #FAFAFA"><div style=" text-align:  center">
+		<b> Monto</b>
+	</div>
+</td>
+</tr>
+{% for dmd in detalleMontosDeposito %}
+<tr>
+	<td>
+		{{ dmd.formaPago }}
+	</td>
+	<td>
+		<div class="{{ dmd.idDeposito }}">
+			<span id="{{ dmd.idDeposito }}">{{ dmd.deposito }}</span>
+			<a class="btn btn-warning btn-minier" title="Editar N° Depósito" onclick="botonEditarDeposito({{ dmd.idDeposito }})">
+				<i class="icon-edit"></i> Editar
+			</a>
+		</div>
+		<div class="input_{{ dmd.idDeposito }} hide deposito">
+			<input id="input_{{ dmd.idDeposito }}">
+			<a class="btn btn-success btn-minier" title="Guardar N° Depósito" onclick="botonGuardarDeposito({{ dmd.idDeposito }})">
+				<i class='icon-save'></i> Guardar
+			</a>
+		</div>
+		<div class="alert_{{ dmd.idDeposito }} hide red">Error en el envío</div>
+		<div class="exito_{{ dmd.idDeposito }} hide green">
+			<i class="icon-check-sign"></i> Guardado Exitosamente!
+		</div>
+	</td>
+	<td ><div style=" text-align: right ">
+		{{ obtenerMonto( dmd.monto ) }}
+	</div>
+</td>
+</tr>
+{% endfor %}
+{% endif %}
+{# FIN TODOS LOS DEPOSITOS #}
+{# TODAS LAS GARANTIAS  #}
+{% set auxVar = 0 %}
+{% for dmg in detalleMontosGarantias %}
+{% set auxVar = auxVar + 1 %}
+{% endfor %}
+{% if auxVar > 0 %}
+{% set auxVar = 0 %}
+<tr  >
+	<td  colspan="4"  style=" background-color: #DDDDDD">
+		<b>Todos las Garantias</b>
+	</td>
+</tr>
+<tr  >
+	<td width="25%"  style=" background-color: #FAFAFA">
+		<b> Tipo de Garantia</b>
+	</td>
+	<td width="25%" style=" background-color: #FAFAFA">
+		<div style=" text-align:  center">
+			<b> Monto</b>
+		</div>
+	</td>
+</tr>
+{% for dmg in detalleMontosGarantias %}
+<tr>
+	<td>{{ dmg.nombreForma }} </td>
+	<td ><div style=" text-align: right ">
+		{{ obtenerMonto( dmg.monto ) }}
+	</div></td>
+</tr>
+{% endfor %}
+{% endif %}
+{# FIN TODAS LAS GARANTIAS  #}
+</table>
+<form id="formInfoCaja" method="POST" class="form-horizontal hide" action="{{ path("Caja_PostPago_PrintDetalleCaja_ImpresionPDF") }}" method="post" target="_blank" >
+	<input id ="valoridCaja" type="text" name="valoridCaja"  value=" {{ idcaja }}"><br>
+</form>
+{% endif %}
+{#<div class="modalVerEditarBono hide"></div>#}
+{% block scripts %}
+<script type="text/javascript">
+	$('.zoom-pagos').css('zoom', '0.7');
+	{#Botón que despliega la edición de talonario de boletas#}
+	$(".editar").on('click', function(e) {
+		e.preventDefault();
+		$.post($(this).attr('href'), null, function(response) {
+			var vistaHtml = response;
+			{#Llamamos a la función editar del fn.common#}
+			editar(vistaHtml, '#edit_form');
+		}).error(function(xhr,textResponse,errorThrown){
+			xhr.textResponse;
+		});
+	});
+
+	function botonEditarDeposito(id){
+		$('.' + id).hide();
+		var num = $('#' + id).text();
+		$('.input_' + id).show();
+		$('#input_' + id).val(num);
+	}
+
+	function botonGuardarDeposito(id){
+		var numNuevo = $('#input_' + id).val();
+		$('.input_' + id).hide();
+		grabaDeposito(numNuevo, id);
+		$('#input_' + id).val(numNuevo);
+		$('.' + id).show();
+	}
+	{#Script que bloquea letras y símbolos, sólo permite números.#}
+	$(".deposito").bind("keypress", function(event) {
+		if (event.charCode !== 0) {
+			var regex = new RegExp("^[0-9,]+$");
+			var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+			if (!regex.test(key)) {
+				event.preventDefault();
+				return false;
+			}
+		}
+	});
+	function grabaDeposito(numNuevo, id){
+		var deposito = {numeroDepositoNuevo: numNuevo, idDeposito: id}
+		$.ajax({
+			type: 'get',
+			url : "{{ path('Caja_Supervisor_ConsolidadoCaja_EditaNumeroDeposito') }}",
+			data: deposito,
+			success: function(data){
+				data = $.parseJSON(data);
+				if(data == 'no'){
+					$('.alert_' + id).show();
+				}else{
+					$('#' + id).html(data);
+					$('.exito_' + id).slideDown();
+					setTimeout(function() {
+						$('.exito_' + id).slideUp('slow');
+					},3000);
+				}
+			}
+		})
+	}
+</script>
+{% endblock %}

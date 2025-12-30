@@ -1,0 +1,26 @@
+<div class="btn-group pull-right">
+    {# <button id="btn-descuentos" class="btn btn-pre-pagar btn-success hide ocultarDiv hide" type="button"><span>-</span><i class='icon-usd'></i>Seleccionar Diferencia</button> #}
+    {#% if idReservaAtencion%}
+		{% else %#}
+{#    {% if coreApi is defined and coreApi == 1%}#}
+        <button id='btn-Carga-DatosTratamiento-Edit' class='btn btn-warning  opcionCargaTratamientoEdit hiden hidden'> Modificar Tratamiento</button>
+        <button id='btn-Cancelar-DatosTratamiento-Edit' class='btn opcionCargaTratamientoEdit hiden hidden' onclick='javascript:cancelarEdicionTratamiento();'>Cancelar Modificación</button>
+        <button id="btn-Carga-DatosTratamiento" class="btn btn-info opcionCargaTratamiento hiden hidden" type="button"><i class='icon-align-justify'></i>Cargar Datos de Tratamiento</button>
+        <button id="btn-tratamiento" class="btn btn-info opcionTratamiento hide" type="button"><i class='icon-align-justify'></i>Crear Tratamiento</button>
+
+
+{#    {% endif %}#}
+    {% if from == 'caja'%}
+        <button id="btn-PagoNormal" class="btn btn-success opcionTratamiento hide" type="button"><i class='icon-usd'></i>Continuar Pago Normal</button>
+    {% endif %}
+    {#% endif %#}
+
+    <button id="btn-pre-pagar" class="btn btn-pre-pagar btn-success hide ocultarDiv " type="button"><i class='icon-usd'></i>Seleccionar Medio de Pago</button>
+    {% if idReservaAtencion %}
+    {% else %}
+        <button id="cancelar-desde-prestador" class="btn btn-pre-pagar btn-volver2 cancelar-desde-prestador " type="button"><i class='icon-arrow-left'></i>Cancelar </button>
+    {% endif %}
+</div>
+<div id="saltosTeporales">
+    </br> <div class="clearfix"></div></br> <div class="clearfix"></div></br><div class="clearfix"></div></br><div class="clearfix"></div></br>
+</div>

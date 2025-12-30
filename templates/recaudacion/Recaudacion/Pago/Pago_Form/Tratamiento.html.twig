@@ -1,0 +1,38 @@
+<div class="table-header-grey" style="text-align:left;">
+    <i class="icon-plus-sign textoNuevoTratamiento  icon-large text-left space"></i> 
+    <i class="icon-edit textoEditTratamiento hide icon-large text-left space"></i> 
+    <span class="textoNuevoTratamiento">Crear</span>
+    <span class="textoEditTratamiento hide ">Modificar</span> 
+    Tratamiento
+</div>
+{#<div class="alert alert-info">
+    Puede Actualizar Tratamientos anteriores o Crear un nuevo tratamiento en base a selección realizada posteriormente en <b>Listado Servicios Pago</b>.
+</div>#}   
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-condensed table-hover grey">
+    <tr >
+        <th width="25%">Nombre <span class="textoNuevoTratamiento">Crear</span>
+            <span class="textoEditTratamiento hide"></span> Tratamiento</th>
+            <td >
+                <div class="input-append center-align center">
+                    {{ form_widget(prestacion_form.nombreTratamiento) }}
+                {#<span class="add-on dark-opaque"><i class="icon-asterisk"></i>
+            </span> #}
+        </div>
+        <div class="clearfix"></div> 
+        <div class="nombreTratamientoField hide red mensajeErrorFormularioTratamiento"> <i class="icon-remove"></i>
+            <span id="mensajeErrorFormularioTratamiento"></span>
+        </div> 
+    </td>
+</tr>
+<tr >
+    <th width="25%">Tipo Tratamiento</th>
+    <td >
+        {{ form_widget(prestacion_form.tipoTratamiento, {'attr':{'class':'disableform'} }) }}
+        {#Verifica si existe un error#}
+        <div class="clearfix"></div>
+        {% for error in prestacion_form.tipoTratamiento.vars.errors %}
+            <span class="text-error">{{ error.message }}</span>
+        {% endfor %}
+    </td>
+</tr>
+</table>

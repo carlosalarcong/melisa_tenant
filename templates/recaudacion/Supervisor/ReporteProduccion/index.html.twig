@@ -1,0 +1,116 @@
+{% extends 'RecaudacionBundle:Supervisor:sublayout.html.twig' %}
+{% block contenedorMantenedor -%}
+<div class="table-header">
+    Reporte de Producción entre dos fechas
+    <div id="div-volver" class="btn-group pull-right">
+        <a id="volverListado" class="btn btn-mini" href="{{ path('Caja_Supervisor') }}">
+            <i class="icon-arrow-left"></i> Volver
+        </a>
+    </div>
+</div>
+<br>
+<div id="filtro">
+    <table align='center' width="60%">
+        <tr>
+            <th align="left" width="90">Fecha Inicio</th>
+            <td style=" padding: 10px 0 0 0">{{ form_widget(form.fechaIni, { 'attr': {'class': 'span3', 'readonly':'readonly'} }) }}</td>
+            <th align="left" width="70">Fecha Fin</th>
+            <td style=" padding: 10px 0 0 0">{{ form_widget(form.fechaFin, { 'attr': {'class': 'span3', 'readonly':'readonly'} }) }}</td>
+        </tr>
+        <tr>
+            <td colspan="2"><br>
+                <div style="width:350px" align="center">{{ form_rest(form) }}</div>
+            </td>
+            <td>
+                <div style="text-align: end;"> <span id="loading" class="hide"><i class='icon-spinner blue icon-spin icon-5x'></i></span></div>
+            </td>
+        </tr>
+    </table>
+    {# Pie de página #}
+    <div class="table-footer">
+        <div class="btn-group pull-right">
+            <a class="btn btn-mini" href="{{ path('Caja_Supervisor') }}">
+                <i class="icon-arrow-left"></i> Volver
+            </a>
+            <a class="btn btn-mini btn-success btn-excel informacion btn1" id="formInfoExcel"
+               onclick="executeReporte();">
+                <i class="icon-download-alt"></i> Reporte Producción
+            </a>
+        </div>
+    </div>
+</div>
+<div class="modalSinCerrar hide"></div>
+<div class="modalVer hide" id="modalVer"></div>
+{% endblock %}
+{% block scripts -%}
+    <link href="{{ asset('css/datepicker.css') }}" rel="stylesheet">
+    <script src="{{ asset('js/bootstrap-datepicker.min.js') }}"></script>
+    <script src="{{ asset('js/date-time/locales/bootstrap-datepicker.es.js') }}" charset="UTF-8"></script>
+    <script type="text/javascript">
+        $(document).on('ready', function(){
+            $('.menuSUpervisor').removeClass('active');
+            $('#ReporteProduccion').addClass('active');
+            maximoDias= {{ maximoDias }};
+            $('#reporte_produccion_type_fechaIni').datepicker({
+                startDate: '-'+maximoDias+'d',
+                endDate: '0',
+                format: "dd-mm-yyyy",
+                weekStart: 1,
+                todayBtn: true,
+                language: "es",
+                todayHighlight: true,
+                autoclose: true
+            });
+            $('#reporte_produccion_type_fechaFin').datepicker({
+                startDate: '-'+maximoDias+'d',
+                endDate: '0',
+                format: "dd-mm-yyyy",
+                weekStart: 1,
+                todayBtn: true,
+                language: "es",
+                todayHighlight: true,
+                autoclose: true
+            });
+            {# Ocultamos el botón de aceptar mientras no se hayan seleccionado la fecha #}
+            $('.btn1').hide();
+            {# Detecta algún cambio en la fecha #}
+            $("#reporte_produccion_type_fechaIni").change(function(){
+                ValidaEntrada();
+            });
+            $("#reporte_produccion_type_fechaFin").change(function(){
+                ValidaEntrada();
+            });
+
+            function ValidaEntrada(){
+                if(($("#reporte_produccion_type_fechaIni").val() != "") &&
+                    ($("#reporte_produccion_type_fechaFin").val() != "")) {
+                    muestraBoton()
+                }
+            }
+
+            {# Función que muestra el botón aceptar una vez que el usuario haya seleccionado la fecha #}
+            function muestraBoton(){
+                $('.btn1').show();
+            }
+
+        });
+
+        function executeReporte(){
+            $('#loading').show();
+            let fechaIni = $("#reporte_produccion_type_fechaIni").val(),
+                fechaFin = $("#reporte_produccion_type_fechaFin").val();
+            let fechaDesde = fechaIni.substr(6, 4) + "-" + fechaIni.substr(3, 2) + "-" + fechaIni.substr(0, 2),
+                fechaHasta = fechaFin.substr(6, 4) + "-" + fechaFin.substr(3, 2) + "-" + fechaFin.substr(0, 2);
+
+            let strinPath = '{{ path('Caja_Supervisor_ReporteProduccion_Descargas', {fechaIni:'fechaIni', fechaFin:'fechaFin'}) }}';
+            strinPath = strinPath.replace("fechaIni", fechaDesde);
+            strinPath = strinPath.replace("fechaFin", fechaHasta);
+
+            window.location = strinPath;
+            setTimeout( function() {
+                $('#loading').hide();
+            }, 3000);
+        }
+
+    </script>
+{% endblock %}

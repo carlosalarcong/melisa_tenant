@@ -1,0 +1,60 @@
+<style>
+    body .modal {
+        width: 98%;
+        left: 1%;
+        height: 40%;   
+        margin-right: auto; 
+        margin-left: 0%; 
+    }
+    body .modal-body{
+
+        padding: 1px;
+        max-height: 82%;
+        height: 82%;
+    }
+
+    body .modal.fade.in {
+        top: 20%; 
+    }
+</style>
+<div class="table-header header-color-blue " style="text-align:left;">
+    <span class="white"><b>INFORME DE CAJA:</b></span>
+</div>
+<div class="table-header-grey" style="text-align:left;">
+    <i class="icon-user text-left space"> </i> Información Cajero
+</div>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-condensed  grey">
+    <th width="6%" style=" background-color: whitesmoke ">Rut:</th>
+    <td width="10%">
+        <span >{{cajero.rut}}-{{cajero.dv}}</span>
+    </td>
+    <th width="8%" style=" background-color: whitesmoke ">Cajero:</th>
+    <td width="36%">
+        <span  >{{cajero.nombreUser}} {{cajero.apellidoP}} {{cajero.apellidoM}}</span>
+    </td>
+    <th  width="8%" style=" background-color: whitesmoke ">Fecha Caja:</th>
+    <td width="12%">
+      {{datosCaja.fechaApertura|date('d-m-Y')}}
+  </td>
+  <th  width="10%" style=" background-color: whitesmoke ">Estado Caja:</th>
+  <td width="10%">
+    {% if  datosCaja.fechaCierre %}
+        Cerrada
+        {% else %}
+        {% if  datosCaja.idRe ==  estadoReapertura %}
+            Reapertura
+            {% else %} 
+            Abierta
+        {% endif %}
+    {% endif %}
+</td>
+</tr>
+</table>
+<div class="alert alert-warning CajaCerrada">
+    <strong>NO SE REGISTRAN TRANSACCIONES PARA ÉSTA CAJA</strong>
+    <div class="clearfix"></div>
+    No se han generado ni garantias relacionados con ésta Caja.
+</div>    
+<script type="text/javascript">
+ $('.btn-print').hide();
+</script>

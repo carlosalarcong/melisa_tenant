@@ -1,0 +1,13 @@
+{% import 'RebsolHermesBundle:UI/Macros:label.html.twig' as macroLabel %}
+{% import 'RebsolHermesBundle:UI/Macros:ahref.html.twig' as macroAhref %}
+{% import 'RebsolHermesBundle:UI/Macros:button.html.twig' as macroButton %}
+{% import 'RebsolHermesBundle:UI/Macros:dependencias.html.twig' as macroDependencias %}
+
+{% block body %} {% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+$('.ace-switch').closest('label').css('zoom', '1.15');
+$('.ace-switch').closest('label').find('.lbl').text('');
+</script>
+{% endblock %}

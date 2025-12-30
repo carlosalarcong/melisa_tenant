@@ -1,0 +1,72 @@
+<div id="formPrestaciones">
+    <div id="agregar-prestacion-insumo-paquete" class="hide ocultarDiv"> {# COMENTADO PARA REALIZAR SKELETON - DESCOMENTAR PARA REALIZAR EL NEGOCIO DE LA VISTA #}
+        <div class="table-header-grey" style="text-align:left;">
+            <i class="icon-plus-sign  icon-large text-left space"></i> Agregar<span class="hide datosTratamiento"> Items para Tratamiento</span>
+        </div>
+        <table width="100%" align="center">
+            <tr>
+
+                <td id="busquedaPrestacionesField" valign="top" width="50%"
+                        {#{% if from == 'caja'  and getPrestacionesCaja ==  0 %}
+                    class="hidden"
+                        {% endif %}#}> {# COMENTADO PARA REALIZAR SKELETON - DESCOMENTAR PARA REALIZAR EL NEGOCIO DE LA VISTA #}
+                    <table width="100%" border="0" cellspacing="10" cellpadding="10" class="table table-bordered table-condensed table-hover grey">
+                        <tr>
+                            <th>
+                                Prestación
+                            </th>
+                            <td>
+                                <div class="input-append">
+                                    <input id="inputPrestacionBuscar" type="text">
+                                    <span class="add-on"><i id="iconPrestacionBuscar" class="icon-asterisk"></i></span>
+                                    <a id="btnPrestacionBuscar" class="btn btn-info"><i class="white icon-search"></i> Buscar</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                {# se oculta elemento para seleccionar paquete artículo, mientras se libera la conrrige la selección de paquete con hidden="hidden"#}
+                <td id="busquedaPaqueteField" valign="top" width="50%" hidden="hidden">
+                    <table width="100%" border="0" cellspacing="10" cellpadding="10" class="table table-bordered table-condensed table-hover  grey">
+                        <tr>
+                            <th {% if from == 'caja' and getPrestacionesCaja ==  0 %}width="25%"{% endif %}> {# COMENTADO PARA REALIZAR SKELETON - DESCOMENTAR PARA REALIZAR EL NEGOCIO DE LA VISTA #}
+                                Paquetes Artículos
+                            </th>
+                            <td>
+                                <div class="input-append">
+                                    <input id="inputPaqueteBuscar" type="text">
+                                    <span class="add-on"><i id="iconPaqueteBuscar" class="icon-asterisk"></i></span>
+                                    <a id="btnPaqueteBuscar" class="btn btn-info"><i class="white icon-search"></i> Buscar</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                {# se oculta elemento para seleccionar paquete prestaciones, mientras se libera la conrrige la selección de paquete con hidden="hidden"#}
+                <td id="busquedaPaquetesPrestacionesField" valign="top" width="50%" {% if from == 'caja'  and getPrestacionesCaja ==  0 %} class="hidden"{% endif %} hidden="hidden"> {# COMENTADO PARA REALIZAR SKELETON - DESCOMENTAR PARA REALIZAR EL NEGOCIO DE LA VISTA #}
+                    <table width="100%" border="0" cellspacing="10" cellpadding="10" class="table table-bordered table-condensed table-hover grey">
+                        <tr>
+                            <th>
+                                Paquetes Prestaciones
+                            </th>
+                            <td>
+                                <div class="input-append">
+                                    <input id="inputPaquetePrestacionBuscar" type="text">
+                                    <span class="add-on"><i id="iconPaquetePrestacionBuscar" class="icon-asterisk"></i></span>
+                                    <a id="btnPaquetePrestacionBuscar" class="btn btn-info"><i class="white icon-search"></i> Buscar</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr></tr>
+            <tr>
+                <td colspan="4">
+                    <div class="clearfix"></div>
+                    {% include 'RecaudacionBundle:TratamientoPaciente:_tablaResultadosAgregarItemsTratamientoPaciente.html.twig' %}
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

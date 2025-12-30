@@ -1,0 +1,18 @@
+{% extends 'RecaudacionBundle::layout.html.twig' %}
+{% block breadcrumbs %}
+<div id="breadcrumbs" class="navbar-fixed-top">
+	<ul class="breadcrumb">
+		<li>
+			<i class="icon-home"></i> <a href="{{ path('Dashboard_home') }}">Home</a>
+			<span class="divider"><i class="icon-angle-right"></i></span>
+		</li>
+		<li>
+			<a href="{{ path('recaudacion_index') }}">Módulo Caja</a>
+			<span class="divider"><i class="icon-angle-right"></i></span>
+		</li>
+		{% block Caja %}{% endblock %}
+	</ul>
+</div>
+{% endblock %}
+
+

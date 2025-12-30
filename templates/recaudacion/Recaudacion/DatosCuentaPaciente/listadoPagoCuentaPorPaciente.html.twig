@@ -1,0 +1,54 @@
+<table id="listado-pago-cuenta-por-paciente" class="table table-bordered table-condensed table-hover">
+	<thead>
+		<tr>
+			<th>N°</th>
+			<th>Fecha de Pago</th>
+			<th>Total Cuenta</th>
+			<th> </th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for  pagoCuentaPorPaciente in listadoPagoCuentaPorPaciente %}
+			<tr>
+				<td>
+					{{ loop.index }}
+				</td>
+				<td>
+					{{ pagoCuentaPorPaciente.fechaPago|hermes_datetime_format() }}
+				</td>
+				<td>{{ obtenerMonto(pagoCuentaPorPaciente.montoPagado) }}</td>
+				<td width="10%" style="text-align: center;">
+					<a title="Ver Detalle Pago" class="print-detalle-pago btn btn-mini btn-mini-doc btn-primary" data-id-pago-cuenta="{{ pagoCuentaPorPaciente.idPagoCuenta }}">
+						<i class="icon-dollar icon-large"></i> Ver detalle pago
+					</a>
+				</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+<script type="text/javascript">
+
+	var DATATABLES = "{{ asset('js/datatables/dataTables.es.txt') }}";
+
+	$('#listado-pago-cuenta-por-paciente').dataTable({
+		"oLanguage": {
+			"sUrl": DATATABLES
+		},
+	});
+
+	$('.print-detalle-pago').on('click',  function (e){
+
+		e.preventDefault();
+
+		$.post($.trim(Routing.generate('Caja_PostPago_PrintDetallePago') + '/' + $(this).data('idPagoCuenta')), function (resultado){
+			bootbox.dialog(resultado, [{
+				"label": "Aceptar",
+				"class": "btn btn-mini alert",
+				"callback": function() {
+					bootbox.hideAll();
+				}
+			}]);
+		});
+	});
+</script>

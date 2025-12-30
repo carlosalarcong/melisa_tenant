@@ -1,0 +1,21 @@
+{% extends 'RebsolHermesBundle::layout.html.twig' %}
+
+{% block postcss %}
+<link href="{{ asset('css/uncompressed/hermes-dashboard.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div id="breadcrumbs" class="navbar-fixed-top">
+	<ul class="breadcrumb">
+		<li>
+			<i class="icon-home"></i> <a href="{{path('Dashboard_home')}}">Home</a>
+			<span class="divider">
+				<i class="icon-angle-right"></i>
+			</span>
+		</li>
+		<li class="active">
+			Módulo de Caja
+		</li>
+	</ul>
+</div>
+{% endblock %}

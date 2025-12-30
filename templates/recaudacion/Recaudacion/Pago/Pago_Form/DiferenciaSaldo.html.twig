@@ -1,0 +1,226 @@
+{% block body %}
+<style>
+	body .modal {
+		width: 70%;
+		left: 15%;
+		height: 400px;
+		margin-right: auto;
+		margin-left: 0%;
+	}
+
+	body .modal-body{
+		padding: 5px;
+		max-height: 100%;
+		height: 100%;
+	}
+
+	body .modal.fade.in {
+		top: 20%;
+		bottom: 5%;
+	}
+</style>
+
+<div class="alert alert-warning hide errorfaltaDiferenciaSaldo">
+	<button type="button" class="close" data-dismiss="alert">
+		<i class="icon-remove"></i>
+	</button>
+	<strong>Faltan Datos en Formulario </strong>
+	<div class="clearfix"></div>
+	Debe llenar todos los campos obligatorios.
+	<br>
+</div>
+
+<div class="alert alert-success hide exito">
+	<button type="button" class="close" data-dismiss="alert">
+		<i class="icon-remove"></i>
+	</button>
+	<strong>Diferencia Aprobada por Supervisor</strong>
+	<div class="clearfix"></div>
+	Puede continuar con el proceso de Pago con la diferencia Aplicada.
+	<br>
+</div>
+
+<div class="alert alert-warning hide rechazo">
+	<button type="button" class="close" data-dismiss="alert">
+		<i class="icon-remove"></i>
+	</button>
+	<strong>Diferencia Rechazada por Supervisor</strong>
+	<div class="clearfix"></div>
+	Puede continuar con el proceso de Pago pero no estará la diferencia aplicada.
+	<br>
+</div>
+
+<div class="table-header-grey" style="text-align:left;">
+	<i class="icon-check-sign  icon-large text-left space"></i> Diferencia
+</div>
+<div id="generandoDiferencia" class="hide"></div>
+
+<div id="formDiferenciaFull">
+
+	<form id="formDiferenciaSaldo" action="{{ path('Caja_Diferencia_Aplicar') }}" method="post">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-condensed  grey">
+			<tr>
+				<th>Motivo de Diferencia:</th>
+				<td>   {{ form_widget(diferencia_form.motivoDiferencia, {'attr':{ 'class':'diferenciaRequiered'} })}}
+					<div class="clearfix"></div><div class="hide red mensajeErrorFormularioDiferenciaSaldo mensajeErrorFormularioMotivoDiferenciaSaldo"> <i class="icon-remove"></i>
+					<span id="mensajeErrorFormularioMotivoDiferenciaSaldo"></span>
+				</div>
+			</td>
+		</tr>
+		<tr >
+			<th> Monto Diferencia: </th>
+			<td>
+				{{ form_widget(diferencia_form.montoSaldo, {'attr':{'class':'diferenciaRequiered DiferenciaInputMonto DiferenciaInputMontoGr'} }) }}
+				<div class="clearfix"></div><div class="hide red mensajeErrorFormularioDiferenciaSaldo mensajeErrorFormularioMontoDiferenciaSaldo"> <i class="icon-remove"></i>
+				<span id="mensajeErrorFormularioMontoDiferenciaSaldo"></span>
+			</div>
+		</td>
+	</tr>
+	<tr >
+		<th>
+			Máximo Aplicable a Diferencia<span class="aFavorEnContra"></span>:
+		</th>
+		<td >
+			<b id="refSaldoColor">$ {{saldo}}</b>
+		</td>
+	</tr>
+	<tr >
+		<th>
+			Total Cuenta con Diferencia<span class="aFavorEnContra"></span>:
+		</th>
+		<td >
+			<b>$<span id="totalSaldo"></span></b>
+		</td>
+	</tr>
+</table>
+<span class="hide" id="subTotal"></span>
+
+</form>
+<div class="btn-group pull-right" style="padding: 55px  0 0 0">
+	<button id="btn-volver-solicitada-saldo" class="btn btn-success hide hidden" type="button"  onclick="javascript:$(this).closest('.modal').modal('hide');">
+		<i class='icon-ok'></i>Volver a Caja con Diferecia Aplicada
+	</button>
+	<button id="btn-volver-rechazada" class="btn hide hidden" type="button"  onclick="javascript:$(this).closest('.modal').modal('hide');">
+		<i class='icon-ok'></i>Volver a Caja
+	</button>
+	<button id="btn-diferencia-solicitar-saldo" class="btn btn-success diferenciaPostSolicitud" type="button" >
+		<i id="id-icon-diferencia" class='icon-sort'></i>Generar Diferencia
+	</button>
+	<button id="btn-cancelar-desde-diferencia" class="btn" type="button" onclick="javascript:$(this).closest('.modal').modal('hide');">
+		<i class='icon-arrow-left'></i> Cancelar
+	</button>
+
+</div>
+</div>
+{% endblock %}
+{% block scripts %}
+
+<script type="text/javascript" src="{{ asset('js/uncompressed/Caja/Events-Diferencias.js') }}"></script>
+<script type='text/javascript'>
+	var saldo               = '{{saldo}}';
+	var n                   = saldo.search("-");
+	var tipoDiferenciaSaldo = 0;
+	var subtotalsaldo       = $("#sumaTotalMediosDePago").text();
+	subtotalsaldo           = subtotalsaldo.replace(",", "");
+
+	setTimeout(function() {
+	   $('#rebsol_hermesbundle_DiferenciaType_motivoDiferenciaSaldo').prop('disabled', false);
+	   $("#rebsol_hermesbundle_DiferenciaType_motivoDiferenciaSaldo").chosen({width: "215px",
+		 allow_single_deselect: true, no_results_text: "No se ha encontrado Motivo"
+	 });
+	   $('#totalSaldo').html(subtotalsaldo);
+	   if(n == 1){
+		tipoDiferenciaSaldo = 1;
+				// a favor, se suma
+				var nn = saldo.replace("-", "");
+				nn = parseInt(nn);
+				$("#refSaldoColor").addClass("green");
+				$('#rebsol_hermesbundle_DiferenciaType_montoSaldo').val(nn).addClass("green");
+				totalSaldoTemp = parseInt(subtotalsaldo) + parseInt(nn);
+				$('#totalSaldo').html(totalSaldoTemp);
+				$('#rebsol_hermesbundle_DiferenciaType_montoSaldo').val(nn);
+
+			}else{
+				// en cntra, se resta
+				tipoDiferenciaSaldo = 2;
+				saldo = parseInt(saldo);
+				$("#refSaldoColor").addClass("red");
+				$('#rebsol_hermesbundle_DiferenciaType_montoSaldo').addClass('red');
+				totalSaldoTemp = parseInt(subtotalsaldo) - parseInt(saldo);
+				$('#totalSaldo').html(totalSaldoTemp);
+				$('#rebsol_hermesbundle_DiferenciaType_montoSaldo').val(saldo);
+
+
+
+			}
+
+			$('#rebsol_hermesbundle_DiferenciaType_montoSaldo').on('keypress', function() {
+				if (event.charCode !== 0) {
+					var regex = new RegExp("^[0-9]+$");
+					var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+					if (!regex.test(key)) {
+						event.preventDefault();
+						return false;
+					}
+				}
+			});
+
+			$('#rebsol_hermesbundle_DiferenciaType_montoSaldo').on('keyup', function() {
+				var saldoux = $('#rebsol_hermesbundle_DiferenciaType_montoSaldo').val();
+				if(parseInt(saldoux) >  parseInt(saldo) || parseInt(saldoux) < 0){
+					$('#rebsol_hermesbundle_DiferenciaType_montoSaldo').val(saldo);
+					return;
+				}
+				if($(this).val() != null || $(this).val() != ""){
+					if($(this).val().length >= 1){
+						var totalSaldoTemp = $(this).val();
+						if(parseInt(saldo) == parseInt(totalSaldoTemp)){
+							$('#totalSaldo').html(subtotalsaldo);
+						}else{
+							if(tipoDiferenciaSaldo == 2){
+								totalSaldoTemp = parseInt(subtotalsaldo) - parseInt(totalSaldoTemp);
+								$('#totalSaldo').html(totalSaldoTemp);
+							}else if(tipoDiferenciaSaldo == 1){
+								totalSaldoTemp = parseInt(subtotalsaldo) + parseInt(totalSaldoTemp);
+								$('#totalSaldo').html(totalSaldoTemp);
+							}
+						}
+					}else{
+						$('#totalSaldo').html(subtotalsaldo);
+					}
+				}
+			});
+
+		$('#rebsol_hermesbundle_DiferenciaType_motivoDiferencia').on('change', function() {
+
+			var motivoDiferencia = $(this).val();
+			$('#rebsol_hermesbundle_DiferenciaType_montoSaldo').val(0);
+			var totalSaldoTemp = $('#rebsol_hermesbundle_DiferenciaType_montoSaldo').val();
+			$.ajax({
+				type: 'GET',
+				url: Routing.generate('Caja_Diferencia_GetTipoSentidoPorMotivoDiferencia'),
+				data: {
+					motivoDiferencia: motivoDiferencia
+				},
+				success: function(tipoDiferencia) {
+					tipoDiferenciaSaldo = tipoDiferencia;
+					console.log('tipoDiferenciaSaldo:: '+ tipoDiferenciaSaldo);
+					console.log('subtotalsaldo:: '+ parseInt(subtotalsaldo));
+					if(tipoDiferenciaSaldo == 2){
+						totalSaldoTemp = parseInt(subtotalsaldo) - parseInt(totalSaldoTemp);
+						console.log('totalSaldoTemp:: '+ totalSaldoTemp);
+						$('#totalSaldo').html(totalSaldoTemp);
+					}else if(tipoDiferenciaSaldo == 1){
+						totalSaldoTemp = parseInt(subtotalsaldo) + parseInt(totalSaldoTemp);
+						console.log('totalSaldoTemp:: '+ totalSaldoTemp);
+						$('#totalSaldo').html(totalSaldoTemp);
+					}
+				}
+			});
+		});
+
+	}, 500);
+
+</script>
+
+{% endblock %}

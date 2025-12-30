@@ -1,0 +1,81 @@
+<style>
+	body .modal.fade.in { top: 2%; bottom: 2%; }
+</style>
+<div class="table-header header-color-blue " style="text-align:left;">
+	<i class="icon-file-text text-left space"> </i><span class="white"><b>HISTORIAL DE GARANTÍAS:</b></span>
+</div>
+<table id="table_Informe_garantias" class="table table-bordered table-condensed table-hover zoom-pagos">
+	<thead>
+		<tr>
+			<th> Identificación </th>
+			<th>Nombre del Paciente </th>
+			<th>Edad</th>
+			<th>Telefonos</th>
+			<th>Financiador</th>
+			<th>Medio de Pago</th>
+			<th>Fecha del Pago</th>
+			<th>Cajero</th>
+		</tr>
+	</thead>
+	<tbody> 
+		{% for garantia in garantias %}
+			<tr >
+				<td >
+
+					<strong>
+						[ {% if garantia.nombreDocumento is not null %}
+						{{ garantia.nombreDocumento }}
+						{% else %}
+						Sin identificación
+					{% endif %} ] </strong> /
+
+					{{ garantia.identificacionExtranjero }}
+				</td> 
+				<td > {{ garantia.paciente}}</td>
+				<td > <span class="edad{{garantia.pagoCuenta}}"></span></td>
+				<td > {{garantia.telefonoMovil}}{% if garantia.telefonoMovil or garantia.telefonoTrabajo or garantia.telefonoFijo %}/ {% endif %} {{garantia.telefonoTrabajo }}{% if garantia.telefonoTrabajo and garantia.telefonoFijo %}/ {% endif %} {{ garantia.telefonoFijo }}</td>
+				<td > {{ garantia.prevision }}  {% if garantia.convenio %} &nbsp/&nbsp{{ garantia.convenio }} {% endif %}  </td>
+				<td >
+					{% for medio in garantia.mediosPago %}
+						- {{medio.medioPago}}</br>
+					{% endfor %}
+				</td>
+				<td > 
+					{{ garantia.fechaPago | date("d-m-Y H:i")}} 
+				</td>
+				<td >
+					{{ garantia.cajero }}
+				</td>
+			</tr>
+			<script type="text/javascript">
+				id= "{{garantia.pagoCuenta}}";
+				var fechan = "{{garantia.fechaNacimiento| date('d-m-Y')}}"
+				var anio_nacim = fechan.substr(6, 4);
+				var mes_nacim = fechan.substr(3, 2);
+				var dia_nacim = fechan.substr(0, 2);
+				$(".edad"+id).html(calcular_edad(dia_nacim, mes_nacim, anio_nacim));
+			</script> 
+		{% endfor %}
+	</tbody>
+</table>
+<div class="modalInformeCaja hide"></div>
+{% block scripts -%}
+	
+	<script type="text/javascript">   
+		$('.zoom-pagos').css('zoom', '0.9');
+		$('#table_Informe_garantias').dataTable({
+			"oLanguage": { "sUrl": "{{ asset('js/datatables/dataTables.es.txt') }}" },
+			"lengthMenu": [5, 10, 20, 30, 40, 50],
+			"pageLength": 10
+		});         
+		$('.modal').css({
+			width:'98%',
+			height:'92%',
+			left:'1%',
+			'margin-left': 'auto'});
+		$('.modal-body').css({
+			padding: '2px',
+			'max-height': '94%',
+			height: '92%'});
+	</script>     
+{% endblock %}

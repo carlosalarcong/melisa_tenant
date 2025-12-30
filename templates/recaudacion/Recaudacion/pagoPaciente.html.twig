@@ -1,0 +1,81 @@
+{% block pago %}
+    {% import 'RebsolHermesBundle:UI/Macros/Caja:validadorDependencias.html.twig' as validador %}
+    <div id="recaudacion-busqueda-paciente">
+        {% include 'RecaudacionBundle:BusquedaPaciente:_busquedaPaciente.html.twig' %}
+    </div>
+{#    <div id="historico-pagos-paciente"></div>#}
+    <div class="clearfix "></div>
+        <div id="resultadosBusquedaAvanzadaPaciente" class="">
+    </div>
+    <div class="clearfix "></div>
+    <div id="pacienteresumen" class="hide algo">
+{#            {% include 'CajaBundle:Recaudacion/Pago/ResumenFormularios:Resumen_Paciente.html.twig' %}#}
+        {% include 'RecaudacionBundle:InformacionActualPaciente:_informacionPaciente.html.twig' %}
+    </div>
+    <div class="clearfix "></div>
+    <div id="pacienteform" class="hide">
+{#            {% include 'CajaBundle:Recaudacion/Pago/Pago_Form:Paciente.html.twig' %}#}
+        {% include 'RecaudacionBundle:InformacionActualPaciente:_formularioInformacionPaciente.html.twig' %}
+    </div>
+    {% include 'RecaudacionBundle:InformacionActualPaciente:_informacionPacienteDatos.html.twig' %}
+    <div id="ResumenPacienteGarantiaAgenda" class="hide">
+        {#            {% include 'CajaBundle:Recaudacion/Pago/ResumenFormularios:Resumen_Paciente_Garantia_Agenda.html.twig' %}#}
+         {% include 'RecaudacionBundle:InformacionActualPaciente:_informacionPacienteGarantiaAgenda.html.twig' %}
+    </div>
+    <div class="clearfix "></div>
+    <div class="clearfix "></div>
+    <div id="historicoPacientePagos" class="hide"></div>
+    </br>
+    <div class="clearfix "></div>
+    <div class="clearfix "></div>
+    <div id="tratamientoGlosa" class="hide widget-box"></div>
+    <div class="clearfix "></div>
+    <div id="prestadorresumen" class="hide">
+{#        {% include 'CajaBundle:Recaudacion/Pago/ResumenFormularios:Resumen_Prestacion.html.twig' %}#}
+        {% include 'RecaudacionBundle:PrestadorPaciente:_informacionPrestacionPaciente.html.twig' %}
+    </div>
+    <div class="clearfix "></div>
+    <div id="datosprestacion" class="hide">
+{#        {% include 'CajaBundle:Recaudacion/Pago/Pago_Form:DatosPrestacion.html.twig' %}#}
+        {% include 'RecaudacionBundle:PrestadorPaciente:_styleFormularioPrestacionPaciente.html.twig' %}
+        {% include 'RecaudacionBundle:PrestadorPaciente:_formularioPrestacionPaciente.html.twig' %}
+        {% include 'RecaudacionBundle:PagoPaciente:_botonesListaServicioPago.html.twig' %}
+    </div>
+    <div class="clearfix "></div>
+    <!-- Pago Cuenta -->
+    <div class="clearfix " ></div>
+    <div id="datos-cuenta-paciente" class="hide"></div>
+    <!-- Fin Pago Cuenta -->
+
+    <div id="datosgarantia" class="hide">
+{#        {% include 'CajaBundle:Recaudacion/Pago/ResumenFormularios:Resumen_Garantia.html.twig' %}#}
+        {% include 'RecaudacionBundle:InformacionActualPaciente:_informacionPacienteGarantia.html.twig' %}
+    </div>
+    <div class="clearfix "></div>
+    <div id="regularizaGarantia" class="hide">
+{#        {% include 'CajaBundle:Recaudacion/RegularizaGarantia:RegularizaGarantia.html.twig' %}#}
+        {% include 'RecaudacionBundle:GarantiaPaciente:_regularizarGarantiaPaciente.html.twig' %}
+    </div>
+    <div class="clearfix "></div>
+    <div id="mediodepago" class="hide">
+{#        {% include 'CajaBundle:Recaudacion/Pago/Pago_Form:MedioPago.html.twig' %}#}
+        {% include 'RecaudacionBundle:PagoPaciente:_mediosDePago.html.twig' %}
+    </div>
+    <div class="clearfix "></div>
+    <div style='display:none'>
+        {{ form_widget(pago_form.rutPersona) }}
+        {{ form_widget(pago_form.digitoVerifivador) }}
+        <span id="idSucursalObtenida"></span>
+    </div>
+    {{ WidgetCaja.BusquedaRutDv() }}
+    {{ WidgetCaja.BusquedaAvanzada() }}
+    {{ WidgetCaja.funcionGuardar() }}
+    {{ WidgetCaja.EventosDivBusqueda() }}
+    {{ WidgetCaja.FormPrestacion() }}
+    <div class="MediosDePagoMacro">{{ WidgetCaja.MediosDePago() }}</div>
+    {{ WidgetCaja.tippedlist() }}
+    {{ validador.buscacomuna() }}
+
+    <div class="modalVerBoleta hide"></div>
+    <div class="modalDiferencia hide"></div>
+{% endblock %}

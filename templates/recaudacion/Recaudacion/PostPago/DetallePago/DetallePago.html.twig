@@ -1,0 +1,286 @@
+{% block body %}
+
+</br>
+<table width="100%">
+	<tr>
+		<td width="50%" style="padding-left: 10px;">
+			<a class="brand" href="#">
+				{#<img class="logo_empresa" src="{{ asset('uploads/images/logos_empresas/'~app.session.get('Rebsol_Empresa_Logo')) }}" alt="Logo" />#}
+				<img src="{{ obtenerRecurso(hermesImagesLogosEmpresas ~ app.session.get('logoEmpresaLogin')) | imagine_filter('imagen_logo_empresa') }}?{{"now"|date("YmdHis")}}"/>
+			</a>
+			<div class="clearfix " ></div>
+		</td>
+		<td style="padding-right: 5px;">
+			<div style="text-align:right;"><strong>Fecha : {{ "now"|date("d-m-Y") }}</strong><br><strong>Hora   : {{ "now"|date("H:i") }}</strong> </div>
+		</td>
+	</tr>
+</table >
+</br>
+<div style="text-align:center;"><h4><b>COMPROBANTE DE RECAUDACIÓN</b></h4></div>
+<div class="clearfix " ></div>
+<div style="text-align:left;">Con Fecha  {{ "now"|date("d-m-Y") }}, Hemos recibido de:</div>
+</br>
+<table border="1"  width="100%" bordercolor="#CED3D5">
+	{% if coreApi == 0 %}
+	<tr height="30px">
+		<td style=" background-color: whitesmoke; padding-left: 5px; font-weight: bold " width="20%">NOMBRE PACIENTE</td>
+		<td style="padding-left: 5px " width="30%" >
+			{{detalles.nombrePersona|upper}} {{detalles.aPaterno|upper}} {{detalles.aMaterno|upper}}
+		</td>
+		<td style=" background-color: whitesmoke; padding-left: 5px; font-weight: bold " width="20%">RAZA-ESPECIE</td>
+		<td style="padding-left: 5px " width="30%" colspan="2">{{detalles.raza|upper}}-{{detalles.especie|upper}}</td>
+	</tr>
+	<tr height="30px">
+		<td style=" background-color: whitesmoke; padding-left: 5px; font-weight: bold " width="20%">NOMBRE CLIENTE</td>
+		<td  style="padding-left: 5px " width="30%">{{detalles.nombreCliente|upper}} {{detalles.aPaterno|upper}} {{detalles.aMaterno|upper}}</td>
+		<td style=" background-color: whitesmoke;  padding-left: 5px ; font-weight: bold" width="20%">R.U.T.</td>
+		<td style="padding-left: 5px " width="30%" colspan="2">{{detalles.rut}}-{{detalles.dv}}</td>
+	</tr>
+	{%else%}
+	<tr height="30px">
+		<td style=" background-color: whitesmoke; padding-left: 5px; font-weight: bold " width="20%">NOMBRE PACIENTE</td>
+		<td style="padding-left: 5px " width="30%">{{detalles.nombrePersona|upper}} {{detalles.aPaterno|upper}} {{detalles.aMaterno|upper}}</td>
+		<td style=" background-color: whitesmoke;  padding-left: 5px ; font-weight: bold" width="20%">Edad</td>
+		<td style="padding-left: 5px " width="30%" colspan="2"><div><span class="edadEmision"></span></div></td>
+	</tr>
+{% endif %}
+<tr height="30px">
+	<td style=" background-color: whitesmoke;  padding-left: 5px; font-weight: bold">FINANCIADOR</td>
+	<td style="padding-left: 5px " colspan="5">{{ detalles.prevision }}  {% if detalles.convenio %} &nbsp/&nbsp{{ detalles.convenio }} {% endif %}</td>
+</tr>
+<tr height="30px">
+	<td style=" background-color: whitesmoke;  padding-left: 5px; font-weight: bold ">PROFESIONAL</td>
+	<td style="padding-left: 5px " colspan="5">
+		{% if detalles.esExterno == 0 %}
+			{{detalles.nombreProfesional|upper}} {{detalles.aPaternoProfesional|upper}} {{detalles.aMaternoProfesional|upper}}
+			{% else %}
+			{{detalles.profesionalExternoa|upper}}
+		{% endif %}
+	</td>
+</tr>
+<tr height="30px">
+	<td style=" background-color: whitesmoke;  padding-left: 5px; font-weight: bold ">FECHA ATENCIÓN</td>
+	<td style="padding-left: 5px " >{{detalles.fechaPago|date("d-m-Y")}}<span id="fechaEmision" class="hide">{{detalles.fechaPago|date("Y-m-d")}}</span><span id="fechaN" class="hide">{{detalles.fechaN|date("d-m-Y")}}</span></td>
+	<td style=" background-color: whitesmoke;  padding-left: 5px; font-weight: bold " colspan="2">HORA ATENCIÓN</td>
+	<td style="padding-left: 5px "  colspan="2">{{detalles.fechaPago|date("H:i")}} hrs.</td>
+</tr>
+<tr height="30px">
+	<td style=" background-color: whitesmoke;  padding-left: 5px; font-weight: bold ">N° BOLETA</td>
+	<td style="padding-left: 5px " colspan="5">
+		{%if detalles.boleta%}
+		{%if detalles.estadoTalonario == estadoActivoTalonario%}
+		{{detalles.boleta}}
+		{% else %}
+		<em>Boleta Anulada</em>
+	{% endif %}
+	{%else%}
+	<em>Sin Boleta</em>
+{% endif %}
+
+</td>
+</tr>
+<tr>
+	<td colspan="6"  width="100%" >
+		<table  border="0" width="100%">
+			<tr height="25px">
+				<td width="50%" style=" font-weight: bold; padding-left: 20%; font-size:  larger "><b>MEDIO DE PAGO</b><br></td>
+				<td width="50%" style=" font-weight: bold; padding-left: 20%; font-size:  larger "><b>MONTO</b><br></td>
+			</tr>
+			<tr>
+				<td colspan="2" height="3px">
+					<div style="height: 2px; border-style: none; background-color: #CED3D5; color: #CED3D5;"></div>
+				</td>
+			</tr>
+			{% for medioPago in medioPagos%}
+			{% if medioPago.tipoForma != 3  and medioPago.tipoForma != 5 and medioPago.tipoForma != 7 and medioPago.tipoForma != 8  and medioPago.tipoForma != 4 and medioPago.tipoForma != 6 and medioPago.tipoForma != 2 and medioPago.tipoForma != 9  and medioPago.tipoForma != 10%}
+			<tr height="25px">
+				<td width="50%" style=" font-weight: bold; padding-left: 20% "><u>{{medioPago.formaPago}}  </u></td>
+				<td width="50%"  style="  text-align: right; font-size:  larger; padding-right: 60px" valign="top" >
+					<span>$</span>{{medioPago.montoForma|number_format}}
+				</td>
+			</tr>
+		{% endif %}
+
+		{% if medioPago.tipoForma != 3  and medioPago.tipoForma != 5 and medioPago.tipoForma != 7 and medioPago.tipoForma != 8  and medioPago.tipoForma != 4 and medioPago.tipoForma != 6 and medioPago.tipoForma != 1 and medioPago.tipoForma != 9  and medioPago.tipoForma != 10%}
+		<tr height="25px">
+			<td width="50%" style=" font-weight: bold; padding-left: 20% "><u>{{medioPago.formaPago}}  </u>
+				<div class="clearfix " ></div>
+				<span>- Motivo Gratuidad  :</span> <span>{{medioPago.motivoGratuidad}}</spatn>
+			</td>
+			<td width="50%"  style="  text-align: right; font-size:  larger; padding-right: 60px" valign="top" >
+				<span>$</span>{{medioPago.montoForma|number_format}}
+			</td>
+		</tr>
+	{% endif %}
+
+
+	{% if medioPago.tipoForma != 7  and medioPago.tipoForma != 8  and medioPago.tipoForma != 1  and medioPago.tipoForma != 2  and medioPago.tipoForma != 3   and medioPago.tipoForma != 5   and medioPago.tipoForma != 9  and medioPago.tipoForma != 10%}
+	<tr height="25px">
+		<td width="50%" style=" font-weight: bold; padding-left: 20% "><u>{{medioPago.formaPago}}</u>
+			<div class="clearfix " ></div>
+			<span>- Número Voucher  :</span> <span>{{medioPago.numeroTarjeta}}</span>
+		</td>
+		<td width="50%"  style="  text-align: right; font-size:  larger; padding-right: 60px" valign="top" >
+			<span>$</span>{{medioPago.montoForma|number_format}}
+		</td>
+	</tr>
+{% endif %}
+{% if medioPago.tipoForma != 7  and medioPago.tipoForma != 8  and medioPago.tipoForma != 1  and medioPago.tipoForma != 2  and medioPago.tipoForma != 4 and medioPago.tipoForma != 6  and medioPago.tipoForma != 9  and medioPago.tipoForma != 10%}
+<tr height="25px">
+	<td width="50%" style=" font-weight: bold; padding-left: 20% "><u>{{medioPago.formaPago}}</u>
+		<div class="clearfix " ></div>
+		<span>- Número  :</span> <span>{{medioPago.numeroBonoElectronico}}</span>
+		<div class="clearfix " ></div>
+		<span>- Seguro Complementario  :</span>
+		<div class="clearfix " ></div>
+
+	</td>
+	<td width="50%"  style="  text-align: right; font-size:  larger; padding-right: 60px" valign="top" >
+		<span>$</span>{{medioPago.montoDoc|number_format}}
+		<div class="clearfix " ></div>
+		<span> &nbsp </span>
+		<div class="clearfix " ></div>
+		<span>$</span>{{medioPago.seguro|number_format}}
+	</td>
+</tr>
+{% endif %}
+{% if medioPago.tipoForma != 7  and medioPago.tipoForma != 8  and medioPago.tipoForma != 1  and medioPago.tipoForma != 2  and medioPago.tipoForma != 4 and medioPago.tipoForma != 6 and medioPago.tipoForma != 3 and medioPago.tipoForma != 5  and medioPago.tipoForma != 9  and medioPago.tipoForma != 10%}
+<tr height="25px">
+	<td width="50%" style=" font-weight: bold; padding-left: 20% "><u>{{medioPago.formaPago}}  </u>
+		<div class="clearfix " ></div>
+		<span>- Número  :</span> <span>{{medioPago.numeroCheque}}</span>
+	</td>
+	<td width="50%"  style="  text-align: right; font-size:  larger; padding-right: 60px" valign="top" >
+		<span>$</span>{{medioPago.montoDoc|number_format}}
+	</td>
+</tr>
+{% endif %}
+{% if medioPago.tipoForma != 3   and medioPago.tipoForma != 1  and medioPago.tipoForma != 2  and medioPago.tipoForma != 4 and medioPago.tipoForma != 6  and medioPago.tipoForma != 5 and medioPago.tipoForma != 9  and medioPago.tipoForma != 10%}
+<tr height="25px">
+	<td width="50%" style=" font-weight: bold; padding-left: 20% "><u>{{medioPago.formaPago}}</u>
+		<div class="clearfix " ></div>
+		<span>- Rut                :</span> <span>{{medioPago.rutCheque}}</span>
+		<div class="clearfix " ></div>
+		<span>- Nombre    :</span> <span>{{medioPago.nombreCheque}}</span>
+		<div class="clearfix " ></div>
+		<span>- Número    :</span> <span>{{medioPago.numeroDocumentoCheque}}</span>
+		<div class="clearfix " ></div>
+		<span>- Banco    :</span> <span>{{medioPago.banco}}</span>
+		<div class="clearfix " ></div>
+		<span>- Condición    :</span> <span>{{medioPago.condicion}}</span>
+		<div class="clearfix " ></div>
+
+	</td>
+	<td width="50%"  style="  text-align: right; font-size:  larger; padding-right: 60px" valign="top" >
+		<div class="clearfix " ></div>
+		<span>$</span>{{medioPago.montoDoc|number_format}}
+	</td>
+</tr>
+{% endif %}
+
+{% if medioPago.tipoForma != 3  and medioPago.tipoForma != 5 and medioPago.tipoForma != 7 and medioPago.tipoForma != 8  and medioPago.tipoForma != 4 and medioPago.tipoForma != 6 and medioPago.tipoForma != 1 and medioPago.tipoForma != 2%}
+<tr height="25px">
+	<td width="50%" style=" font-weight: bold; padding-left: 20% "><u>{{medioPago.formaPago}}  </u>
+		<div class="clearfix " ></div>
+		<span>- Folio  :</span> <span>{{medioPago.folio}}</spatn>
+	</td>
+	<td width="50%"  style="  text-align: right; font-size:  larger; padding-right: 60px" valign="top" >
+		<span>$</span>{{medioPago.montoForma|number_format}}
+	</td>
+</tr>
+{% endif %}
+
+{% endfor %}
+<tr>
+	<td colspan="2" height="3px">
+		<div style="height: 2px; border-style: none; background-color: #CED3D5; color: #CED3D5;"></div>
+	</td>
+</tr>
+<tr height="25px">
+	<td width="50%" style=" font-weight: bold; padding-left: 20%"><h5><b>Total</b></h5></td>
+	<td width="50%" style="  text-align: right; font-size:  larger; padding-right: 60px" valign="top"  >
+		<h4><span>$</span>{{detalles.totalCuenta|number_format(0)}}</h4>
+	</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr height="30px">
+	<td style=" background-color: whitesmoke;  padding-left: 5px; font-weight: bold ">USUARIO</td>
+	<td colspan="5" style="padding-left: 5px ">{{detalles.nombreCajero}} {{detalles.aPaternoCajero}} {{detalles.aMaternoCajero}}</td>
+</tr>
+</table>
+</br>
+<div style="text-align:left;"><b>{{empresa.nombreEmpresa}}</b></div>
+<div class="clearfix " ></div>
+<div style="text-align:left;">{{empresa.direccion}}</div>
+<div class="clearfix " ></div>
+<div style="text-align:left;">{{empresa.telefonoFijo}}</div>
+<br>
+<form id="formPago" method="POST" class="form-horizontal hide" action="{{ path("Caja_PostPago_PrintDetallePago_ImpresionPDF") }}" method="post" target="_blank" >
+	<input id ="valoridPago" type="text" name="valoridPago"  value="{{ idPago }}"><br>
+</form>
+
+<script type='text/javascript'>
+
+
+	setTimeout(function(){
+
+
+
+		$('.modal').css({'width': '70%',
+			'left': '10%',
+			'height': '90%',
+			'margin-right': 'auto',
+			'margin-left': '5%'});
+
+		$('.modal-body').css({ 'padding': '5px',
+			'max-height': '90%',
+			'height': '90%' });
+
+		$('.modal.fade.in').css({'top': '5%',
+			'height': '90%' });
+
+	},500);
+
+
+
+
+	var fechan =  $("#fechaN").text();
+	var fechaEmision =  $("#fechaEmision").text();
+	var anio_nacim = fechan.substr(6, 4);
+	var mes_nacim = fechan.substr(3, 2);
+	var dia_nacim = fechan.substr(0, 2);
+
+	$(".edadEmision").html(calcular_edad_FechaEmicionDos(dia_nacim, mes_nacim, anio_nacim, fechaEmision));
+	function calcular_edad_FechaEmicionDos(dia_nacim, mes_nacim, anio_nacim, fechaEmision)
+	{
+		var fechaEmision = new Date(fechaEmision);
+
+		var anio_emision = fechaEmision.getYear();
+		var mes_emision = fechaEmision.getMonth();
+		var dia_emision = fechaEmision.getDate();
+
+		var edad = (anio_emision + 1900) - anio_nacim;
+		if (mes_emision < (mes_nacim - 1))
+		{
+			edad--;
+		}
+		if (((mes_nacim - 1) == mes_emision) && ( dia_emision < dia_nacim))
+		{
+			edad--;
+		}
+		if (edad > 1900)
+		{
+			edad -= 1900;
+		}
+
+		var ruta = Routing.generate("Caja_GuardaFechaEnBaseDocumento");
+		var data = { edad : edad };
+		$.ajax({type: 'get',  url: ruta, data: data,success: function(datar) {   } });
+
+		return edad;
+	}
+
+</script>
+{% endblock %}

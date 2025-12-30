@@ -1,0 +1,140 @@
+{% extends 'RecaudacionBundle::Supervisor/sublayout.html.twig' %}
+
+{% block contenedorMantenedor -%}
+<div class="table-header">
+	Informe de Caja Consolidado
+	<div id="div-volver" class="btn-group pull-right">
+		<a id="volverListado" class="btn btn-mini" href="{{ path('Caja_Supervisor_ConsolidadoCaja') }}">
+			<i class="icon-arrow-left"></i> Volver
+		</a>
+	</div>
+</div>
+<div class="table-header-grey hide">
+	<i></i> Informe de Caja
+	<div class="btn-group pull-right">
+		<a id="formInfoExcel" class="btn btn-mini btn-info btn-excel informacion" title="Ver Informe de Caja" href="">
+			<i class="icon-eye-open"></i> Informe de Caja
+		</a>
+	</div>
+</div>
+<table id="table_report" class="table table-bordered table-condensed table-hover">
+	<thead>
+		<tr>
+			<th> Funcionario </th>
+			<th> Estado Caja </th>
+			<th> Ubicación </th>
+			<th> Hora Apertura Caja </th>
+			<th class="sorting_disabled"></th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for caja in oCaja %}
+		<tr>
+			<td>
+				{{ caja.nombre|title }} {{ caja.apellidoPaterno|title }} {{ caja.apellidoMaterno|title }}
+			</td>
+			<td>
+				{% if caja.idEstadoReapertura == kk %}
+				<span>REABIERTA</span>
+				{% else %}
+				{% if caja.fechaCierre %}
+				<span>CERRADA</span>
+				{% else %}
+				<span>ABIERTA</span>
+				{% endif %}
+				{% endif %}
+			</td>
+			<td>{{ caja.ubica }}</td>
+			{% if caja.fechaReapertura %}
+			<td>{{ caja.fechaReapertura|date('Y-m-d H:i') }}</td>
+			{% else %}
+			<td>{{ caja.fechaApertura|date('Y-m-d H:i') }}</td>
+			{% endif %}
+			<td class="span2">
+				<div class="btn-group">
+					<a class="btn btn-mini btn-info detalleCaja informacionPDF" title="Informe Por Cajero" href="">
+						<i class="icon-eye-open"></i>
+					</a>
+					{% if caja.idEstadoReapertura == kk %}
+					{#<a class="btn btn-mini btn-danger cerrarCaja" title="Cerrar Caja" href="{{ path('Caja_Supervisor_ConsolidadoCaja_Cerrar', {'id': caja.idCaja }) }}">#}
+					<a class="btn btn-mini btn-danger cerrarCaja" title="Cerrar Caja" href="">
+						<i class="icon-remove-sign"></i>
+					</a>
+					{% else %}
+					{% if caja.fechaCierre %}
+					<a class="btn btn-mini btn-warning edit" title="Editar" href="">
+						<i class="icon-edit"></i>
+					</a>
+					<a class="btn btn-mini btn-success abrirCaja" title="Abrir Caja" href="">
+						<i class="icon-check-sign"></i>
+					</a>
+					{% else %}
+					{#<a class="btn btn-mini btn-danger cerrarCaja" title="Cerrar Caja" href="{{ path('Caja_Supervisor_ConsolidadoCaja_Cerrar', {'id': caja.idCaja }) }}">#}
+					<a class="btn btn-mini btn-danger cerrarCaja" title="Cerrar Caja" href="">
+						<i class="icon-remove-sign"></i>
+					</a>
+					{% endif %}
+					{% endif %}
+				</div>
+			</td>
+		</tr>
+		{% endfor %}
+		<tr>
+			<td>Pagos Web</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td class="span2">
+				<a class="btn btn-mini btn-info detalleCaja informacionPDF" title="Informe Pagos Web" href="{{ path('Caja_Gestion_InformeCajaPagosWeb') }}">
+					<i class="icon-eye-open"></i>
+				</a>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<div class="table-footer">
+	<div class="btn-group pull-right">
+		<a class="btn btn-mini" href="{{ path('Caja_Supervisor_ConsolidadoCaja') }}">
+			<i class="icon-arrow-left"></i> Volver
+		</a>
+	</div>
+</div>
+<div class="modalSinCerrar hide"></div>
+<div class="modalVer hide"></div>
+{% endblock %}
+{% block scripts -%}
+<script src="{{ asset('js/bootbox.min.js') }}"></script>
+<script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('js/jquery.dataTables.bootstrap.js') }}"></script>
+<script src="{{ asset('js/uncompressed/Caja/fnCommon.js') }}"></script>
+<script type="text/javascript">
+	$(document).on('ready', function(){
+		GestionCaja_CajaSinCerrar();
+		// crearDataTable('#table_report');
+		$('#table_report, #table_report2, #table_report').dataTable({
+			"oLanguage": {
+				"sUrl": "{{ asset('js/datatables/dataTables.es.txt') }}"
+			}
+		});
+	});
+	$(".informacionPDF").on('click', function(e) {
+		e.preventDefault();
+		$.post($(this).attr('href'), null, function(response) {
+			var vistaHtml = response;
+			informacionPDF(vistaHtml);
+		}).error(function(xhr,textResponse,errorThrown){
+			xhr.textResponse;
+		});
+	});
+
+	$(".informacion").on('click', function(e) {
+		e.preventDefault();
+		$.post($(this).attr('href'), null, function(response) {
+			var vistaHtml = response;
+			informacion(vistaHtml);
+		}).error(function(xhr,textResponse,errorThrown){
+			xhr.textResponse;
+		});
+	});
+</script>
+{% endblock %}
