@@ -1,0 +1,42 @@
+Rutas_Caja_Farmacia_Default_Servet:
+  path:  /Inicio
+  defaults: { _controller: CajaBundle:_Default/Servet/Farmacia/Farmacia:index }
+
+#Busqueda de Recetas Por Paciente
+Ruta_Caja_Farmacia_Consulta_Paciente_PorRut_Default_Servet:
+  path:  /ConsultaPorRut
+  defaults: { _controller: CajaBundle:_Default/Servet/Farmacia/TiposBusqueda/BusquedaPacientes:consultaPacientePorRut }
+
+Ruta_Caja_Farmacia_Consulta_Wb_PorRut_Default_Servet:
+  path:  /ConsultaDatoWbPorRut
+  defaults: { _controller: CajaBundle:_Default/Servet/Farmacia/TiposBusqueda/BusquedaPacientes:obtenerDatosWbPersona }
+
+Ruta_Caja_Farmacia_Actualiza_DatosPersona_Wb_PorRut_Default_Servet:
+  path:  /ActualizarDatos
+  defaults: { _controller: CajaBundle:_Default/Servet/Farmacia/TiposBusqueda/BusquedaPacientes:actualizarDatosPersonaWb }
+
+Ruta_Caja_Farmacia_Consulta_Receta_NoValidas_Default_Servet:
+  path:  /ConsultaRecetas
+  defaults: { _controller: CajaBundle:_Default/Servet/Farmacia/TiposBusqueda/BusquedaPacientes:obtenerRecetas }
+
+Ruta_Caja_Farmacia_Detalle_Receta_Articulo_Default_Servet:
+  path:  /DetalleArticuloReceta
+  defaults: { _controller: CajaBundle:_Default/Servet/Farmacia/TiposBusqueda/BusquedaPacientes:obtenerDetalleArticulo }
+
+Caja_PagoCuenta_RealizarPago_Farmacia_Default_Servet:
+  path: /RealizarPagoPaciente
+  defaults: { _controller: CajaBundle:_Default/Servet/Farmacia/RealizarPagoPacienteFarmacia:cuentaPagarMedios }
+
+Caja_Gestion_AbrirCaja_Default_Servet:
+  path:  /GestionAbrirCajaFarmacia
+  defaults: { _controller: CajaBundle:_Default/Servet/Farmacia/Farmacia:GestionAbrirCajaFarmacia }
+
+Caja_Gestion_CerrarCaja_Default_Servet:
+  path:  /{id}/GestionCerrarCajaFarmacia
+  defaults: { _controller:  CajaBundle:_Default/Servet/Farmacia/Farmacia:gestionCerrarCajaFarmacia }
+  requirements: { id: \d+ }
+
+# Caja_Gestion_CerrarCajaCerrado_Default_Servet:
+#     path:   /{id}/GestionCerrarCajaCerrado
+#     defaults: { _controller: CajaBundle:_Default/Recaudacion/GestionCaja/GestionCaja:gestionCerrarCajaCerrado }
+#     requirements: { id: \d+ }

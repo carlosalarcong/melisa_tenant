@@ -1,0 +1,89 @@
+<div id="formRisLis" class="hide"> {# COMENTADO PARA REALIZAR SKELETON - DESCOMENTAR PARA REALIZAR EL NEGOCIO DE LA VISTA #}
+    <div class="table-header-grey" style="text-align:left;">
+        {% if datosProfesionalDefecto is defined and datosProfesionalDefecto is not null %}
+            Datos utilizado a creación de solicitud RIS/LIS
+        {% else %}
+            Datos a completar para solicitud de exámenes
+        {% endif %}
+    </div>
+    <table width="100%" align="center">
+        <tr>
+            <td id="runProfesionalRisLisField" valign="top">
+                <table width="100%" border="0" cellspacing="10" cellpadding="10" class="table table-bordered table-condensed table-hover grey">
+                    <tr>
+                        <th>
+                            RUN Profesional
+                        </th>
+                        <td>
+                            <div class="input-append">
+                                <input id="inputRutProfesionalRisLis" type="text" maxlength="12" {% if datosProfesionalDefecto is defined and datosProfesionalDefecto is not null %} value="{{datosProfesionalDefecto['rutDefecto']}}" {% endif %}>
+                                <span class="add-on"><i id="iconRut" class="icon-asterisk grey"></i></span>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td id="nombresProfesionalRisLisField" valign="top">
+                <table width="100%" border="0" cellspacing="10" cellpadding="10" class="table table-bordered table-condensed table-hover  grey">
+                    <tr>
+                        <th>
+                            Nombres
+                        </th>
+                        <td>
+                            <div class="input-append">
+                                <input id="inputNombresProfesionalRisLis" type="text" {% if datosProfesionalDefecto is defined and datosProfesionalDefecto is not null %} value="{{datosProfesionalDefecto['nombreDefecto']}}" {% endif %}>
+                                <span class="add-on"><i class="icon-asterisk"></i></span>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td id="apellidoPatProfesionalRisLisField" valign="top">
+                <table width="100%" border="0" cellspacing="10" cellpadding="10" class="table table-bordered table-condensed table-hover  grey">
+                    <tr>
+                        <th>
+                            Ap. Paterno
+                        </th>
+                        <td>
+                            <div class="input-append">
+                                <input id="inputApellidoPatProfesionalRisLis" type="text" {% if datosProfesionalDefecto is defined and datosProfesionalDefecto is not null %} value="{{datosProfesionalDefecto['apellidoPaternoDefecto']}}" {% endif %}>
+                                <span class="add-on"><i class="icon-asterisk"></i></span>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td id="apellidoMatProfesionalRisLisField" valign="top">
+                <table width="100%" border="0" cellspacing="10" cellpadding="10" class="table table-bordered table-condensed table-hover  grey">
+                    <tr>
+                        <th>
+                            Ap. Materno
+                        </th>
+                        <td>
+                            <div class="input-append">
+                                <input id="inputApellidoMatProfesionalRisLis" type="text" {% if datosProfesionalDefecto is defined and datosProfesionalDefecto is not null %} value="{{datosProfesionalDefecto['apellidoMaternoDefecto']}}" {% endif %}>
+                                <span class="add-on"><i class="icon-asterisk"></i></span>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td id="observacionlRisLisField" valign="top">
+                <table width="100%" border="0" cellspacing="10" cellpadding="10" class="table table-bordered table-condensed table-hover  grey">
+                    <tr>
+                        <th>
+                            Observación
+                        </th>
+                        <td>
+                            <div class="input-append">
+                                <input id="inputObservacionRisLis" type="text" {% if datosProfesionalDefecto is defined and datosProfesionalDefecto is not null %} value="{{datosProfesionalDefecto['observacionDefecto']}}" {% endif %}>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>

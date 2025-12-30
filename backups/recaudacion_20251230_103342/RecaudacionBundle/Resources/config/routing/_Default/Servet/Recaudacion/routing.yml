@@ -1,0 +1,5 @@
+Caja_Recaudacion_Inicio_Recaudacion:
+  resource: "@RecaudacionBundle/Resources/config/routing/_Default/Servet/Recaudacion/recaudacion.yml"
+
+Caja_Recaudacion_Inicio_Servicio:
+  resource: "@RecaudacionBundle/Resources/config/routing/_Default/Servet/Recaudacion/servicio.yml"

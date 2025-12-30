@@ -1,0 +1,25 @@
+# TRATAMIENTO
+Caja_PagoCuenta_Tratamiento_Crear:
+    path:   /Crear_tratamiento
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Tratamiento/Tratamiento:crearTratamiento }
+
+Caja_PagoCuenta_Tratamiento_Editar:
+    path:   /EditarTratamiento
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Tratamiento/Tratamiento:editarTratamiento }
+
+Caja_PagoCuenta_Tratamiento_Crear_BuscarTratamiento_Pnatural:
+    path:   /CrearBucarTratamientoPnatural
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Tratamiento/Tratamiento:crearTratamientoBuscarPnatural }
+
+Caja_PagoCuenta_Tratamiento_Anulacion:
+    path:   /{id}/Anular_tratamiento
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Tratamiento/Tratamiento:anularTratamiento }
+    requirements: { id: \d+ }
+
+Caja_PagoCuenta_Tratamiento_Glosa:
+    path:  /Glosa_Tratamiento
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Tratamiento/Tratamiento:glosaTratamiento }
+
+Caja_PagoCuenta_Tratamiento_Get_Edit:
+    path:  /GetEdit_Tratamiento
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Tratamiento/Tratamiento:getEditartratamiento }

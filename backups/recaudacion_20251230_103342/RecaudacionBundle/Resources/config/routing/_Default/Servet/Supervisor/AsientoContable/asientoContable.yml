@@ -1,0 +1,15 @@
+Caja_Supervisor_AsientoContable:
+    path:  /
+    defaults: { _controller: RecaudacionBundle:_Default/Supervisor/AsientoContable/AsientoContable:index }
+
+Caja_Supervisor_AsientoContable_Informe:
+    path:  /Informe
+    defaults: { _controller: RecaudacionBundle:_Default/Supervisor/AsientoContable/AsientoContableInforme:informe }
+
+Caja_Supervisor_UbicacionUsuario_BySucursal:
+    path: /ubicacionusuariobysucursal
+    defaults: { _controller: RecaudacionBundle:_Default/Supervisor/AsientoContable/AsientoContableUsuarioBySucursal:index }
+
+Caja_Supervisor_AsientoContable_Descargas:
+    path:  /Descarga/{fechaIni}/{fechaFin}/{idSucursal}/{idUsuario}
+    defaults: { _controller: RecaudacionBundle:_Default/Supervisor/AsientoContable/Descarga:excel }

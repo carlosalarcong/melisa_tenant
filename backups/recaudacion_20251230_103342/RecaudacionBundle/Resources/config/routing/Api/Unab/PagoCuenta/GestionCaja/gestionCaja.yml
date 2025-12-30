@@ -1,0 +1,37 @@
+# GESTION CAJA
+Caja_PagoCuenta_Gestion_CerrarCaja:
+    path:  /{id}/GestionCerrarCaja
+    defaults: { _controller:  CajaBundle:Api/Unab/PagoCuenta/GestionCaja/GestionCaja:gestionCerrarCaja }
+    requirements: { id: \d+ }
+
+Caja_PagoCuenta_Gestion_CerrarCajaCerrado:
+    path:   /{id}/GestionCerrarCajaCerrado
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/GestionCaja/GestionCaja:gestionCerrarCajaCerrado }
+    requirements: { id: \d+ }
+
+Caja_PagoCuenta_Gestion_AbrirCaja:
+    path:  /GestionAbrirCaja
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/GestionCaja/GestionCaja:gestionAbrirCaja}
+
+Caja_PagoCuenta_Gestion_InformesCajas:
+    path:   /{id}/InformeCajas
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/GestionCaja/GestionCaja:gestionInformeCajas}
+    requirements: { id: \d+ }
+
+Caja_PagoCuenta_Gestion_InformeCaja:
+    path:   /{id}/InformeCaja
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/GestionCaja/GestionCaja:gestionInformeCaja}
+    requirements: { id: \d+ }
+
+Caja_PagoCuenta_Gestion_InformesGarantias:
+    path:   /InformeGarantias
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/GestionCaja/GestionCaja:gestionInformeGrantias}
+
+Caja_PagoCuenta_TraeCorrelativo:
+    path:  /TraeCorrelativo
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/GestionCaja/GestionCaja:traeCorrelativo}
+
+Caja_PagoCuenta_PostPago_PrintDetalles_ImpresionPDF:
+    path:  /DetallesCajaPrinter
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/GestionCaja/GestionCaja:gestionInformeCajaImprimir }
+    requirements: { _method: post }

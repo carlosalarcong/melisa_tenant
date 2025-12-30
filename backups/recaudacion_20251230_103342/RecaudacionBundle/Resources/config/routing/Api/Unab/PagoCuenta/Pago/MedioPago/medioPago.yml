@@ -1,0 +1,23 @@
+Caja_PagoCuenta_GetNuevoFormDinamico:
+    path:  /CajaGetNuevoFormDinamico
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/MedioPago:nuevoFormDinamico}
+
+#VALIDA VALORES POR PAGAR
+Caja_PagoCuenta_Valor_Pagar:
+    path:  /CajaValorPagar
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/MedioPago:cajaValorPagar}
+
+#VALIDA VALORES POR PAGAR
+Caja_PagoCuenta_Valor_Pagar_Comparar_Tabs:
+    path:  /CajaValorPagarCompararTabs
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/MedioPago:cajaValorPagarCompararTabs}
+
+#VALIDA VALORES POR PAGAR
+Caja_PagoCuenta_Valmacena_Total_Suma:
+    path:  /CajaValmacenaTotalSuma
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/MedioPago:cajaValmacenaTotalSuma}
+
+#VALIDA VALORES POR PAGAR
+Caja_PagoCuenta_CMPVP:
+    path:  /CMPVP
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/MedioPago:CMPVP}

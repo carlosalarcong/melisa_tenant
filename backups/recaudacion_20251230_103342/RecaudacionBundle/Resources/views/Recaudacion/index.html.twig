@@ -1,0 +1,117 @@
+{% block Content %}
+    {% import 'RecaudacionBundle:UI/Macros:WidgetsCaja.html.twig' as WidgetCaja %}
+    {% if  errores|length != 0%}
+        <div class="alert alert-warning CajaCerrada">
+            <strong>No es posible acceder a Caja mientras no ingrese los siguientes datos:</strong><br>
+            {% for error in errores%}
+                - {{error}} <div class="clearfix"></div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
+            <tr>
+                <td width="100%" align="center" valign="top">
+                    <br>
+                    <div class="tabbable whileload">
+                        <div class="tabbable">
+                            <ul class="nav nav-tabs" id="RecaudacionTabs">
+                                <li class="active">
+                                    <a data-toggle="tab" href="#Pago"><i class="blue icon-money icon-2x bigge-125"> </i>Pago Paciente</a>
+                                </li>
+                                <li >
+                                    <a data-toggle="tab" href="#AperturaCierre"><i class="blue icon-bar-chart icon-2x bigger-125"> </i>Gestión Caja</a>
+                                </li>
+                                <li>
+                                    <a data-toggle="tab" href="#POSTransbank"><i class="blue icon-tablet icon-2x bigger-125"> </i>Transbank</a>
+                                </li>
+                                <li class="dropdown">
+                                    <a data-toggle="dropdown" class="dropdown-toggle yellow">
+                                        <i class="icon-print icon-2x"></i>
+                                        Informes
+                                        <i class="icon-chevron-sign-down icon-on-right"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-info">
+                                        {% if caja is not null %}
+                                        <li >
+                                            <a title="Informe Caja" class="detalleCaja pull-left" href="{{ path('Caja_Gestion_InformeCaja', { 'id': caja.id }) }}" {#href="{{ path('Caja_Gestion_InformeCaja', { 'id': caja.id }) }}"#}>
+                                                <i class="icon-file-alt"></i>Informe Caja Actual</a>
+                                            <a title="Informe Garantias" class="InformesGarantiaS pull-left" href="{{ path('Caja_Gestion_InformesGarantias') }}" {#href="{{ path('Caja_Gestion_InformesGarantias') }}"#}>
+                                                <i class="icon-file-alt"></i>Informe General Garantías</a>
+                                            <a title="Informe Medios de Pago" class="informeMedioDePago pull-left" href="{{path('Caja_Recaudacion_PV_Imprimir_Medios_De_Pago', {'id' : caja.id})}}" {#href="{{path('Caja_Recaudacion_PV_Imprimir_Medios_De_Pago', {'id' : caja.id})}}"#}>
+                                                <i class="icon-file-alt"></i> Informe Medios de Pago por Profesional
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                        <li class="pull-left">____________________</li>
+                                        <li>
+                                            <a title="Informe de Cajas" class="InformesCajaS pull-left" href="{{ path('Caja_Gestion_InformesCajas', { 'id': cajero.usuario }) }}" {#href="{{ path('Caja_Gestion_InformesCajas', { 'id': cajero.usuario }) }}"#}>
+                                                <i class="icon-list-ul"></i>  Listado Cajas
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tab-content">
+
+                            {% if sintalonario == 0 %}
+                                <div>
+                                </div>
+                                <div id="AperturaCierre" class="tab-pane in active">
+                                    {% include 'RecaudacionBundle:Recaudacion/GestionCaja:index.html.twig' %}
+                                </div>
+                            {% else %}
+                                {% if abierta == 1 %}
+                                    {% if cerrada == 0 %}
+                                        <div>
+                                        </div>
+                                        <div id="AperturaCierre" class="tab-pane in active">
+                                            {% include 'RecaudacionBundle:Recaudacion/GestionCaja:index.html.twig' %}
+                                        </div>
+                                    {% else%}
+                                        {% if sincerrar == 0 %}
+                                            <div>
+                                            </div>
+                                            <div id="AperturaCierre" class="tab-pane in active">
+                                                {% include 'RecaudacionBundle:Recaudacion/GestionCaja:index.html.twig' %}
+                                            </div>
+                                        {% else %}
+                                            {# Caja abierta sin restricción #}
+                                            <div id="Pago" class="tab-pane in active" style="overflow-y: auto; padding-bottom: 180px !important;">
+                                                {% include 'RecaudacionBundle:Recaudacion/Pago:index.html.twig' %}
+                                            </div>
+                                            <div id="POSTransbank" class="tab-pane">
+                                                {% include 'RebsolTransbankBundle:Default:index.html.twig' %}
+                                            </div>
+                                            <div id="AperturaCierre" class="tab-pane">
+                                                {% include 'RecaudacionBundle:Recaudacion/GestionCaja:index.html.twig' %}
+                                            </div>
+                                            {# Caja abierta sin restricción #}
+                                        {% endif %}
+                                    {% endif %}
+                                {% else%}
+                                    <div>
+                                    </div>
+                                    <div id="AperturaCierre" class="tab-pane in active">
+                                        {% include 'RecaudacionBundle:Recaudacion/GestionCaja:index.html.twig' %}
+                                    </div>
+                                {% endif%}
+                            {% endif %}
+
+
+                        </div>
+                    </div>
+                    <br>
+                </td>
+            </tr>
+        </table>
+        <div class="modalVerA hide"></div>
+        <div class="modalSinCerrar hide"></div>
+        <div class="modalInformeCajas hide"></div>
+        <div class="modalVerDocs hide"></div>
+        <div class="modalOpcionBonoE hide"></div>
+        {{ WidgetCaja.EventosDivBusqueda() }}
+        {{ WidgetCaja.PagoGarantia() }}
+        {{ WidgetCaja.PagoReserva() }}
+    {% endif %}
+{% endblock %}

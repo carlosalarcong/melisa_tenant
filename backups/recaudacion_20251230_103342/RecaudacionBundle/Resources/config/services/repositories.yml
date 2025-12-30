@@ -1,0 +1,35 @@
+services:
+
+  recaudacion.CuentaPaciente:
+      public: true
+      class: Rebsol\RecaudacionBundle\Repository\CuentaPacienteRepository
+      arguments: ["@doctrine.orm.entity_manager"]
+
+  recaudacion.Paciente:
+      public: true
+      class: Rebsol\RecaudacionBundle\Repository\PacienteRepository
+      arguments: ["@doctrine.orm.entity_manager"]
+
+  recaudacion.RchReceta:
+      public: true
+      class: Rebsol\RecaudacionBundle\Repository\RchRecetaRepository
+      arguments: ["@doctrine.orm.entity_manager"]
+
+  recaudacion.Persona:
+      public: true
+      class: Rebsol\RecaudacionBundle\Repository\PersonaRepository
+      arguments: [ "@doctrine.orm.entity_manager" ]
+
+  recaudacion.RegistroPersona:
+      public: true
+      class: Rebsol\RecaudacionBundle\Repository\RegistroPersonaRepository
+      arguments: [ "@doctrine.orm.entity_manager", "@Buscar_Paciente_Service" ]
+
+  recaudacion.AccionClinica:
+      public: true
+      class: Rebsol\RecaudacionBundle\Repository\AccionClinicaRepository
+      arguments: [ "@doctrine.orm.entity_manager" ]
+
+  recaudacion.obtenerParametrosGlobales:
+    class: Rebsol\RecaudacionBundle\Services\Parametro\ParametrosServices
+    arguments: ['@service_container', '@doctrine.orm.entity_manager']

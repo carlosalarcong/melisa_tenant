@@ -1,0 +1,27 @@
+<div class="tablaInformacion">
+	<div class="table-header headerAuditoria">
+		Información de Auditoría
+	</div>
+	<table class="table">
+		<tbody>
+			<tr>
+				<th class="input-large">
+					<i class="icon-plus-sign-alt"></i> Creado
+				</th>
+				<td>
+					{{ arrAuditoria.creado.username }} (<i>{{ arrAuditoria.creado.fecha|date('d-m-Y H:i') }}</i>)
+				</td>
+			</tr>
+			{% if arrAuditoria.modificado != false %}
+			<tr>
+				<th class="input-large">
+					<i class="icon-edit-sign"></i> Modificado
+				</th>
+				<td>
+					{{ arrAuditoria.modificado.username }} (<i>{{ arrAuditoria.modificado.fecha|date('d-m-Y H:i') }}</i>)
+				</td>
+			</tr>
+			{% endif %}
+		</tbody>
+	</table>
+</div>

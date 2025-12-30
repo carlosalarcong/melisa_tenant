@@ -1,0 +1,31 @@
+{% extends 'RecaudacionBundle:Supervisor:layoutformulariosajax.html.twig' %}
+{% block body %}
+<div class="tablaInformacion">
+	<div class="table-header">
+		Ubicación Caja
+	</div>
+	<table class="table">
+		<tbody>
+			<tr>
+				<th>Nombre</th>
+				<td>
+					{{ entity.nombre }}
+				</td>
+			</tr>
+			<tr>
+				<th>Sucursal</th>
+				<td>
+					{{ entity.idSucursal.nombreSucursal }}
+				</td>
+			</tr>
+			<tr>
+				<th>Descripción</th>
+				<td>
+					{{ entity.descripcion }}
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+{{ render(controller("RecaudacionBundle:_Default/Supervisor/Supervisor:obtenerAuditoriaDeEntidad", { 'oEntidad': entity } )) }}
+{% endblock %}

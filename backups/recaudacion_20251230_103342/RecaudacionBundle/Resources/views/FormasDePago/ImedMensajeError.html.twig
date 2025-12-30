@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<title>Interfaz Imed - Rebsol</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- Bootstrap -->
+	{% block css %}
+	{% endblock %}
+	<link rel="shortcut icon" href="{{ asset('img/favicon.png') }}" type="image/x-icon">
+	<link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
+	<link href="{{ asset('css/bootstrap-responsive.min.css') }}" rel="stylesheet" media="screen">
+	<link href="{{ asset('css/ace.min.css') }}" rel="stylesheet">
+	<link href="{{ asset('css/ace-responsive.min.css') }}" rel="stylesheet">
+	<link href="{{ asset('css/font-awesome.min.css') }}" rel="stylesheet">
+	<link href="{{ asset('css/font-awesome-animation.css') }}" rel="stylesheet">
+	<link href="{{ asset('css/uncompressed/hermes.css') }}" rel="stylesheet">
+	<link href="{{ asset('css/uncompressed/medical-font-rebsol.css') }}" rel="stylesheet">
+	<link href="{{ asset('css/uncompressed/tablaInformacion.css') }}" rel="stylesheet">
+	{% block postcss %}
+	{% endblock %}
+	  <!--[if IE 7]>
+	  <link rel="stylesheet" href="{{ asset('css/font-awesome-ie7.min.css') }}" />
+	  <![endif]-->
+	  <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+	  <!--[if lt IE 9]>
+	  <script src=" {#{ asset('js/html5shiv.js') }#}"></script>
+	  <![endif]-->
+	  {% import 'RebsolHermesBundle:UI/Macros:label.html.twig' as macroLabel %}
+	  {% import 'RebsolHermesBundle:UI/Macros:ahref.html.twig' as macroAhref %}
+	  {% import 'RebsolHermesBundle:UI/Macros:button.html.twig' as macroButton %}
+	  {% import 'RebsolHermesBundle:UI/Macros:dependencias.html.twig' as macroDependencias %}
+	</head>
+	<body class="navbar-fixed">
+		<div class="navbar navbar-inverse navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container-fluid">
+					<a class="brand" href="#">
+						<img class="logo_empresa" src="{#{ (directorio_logos_empresa ~ app.session.get('Rebsol_Empresa_Logo')) | imagine_filter('imagen_logo_empresa', true) }#}" alt="Logo" />
+					</a>
+					<ul class="nav ace-nav pull-right">
+						<li id="navbarModulo">
+							<a>
+								<span id="rebsolModulo_info">
+									<small>Fcha y Hora Error:</small>{{fechaActual|date("d-m-Y, H:i:s") }}
+								</span>
+							</a>
+						</li>
+						{#<li class="user-profile" id="barraPerfilUsuario">
+							<a class="user-menu dropdown-toggle" href="#" data-toggle="dropdown">
+								<img  id="img_nav" alt="Foto Usuario" src="#}{#{ (directorio_avatars_usuarios ~ app.user.avatar | default('imagenNuevosUsuarios.png')) | imagine_filter('imagen_nav', true) }#}{#" class="img-circle" >
+								#}{#<i> <i class="icon-2x icon-user"> </i></i>#}{#
+								<span id="user_info">
+									<small>Usuario:</small> {{app.user.username}}
+								</span>
+							</a>
+						</li>#}
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="container-fluid" id="main-container">
+			{% block breadcrumbs %}
+			<style type='text/css'>
+				#contenido_pagina {
+					margin-top: -400px;
+				}
+			</style>
+			<div id="breadcrumbs" class="navbar-fixed-top">
+				<ul class="breadcrumb">
+					<i class='icon-remove-sign red'></i><b> Error en Proceso IMED...</b>
+				</ul>
+			</div>
+			{% endblock %}
+			<div class="clearfix"></div>
+			<div id="bodycontainer">
+				{% include "CajaBundle:Recaudacion/Pago/FormasDePago:ImedMensajeGlosa.html.twig" %}
+			</div>
+		</div>
+		{% include "RebsolHermesBundle:System:footer.html.twig" %}
+		<script src="{{ asset('js/jquery-1.9.1.min.js') }}"></script>
+		<script src="{{ asset('js/bootstrap.min.js') }}"></script>
+		<script src="{{ asset('js/ace-elements.min.js') }}"></script>
+		<script src="{{ asset('js/ace.min.js') }}"></script>
+		<script src="{{ asset('js/uncompressed/hermes.js') }}"></script>
+		{% block scr %}{% endblock %}
+		<script type="text/javascript">
+			moduloJSON = {};
+			function modulo_hora() {
+				var h=new Date();
+				var dd = h.getDate();
+		  var mm = h.getMonth()+1;//January is 0!
+		  var yyyy = h.getFullYear();
+		  if(dd<10) {
+			dd='0'+dd
+		  }
+		  if(mm<10) {
+			mm='0'+mm
+		  }
+		  $("#modulo_hora").html(""+dd+'-'+mm+'-'+yyyy+" ")
+		  $("#modulo_hora").append(((h.getHours()<10)?"0":"")+h.getHours()+":")
+		  $("#modulo_hora").append(((h.getMinutes()<10)?"0":"")+h.getMinutes()+":")
+		  $("#modulo_hora").append(((h.getSeconds()<10)?"0":"")+h.getSeconds());
+		  setTimeout( "modulo_hora();", 1000 );
+		  $('.breadcrumb').css('padding', '0 0 0 30px ');
+		}
+		$(document).on('ready', function(){
+			modulo_hora();
+		});
+		function cerrarVentana(){
+			if (confirm("Close Window?")) {
+				close();
+			}
+		// parent.window.close();
+		// window.close();
+	}
+</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

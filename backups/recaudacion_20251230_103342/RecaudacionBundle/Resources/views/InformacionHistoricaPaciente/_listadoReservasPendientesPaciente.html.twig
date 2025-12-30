@@ -1,0 +1,27 @@
+{% if ValidaHistoricoReserva is defined and ValidaHistoricoReserva == true %}
+    <div id="reservasHistoricosDiv" class="widget-box ">{#collapsed#}
+        <div class="widget-header header-color-grey">
+            <div  style="text-align:left; vertical-align: middle" class="encabezadoDeListados">
+                <h8> <i class="icon-time icon-large text-left space"></i> Listado Reservas Pendientes de Paciente
+                    <div class="clearfix"></div>
+                </h8>
+            </div>
+            <div class="widget-toolbar">
+                <a href="#" data-action="collapse" >
+                    <i class="icon-chevron-down icon-list-historicoReserva icon-list-historico"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="widget-body">
+            <div class="widget-main no-padding">
+                <div class="content">
+                    <div id="table_report_wrapper" class="dataTables_wrapper">
+{#                        {% include 'CajaBundle:HistorialPagoPaciente:indexHistorialReserva.html.twig' %}#}
+                        {% include 'RecaudacionBundle:InformacionHistoricaPaciente:_historialReservaPaciente.html.twig' %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}

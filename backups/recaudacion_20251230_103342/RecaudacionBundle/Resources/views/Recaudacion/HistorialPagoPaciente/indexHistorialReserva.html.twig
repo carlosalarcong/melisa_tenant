@@ -1,0 +1,94 @@
+<table id="table_report_history_reserva" class="table table-bordered table-condensed table-hover">
+   <thead>
+    <tr>
+        <th>Nombre Paciente</th>
+        <th>Fecha Reserva</th>
+        <th>Nombre Medico</th>
+        <th>Especialidad</th>
+        <th>Tipo Reserva</th>
+        <th>Prestación</th>
+        <th class="sorting_disabled span2" ></th>
+    </tr>
+</thead>
+<tbody> 
+    {% for individual in historicoReservas%}
+    <tr>  
+        <td>{{ individual.nombre }}</td>
+        <td>{{ individual.fechaRegistro | date("m-d-Y H:i")}}</td>
+        <td>{{ individual.nombreMedico }}</td>
+        <td>{{ individual.especialidad }}</td>
+        <td>{% if individual.idReserva %}Atención{% elseif individual.idExamen %}Examen{% endif %}</td>
+        <td>
+         {% for prestaciones in prestacionesReserva%} 
+         {% if individual.idReserva == prestaciones.id %}
+            {% for nombre in prestaciones.prestaciones%} 
+            {{nombre.nombrePrestacion}}{%if loop.last%}.{%else%}<div class="clearfix"></div>{%endif%}
+        {% endfor %}
+    {% endif %}     
+{% endfor %}
+</td> 
+<td class="span2">
+    <div class="btn-group">
+       {% if from == 'caja' %}
+        <a title="Pago Reserva" class="btn btn-mini btn-success btn-Pago-Reserva" data-id="{% if individual.idReserva %}{{ individual.idReserva }}{% elseif individual.idExamen %}{{ individual.idExamen }}{% endif %}">
+           <i class="icon-usd icon-large"></i>Pagar Reserva</a>
+           {% else %} 
+           <a class="btn btn-mini btn-light" > 
+             <i class="icon-usd icon-large"></i>Pago de Reserva Pendiente</a>
+         {% endif %} 
+     </div>
+ </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% block scripts %}
+    <script>
+        $(document).ready(function(){
+            {% if from == 'caja' %}
+            $(".btn-Pago-Reserva").on('click', function(e) {
+                var plan = $("#rebsol_hermesbundle_PrestacionType_plan").val();
+                if(plan == '' || !plan) {
+                    var error = "" +
+                        "<div class='alert alert-block alert-danger'>" +
+                        "    <p>" +
+                        "    <strong>Debe seleccionar un plan para agregar examen a listado.</strong>" +
+                        "    </p>" +
+                        "</div>";
+                    bootbox.dialog(error, [{
+                        "label": "Aceptar",
+                        "class": "btn btn-mini btn-info",
+                        "callback": function() {
+
+                        }
+                    }]);
+                    return;
+                }
+                idReservaAtencion = $(this).data('id');
+                e.preventDefault();
+                bootbox.dialog("<div class='alert alert-block alert-success AvisoReservaCarga'>" +
+                               "    <p>" +
+                               "    <strong>Pagará una Reserva</strong>" +
+                               "    <br>¿Desea continuar?"+
+                               "    </p>" +
+                               "</div>"
+                               , [{
+                                "label": "Cancelar",
+                                "class": "btn btn-mini",
+                                "callback": function() {
+                                }
+                            },
+                            {
+                                "label": "Pagar Reserva",
+                                "class": "btn btn-mini btn-success",
+                                "callback": function() {
+                                    bootbox.hideAll();
+                                    PreparaVistaReserva(idReservaAtencion);
+                                }
+                            }
+                            ]);
+});
+{% endif %} 
+});
+</script>
+{% endblock %}

@@ -1,0 +1,55 @@
+Caja_Verifica_UsuarioNuevo:
+    path:  /VerificaUsuarioNuevoAntiguo
+    defaults: { _controller: RecaudacionBundle:_Default/Servicios/BuscaUsuarioNuevoAntiguo:index  }
+
+#Caja_PaisporRegion:
+#    path:  /PaisporRegion
+#    defaults: { _controller: RecaudacionBundle:_Default/Servicios/BuscaPaisporRegion:index }
+
+Caja_ProvinciaporComuna:
+    path:  /ProvinciaporComuna
+    defaults: { _controller: RecaudacionBundle:_Default/Servicios/BuscaProvinciaporComuna:index }
+
+#Caja_RegionporProvincia:
+#    path:  /RegionporProvincia
+#    defaults: { _controller: RecaudacionBundle:_Default/Servicios/BuscaRegionporProvincia:index }
+
+Caja_getPrestacion:
+    path:  /CajagetPrestacion
+    defaults: { _controller: RecaudacionBundle:_Default/Servicios/BuscarPrestaciones:obtenerPrestacionJson }
+
+Caja_getPaquete:
+    path:  /CajagetPaquete
+    defaults: { _controller: RecaudacionBundle:_Default/Servicios/BuscarPaquete:obtenerPaqueteJson }
+
+Caja_getPrestacionHonorarios:
+    path:  /CajagetPrestacionHonorarios
+    defaults: { _controller: RecaudacionBundle:_Default/Servicios/BuscarPrestaciones:obtenerPrestacionHonorariosJson }
+
+Caja_BuscarPrestacion:
+    path:  /CajabuscarPrestacion
+    defaults: { _controller: RecaudacionBundle:_Default/Servicios/BuscarPrestaciones:index }
+
+#Caja_BuscarPaquetePrestacion:
+#    path:  /CajabuscarPaquetePrestacion
+#    defaults: { _controller: RecaudacionBundle:_Default/Servicios/BuscarPrestaciones:buscarPaquetesPrestaciones }
+
+Caja_BuscarInsumos:
+    path:  /CajabuscarInsumos
+    defaults: { _controller: RecaudacionBundle:_Default/Servicios/BuscarInsumos:index }
+
+Caja_BuscarPaquete:
+    path:  /CajabuscarPaquete
+    defaults: { _controller: RecaudacionBundle:_Default/Servicios/BuscarPaquete:index }
+
+Caja_getInsumo:
+    path:  /CajagetInsumos
+    defaults: { _controller: RecaudacionBundle:_Default/Servicios/BuscarInsumos:obtenerInsumosJson }
+
+Caja_reservarFolio:
+    path:  /CajareservarFolio
+    defaults: { _controller: RecaudacionBundle:_Default/Servicios/BuscarPrestaciones:reservarFolio }
+
+#Caja_disponibilizarFolio:
+#    path:  /CajadisponibilizarFolio
+#    defaults: { _controller: RecaudacionBundle:_Default/Servicios/BuscarPrestaciones:disponibilizarFolio }

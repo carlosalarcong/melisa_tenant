@@ -1,0 +1,340 @@
+{% block pago %}
+    {% import 'RebsolHermesBundle:UI/Macros/Caja:validadorDependencias.html.twig' as validador %}
+    <div class="table-header header-color-blue " style="text-align:left;">
+        <span class="white"><b>Pago Paciente</b></span>
+    </div>
+    <div class="alert alert-warning pacientefallecido  hide">
+        <strong>Usuario Fallecido</strong>
+        <div class="clearfix"></div>
+        El usuario ingresado, se encuentra registrado con fecha de defunción <span id="fechad"></span>.
+    </div>
+    <div id="busquedaPacientesForm">
+        <div class="table-header header-color-grey left left-align" style="text-align:left;">
+            <i class="icon-search icon-large text-left left left-align"> </i> Busqueda Pacientes
+        </div>
+        <div width="100%">
+            <div class="tabbable tabs-left">
+                <ul class="nav nav-tabs" id="TabBusqueda">
+                    <li class="active">
+                        <a data-toggle="tab" href="#ssimple" id="ssimplediv">
+                            <i class="grey icon-search bigger-110"></i>
+                            Busqueda Simple
+                        </a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#sadv" id="sadvdiv">
+                            <i class="grey icon-search bigger-110"></i>
+                            Busqueda Avanzada
+                        </a>
+                    </li>
+                </ul>
+                <div class="consultaBusqueda">
+                    <div class="tab-content" style="min-height: 450px;">
+                        <div id="ssimple" class="tab-pane in active">
+                            <table border="0">
+                                <tr>
+                                    <td>
+                                        <b> Tipo de Identificación: </b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        {{ form_widget( tipoIdentificacionExtranjeroForm.tipoIdentificacion ) }}
+                                        <div class="input-append center-align center" style="margin: 0 auto;">
+                                            {{ form_widget(tipoIdentificacionExtranjeroForm.identificacion,{ 'attr': {'placeholder':'Identificación','class':'validacionRutJS limpiarCampos', 'maxlength':'12'} } ) }}
+                                            <span class="add-on dark-opaque">
+													<i class="icon-asterisk"></i>
+												</span>
+                                        </div>
+                                    </td>
+                                    <td align="left">
+                                        <div class="input-append left "
+                                             style="padding: 0 10px 0 0; margin: 0 auto;">
+                                            <span style=" padding: 0 10px 0 0;"></span>
+                                            <a id="Buscar" class="btn btn-primary left" type="button">
+                                                <i class="icon-search"></i> Buscar
+                                            </a>
+                                            <span style=" padding: 0 5px 0 0"></span>
+                                            <a id="limpiar" class="btn btn-primary left" type="button">
+                                                <i class="icon-eraser"></i> limpiar
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div class="clearfix "></div>
+                            <div class="alert alert-block alert-success alertaNoexiste hide">
+                                <p>
+                                    <strong>
+                                        <i class="icon-warning-sign"></i>
+                                        No se han encontrado resultados.
+                                    </strong>
+                                    </br>
+                                    ¿Desea agregar nuevo paciente para continuar con Pago?.
+                                </p>
+                                <p>
+                                    <button class="btn btn-small btn-success agregarnuevo">Si, Agregar nuevo
+                                        paciente
+                                    </button>
+                                    <button class="btn btn-small noagregarnuevo">No, Buscar nuevamente</button>
+                                </p>
+                            </div>
+                            <div id="errorrut" class="clearfix red hide ">
+                                <i class="icon-remove"> </i> <span id="errormsjrut"></span>
+                            </div>
+                        </div>
+                        <div id="sadv" class="tab-pane">
+                            <div id="BloqueBusquedaAvanzada" class="" style="">
+                                <table class="table table-noborder">
+                                    <tr>
+                                        <td>
+                                            <div id="divFormularioBusqueda">
+                                                <form id="busquedaAvanzadaPaciente" name="busquedaAvanzadaPaciente"
+                                                      method="POST" action="" autocomplete="off">
+                                                    <div style="padding-left:15%">
+                                                        <div style="float:left">
+                                                            <div>
+                                                                <strong> Nombre </strong>
+                                                            </div>
+                                                            <div>
+                                                                <div class="input-append">
+                                                                    {{ form_widget(form.nombres, {'attr': {'class':'campoBusquedaAvanzado limpiarCampos'}} ) }}
+                                                                    <span class="add-on"><i
+                                                                                class="icon-asterisk"></i></span><span
+                                                                            class="add-on"><i
+                                                                                class="icon-asterisk"></i></span>
+                                                                </div>
+                                                                <div class="clear-fix"></div>
+                                                                <span id="error-nombres" class="text-error hide "><i
+                                                                            class="icon-remove"></i> Minimo 3 caracteres</span>
+                                                            </div>
+                                                        </div>
+                                                        <div style="float:left">
+                                                            <div class="clear-fix"></div>
+                                                            <span> &nbsp&nbsp &nbsp&nbsp</span>
+                                                        </div>
+                                                        <div style="float:left">
+                                                            <div>
+                                                                <strong> Apellido Paterno </strong>
+                                                            </div>
+                                                            <div>
+                                                                <div class="input-append">
+                                                                    {{ form_widget(form.apPaterno,{'attr': {'class':'campoBusquedaAvanzado limpiarCampos'}}) }}
+                                                                    <span class="add-on"><i
+                                                                                class="icon-asterisk"></i></span><span
+                                                                            class="add-on"><i
+                                                                                class="icon-asterisk"></i></span>
+                                                                </div>
+                                                                <div class="clear-fix"></div>
+                                                                <span id="error-apPaterno"
+                                                                      class="text-error hide"><i
+                                                                            class="icon-remove"></i> Minimo 3 caracteres</span>
+                                                            </div>
+                                                        </div>
+                                                        <div style="float:left">
+                                                            <div class="clear-fix"></div>
+                                                            <span> &nbsp&nbsp &nbsp&nbsp</span>
+                                                        </div>
+                                                        <div style="float:left">
+                                                            <div>
+                                                                <strong> Apellido Materno </strong>
+                                                            </div>
+                                                            <div>
+                                                                <div class="input-append">
+                                                                    {{ form_widget(form.apMaterno,{'attr': {'class':'campoBusquedaAvanzado limpiarCampos'}}) }}
+                                                                    <span class="add-on"><i
+                                                                                class="icon-asterisk"></i></span><span
+                                                                            class="add-on"><i
+                                                                                class="icon-asterisk"></i></span>
+                                                                </div>
+                                                                <div class="clear-fix"></div>
+                                                                <span id="error-apMaterno"
+                                                                      class="text-error hide"><i
+                                                                            class="icon-remove"></i> Minimo 3 caracteres</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="clear-fix"></div>
+                                                    <div><br>
+                                                        <table width="50%" align="center">
+                                                            <tr>
+                                                                <td colspan=" {{ form.opcionBusqueda|length }}"
+                                                                    class="center center-align centrado"><strong
+                                                                            class="center center-align centrado">
+                                                                        Parametros de Búsqueda</strong>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                {% for choiceFormView in form.opcionBusqueda %}
+                                                                    <td width="33%">{{ form_widget(choiceFormView) }}</td>
+                                                                {% endfor %}
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                    <div class="clear-fix"></div>
+                                                    <div class="center center-align">
+                                                        <br>
+                                                        <div class="input-append">
+                                                            <button id="btnBuscaAvanzadoPaciente"
+                                                                    class="btn btn-primary left">
+                                                                <i class='icon-search'></i> Buscar
+                                                            </button>
+                                                        </div>
+                                                        <div style="float:left">
+                                                            <div class="clear-fix"></div>
+                                                            <span> &nbsp;&nbsp;</span>
+                                                        </div>
+                                                        <div class="input-append">
+                                                            <button id="btnLimpiaAvanzadoPaciente"
+                                                                    class="btn btn-primary left" type="reset">
+                                                                <i class='icon-eraser'></i> Limpiar
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div id="busquedaAvanzadaPaciente_error"
+                                                         class="ocultarDiv oculto campoError">
+                                                        <i class="icon-remove"></i> Debe ingresar un dato valido en
+                                                        al menos uno de los campos
+                                                    </div>
+                                                </form>
+                                                {{ macroDependencias.DobleAsterisco() }}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="clearfix "></div>
+                            <div class="alert alert-block alert-success alertaNoexisteadv hide ocultarDiv">
+                                <p>
+                                    <strong>
+                                        <i class="icon-warning-sign"></i>
+                                        No se han encontrado resultados.
+                                    </strong>
+                                    </br>
+                                    ¿Desea agregar nuevo paciente para continuar con Pago?.
+                                </p>
+                                <p>
+                                    <button class="btn btn-small btn-success agregarnuevo">Si, Agregar nuevo
+                                        paciente
+                                    </button>
+                                    <button class="btn btn-small noagregarnuevo">No, Buscar nuevamente</button>
+                                </p>
+                            </div>
+                            <div id="erroradv" class="clearfix alertrutno  red" style='display:none'>
+                                <i class="icon-remove"> </i> <span id="errormsjadv"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!--/span-->
+    </div>
+    <div class="clearfix "></div>
+    <div id="resultadosBusquedaAvanzadaPaciente" class="">
+    </div>
+    <div class="clearfix "></div>
+    <div id="pacienteresumen" class="hide algo">
+        {% include 'RecaudacionBundle:Recaudacion/Pago/ResumenFormularios:Resumen_Paciente.html.twig' %}
+    </div>
+    <div class="clearfix "></div>
+    <div id="pacienteform" class="hide">
+        {% include 'RecaudacionBundle:Recaudacion/Pago/Pago_Form:Paciente.html.twig' %}
+    </div>
+    {% if idReservaAtencion %}
+        <div align="center" class="alert alert-block alert-success alertaExisteFullDatos hide ocultarDiv">
+            <p>
+                <strong>
+                    <i class="icon-ok"></i>
+                    Datos Personales de Paciente.
+                </strong>
+                </br>
+                ¿Se encuentran los datos del paciente ingresados correctamente?.
+            </p>
+            <p>
+            <div align="center">
+                <button class="btn btn-small btn-success btn-salvarAgenda">
+                    Si, Guardar y Continuar
+                </button>
+            </div>
+            </p>
+        </div>
+    {% else %}
+        <div class="alert alert-block alert-success alertaExisteFullDatos hide ocultarDiv">
+            <p>
+                <strong>
+                    <i class="icon-ok"></i>
+                    Paciente con Datos completos.
+                </strong>
+                </br>
+                ¿Usuario se encuentra con todos los datos necesarios ingresados en Sistema, Desea continuar con
+                Pago?.
+            </p>
+            <p>
+                <button class="btn btn-small btn-success continuarPasoUno">Si, Continuar con Pago</button>
+                <button class="btn btn-small actualizarPasoUno">No, Actualizar datos de Usuario</button>
+                <button class="btn btn-small btn-volverExiste" type="button">Volver Búsqueda</button>
+            </p>
+        </div>
+    {% endif %}
+    <div id="ResumenPacienteGarantiaAgenda" class="hide">
+        {% include 'RecaudacionBundle:InformacionActualPaciente:_informacionPacienteGarantiaAgenda.html.twig' %}
+    </div>
+    <div class="clearfix "></div>
+    {% if tipoPago == 'Recaudacion' %}
+        <div class="clearfix "></div>
+        <div id="historicoPacientePagos" class="hide">
+        </div></br>
+        <div class="clearfix "></div>
+    {% endif %}
+    <div class="clearfix "></div>
+    <div id="tratamientoGlosa" class="hide widget-box">
+    </div>
+    <div class="clearfix "></div>
+    <div id="prestadorresumen" class="hide">
+        {% include 'RecaudacionBundle:PrestadorPaciente:_informacionPrestacionPaciente.html.twig' %}
+    </div>
+
+    {% if tipoPago == 'PagoCuenta' %}
+        <!-- Pago Cuenta -->
+        <div id="datos-cuenta-paciente" class="hide"></div>
+        <div class="clearfix " ></div>
+        <!-- Fin Pago Cuenta -->
+    {% endif %}
+    {% if tipoPago == 'Recaudacion' %}
+        <div class="clearfix "></div>
+        <div id="datosprestacion" class="hide">
+            {% include 'RecaudacionBundle:PrestadorPaciente:_styleFormularioPrestacionPaciente.html.twig' %}
+            {% include 'RecaudacionBundle:PrestadorPaciente:_formularioPrestacionPaciente.html.twig' %}
+            {% include 'RecaudacionBundle:PagoPaciente:_botonesListaServicioPago.html.twig' %}
+        </div>
+    {% endif %}
+    <div class="clearfix "></div>
+    <div id="datosgarantia" class="hide">
+        {% include 'RecaudacionBundle:InformacionActualPaciente:_informacionPacienteGarantia.html.twig' %}
+    </div>
+    <div class="clearfix "></div>
+    <div id="regularizaGarantia" class="hide">
+        {% include 'RecaudacionBundle:GarantiaPaciente:_regularizarGarantiaPaciente.html.twig' %}
+    </div>
+    <div class="clearfix "></div>
+    <div id="mediodepago" class="hide">
+        {% include 'RecaudacionBundle:PagoPaciente:_mediosDePago.html.twig' %}
+    </div>
+    <div class="clearfix "></div>
+    <div style='display:none'>
+        {{ form_widget(pago_form.rutPersona) }}
+        {{ form_widget(pago_form.digitoVerifivador) }}
+        <span id="idSucursalObtenida"></span>
+    </div>
+    {{ WidgetCaja.BusquedaRutDv() }}
+    {{ WidgetCaja.BusquedaAvanzada() }}
+    {{ WidgetCaja.funcionGuardar() }}
+    {{ WidgetCaja.EventosDivBusqueda() }}
+    {{ WidgetCaja.FormPrestacion() }}
+    <div class="MediosDePagoMacro">{{ WidgetCaja.MediosDePago() }}</div>
+    {{ WidgetCaja.tippedlist() }}
+    {{ validador.buscacomuna() }}
+
+    <div class="modalVerBoleta hide"></div>
+    <div class="modalDiferencia hide"></div>
+{% endblock %}

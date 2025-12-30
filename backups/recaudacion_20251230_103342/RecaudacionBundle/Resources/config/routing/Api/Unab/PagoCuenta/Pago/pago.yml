@@ -1,0 +1,78 @@
+# Caja_PagoCuenta_ActualizaPaciente:
+#  path:  /actualizaPaciente
+#  defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/Pago:actualizaPaciente }
+
+# Caja_PagoCuenta_CreaPaciente:
+#  path:  /creaPaciente
+#  defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/Pago:creaPaciente }
+
+# Caja_PagoCuenta_ConsultaPacienteIdPnatural:
+#  path:  /consultaIpPnatural
+#  defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/Pago:consultaPaciente }
+
+# Caja_PagoCuenta_Consulta_Planes:
+#  path:  /consulaPlanes
+#  defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/Pago:consulaPlanes }
+
+# Caja_PagoCuenta_Consulta_Profesionales:
+#  path:  /consulaProfesionales
+#  defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/Pago:consulaProfesionales }
+
+# Caja_PagoCuenta_Consulta_Externos:
+#  path:  /consulaExternos
+#  defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/Pago:busquedaExterno }
+
+# Caja_PagoCuenta_Obtiene_Externo:
+#  path:  /ObtieneExterno
+#  defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/Pago:obtieneExterno }
+
+# Caja_PagoCuenta_Consulta_Origen:
+#  path:  /consulaOrigen
+#  defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/Pago:consulaOrigen }
+
+# Caja_PagoCuenta_Diferencia:
+#  path:  /Diferencia
+#  defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/Pago:diferencia }
+
+# Caja_PagoCuenta_Diferencia_ConsultaMotivoPorTipo:
+#  path:  /DiferenciaConsultaMotivoPorTipo
+#  defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/Pago:consultaMotivoPorTipo }
+
+# # API
+# Caja_PagoCuenta_ActualizaPaciente_Api1:
+#  path:  /actualizaPacienteMascota
+#  defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/Pago:actualizaPacienteApi1 }
+
+# Caja_PagoCuenta_CreaPacienteApi:
+#  path:  /creaPacienteMascota
+#  defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/Pago:CreaPacienteApi }
+
+# Caja_PagoCuenta_Recaudacion_ConsultaMascotas:
+#  path:  /BuscaMascotasPorDueno
+#  defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/Pago:buscaMascotasPorDueno }
+
+# Caja_PagoCuenta_Guarda_IdPnaturalMascota:
+#  path:   /GuardaIdPnaturalMascota
+#  defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/Pago:guardaIdPnaturalMascota }
+
+# Caja_PagoCuenta_BuscaMascotas_Cliente:
+#  path:   /BuscaMascotasCliente
+#  defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/Pago:buscaMascotasCliente }
+
+# Caja_PagoCuenta_ActualizaPacienteSinRut:
+#  path:  /ActualizaPacienteSinRut
+#  defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/Pago:actualizaPacienteSinRut }
+
+# Caja_PagoCuenta_Recurso_Rutas_Pago_Pagar:
+#   resource: "@CajaBundle/Resources/config/routing/Api/Unab/PagoCuenta/Pago/Pagar/pagar.yml"
+
+# Caja_PagoCuenta_Recurso_Rutas_Pago_Dependencias:
+#   resource: "@CajaBundle/Resources/config/routing/Api/Unab/PagoCuenta/Pago/Dependencias/dependencias.yml"
+
+# Caja_PagoCuenta_Recurso_Rutas_Pago_MedioPago:
+#   resource: "@CajaBundle/Resources/config/routing/Api/Unab/PagoCuenta/Pago/MedioPago/medioPago.yml"
+
+# Caja_PagoCuenta_Recurso_Rutas_Pago_PostPago:
+#   resource: "@CajaBundle/Resources/config/routing/Api/Unab/PagoCuenta/Pago/PostPago/postPago.yml"
+
+

@@ -1,0 +1,107 @@
+{% extends 'RecaudacionBundle:Supervisor:sublayout.html.twig' %}
+
+{% block contenedorMantenedor -%}
+    {# % if bValidarRequisitos is not empty %}
+<div class="alert alerta-regulariza-mantenedor">
+    <strong>¡Importante!</strong>
+    No puede ingresar al mantenedor de <strong>Ubicación Caja</strong>, mientras no regularice y/o ingrese datos en el mantenedor <strong>Sucursal</strong>.
+</div>
+{% else % #}
+    <div class="table-header">
+        Mantenedor de Correlativo de Boletas
+        <div class="btn-group pull-right">
+            <a class="btn btn-mini" href="{{ path('Caja_Supervisor') }}">
+                <i class="icon-arrow-left"></i> Volver
+            </a>
+            <a class="btn btn-mini btn-success new" href="{{ path('Caja_Supervisor_CorrelativoBoletas_new') }}">
+                <i class="icon-plus"></i> Crear
+            </a>
+        </div>
+    </div>
+    <table id="table_report" class="table table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+            <th> Sub-Empresa</th>
+            <th> Ubicación</th>
+            <th> Documento</th>
+            <th> Número de Pila</th>
+            <th> Estado de Pila</th>
+            <th> Sucursal</th>
+            <th class="sorting_disabled"></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for talonario in oTalonario %}
+            <tr>
+                <td>
+                    {{ talonario.idSubEmpresa.nombre }}
+                </td>
+
+                <td>
+                    {% if talonario.idUbicacionCaja.nombre is defined %}
+                        {{ talonario.idUbicacionCaja.nombre }}
+                    {% else %}
+                        Talonario Global
+                    {% endif %}
+                </td>
+                <td>
+                    {{ talonario.idRelEmpresaTipoDocumento.nombre }}
+                </td>
+                <td class="span2">
+                    {{ talonario.numeroPila }}
+                </td>
+                {% if talonario.idEstadoPila.id == '0' %}
+                    <td>Inactivo</td>
+                {% elseif talonario.idEstadoPila.id == '1' %}
+                    <td>Activo</td>
+                {% endif %}
+                <td>
+                    {{ talonario.idSucursal.nombreSucursal }}
+                </td>
+                <td class="span2">
+                    <div class="btn-group">
+                        <a class="btn btn-mini btn-info show" title="Ver Detalle"
+                           href="{{ path('Caja_Supervisor_CorrelativoBoletas_show', {'idTalonario': talonario.id }) }}">
+                            <i class="icon-eye-open"></i>
+                        </a>
+                        <a class="btn btn-mini btn-danger delete" title="Eliminar Plan"
+                           href="{{ path('Caja_Supervisor_CorrelativoBoletas_delete', {'idTalonario': talonario.id }) }}">
+                            <i class="icon-trash"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="table-footer">
+        <div class="btn-group pull-right">
+            <a class="btn btn-mini" href="{{ path('Caja_Supervisor') }}">
+                <i class="icon-arrow-left"></i> Volver
+            </a>
+            <a class="btn btn-mini btn-success new" href="{{ path('Caja_Supervisor_CorrelativoBoletas_new') }}">
+                <i class="icon-plus"></i> Crear
+            </a>
+        </div>
+    </div>
+    <div class="modalVer hide"></div>
+    {# % endif % #}
+{% endblock %}
+{% block scripts -%}
+    <script src="{{ asset('js/bootbox.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.dataTables.bootstrap.js') }}"></script>
+    <script src="{{ asset('js/uncompressed/Caja/fnCommon.js') }}"></script>
+    <script type="text/javascript">
+        $(document).on('ready', function () {
+            $('.menuSUpervisor').removeClass('active');
+            $('#CorrelativoBoletas').addClass('active');
+            // crearDataTable('#table_report');
+            $('#table_report').dataTable({
+                "oLanguage": {
+                    "sUrl": "{{ asset('js/datatables/dataTables.es.txt') }}"
+                }
+            });
+        });
+    </script>
+{% endblock %}

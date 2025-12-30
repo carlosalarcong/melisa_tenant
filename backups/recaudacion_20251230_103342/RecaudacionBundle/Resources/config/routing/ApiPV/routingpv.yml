@@ -1,0 +1,9 @@
+# CAJA RECAUDACION
+Rutas_Caja_Recaudacion_ApiPv:
+    resource: "@RecaudacionBundle/Resources/config/routing/ApiPV/Recaudacion/routing.yml"
+    prefix: /Recaudacion
+
+# CAJA SUPERVISOR CONSOLIDADO CAJA POR PROFESIONAL
+Rutas_Caja_Supervisor_Consolidado_Caja_Por_Profesional_ApiPv:
+    resource: "@RecaudacionBundle/Resources/config/routing/ApiPV/Supervisor/ConsolidadoCajaPorProfesional/routing.yml"
+    prefix: /Supervisor/ConsolidadoCajaPorProfesional

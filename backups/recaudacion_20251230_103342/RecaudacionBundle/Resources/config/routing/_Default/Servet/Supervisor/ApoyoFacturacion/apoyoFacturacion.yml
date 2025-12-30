@@ -1,0 +1,11 @@
+Caja_Supervisor_ApoyoFacturacion:
+    path:  /
+    defaults: { _controller: RecaudacionBundle:_Default/Supervisor/ApoyoFacturacion/ApoyoFacturacion:index }
+
+Caja_Supervisor_ApoyoFacturacion_Informe:
+    path:  /Informe
+    defaults: { _controller: RecaudacionBundle:_Default/Supervisor/ApoyoFacturacion/ApoyoFacturacionInforme:informe }
+
+Caja_Supervisor_ApoyoFacturacion_Descargas:
+    path:  /Descarga/{mes}
+    defaults: { _controller: RecaudacionBundle:_Default/Supervisor/ApoyoFacturacion/Descarga:excel }

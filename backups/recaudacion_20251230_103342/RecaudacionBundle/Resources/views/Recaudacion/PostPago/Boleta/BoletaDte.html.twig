@@ -1,0 +1,38 @@
+{% extends 'MantenedoresBundle::_Default/MantenedorMaestro/layoutformulariosajax.html.twig' %}
+{% block body -%}
+    <link rel="stylesheet" href="{{ asset('css/tipped/tipped.css') }}">
+    <div class="table-header">
+        Descargar Documentos Electrónicos
+    </div>
+
+    <table class="table table-bordered table-condensed table-hover">
+        <tbody>
+        {% set i = 0 %}
+        {% for urlDte in individual.urlDte if urlDte is not null and urlDte is not empty %}
+            {% set i = i + 1 %}
+            <tr>
+                <th>Documento Electrónico {{ i }}</th>
+                <td><a title="Descargar Documento Electrónico"
+                       class="btn btn-mini btn-light "
+                       href="{{ urlDte }}" target="_blank">
+                        <i class="icon-file-text icon-large"
+                           style="color:green"></i>
+                    </a></td>
+            </tr>
+        {% endfor %}
+        {% for dataPendiente in individual.dataPendiente if dataPendiente is not null and dataPendiente is not empty %}
+            {% set i = i + 1 %}
+            <tr>
+                <th>Documento Electrónico {{ i }}</th>
+                <td><a title="Reenviar Documento Electrónico"
+                       class="btn btn-mini btn-light "
+                       onclick="javascript:ReenviarDte({{ dataPendiente }},{{ idEmpresa }} , {{ individual.evento }})"
+                       id="a_pagoCuentaDetalle_{{ dataPendiente }}">
+                        <i class="icon-file-text icon-large" style="color:red"
+                           id="i_pagoCuentaDetalles_{{ dataPendiente }}"></i>
+                    </a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

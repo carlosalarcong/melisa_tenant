@@ -1,0 +1,78 @@
+#Caja_PagoCuenta_Inicio:
+#  path: /Inicio
+#  defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/PagoCuenta:index }
+
+# Rutas Pago Cuentas
+Caja_PagoCuenta_ConsultarDatos_CuentaPaciente:
+  path: /CuentaPaciente
+  defaults: { _controller: RecaudacionBundle:Api/Unab/PagoCuenta/CuentaPaciente:mostrarCuenta }
+  
+#Caja_PagoCuenta_ConsultarDatos_CuentaPaciente_No_Encontrado:
+#  path: /CuentaPacienteNoEncontrado
+#  defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/CuentaPaciente:mostrarCuentaNoEncontrado }
+  
+Caja_PagoCuenta_Prevision_CuentaPaciente:
+  path: /PrevisionPaciente
+  defaults: { _controller: RecaudacionBundle:Api/Unab/PagoCuenta/CuentaPaciente:mostrarFinanciadorPaciente }
+
+Caja_PagoCuenta_ConsultarDatos_CuentaPaciente_InsertarReguardoFinanciero:
+  path: /insertarReguardoFinanciero
+  defaults: { _controller: RecaudacionBundle:Api/Unab/PagoCuenta/CuentaPaciente:insertarReguardoFinanciero }
+
+#Caja_PagoCuenta_ConsultarDatos_CuentaPaciente_InsertarListadoPagoCuentaPorPaciente:
+#  path:  /insertarListadoPagoCuentaPorPaciente
+#  defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/CuentaPaciente:insertarListadoPagoCuentaPorPaciente }
+#  methods: [ POST|GET ]
+
+#Caja_Gestion_AbrirCaja_Api_Unab:
+#  path:  /GestionAbrirCajaPagoCuenta
+#  defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/CuentaPaciente:gestionAbrirCajaFarmacia }
+
+
+#Caja_Gestion_CerrarCaja_Api_Unab:
+#  path:  /{id}/GestionCerrarPagoCuenta
+#  defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/CuentaPaciente:gestionCerrarCajaFarmacia }
+#  requirements: { id: \d+ }
+
+#Caja_PagoCuenta_RealizarPago_CuentaPaciente:
+#  path: /RealizarPagoCuenta
+#  defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/RealizarPagoCuentaPaciente:cuentaPagarMedios }
+  
+#Caja_vresultadoBusquedaAvanzadaPaciente_CuentaPaciente:
+#  path:  /PagoBusquedaAvanzadaPacientes
+#  defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/CuentaPaciente:resultadoBusquedaAvanzadaPacienteCuentaPaciente }
+
+
+# Caja_PagoCuenta_Recurso_Rutas_Pago:
+#   resource: "@CajaBundle/Resources/config/routing/Api/Unab/PagoCuenta/Pago/pago.yml"
+
+# Caja_PagoCuenta_Recurso_Rutas_GestionCaja:
+#   resource: "@CajaBundle/Resources/config/routing/Api/Unab/PagoCuenta/GestionCaja/gestionCaja.yml"
+
+# Caja_PagoCuenta_Recurso_Rutas_Imed:
+#   resource: "@CajaBundle/Resources/config/routing/Api/Unab/PagoCuenta/Imed/imed.yml"
+
+# Caja_PagoCuenta_Recurso_Rutas_Tratamiento:
+#   resource: "@CajaBundle/Resources/config/routing/Api/Unab/PagoCuenta/Tratamiento/tratamiento.yml"
+
+# Caja_PagoCuenta_Recurso_Rutas_Diferencia:
+#   resource: "@CajaBundle/Resources/config/routing/Api/Unab/PagoCuenta/Diferencia/diferencia.yml"
+
+#@todo Redireccionar a su carpeta Servet
+Caja_Recaudacion:
+  path:  /Recaudacion
+  defaults: { _controller: RecaudacionBundle:Api/Unab/PagoCuenta/Recaudacion:index }
+
+# # RECAUDACION DESDE AGENDAMIENTO
+# Caja_Caja_Recaudacion_Agendamiento:
+#     path:  /{id}/Recaudacion
+#     defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Recaudacion:indexPago }
+#     requirements: { id: \d+ }
+
+# Caja_PagoCuenta_buscaPrestacionSubEmpresaDesdeAgenda:
+#     path:  /buscaPrestacionSubEmpresaDesdeAgenda
+#     defaults: { _controller: CajaBundle:Api/Unab/Servicios/BuscarPrestaciones:buscaPrestacionSubEmpresaDesdeAgenda }
+
+Caja_PagoCuenta_VerificarPagosPendientes_CuentaPaciente:
+  path: /VerificarPagosPendientes
+  defaults: { _controller: RecaudacionBundle:Api/Unab/PagoCuenta/CuentaPaciente:verificarPagosPendientes }

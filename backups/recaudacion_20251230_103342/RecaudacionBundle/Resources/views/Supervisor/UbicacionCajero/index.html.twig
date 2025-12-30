@@ -1,0 +1,95 @@
+{% extends 'RecaudacionBundle:Supervisor:sublayout.html.twig' %}
+{% block seccionTesoreria %}class="active"{% endblock %}
+{% block mantenedorUbicacionCajero %}{{ block('seccionTesoreria') }}{% endblock %}
+{% block mantenedor -%}<li {{ block('seccionTesoreria') }}>Ubicación Cajero</li>{% endblock %}
+{% block contenedorMantenedor -%}
+{% if bValidarRequisitos is not empty %}
+<div class="alert alerta-regulariza-mantenedor">
+	<strong>�Importante!</strong>
+	No puede ingresar al mantenedor de <strong>Ubicación Cajero</strong>, mientras no regularice y/o ingrese datos {% if bValidarRequisitos|length() == 1 %}en el mantenedor <strong>{{ bValidarRequisitos|first }}</strong>.{% else %}en los siguientes mantenedores:
+	<br />
+	<br />
+	{% for mantenedor in bValidarRequisitos %}
+	- {{ mantenedor }}<br />
+	{% endfor %}
+	{% endif %}
+</div>
+{% else %}
+<div class="table-header">
+	Listado de Ubicaciones de Cajero
+	<div class="btn-group pull-right">
+		{{ macroAhref.ahref_volver(path('Caja_Supervisor')) }}
+		{{ macroAhref.ahref_crear(path('Caja_Supervisor_UbicacionCajero_new'), '', 'new') }}
+	</div>
+</div>
+<table id="table_report" class="table table-bordered table-condensed table-hover">
+	<thead>
+		<tr>
+			<th> Cajero </th>
+			<th> Ubicación Caja </th>
+			<th> Sucursal </th>
+			<th> Monto Inicial </th>
+			<th> Estado </th>
+			<th class="sorting_disabled"></th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for entity in entities %}
+		<tr>
+			<td>
+				{{ entity.idUsuario.idPersona.idPnatural.getNombrePorOrden(9) }}
+			</td>
+			<td>
+				{{ entity.idUbicacionCaja.nombre }}
+			</td>
+			<td>
+				{{ entity.idUbicacionCaja.idSucursal.nombreSucursal }}
+			</td>
+			<td>
+				{{ obtenerMonto(entity.montoInicial) }}
+			</td>
+			<td class="span2">
+				{% if entity.idEstado.id == estado_activo %}
+				{{ macroLabel.label(entity.idEstado.nombre, 'success') }}
+				{% else %}
+				{{ macroLabel.label(entity.idEstado.nombre, 'important') }}
+				{% endif %}
+			</td>
+			<td class="span2">
+				<div class="btn-group">
+					{{ macroAhref.ahref_ver(path("Caja_Supervisor_UbicacionCajero_show", { 'id': entity.id }), '', 'show') }}
+					{{ macroAhref.ahref_editar(path("Caja_Supervisor_UbicacionCajero_edit", { 'id': entity.id }), '', 'edit') }}
+					{{ macroAhref.ahref_eliminar(path("Caja_Supervisor_UbicacionCajero_delete", { 'id': entity.id }), '', 'delete') }}
+				</div>
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+<div class="table-footer">
+	<div class="btn-group pull-right">
+		{{ macroAhref.ahref_volver(path('Caja_Supervisor')) }}
+		{{ macroAhref.ahref_crear(path('Caja_Supervisor_UbicacionCajero_new'), '', 'new') }}
+	</div>
+</div>
+<div class="modalVer hide"></div>
+{% endif %}
+{% endblock %}
+{% block scripts -%}
+<script src="{{ asset('js/bootbox.min.js') }}"></script>
+<script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('js/jquery.dataTables.bootstrap.js') }}"></script>
+<script src="{{ asset('js/uncompressed/Caja/fnCommon.js') }}"></script>
+<script type="text/javascript">
+	$(document).on('ready', function(){
+		// crearDataTable('#table_report');
+		$('.menuSUpervisor').removeClass('active');
+		$('#UbicacionCajero').addClass('active');
+		$('#table_report').dataTable({
+			"oLanguage": {
+				"sUrl": "{{ asset('js/datatables/dataTables.es.txt') }}"
+			}
+		});
+	});
+</script>
+{% endblock %}

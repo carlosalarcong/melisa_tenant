@@ -1,0 +1,129 @@
+Caja_PagoCuenta_PostPago:
+    path:  /PostPago
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:index }
+
+Caja_PagoCuenta_PostPago_PrintDetallePago:
+    path:  /{id}/DetallePago
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:detallesPago }
+    requirements: { id: \d+ }
+
+Caja_PagoCuenta_PostPago_PrintDetalleAtencion:
+    path:  /{id}/DetalleAtencion
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:detallesAtencion }
+    requirements: { id: \d+ }
+
+Caja_PagoCuenta_PostPago_PrintDetalleBoleta:
+    path:  /{id}/DetalleBoleta
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:detallesBoleta }
+    requirements: { id: \d+ }
+
+Caja_PagoCuenta_PostPago_Historial:
+    path:  /PostPagoHistorial
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:historialPaciente }
+
+Caja_PagoCuenta_PostPago_PrintDetalleAtencion_ImpresionPDF:
+    path:  /DetalleAtencionPrinter
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:imprimirDetalleAtencion }
+
+Caja_PagoCuenta_PostPago_PrintDetallePago_ImpresionPDF:
+    path:  /DetallePagoPrinter
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:imprimirDetallePago }
+    requirements: { _method: post }
+
+Caja_PagoCuenta_PostPago_PrintDetalleBoleta_ImpresionPDF:
+    path:  /DetalleBoletaPrinter
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:imprimirDetalleBoleta }
+    requirements: { _method: post }
+
+Caja_PagoCuenta_PostPago_Boleta:
+    path:  /postPagoBoleta
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:postPagoBoleta }
+
+Caja_PagoCuenta_Boleta_ModificaNumero:
+    path:  /ModificaBoleta
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:modificaBoleta }
+
+Caja_PagoCuenta_Boleta_ModificaNumero_Manual:
+    path:  /ModificaBoletaManual
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:modificaBoletaManual }
+
+Caja_PagoCuenta_PostPago_AnulacionPagoAgenda:
+    path:   /AnulacionPagoAgenda
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:anulacionPagoAgenda }
+
+
+Caja_PagoCuenta_PostPago_AnulacionPagoAgenda_Api1:
+    path:   /AnulacionPagoAgendaApi1
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:anulacionPagoAgendaApi1 }
+
+Caja_PagoCuenta_PostPago_AnulacionPagoCaja:
+    path:  /{id}/AnulacionPagoCaja
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:anulacionPagoCaja }
+    requirements: { id: \d+ }
+
+Caja_PagoCuenta_PostPago_PagoGarantia:
+    path:  /PagoGarantia
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:pagoGarantia }
+
+Caja_PagoCuenta_PostPago_PagoReserva:
+    path:  /PagoReserva
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:pagoReserva }
+
+Caja_PagoCuenta_PostPago_DocumentosPostPago:
+    path:  /DocumentosPostPago
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:documentosPostPago }
+
+Caja_PagoCuenta_Gestion_verificaCorrelativo:
+    path:   /verificaCorrelativo
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:verificaCorrelativo }
+
+Caja_PagoCuenta_GuardaFechaEnBaseDocumento:
+    path:   /GuardaFechaEnBaseDocumento
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:guardaFechaEnBaseDocumento }
+
+
+# GARANTIA
+Caja_PagoCuenta_PostPago_PagoGarantia_BuscarPrestaciones:
+    path:   /PagoGarantiaBuscarPrestaciones
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:pagoGarantiaBuscarPrestaciones }
+
+Caja_PagoCuenta_PostPago_PagoGarantia_BuscarHonorario:
+    path:   /PagoGarantiaBuscarHonorario
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:pagoGarantiaBuscarHonorario }
+
+Caja_PagoCuenta_PostPago_PagoGarantia_BuscarArticulos:
+    path:   /PagoGarantiaBuscarArticulos
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:pagoGarantiaBuscarArticulos }
+
+Caja_PagoCuenta_PostPago_PagoGarantia_VerificaSubEmpresaActualCajero_PrestacionesInsumos:
+    path:   /VerificaSubEmpresaActualCajero_PrestacionesInsumos
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:reservaVerificaSubEmpresaActualCajeroPrestacionesInsumos }
+
+Caja_PagoCuenta_PostPago_PagoGarantia_BuscaOtrosMedios:
+    path:   /BuscaOtrosMedios
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:pagoGarantiaBuscaOtrosMedios }
+
+# RESERVA
+Caja_PagoCuenta_PostPago_PagoReserva_VerificaSubEmpresaActualCajero_PrestacionesInsumos:
+    path:   /ReservaVerificaSubEmpresaActualCajeroPrestacionesInsumos
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:reservaVerificaSubEmpresaActualCajeroPrestacionesInsumos }
+
+Caja_PagoCuenta_PostPago_PagoReserva_BuscarPrestaciones:
+    path:   /PagoReservaBuscarPrestaciones
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:pagoReservaBuscarPrestaciones }
+
+
+############## SUBIR / ABRIR / ELIMINAR PDF ########
+Caja_PagoCuenta_PostPago_SubirPDF:
+    path:   /CajaPostPagoSubirPDF
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:subirPDF }
+    requirements: { _method: post }
+
+Caja_PagoCuenta_PostPago_AbrirPDF:
+    path:   /CajaPostPagoAbrirPDF
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:abrirPDF }
+
+Caja_PagoCuenta_PostPago_EliminarPDF:
+    path:   /CajaPostPagoEliminarPDF
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/PostPago:eliminarPDF }
+    requirements: { _method: post }

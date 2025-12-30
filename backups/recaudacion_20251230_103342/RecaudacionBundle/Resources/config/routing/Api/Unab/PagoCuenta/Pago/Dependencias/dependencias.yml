@@ -1,0 +1,28 @@
+Caja_PagoCuenta_Pago_ValRut:
+    path:  /BusquedaRut
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/Dependencias/Valrut:indexRut }
+
+Caja_PagoCuenta_Pago_ValExtranjeros:
+    path:  /BusquedaExtranjero
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/Dependencias/Valrut:indexExtranjero }
+
+Caja_PagoCuenta_Pago_ObtieneDomicilio:
+    path:  /ObtieneDomicilio
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/Dependencias/Avanzada:domicilio  }
+
+Caja_PagoCuenta_Pago_ObtieneDatosNUsuarios:
+    path:  /ObtieneDatosNUsuarios
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/Dependencias/Avanzada:obtieneDatosNUsuarios  }
+
+Caja_PagoCuenta_Pago_ObtieneDatosUnUsuario:
+    path:  /ObtieneDatosUnUsuario
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/Dependencias/Avanzada:obtieneDatosUnUsuario  }
+
+Caja_PagoCuenta_Pago_Avanzada:
+    path:  /BusquedaAvanzada
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/Dependencias/Avanzada:indexAdv }
+
+
+Caja_PagoCuenta_vresultadoBusquedaAvanzadaPaciente:
+    path:  /PagoBusquedaAvanzadaPacientes
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Pago/Dependencias/Avanzada:resultadoBusquedaAvanzadaPaciente }

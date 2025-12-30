@@ -1,0 +1,12 @@
+Caja_PagoCuenta_Default_Servet_Inicio:
+  path: /
+  defaults: { _controller: CajaBundle:_Default/Servet/PagoCuenta/PagoCuenta:index }
+
+# Caja_Gestion_AbrirCaja_Default_PagoCuenta_Servet:
+#   path:  /GestionAbrirCajaPagoCuenta
+#   defaults: { _controller: CajaBundle:_Default/Servet/PagoCuenta/PagoCuenta:GestionAbrirCajaFarmacia }
+
+# Caja_Gestion_CerrarCaja_Default_PagoCuenta_Servet:
+#   path:  /{id}/GestionCerrarCajaPagoCuenta
+#   defaults: { _controller:  CajaBundle:_Default/Servet/PagoCuenta/PagoCuenta:gestionCerrarCajaFarmacia }
+#   requirements: { id: \d+ }

@@ -1,0 +1,195 @@
+{% set contadorT = 0%}
+{% for talonario in talonarios %}
+{% set contadorT = contadorT +1%}
+{% endfor %}
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-condensed  grey">
+	<tr >
+		<th  colspan="3" width="100%" style=" font-size: larger " ><b>Caja Actualmente Abierta</b></th>
+	</tr>
+	<tr >
+		<th width="20%" style=" background-color: whitesmoke ">Fecha Apertura:</th>
+		<td width="30%">
+			<span>{{caja.fechaApertura | date("d-m-Y H:i")}}</span>
+		</td>
+		<th width="20%" style=" background-color: whitesmoke ">Fecha Cierre:</th>
+		<td width="30%">
+		 <span>
+			{% if  caja.fechaCierre %}
+			{{caja.fechaCierre | date("d-m-Y H:i")}}
+			{% else %}
+			{% if  caja.idEstadoReapertura == estadoReapertura %}
+			<b>Informacion:</b> <div class="clearfix " ></div>La Caja ha sido Reabierta por Supervisor.
+			{% else %}
+
+			Caja aun no ha sido Cerrada.
+			{% endif %}
+			{% endif %}
+		</span>
+	</td>
+</tr>
+<tr >
+	<th style=" background-color: whitesmoke ">Ubicación Caja:</th>
+	<td colspan="3" >
+		<span>   {{caja.idUbicacionCajero.idUbicacionCaja.nombre}} </span>
+	</td>
+</tr>
+<tr >
+ <th style=" background-color: whitesmoke ">
+	 {%if contadorT == 1%}
+	 N° Actual Documento:
+	 {% else %}
+	 N° Actual Documentos:
+	 {% endif %}
+ </th>
+ <td colspan="3" >
+	{%if contadorT == 1%}
+	{% for talonario in talonarios %}
+	<span>{{talonario.idRelEmpresaTipoDocumento.nombre}}     </span>   <span>N°: </span><span><b>{{talonario.numeroInicio}}</b></span>
+	{% endfor %}
+	{% else %}
+	<table  width="100%">
+	 {% for se in subEmpresa%}
+	 {% for talonario in talonarios if se == talonario.idSubEmpresa.id and se is not null%}
+	 {% if loop.first %}
+	 <tr>
+		<td colspan="2" style=" background-color:  #CED8F6; color:  #565656"><b>Sub-Empresa: {{talonario.idSubEmpresa.nombre}}</b>
+		</td>
+	</tr>
+	{% endif %}
+	{% endfor %}
+	{% for talonario in talonarios %}
+	{% if se == talonario.idSubEmpresa.id%}
+	<tr>
+		<td  width="50%">
+			<span>{{talonario.idRelEmpresaTipoDocumento.nombre}}</span>
+		</td>
+		<td  width="50%">
+		 <span>N°: </span><span><b>
+		 {% for NumeroActual in TalonarioNumeroActual %}
+		 {% if (NumeroActual['idSubEmpresa'] == talonario.idSubEmpresa.id) and (NumeroActual['idSubEmpresa'] == se) and (NumeroActual['idTalonario'] == talonario.id) and (NumeroActual['idTipoDocumento'] == talonario.idRelEmpresaTipoDocumento.idTipoDocumento.id)%}
+		 {{NumeroActual['numeroDocumento']}}
+		 {% endif %}
+		 {%endfor %}
+	 </b></span>
+ </td>
+</tr>
+{% endif %}
+{% endfor %}
+{% endfor %}
+
+
+
+
+
+
+</table>
+
+{% endif %}
+
+</td>
+</tr>
+		 {#<tr >
+
+				<th style=" background-color: whitesmoke ">
+		{%if contadorT == 1%}
+						N° Inicial Documento:
+		 {% else %}
+						N° Inicial Documentos:
+		 {% endif %}
+				</th>
+
+				 <td colspan="3" >
+						{%if contadorT == 1%}
+						{% for talonario in talonarios %}
+								 <span>{{talonario.idTipoDocumento.nombre}}     </span>   <span>N° Documento: </span><span><b>{{talonario.numeroActual}}</b></span>
+							{% endfor %}
+								{% else %}
+						<table  width="100%">
+
+
+								 {% for se in subEmpresa%}
+
+										 {% for talonario in talonarios if se == talonario.idSubEmpresa.id and se is not null%}
+										 {% if loop.first %}
+										<tr>
+												<td colspan="2" style=" background-color:  #CED8F6; color:  #565656"><b>Sub-Empresa: {{talonario.idSubEmpresa.nombre}}</b>
+												</td>
+										</tr>
+											{% endif %}
+										{% endfor %}
+
+												{% for talonario in talonarios %}
+										{% if se == talonario.idSubEmpresa.id%}
+										<tr>
+												<td  width="15%">
+								<span>{{talonario.idTipoDocumento.nombre}}</span>
+								</td>
+								<td  width="85%">
+										 {%if talonario.numeroActual >= talonario.numeroTermino%} <span>N°: </span><span><b class="red">{{talonario.numeroActual}} </b> (Talonario se encuentra Agotado)</span>{% else %} <span>N°: </span><span><b>{{talonario.numeroInicio}}</b></span>{%endif%}
+								</td>
+										</tr>
+
+										{% endif %}
+											{% endfor %}
+
+				 {% endfor %}
+
+
+				 </table>
+
+						{% endif %}
+
+				</td>
+
+			</tr>#}
+			<tr >
+				<th style=" background-color: whitesmoke ">Monto Inicial:</th>
+				<td colspan="3" >
+					{{ obtenerMonto(caja.montoInicial) }}
+				</td>
+			</tr>
+		</table>
+
+{# <div class="table-header-grey" style="text-align:left;">
+				<i class="icon-user text-left space"> </i> Información Cajero
+			</div> #}
+{# <div class="alert alert-block">
+		<div class="btn-group pull-left">
+				<button data-toggle="dropdown" class="btn btn-yellow btn-large dropdown-toggle">
+						<i class="icon-print bigger-125"></i>
+						Lista de Informes en Caja
+						<i class="icon-chevron-sign-down icon-on-right"></i>
+				</button>
+
+				<ul class="dropdown-menu pull-right">
+						<li>
+								<a href="#">Action</a>
+						</li>
+
+						<li>
+								<a href="#">Another action</a>
+						</li>
+
+						<li>
+								<a href="#">Something else here</a>
+						</li>
+
+						<li class="divider"></li>
+
+						<li>
+								<a href="#">Separated link</a>
+						</li>
+				</ul>
+			</div> #}
+
+
+
+
+
+
+														{# <p>
+
+
+																{# <a title="Informe Garantias" class="btn btn-small InformesGarantiaS"  href="{{ path('Caja_Gestion_InformesGarantias', { 'id': caja.id }) }}">Informe Garantías</a>
+															</p> #}
+														</div>

@@ -1,0 +1,9 @@
+services:
+    Caja_valida:
+        public: true
+        class: Rebsol\HermesBundle\Services\Caja
+        arguments: ["@doctrine.orm.entity_manager", "@service_container"]
+    CommonServices:
+        public: true
+        class: Rebsol\RecaudacionBundle\Services\Common\CommonServices
+        arguments: [ "@doctrine.orm.entity_manager" ]

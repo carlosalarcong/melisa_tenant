@@ -1,0 +1,360 @@
+{% if FechaPagoAgenda== 0 and PagoesGarantia ==1 %}
+<div class="alert alert-warning CajaCerrada">
+	<strong>Alerta: Garantia no Regularizada</strong>
+	<div class="clearfix"></div>
+	Debe regularizar la garantía a continuación generada el <strong>{{datosPago.fechaPago | date ('d-m-Y')}}</strong> a las <strong>{{datosPago.fechaPago | date ('h:i')}}</strong> hrs.
+</div>
+{% endif %}
+
+{% if FechaPagoAgenda== 0 and PagoesGarantia ==0 %}
+<div class="alert alert-info">
+	<i class="icon-usd  blue"></i>  La Atencion se encuentra pagada desde el <strong>{{datosPago.fechaPago | date ('d-m-Y')}}</strong> a las <strong>{{datosPago.fechaPago | date ('h:i')}}</strong> hrs.
+</div>
+{% endif %}
+
+<div class="table-header blue" style="text-align:left;">
+	<i class="icon-user icon-large text-left white"> </i><span class="white"> Información Paciente</span>
+</div>
+{# TABLA RESUMEN #}
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-condensed  grey">
+	<tr >
+		<th width="20%" style=" background-color: #CED8F6; color: #000">Rut:</th>
+		<td colspan="3" width="20%"><span  id="rutspan" ></span></td>
+		<th width="10%" style=" background-color: #CED8F6; color: #000">Nombre:</th>
+		<td width="50%"> <span  id="nombrespan" ></span></td>
+	</tr>
+	<tr >
+		<th width="10%" style=" background-color: #CED8F6; color: #000">Fecha Nacimiento:</th>
+		<td width="10%"><span  id="fechanspan" ></span></td>
+		<th width="10%" style=" background-color: #CED8F6; color: #000">Edad:</th>
+		<td width="10%"><span  id="edadspan" ></span></td>
+		<th  width="10%" style=" background-color: #CED8F6; color: #000">Apellidos:</th>
+		<td  width="50%"><span  id="apepspan" ></span>&nbsp<span  id="apemspan" ></span></td>
+	</tr>
+</table>
+<div class="table-header blue" style="text-align:left;">
+	<i class=" icon-stethoscope icon-large text-left white"> </i><span class="white"> Información Pago Atención Paciente</span>
+</div>
+{# TABLA HISTORICA #}
+<table id="tabla_historica" class="table table-bordered table-condensed table-hover">
+	<thead>
+		<tr  style=" background-color: #CED8F6; color: #000">
+			<th >Atención </th>
+			<th>Fecha Atención </th>
+			<th>Financiador</th>
+			<th>Estado Cuenta</th>
+			<th>Tipo Atención</th>
+			<th class="sorting_disabled span2" ></th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for individual in historico if  individual.estadoPagoCuenta != 0%}
+		{% if individual.idboleta is null%}
+
+		{% if individual.estadoPagoCuenta == 2%}
+		<tr  style=" background-color: #FFC">
+			{% else %}
+			<tr >
+			  {% endif %}
+			  <td >{{ individual.evento }}</td>
+			  <td >{{ individual.fechaIngreso | date("d-m-Y H:i")}}</td>
+			  <td> {{ individual.prevision }}  {% if individual.convenio %} &nbsp/&nbsp{{ individual.convenio }} {% endif %}  </td>
+			  {% if individual.estadoPagoCuenta == 2%}
+			  <td> {{ individual.nombrePagoCuenta }} </td>
+			  {% else %}
+			  <td> {{ individual.estadoCuenta }} </td>
+			  {% endif %}
+			  <td> {{ individual.tipoAtencion }} </td>
+			  <td class="span2">
+				<div class="btn-group">
+					<a title="Ver Detalle Atención" class="btn btn-mini Print-Detalle-Atencion" href="{{ path("Caja_PostPago_PrintDetalleAtencion", { 'id': individual.idPaciente }) }}">
+						<i class="icon-stethoscope icon-large"></i>
+					</a>
+
+					<a title="Ver Detalle Pago" class="btn btn-mini btn-primary Print-Detalle-Pago" href="{{ path('Caja_PostPago_PrintDetallePago', { 'id':  individual.idPago }) }}">
+						<i class="icon-dollar icon-large"></i>
+					</a>
+					<a class="btn btn-mini btn-light " >
+					  <i class="icon-file-text icon-large"></i>
+				  </a>
+				  {% if individual.estadoPagoCuenta == 2%}
+
+				  <a  title="Regularizar Garantía" class="btn btn-mini btn-success pagar-Garantia" data-id="{{ individual.idPago }}" >
+					  <i class=" icon-ok-sign icon-large"></i>
+				  </a>
+				  {% else %}
+				  <a class="btn btn-mini btn-light" >
+					  <i class=" icon-ok-sign icon-large"></i>
+				  </a>
+
+				  {% endif %}
+
+			  </div>
+		  </td>
+	  </tr>
+	  {% else %}
+	  <tr >
+		<td >{{ individual.evento }}</td>
+		<td >{{ individual.fechaIngreso | date("d-m-Y H:i")}}</td>
+		<td> {{ individual.prevision }}  {% if individual.convenio %} &nbsp/&nbsp{{ individual.convenio }} {% endif %}  </td>
+		<td> {{ individual.estadoCuenta }} </td>
+		<td> {{ individual.tipoAtencion }} </td>
+		<td class="span2">
+			<div class="btn-group">
+				<a title="Ver Detalle Atención" class="btn btn-mini  Print-Detalle-Atencion" href="{{ path("Caja_PostPago_PrintDetalleAtencion", { 'id': individual.idPaciente }) }}">
+					<i class="icon-stethoscope icon-large"></i>
+				</a>
+				<a title="Ver Detalle Pago" class="btn btn-mini btn-primary Print-Detalle-Pago" href="{{ path('Caja_PostPago_PrintDetallePago', { 'id':  individual.idPago }) }}">
+					<i class="icon-dollar icon-large"></i>
+				</a>
+				<a title="Ver Boleta de Pago" class="btn btn-mini btn-info Print-Detalle-Boleta" href="{{ path("Caja_PostPago_PrintDetalleBoleta", { 'id': individual.idPaciente }) }}">
+				   <i class="icon-file-text icon-large"></i>
+				   {% if individual.estadoPagoCuenta == 2%}
+				   <a class="btn btn-mini btn-success " >
+					  <i class=" icon-ok-sign icon-large"></i>
+				  </a>
+				  {% else %}
+				  <a class="btn btn-mini btn-light" >
+					  <i class=" icon-ok-sign icon-large"></i>
+				  </a>
+				  {% endif %}
+			  </div>
+		  </td>
+	  </tr>
+	  {%endif %}
+	  {% endfor %}
+
+
+
+
+  </tbody>
+</table>
+
+
+{% if FechaPagoAgenda== 0 and PagoesGarantia ==1 %}
+<div class="alert alert-warning CajaCerrada">
+ Nota: no puede anular una garantia con fecha pasadas.
+</div>
+{% else  %}
+<div><a id="btnAnularPago" onclick="javascript:anulacion();" class="btn btn-small btn-danger"><i class="icon-remove"></i> Anular Pago</a></div>
+{% endif %}
+
+{# JAVASCRIPT #}
+<script type='text/javascript'>
+   function anulacion(){
+
+	  var id = "{{datosPacienteVistaG['id']}}";
+	  var fechaRecepcion = "{{ datosPacienteVistaG['fechaR']|date("d-m-Y") }}";
+	  var data = {
+		id: id
+	};
+	$.ajax({
+		type: 'get',
+		url: "{{ path('Caja_PostPago_AnulacionPagoAgenda') }}",
+		data: data,
+		success: function(datar) {
+			if(datar == 0){
+			 bootbox.dialog("<strong class='red'>ERROR DE CAJA</strong>,<br><strong>Fecha de Caja y de Pago no Coinciden</strong>,<br>Deberá solicitar al Supervisor, cerrar caja actuál y hacer reapertura de caja con fecha: "+fechaRecepcion+".", [
+			 {
+				"label": "Aceptar",
+				"class": "btn btn-mini alert",
+				"callback": function() {
+
+				}
+			}]);
+		 }else{
+		   $('#calendar').fullCalendar('refetchEvents');
+		   $('#calendarPanoramica').fullCalendar('refetchEvents');
+		   bootbox.dialog("<div class='alert alert-block alert-success'>" +
+			"    <p>" +
+			"    <strong><i class='icon-ok'></i>Pago Anulado Correctamente.</strong>" +
+			"    </p>" +
+			"</div>", [
+			{
+				"label": "Aceptar",
+				"class": "btn btn-mini alert",
+				"callback": function() {
+					bootbox.hideAll();
+
+				}
+			}]);
+	   }
+
+
+
+
+   }
+});
+
+
+}
+
+
+setTimeout(function() {
+	$(".Print-Detalle-Pago").on('click', function(e) {
+		e.preventDefault();
+		$(".modalVerA").html('');
+		$(".modalVerA").load($(this).attr('href'), function(response, status, xhr) {
+
+			var vistaHtml = response;
+			bootbox.dialog(vistaHtml, [
+			{
+				"label": "<i class='icon-arrow-left'></i> Volver",
+				"class": "btn btn-mini",
+				"callback": function() {
+					$(".modalVerA").html('');
+				}
+			},
+			{
+				"label": "<i class='icon-print'></i> Imprimir",
+				"class": "btn btn-mini btn-success btn-print",
+				"callback": function() {
+					$("#formPago").submit();
+
+				}
+			}
+			]);
+		});
+	});
+
+	$(".Print-Detalle-Atencion").on('click', function(e) {
+		e.preventDefault();
+		$(".modalVerA").html('');
+		$(".modalVerA").load($(this).attr('href'), function(response, status, xhr) {
+
+			var vistaHtml = response;
+			bootbox.dialog(vistaHtml, [
+			{
+				"label": "<i class='icon-arrow-left'></i> Volver",
+				"class": "btn btn-mini",
+				"callback": function() {
+					$(".modalVerA").html('');
+				}
+			},
+			{
+				"label": "<i class='icon-print'></i> Imprimir",
+				"class": "btn btn-mini btn-success btn-print",
+				"callback": function() {
+					$("#formAtencion").submit();
+				}
+			}
+			]);
+		});
+	});
+
+	$(".pagar-Garantia").on('click', function(e) {
+
+	   var idPago = $(this).data('id');
+	   e.preventDefault();
+	   bootbox.dialog("<div class='alert alert-block alert-success AvisoGarantiaCarga'>" +
+		   "    <p>" +
+		   "    <strong>Regularizará la Garantía</strong>" +
+		   "    <br>¿Desea continuar?"+
+		   "    </p>" +
+		   "</div>"
+		   , [{
+			"label": "Cancelar",
+			"class": "btn btn-mini",
+			"callback": function() {
+			}
+		},
+		{
+			"label": "Regularizar Garantía",
+			"class": "btn btn-mini btn-success",
+			"callback": function() {
+
+				if(!idReservaAtencion){
+				   bootbox.hideAll();
+			   }else{
+				  $('div.modalEsperaGarantia').parents('div').modal('hide');
+			  }
+			  PreparaVistaGarantia(idPago);
+		  }
+	  }
+	  ]);
+   });
+
+
+
+	$(".Print-Detalle-Boleta").on('click', function(e) {
+		e.preventDefault();
+		$(".modalVerA").html('');
+		$(".modalVerA").load($(this).attr('href'), function(response, status, xhr) {
+
+			var vistaHtml = response;
+			bootbox.dialog(vistaHtml, [
+			{
+				"label": "<i class='icon-arrow-left'></i> Volver",
+				"class": "btn btn-mini",
+				"callback": function() {
+					$(".modalVerA").html('');
+				}
+			},
+			{
+				"label": "<i class='icon-print'></i> Imprimir",
+				"class": "btn btn-mini btn-success btn-print",
+				"callback": function() {
+					$("#formBoleta").submit();
+				}
+			}
+			]);
+		});
+	});
+
+	document.oncontextmenu = function() {
+		return false;
+	}
+}, 10);
+
+var rut1 = "{{ datosPacienteVistaG['rut'] }}";
+var dv1 = "{{ datosPacienteVistaG['dv'] }}";
+
+if(dv1){
+	var rutfull = rut1+"-"+dv1;
+}else{
+	var rutfull = rut1;
+}
+
+
+var nombre1 = "{{ datosPacienteVistaG['nombre'] }}";
+var apep1 = "{{ datosPacienteVistaG['ApellidoPaterno'] }}";
+var apem1 = "{{ datosPacienteVistaG['ApellidoMaterno'] }}";
+if ("{{ datosPacienteVistaG['fechaNacimiento']|date() }}") { var fechanacimiento1 = "{{ datosPacienteVistaG['fechaNacimiento']|date('d-m-Y') }}"; }
+var anio_nacim = fechanacimiento1.substr(6, 4);
+var mes_nacim = fechanacimiento1.substr(3, 2);
+var dia_nacim = fechanacimiento1.substr(0, 2);
+$("#rutspan").html(rutfull);
+$("#nombrespan").html(nombre1);
+$("#apepspan").html(apep1);
+$("#apemspan").html(apem1);
+$("#fechanspan").html(fechanacimiento1);
+$("#edadspan").html(calcular_edad(dia_nacim, mes_nacim, anio_nacim));
+
+function calcular_edad(dia_nacim, mes_nacim, anio_nacim)
+{
+	var fecha_hoy = new Date();
+	var ahora_anio = fecha_hoy.getYear();
+	var ahora_mes = fecha_hoy.getMonth();
+	var ahora_dia = fecha_hoy.getDate();
+	var edad = (ahora_anio + 1900) - anio_nacim;
+	if (ahora_mes < (mes_nacim - 1))
+	{
+		edad--;
+	}
+	if (((mes_nacim - 1) == ahora_mes) && (ahora_dia < dia_nacim))
+	{
+		edad--;
+	}
+	if (edad > 1900)
+	{
+		edad -= 1900;
+	}
+	return edad;
+}
+
+
+
+
+
+</script>
+<div class="modalVerA hide"></div>

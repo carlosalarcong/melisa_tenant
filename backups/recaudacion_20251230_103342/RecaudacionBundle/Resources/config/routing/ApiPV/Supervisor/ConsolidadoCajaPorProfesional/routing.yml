@@ -1,0 +1,21 @@
+Caja_Supervisor_ConsolidadoCajaPorProfesional_PV:
+    path:  /index
+    defaults: { _controller: RecaudacionBundle:ApiPV\Supervisor\ConsolidadoCajaPorProfesional\ConsolidadoCajaPorProfesional:index }
+
+Caja_Supervisor_ConsolidadoCajaPorProfesional_Informe:
+    path:  /informe
+    defaults: { _controller: RecaudacionBundle:ApiPV\Supervisor\ConsolidadoCajaPorProfesional\ConsolidadoCajaPorProfesionalInforme:informe }
+
+Caja_Supervisor_ConsolidadoCajaPorProfesional_Informer:
+    path:  /Informer/
+    defaults: { _controller: RecaudacionBundle:ApiPV\Supervisor\ConsolidadoCajaPorProfesional\ConsolidadoCajaPorProfesionalInforme:informer }
+
+Caja_Supervisor_Informe_Caja_Por_Profesional:
+    path:  /InformeCajaPorProfesional/{id}
+    defaults: { _controller: RecaudacionBundle:ApiPV\Supervisor\ConsolidadoCajaPorProfesional\ConsolidadoCajaPorProfesional:renderViewInformeCajaPorProfesional }
+    requirements: { id: \d+ }
+
+Caja_Supervisor_Informe_Caja_Por_Profesional_PDF:
+    path:  /ImprimirCajaPorProfesionalPDF
+    defaults: { _controller: RecaudacionBundle:ApiPV\Supervisor\ConsolidadoCajaPorProfesional\ConsolidadoCajaPorProfesional:renderViewInformeCajaPorProfesionalPDF }
+    methods: [POST]

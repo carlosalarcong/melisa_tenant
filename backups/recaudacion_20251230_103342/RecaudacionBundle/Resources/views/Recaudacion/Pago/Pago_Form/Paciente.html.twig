@@ -1,0 +1,269 @@
+
+<div class="table-header-grey" style="text-align:left;">
+	<i class="icon-user icon-large text-left space"></i> Información Paciente
+</div>
+<div class="alert alert-error errorfalla hide">
+	<button type="button" class="close" data-dismiss="alert">
+		<i class="icon-remove"></i>
+	</button>
+	<strong>
+		<i class="icon-remove"></i>
+		ERROR
+	</strong> <div class="clearfix"></div>
+	Ha ocurrido un error en la transacción de datos, favor volver a intentarlo.
+	<br>
+</div>
+<div class="alert alert-block alert-success creado hide">
+	<button type="button" class="close" data-dismiss="alert">
+		<i class="icon-remove"></i>
+	</button>
+	<strong>
+		<i class="icon-ok"></i>
+		El Usuario se ha Creado exitosamente
+	</strong>    <div class="clearfix"></div>
+	Ahora puede continuar con los datos de Prestación.
+</div>
+<div class="alert alert-block alert-success actualizado hide">
+	<button type="button" class="close" data-dismiss="alert">
+		<i class="icon-remove"></i>
+	</button>
+	<strong>
+		<i class="icon-ok"></i>
+		El Usuario se ha Actualizado exitosamente
+	</strong>    <div class="clearfix"></div>
+	Ahora puede continuar con los datos de Prestación.
+</div>
+
+{# <div class="alert alert-block alert-success AlertExtrangero hide">
+	<button type="button" class="close" data-dismiss="alert">
+		<i class="icon-remove"></i>
+	</button>
+	<strong>
+		<i class="icon-ok"></i>
+		El Paciente Ingresado es Extranjero
+	</strong>    <div class="clearfix"></div>
+	Puede Proceder a completar la información de Paciente.
+</div> #}
+
+<div class="alert alert-warning hide errorfalta">
+	<button type="button" class="close" data-dismiss="alert">
+		<i class="icon-remove"></i>
+	</button>
+	<strong>Faltan Datos en Formulario</strong>
+	<div class="clearfix"></div>
+	Debe ingresar todos los campos requeridos para continuar con la creación de usuario.
+	<br>
+</div>
+<div class="alert alert-warning hide erroralmenosuno">
+	<button type="button" class="close" data-dismiss="alert">
+		<i class="icon-remove"></i>
+	</button>
+	<strong>Ingresar al menos un número de contacto</strong>    <div class="clearfix"></div>
+	Debe ingresar al menos un número de contacto para continuar con la creación de paciente.
+	<br>
+</div>
+<div class="alert alert-info infoesusuario hide hide">
+	<button type="button" class="close" data-dismiss="alert">
+		<i class="icon-remove"></i>
+	</button>
+	<strong>Rut es de Usuario Interno</strong>
+	<div class="clearfix"></div>
+	El rut ingresado, pertenece a un usuario vigente, no podrá modificar la información personal.
+	<br>
+</div>
+<div class="alert alert-warning sinRutDesdeReserva hide">
+	<button type="button" class="close" data-dismiss="alert">
+		<i class="icon-remove"></i>
+	</button>
+	<strong>Ingreso de Paciente sin Rut</strong>
+	<div class="clearfix"></div>
+	Para lograr continuar con Pago debe ingresar un Rut Valido o un Documento de Extrangero.
+	<br>
+</div>
+<div class="alert alert-info infoesusuariolista hide hide">
+	<button type="button" class="close" data-dismiss="alert">
+		<i class="icon-remove"></i>
+	</button>
+	<strong>Selecciono Usuario Interno</strong>
+	<div class="clearfix"></div>
+	El dato seleccionado, pertenece a un usuario vigente, no podrá modificar alguna información personal.
+	<br>
+</div>
+
+<div class="alert alert-info infoTieneGarantia hide">
+	<button type="button" class="close" data-dismiss="alert">
+		<i class="icon-remove"></i>
+	</button>
+	<strong>Paciente mantiene Garantía<span class="usoPluralGarantia"></span> Pendientes</strong>
+	<div class="clearfix"></div>
+	El rut pertenece a un Paciente Registrado, que mantiene <b><span id="numeroGarantiasSinRegularizar"></span></b> Garantía<span class="usoPluralGarantia"></span> sin Regularizar.
+	<br>
+</div>
+<div class="alert alert-block alert-success AlertEsTratamiento hide">
+	<button type="button" class="close" data-dismiss="alert">
+		<i class="icon-remove"></i>
+	</button>
+	<strong>
+		<i class="icon-ok"></i>
+		La hora Agendada, corresponde a un Tratamiento.
+	</strong>    <div class="clearfix"></div>
+	Puede Agregar un nuevo Tratamiento para este Paciente, o continuar alguno que se encuentre en proceso actualmente.
+</div>
+
+<form id="formPaciente" method="post">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-condensed  grey">
+		<tr >
+			<th width="15%" >
+				{{ form_widget(pago_form.documento, {'attr':{'class':'disablepago camposExtranjero'} }) }}
+				<div class="clearfix"></div><div class="docval hide red mensajeErrorFormulario"> <i class="icon-remove"></i> Debe Ingresar Tipo de Documento </div>
+				{{ form_widget(pago_form.habilitarPaisExtranjero) }}
+			</th>
+			<td width="35%">
+
+
+				<div class="input-append center-align center">
+					<input type="text" name="rutdv2" id="rutdv2" maxlength="12" class="rut disablepago disableFieldsStandar campoNoExtrangero" onkeydown="if (event.keyCode == 13) verificaRutDocumentoExtranjeroExisteFun($(this).val())" onblur="javascript:verificaRutDocumentoExtranjeroExisteFun($(this).val())">
+					<span class="add-on dark-opaque"><i class="icon-asterisk"></i></span>
+					<button id="soloRutForm" class="btn sinRutDesdeReserva hidden" onclick="javascript:sinRutDesdeReserva($(this).attr('id'), 1)"  type="button" ><i class="icon-ok-sign white"></i></button>
+				</div>
+
+				<div class="clearfix"></div> <div class="rutdv2val hide red mensajeErrorFormulario"> <i class="icon-remove"></i> Debe ingresar Rut </div> </td>
+
+
+				<td width="35%">
+					<div class="input-append center-align center">
+						{{ form_widget(pago_form.numeroDocumento, {'attr':{'class':'disablepago permitidoUserNuervo camposExtranjero'} }) }}
+						<button id="soloExtrangeroForm" class="btn sinRutDesdeReserva hidden"  onclick="javascript:sinRutDesdeReserva($(this).attr('id'), 0)" type="button" ><i class="icon-ok-sign white"></i></button>
+					</div>
+					<div class="clearfix"></div><div class="numdocval hide red mensajeErrorFormulario"> <i class="icon-remove"></i> Debe Ingresar Número Documento </div>
+				</td>
+			</tr>
+			<tr>
+				<th width="15%" >Nombre:</th>
+				<td width="35%"> {{ form_widget(pago_form.nombrePnatural, {'attr':{'placeholder':'Ejemplo: Juan', 'class':'disablepago disableFieldsStandar permitidoUserNuervo'} }) }}
+					<div class="clearfix"></div> <div class="nombreval hide red mensajeErrorFormulario"> <i class="icon-remove"></i> Campo no debe ser vacio </div>
+				</td>
+				<th>Fecha Nacimiento:</th>
+				<td>   {{ form_widget(pago_form.fechaNacimiento, { 'attr': {'class':'disablepago disableFieldsStandar permitidoUserNuervo'} }) }}
+					<div class="clearfix"></div><div class="fechanval hide red mensajeErrorFormulario"> <i class="icon-remove"></i> Campo no debe ser vacio </div>
+					<div class="fechansuperior hide red mensajeErrorFormulario"> <i class="icon-remove"></i> Fecha no debe ser Superior a hoy.</div></td>
+				</tr>
+				<tr>
+					<th width="15%" >Apellido Paterno:</th>
+					<td width="35%">{{ form_widget(pago_form.apellidoPaterno, {'attr':{'placeholder':'Ejemplo: Perez', 'class':'disablepago disableFieldsStandar permitidoUserNuervo'} }) }}
+						<div class="clearfix"></div><div class="apepval hide red mensajeErrorFormulario"> <i class="icon-remove"></i> Campo no debe ser vacio </div>
+					</td>
+					<th>Sexo:</th>
+					<td> {{ form_widget(pago_form.idSexo, { 'attr': {'class':'disablepago disableFieldsStandar'} }) }}
+						<div class="clearfix"></div><div class="sexoval hide red mensajeErrorFormulario"> <i class="icon-remove"></i> Campo no debe ser vacio </div></td>
+					</tr>
+					<tr>
+						<th width="15%" >Apellido Materno:</th>
+						<td width="35%">{{ form_widget(pago_form.apellidoMaterno, {'attr':{'placeholder':'Ejemplo: Gomez', 'class':'disablepago disableFieldsStandar permitidoUserNuervo'} }) }}
+							<div class="clearfix"></div><div class="apemval hide red mensajeErrorFormulario"> <i class="icon-remove"></i> Campo no debe ser vacio </div>
+						</td>
+						<th rowspan ="2">Dirección</th>
+						<td rowspan ="2"><div class="input-append center-align center ">
+							{{ form_widget(pago_form.direccion, {'attr':{'placeholder':'Dirección', 'class':'disablepago permitidoTemp'} } ) }}
+							{{ form_widget(pago_form.numero, {'attr':{'placeholder':'Número', 'class':'span1 disablepago permitidoTemp'} }) }}
+							<span class="add-on dark-opaque"><i class="icon-asterisk"></i></span></div>  <div class="clearfix"></div>
+							<div class="clearfix"></div><div class="direccionval hide red mensajeErrorFormulario"> <i class="icon-remove"></i> Debe Ingresar Dirección Completa </div>
+							<div class="input-append center-align center ">
+
+								{{ form_widget(pago_form.resto, {'attr':{'placeholder':'Condominio', 'class':'disablepago permitidoTemp'} }) }}
+								{# <span class="add-on dark-opaque"><i class="icon-asterisk"></i></span>  #}
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<th width="15%" > Teléfono Móvil </th>
+						<td width="35%"><div class="input-append">
+							{{ form_widget(pago_form.telefonoMovil, { 'attr': {'maxlength':'10', 'size':'10', 'placeholder':'Ingrese Teléfono Movíl', 'class':'disablepago permitidoTemp'} } ) }}  <span class="add-on dark-opaque"><i class="icon-asterisk"></i></span><span class="add-on dark-opaque"><i class="icon-asterisk"></i></span>
+						</div>
+						<div class="clearfix"></div><div class="hide red mensajeErrorFormulario"> <i class="icon-remove"></i> Al menos un campo debe ser completado </div></td>
+					</tr>
+
+					<tr>
+						<th width="15%" >Teléfono Fijo</th>
+						<td width="35%">  <div class="input-append">
+							{{ form_widget(pago_form.telefonoFijo, { 'attr': {'maxlength':'10', 'size':'10', 'placeholder':'Ingrese Teléfono Fijo', 'class':'disablepago permitidoTemp' } }) }} <span class="add-on dark-opaque"><i class="icon-asterisk"></i></span><span class="add-on dark-opaque"><i class="icon-asterisk"></i></span>
+						</div>
+						<div class="clearfix"></div><div class="hide red mensajeErrorFormulario"> <i class="icon-remove"></i> Al menos un campo debe ser completado </div></td>
+							<th id="vistaPaisTh" rowspan="3" class="oculto">País
+							</th>
+							<td id="vistaPaisTd" class="oculto" rowspan="3"> {{ form_widget(pago_form.pais, {'attr':{ 'class':'disablepago permitidoTemp'} }) }}
+								<div class="clearfix"></div>
+								<div class="paisval hide red mensajeErrorFormulario"> <i class="icon-remove"></i> Campo no debe ser vacio </div>
+								<div class="clearfix">
+								</div>
+							</td>
+							<th id="vistaComunaTh" class="oculto" rowspan="3">Comuna
+							    <div class="clearfix">
+								</br>
+								</div>
+								<span class="hide provincia"  id="provincialabel" style="padding:0 0 0 0; "><b>Provincia:</b></span>
+								</br>  </br>
+								<span class="hide region"  id="regionlabel" ><b>Región:</b></span>
+								</br>  </br>
+								<span class="hide pais"  id="paislabel"><b>País</b></span>
+							</th>
+						    <td id="vistaComunaTd" class="oculto" rowspan="3"> {{ form_widget(pago_form.comuna, {'attr':{ 'class':'disablepago permitidoTemp'} }) }}
+								<div class="clearfix"></div>
+								<div class="comunaval hide red mensajeErrorFormulario"> <i class="icon-remove"></i> Campo no debe ser vacio </div>
+								<div class="clearfix">
+								</div>
+								<span class="hide provincia" id="provincia" style="padding:0 0 0 10px; "></span>
+								</br>  </br>
+								<span class="hide region" id="region"  style="padding:0 0 0 10px; "></span>
+								</br>  </br>
+								<span class="hide pais" id="pais"  style="padding:0 0 0 10px; "></span>
+							</td>
+</tr>
+
+<tr>
+	<th width="15%" >Teléfono Trabajo</th>
+
+	<td width="35%">  <div class="input-append">
+		{{ form_widget(pago_form.telefonoTrabajo, { 'attr': {'maxlength':'10', 'size':'10', 'placeholder':'Ingrese Teléfono Trabajo', 'class':'disablepago permitidoTemp' } }) }} <span class="add-on dark-opaque"><i class="icon-asterisk"></i></span><span class="add-on dark-opaque"><i class="icon-asterisk"></i></span>
+	</div>
+	<div class="clearfix"></div><div class="fonoval hide red mensajeErrorFormulario"> <i class="icon-remove"></i> Debe Ingresar al menos un número de Contacto.  </div></td>
+</tr>
+<tr>
+	<th width="15%" >Email: </th>
+	<td width="35%"> {{ form_widget(pago_form.correoElectronico, { 'attr': {'maxlength':'100', 'placeholder':'Ingrese Correo Principal', 'class':'disablepago permitidoTemp'} }) }}
+		{# <div class="clearfix"></div><div class="emailval hide red mensajeErrorFormulario"> <i class="icon-remove"></i> Campo no debe ser vacio</div> #}
+		<div class="clearfix"></div><div class="emailvalida hide red mensajeErrorFormulario"> <i class="icon-remove"></i> Ingrese Email Correctamente</div></td>
+	</tr>
+</table>
+</form>
+<div  align="center" class="alert alert-block alert-warning alertaExisteDatos hide ocultarDiv">
+	<p>
+		<strong>
+			<i class="icon-warning-sign"></i>
+			Datos Personales de Paciente.
+		</strong>
+	</br>
+	Para continuar, debe ingresar todos los datos requeridos del Paciente.
+</p>
+<p>
+	<div align="center">
+		{% if idReservaAtencion%}
+		{% else %}
+		<button id="volver-desde-formulario-paciente" class="btn btn-small btn-volver2 volver-desde-prestador btnCargaFormPaciente ocultarDiv" type="button"></i> Cancelar y Volver a Nueva Búsqueda </button>
+		<button id="btnback" class="btn btn-small btn-volver btnCargaFormPaciente ocultarDiv" type="button"> Cancelar </button>
+		<button id="btnbackfromedit"  class="btn btn-small btn-volverEdit ocultarDiv btnCargaFormPaciente" type="button"> Cancelar y Volver a Pago </button>
+
+	{% endif %}
+
+	<button id="btn-salvar"  class="btn btn-small btn-success btn-salvar btnCargaFormPaciente">Crear Nuevo Registro</button>
+	<button id="btn-salvar-edit"  class="btn btn-small btn-warning btn-salvar-edit ocultarDiv btnCargaFormPaciente" type="button">  </i> Guardar Edición</button>
+</div>
+</p>
+</div>
+<div style='display:none'>
+	<input type="text" name="idPersonainput" id="idPersonainput" maxlength="12" class="idPersona disablepago">
+	{{ form_widget(pago_form.empresaSolicitante) }}
+</div>
+
+</br>
+<div id="modalVer" class="modalVer hide"></div>

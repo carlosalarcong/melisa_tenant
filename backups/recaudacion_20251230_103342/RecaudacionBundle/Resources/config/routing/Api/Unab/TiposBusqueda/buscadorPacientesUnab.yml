@@ -1,0 +1,7 @@
+Api_Caja_buscarPorRut:
+  path:  /buscarPorRut
+  defaults: { _controller:  CajaBundle\Api\TiposBusqueda\BuscadorPacientesUnab:buscarPorRut }
+
+Api_Caja_BuscarMascotaPorNombre:
+  path:  /buscarMascotaPorNombre
+  defaults: { _controller:  CajaBundle\Api\TiposBusqueda\BuscadorPacientesUnab:buscarMascotaPorNombre }

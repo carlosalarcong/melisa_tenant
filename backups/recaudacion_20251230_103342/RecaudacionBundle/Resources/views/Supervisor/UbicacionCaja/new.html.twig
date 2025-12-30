@@ -1,0 +1,53 @@
+{% extends 'RecaudacionBundle:Supervisor:layoutformulariosajax.html.twig' %}
+{% block body -%}
+<div class="table-header">
+    Crear Ubicación Caja
+</div>
+<form id="new_form" class="form-horizontal" action="{{ path('Caja_Supervisor_UbicacionCaja_create') }}" method="post">
+    <table class="table table-bordered table-condensed table-hover">
+        <tr>
+            <th>
+                {{ form_label(form.nombre) }}
+            </th>
+            <td>
+                {{ form_widget(form.nombre) }}
+                <div class="clearfix"></div>
+                {% for error in form.nombre.vars.errors %}
+                    <span class="text-error">
+                        {{ error.message }}
+                    </span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th>
+                {{ form_label(form.idSucursal) }}
+            </th>
+            <td>
+                {{ form_widget(form.idSucursal) }}
+                <div class="clearfix"></div>
+                {% for error in form.idSucursal.vars.errors %}
+                    <span class="text-error">
+                        {{ error.message }}
+                    </span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th>
+                {{ form_label(form.descripcion) }}
+            </th>
+            <td>
+                {{ form_widget(form.descripcion) }}
+                <div class="clearfix"></div>
+                {% for error in form.descripcion.vars.errors %}
+                    <span class="text-error">
+                        {{ error.message }}
+                    </span>
+                {% endfor %}
+            </td>
+        </tr>
+    </table>
+    {{ form_rest(form) }}
+</form>
+{% endblock %}

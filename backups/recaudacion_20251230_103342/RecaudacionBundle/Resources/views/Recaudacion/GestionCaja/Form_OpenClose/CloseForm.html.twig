@@ -1,0 +1,203 @@
+<style>
+	body .modal {
+		width: 50%;
+		left: 25%;
+		height: 90%;
+		margin-right: auto;
+		margin-left: 0%;
+	}
+	body .modal-body{
+
+		padding: 5px;
+		max-height: 90%;
+		height: 90%;}
+
+		body .modal.fade.in {
+			top: 5%;
+			bottom: 5%;
+		}
+
+	</style>
+
+	<div class="table-header header-color-blue " style="text-align:left;">
+		<span class="white"><b>Cierre Caja</b></span>
+	</div>
+	<form id="form" method="POST"class="form-horizontal" action="{{ path('Caja_Gestion_CerrarCajaCerrado', { 'id': caja.id  }) }}" >
+		{% set z = 0 %}
+		{% for key, item in items %}
+		{% set z = z +1 %}
+		{% endfor %}
+
+		{% if z == 0%}
+		<div class="alert alert-warning CajaCerrada">
+			<strong>Caja actual no posee registro de Pagos</strong>
+			<div class="clearfix"></div>
+			La caja actual, no presenta actividad, Superávit y/o Déficit  en su momento de cierre
+		</div>
+		{% endif %}
+		{% if z > 0%}
+		<div class="table-header-grey" style="text-align:left;">
+		 Ingreso Número de Depósito
+	 </div>
+
+	 <table id="table_items" class="table table-bordered table-condensed table-hover">
+		 {% set x = 0 %}
+		 {% for key, item in items %}
+		 {% set x = x +1 %}
+		 {% endfor %}
+
+		 {% if x > 1%}
+		 <thead>
+			<tr>
+				<th width="20%" >Item </th>
+				<th width="20%">Monto </th>
+				<th width="30%">N° Depósito</th>
+			</tr>
+		</thead>
+		{% endif %}
+		<tbody>
+			{% for key, item in items %}
+			{% set numeroDeposito = 'deposito_' ~ key %}
+			<tr >
+				<td >{{ item['nombre'] }}</td>
+				<td ><div style=" text-align:  right"> {{ obtenerMonto(item['suma']) }}</div></td>
+				{% if item['cc'] == 0%}
+				{% set numeroDeposito = 'deposito_' ~ key %}
+				<td>{{ form_widget(form[numeroDeposito], {'attr': {'class': 'Input_num classDepo', 'placeholder':'Número de Depósito'} } ) }}</td>
+				{% else %}
+				<td>{{ form_widget(form.deposito_8_2, {'attr': {'class': 'Input_num classDepo', 'placeholder':'Número de Depósito'} } ) }}<div class="hide">{{ form_widget(form[numeroDeposito], {'attr': {'class': 'hide'} } ) }}</div></td>
+				{% endif %}
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<br>
+	{% endif %}
+	<div class="table-header-grey" style="text-align:left;">
+	</i> Ingreso Superávit / Déficit Caja
+</div>
+<table id="table_superavit" class="table table-bordered table-condensed table-hover">
+ {% if z > 0%}
+ <tr >
+	<td width="50%">
+	 <label>
+		 <input id="radioSuperavit" name="form-field-radio" type="radio" class="ace checkRadio" style="float:left">
+		 <span  style="float:left" class="lbl">&nbsp&nbsp&nbsp&nbsp Superávit</span>
+	 </label>
+ </td>
+ <td > {{ form_widget(form.superavit, {'attr':{'class':'Input_num radioSuperavit'} }) }}
+ </td>
+</tr>
+<tr >
+	<td >
+	 <label>
+		<input id="radioDeficit" name="form-field-radio" type="radio" class="ace checkRadio" style="float:left">
+		<span  style="float:left" class="lbl"> &nbsp&nbsp&nbsp&nbsp Déficit</span>
+	</label>
+</td>
+<td > {{ form_widget(form.deficit, {'attr':{'class':'Input_num radioDeficit'} }) }}
+</td>
+</tr>
+{% else %}
+<div class ="hide">
+ <label>
+	 <input id="radioSuperavit" name="form-field-radio" type="radio" class="ace checkRadio">
+ </label>
+ {{ form_widget(form.superavit, {'attr':{'class':'Input_num radioSuperavit'} }) }}
+ <label>
+	 <input id="radioDeficit" name="form-field-radio" type="radio" class="ace checkRadio">
+ </label>
+ {{ form_widget(form.deficit, {'attr':{'class':'Input_num radioDeficit'} }) }}
+</div>
+{% endif %}
+<tr >
+ <td colspan="2">
+	 <label>
+		 <input style="float:left" id="radioNo" name="form-field-radio" type="radio" class="ace checkRadio" >
+		 <span  style="float:left" class="lbl">&nbsp&nbsp&nbsp&nbsp No</span>
+	 </label>
+ </td>
+
+</tr>
+</table>
+</form>
+<script type='text/javascript'>
+ $(".btn-success").hide();
+ $('.radioSuperavit, .radioDeficit').attr('readonly', true);
+ $('input:radio[id="radioSuperavit"]').change(
+	function(){ apareceGrabar();
+		if ($(this).is(':checked')) {
+			$(".radioSuperavit").attr('readonly', false);
+			$(".radioDeficit").attr('readonly', true);
+			$(".radioDeficit").val("");
+		}
+	});
+ $('input:radio[id="radioDeficit"]').change(
+	function(){ apareceGrabar();
+		if ($(this).is(':checked')) {
+			$(".radioDeficit").attr('readonly', false);
+			$(".radioSuperavit").attr('readonly', true);
+			$(".radioSuperavit").val("");
+		}
+	});
+ $('input:radio[id="radioNo"]').change(
+	 function(){
+		apareceGrabar();
+		if ($(this).is(':checked')) {
+
+			$('.radioSuperavit, .radioDeficit').attr('readonly', true);
+			$('.radioSuperavit, .radioDeficit').val("");
+		}
+	});
+ $('.Input_num').bind("keypress", function(event) {
+	 apareceGrabar();
+	 if (event.charCode !== 0) {
+		var regex = new RegExp("^[0-9]+$");
+		var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+		if (!regex.test(key)) {
+			event.preventDefault();
+			return false;
+		}
+	}
+});
+ $('.Input_num').blur(function() {
+	apareceGrabar();
+});
+ function apareceGrabar(){
+	var count = 0;
+	var countCheck = 0;
+	$('input[class*=classDepo]').each(function() {
+		if($(this).val().length > 0) {
+		 count = count - 1;
+	 }else{
+		count = count +1;
+	}
+});
+	$('.checkRadio').each(function() {
+		if($(this).is(':checked')) {
+			var classTemp = $(this).attr("id");
+			if(classTemp != "radioNo"){
+				if($("."+classTemp).val().length > 0) {
+					count = count - 1;
+				}else{
+				 count = count +1;
+			 };
+		 }else{
+			 count = count - 1;
+		 }
+		 countCheck = countCheck +1;
+	 }else{
+		countCheck = countCheck -1;
+	}
+});
+	var largoclassDepo = $(".classDepo").length;
+	if(count < -largoclassDepo && countCheck == -1){
+	 if($("#rebsol_hermesbundle_CerrarCajaType_deposito_8_2").length == 1){
+		 $("#rebsol_hermesbundle_CerrarCajaType_deposito_8").val($("#rebsol_hermesbundle_CerrarCajaType_deposito_8_2").val());
+	 }
+	 $(".btn-success").show();
+ }else{
+	 $(".btn-success").hide();
+ }
+}
+</script>

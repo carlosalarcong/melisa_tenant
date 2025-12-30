@@ -1,0 +1,616 @@
+;
+(function($, document, window, undefined) {
+
+	'use strict'
+
+	var cajaAgenda = 1;
+
+	var DEFAULT_PAGO_CUENTA = DEFAULT_PAGO_CUENTA || {};
+
+	DEFAULT_PAGO_CUENTA = function() {
+
+		this.init();
+	};
+
+
+	$('#mostrar-datos-cuenta-pago-paciente').dataTable({
+		"oLanguage": {
+			"sUrl": URL_DATATABLES
+		}
+	});
+
+
+	DEFAULT_PAGO_CUENTA.prototype = {
+
+		init: function() {
+			this.eventosClickPagar();
+		},
+		defaultAjax: function(parametersArray) {
+
+			var _self = this;
+
+			var parametersArrayAjax = parametersArrayAjax || {};
+			var setParametersArray = setParametersArray || {};
+
+			if (typeof parametersArray['type'] !== 'undefined') {
+
+				parametersArrayAjax['type'] = parametersArray['type'];
+			}
+
+			if (typeof parametersArray['url'] !== 'undefined') {
+
+				parametersArrayAjax['url'] = parametersArray['url'];
+			}
+
+			if (typeof parametersArray['async'] !== 'undefined') {
+
+				parametersArrayAjax['async'] = parametersArray['async'];
+			}
+
+			if (typeof parametersArray['data'] !== 'undefined') {
+
+				parametersArrayAjax['data'] = parametersArray['data'];
+			}
+
+			if (typeof parametersArray['setParameterId'] !== 'undefined') {
+
+				parametersArrayAjax['success'] = function(result) {
+
+					setParametersArray['getSwitchParameter'] = parametersArray['setSwitchParameter'];
+					setParametersArray['getParameterId'] = parametersArray['setParameterId'];
+					setParametersArray['getResult'] = result;
+					_self.getAjaxResult(setParametersArray);
+				};
+			} else {
+
+				parametersArrayAjax['success'] = function(result) {
+
+					setParametersArray['getSwitchParameter'] = parametersArray['setSwitchParameter'];
+
+					if (parametersArray['setParametersAdditional'] !== 'undefined') {
+
+						setParametersArray['getParametersAdditional'] = parametersArray['setParametersAdditional'];
+					}
+
+					setParametersArray['getResult'] = result;
+					_self.getAjaxResult(setParametersArray);
+
+				};
+
+			}
+
+			if (typeof parametersArray['parameterErrorAjax'] === 'pagado') {
+
+				parametersArrayAjax['error'] = function(jqXHR, textStatus, errorThrown) {
+					falla();
+				};
+
+			} else if (typeof parametersArray['parameterErrorAjax'] === 'realizarPago') {
+				parametersArrayAjax['error'] = function(jqXHR, textStatus, errorThrown) {
+
+					var mensageBootboxError = `<strong class='red'>ERROR EN PAGO</strong>,
+					<br><strong>Se agotó el tiempo de ejecución</strong>,
+					<br>No se ha podido efectuar el pago, verifique su conexión y reintente.`;
+
+					bootbox.dialog(mensageBootboxError, [{
+						"label": "Aceptar",
+						"class": "btn btn-mini alert",
+						"callback": function() {
+							bootbox.hideAll();
+						}
+					}]);
+
+				};
+			}
+
+			// console.log(parametersArrayAjax)
+			$.ajax(parametersArrayAjax);
+
+		},
+		getAjaxResult: function(arrayResultado) {
+			console.log(arrayResultado['getSwitchParameter'])
+			var _self = this;
+
+			switch (arrayResultado['getSwitchParameter']) {
+
+				case 'consultaDatosCuentaPaciente':
+
+					$(arrayResultado['getParameterId']).html(arrayResultado['getResult']);
+					$('.realizar-pago-cuenta').css('pointer-events', 'visible')
+						.css('display', 'none');
+					break;
+
+				case 'cargandoDatosPasoDos':
+
+					arrayResultado['getParametersAdditional']['data'] = arrayResultado['getResult'];
+					_self.cargandoDatosPasoTres(arrayResultado['getParametersAdditional']);
+					break;
+
+				case 'cargandoDatosPasoTres':
+
+					arrayResultado['getParametersAdditional']['respuestaTrim'] = $.trim(arrayResultado['getResult']);
+					_self.preCargandoDatosPasoTres(arrayResultado['getParametersAdditional']);
+					break;
+
+				case 'preCargandoDatosPasoTres':
+					_self.resultadoPreCargandoDatosPasoTres(arrayResultado);
+					break;
+			}
+
+
+		},
+		eventosClickPagar: function() {
+
+			var _self = this;
+			var parametersArrayInsertaListadoPagoCuenta = parametersArrayInsertaListadoPagoCuenta || {};
+			var parametersArrayConsultaDatos = parametersArrayConsultaDatos || {};
+			var parametersArrayCasePay = parametersArrayCasePay || {};
+
+			$('.pagar-cuenta-pago').on('click', function(e) {
+
+				e.preventDefault();
+
+				var datosAdicionalesCuenta = JSON.parse($(this).closest('td').find('#datos-adicionales').val());
+				var idPaciente = datosAdicionalesCuenta.idPaciente;
+				var idDatoIngreso = datosAdicionalesCuenta.idDatoIngreso;
+				var intMonto = parseInt(datosAdicionalesCuenta.saldoCuenta);
+
+				$('.omdp').remove();
+				$('#input-id-dato-ingreso').val(idDatoIngreso);
+
+				var replaceTotalCuenta = $.trim($('#agregar-total-cuenta').text());
+				$('#agregar-total-cuenta').text(replaceTotalCuenta.replace(/0/g, intMonto));
+
+				$('#sumaTotalMediosDePago').text(intMonto);
+				$('#SaldoTotalMediosDePago').text(intMonto);
+
+				parametersArrayConsultaDatos['setSwitchParameter'] = 'consultaDatosCuentaPaciente';
+				parametersArrayConsultaDatos['type'] = 'POST';
+				parametersArrayConsultaDatos['url'] = Routing.generate('Caja_PagoCuenta_ConsultarDatos_CuentaPaciente_InsertarReguardoFinanciero');
+				parametersArrayConsultaDatos['async'] = false;
+				parametersArrayConsultaDatos['setParameterId'] = '#insertar-resguardo-financiero';
+
+				parametersArrayConsultaDatos['data'] = {
+					idDatoIngreso: idDatoIngreso
+				};
+
+				_self.defaultAjax(parametersArrayConsultaDatos);
+
+				/**
+				 * Inserta listado Pago Cuenta por paciente
+				 */
+				parametersArrayInsertaListadoPagoCuenta['setSwitchParameter'] = 'consultaDatosCuentaPaciente';
+				parametersArrayInsertaListadoPagoCuenta['type'] = 'POST';
+				parametersArrayInsertaListadoPagoCuenta['url'] = Routing.generate('Caja_PagoCuenta_ConsultarDatos_CuentaPaciente_InsertarListadoPagoCuentaPorPaciente');
+				parametersArrayInsertaListadoPagoCuenta['async'] = false;
+				parametersArrayInsertaListadoPagoCuenta['setParameterId'] = '#insertar-pagos-realizados';
+
+				parametersArrayInsertaListadoPagoCuenta['data'] = {
+					idPaciente: idPaciente
+				};
+
+				_self.defaultAjax(parametersArrayInsertaListadoPagoCuenta);
+
+
+				$('#mediodepago').slideDown('slow');
+				$('.formularios_Pago').find('input.Input_num').attr('onkeyup', 'javascript:calculaSaldoParcial()');
+
+				$('#datos-cuenta-paciente').slideUp('slow');
+				$('#cancelar-desde-mediopago').addClass('btn-mini');
+				$('#agregar-botones').append('<a id="volver-mascota" class="btn btn-success btn-mini">Volver  <a>');
+				$('#btn-pagar').addClass('btn-mini');
+
+				$('.Input_checkbox').each(function() {
+					$(this).prop('checked', false);
+					$('.formularios_Pago').css('display', 'none');
+				});
+
+				$('#adicional-informacion').appendTo('#adicional');
+				$('#adicional-informacion').removeClass('hide');
+				$('.spcb').remove();
+				$('#btn-diferencia-saldo').remove();
+				$('#btn-pagar').removeClass('hide');
+
+				$('#agregar-numero-admision').text(datosAdicionalesCuenta.idDatoIngreso);
+				$('#agregar-fecha-cuenta').text(datosAdicionalesCuenta.fechaEstadoCuentaLog);
+				$('#agregar-estado-cuenta').text(datosAdicionalesCuenta.nombreEstadoCuentaPaciente);
+
+				parametersArrayCasePay['type'] = 'POST';
+				parametersArrayCasePay['url'] = Routing.generate('Caja_CasePay');
+				parametersArrayCasePay['async'] = false;
+				parametersArrayCasePay['setParameterId'] = undefined;
+				parametersArrayCasePay['dataType'] = 'json';
+
+				localStorage.setItem('pagoCuenta.idPaciente', idPaciente);
+				parametersArrayCasePay['data'] = {
+					idPaciente: idPaciente
+				};
+
+				_self.defaultAjax(parametersArrayCasePay);
+
+			});
+
+			$('.realizar-pago-cuenta').on('click', function(e) {
+
+				e.preventDefault();
+
+				$(".realizar-pago-cuenta").css('pointer-events', 'none');
+
+				var htmlBotboox = `<div class="progress progress-success progress-striped active">
+										<div class="bar" style="width: 1%"></div>
+									</div>
+									<div id="aniadir-text" class="alert alert-block alert-success">
+										<strong class="green">Generando Pago,</strong>
+										<br>
+										Por favor espere...
+									</div>`;
+
+
+				/**
+				 * [def description]
+				 * @type {[type]}
+				 */
+				var def = $.Deferred();
+
+
+				/**
+				 * @todo  iteration, return false bootbox dialog
+				 */
+				// bootbox.dialog(htmlBotboox).delay(500).promise().done(function(event) {
+
+				// 	localStorage.setItem('CMP_VP', removeComas($("#sumaTotalMediosDePago").text()));
+				// 	var CMP_VP = localStorage.getItem('CMP_VP');
+
+				// 	$('.bar').css({
+				// 		width: '20%'
+				// 	}).delay(100).promise().done(function() {
+				// 		_self.cargandoDatosPasoDos();
+				// 	});
+
+				// 	// return false;
+				// });
+
+				_self.cargandoDatosPasoDos();
+
+			});
+
+		},
+		cargandoDatosPasoDos: function() {
+
+			$('.bar').css({
+				width: '40%'
+			}).delay(100);
+
+			var _self = this;
+
+			var cantidadPrestaciones = $('.cambioCantidad').length;
+			var listaPrestaciones = [];
+			var listaDiferencia = [];
+			var listaDiferenciaSaldo = [];
+			var parametersArrayPeopleId = parametersArrayPeopleId || {};
+
+			var indexKey = 0;
+
+			$('.cambioCantidad').each(function() {
+
+				var a = $(this).parents().eq(6).attr('name');
+				var aa = $(this).parents().eq(5).attr('id').replace("td", "");
+				var b = $(this).val();
+				var c = removeComas($("#precio" + aa).text());
+				var x = $("#tipoDoc" + aa).text();
+				var prestaciones = [a, b, c, x];
+
+				listaPrestaciones[indexKey] = prestaciones;
+				indexKey++;
+
+				var prestaciones = [];
+			});
+
+			if (esDiferencia == 1) {
+				for (i = 0; i < 7; i++) {
+					var n = arrayParaDiferencia(i);
+					listaDiferencia[i] = ListaInformacionDiferencia[n];
+				}
+			}
+
+			if (esDiferenciaSaldo == 1) {
+				for (i = 0; i < 4; i++) {
+					var n = arrayParaDiferenciaSaldo(i);
+					listaDiferenciaSaldo[i] = ListaInformacionDiferenciaSaldo[n];
+				}
+			}
+
+			parametersArrayPeopleId['setSwitchParameter'] = 'cargandoDatosPasoDos';
+			parametersArrayPeopleId['type'] = 'GET';
+			parametersArrayPeopleId['url'] = Routing.generate('Caja_PeopleId');
+			parametersArrayPeopleId['async'] = false;
+			parametersArrayPeopleId['setParameterId'] = undefined;
+
+			parametersArrayPeopleId['data'] = {
+				rut: $('#rebsol_hermesbundle_PagoType_rutPersona').val()
+			};
+
+			parametersArrayPeopleId['setParametersAdditional'] = {
+				'listaPrestaciones': listaPrestaciones,
+				'formaPago': 0,
+				'listaDiferencia': listaDiferencia,
+				'listaDiferenciaSaldo': listaDiferenciaSaldo
+			};
+
+			_self.defaultAjax(parametersArrayPeopleId);
+
+		},
+		cargandoDatosPasoTres: function(parametersArray) {
+
+			var _self = this;
+
+			var parametersArrayCasePay = parametersArrayCasePay || {};
+
+			var auxBoleta = '';
+
+			$('.bar').css({
+				width: '50%'
+			}).delay(100);
+
+			var data = parametersArray['data'];
+			var listaPrestaciones = parametersArray['listaPrestaciones'];
+			var formaPago = parametersArray['formaPago'];
+			var listaDiferencia = parametersArray['listaDiferencia'];
+			var listaDiferenciaSaldo = parametersArray['listaDiferenciaSaldo'];
+
+
+			if ($('#rebsol_hermesbundle_PrestacionType_derivadoExternoRut').val() != null) {
+
+				var derivadoRutExtAux = $('#rebsol_hermesbundle_PrestacionType_derivadoExternoRut').val();
+				var largo = derivadoRutExtAux.replace('-', '').length;
+				var r = derivadoRutExtAux.replace('-', '').substr(0, largo - 1);
+				var dv = derivadoRutExtAux.replace('-', '').substr(largo - 1, largo);
+				var derivadoRutExtArray = [r, dv];
+
+			} else {
+				var derivadoRutExtArray = null;
+			}
+
+			var inputIdDatoIngreso = parseInt($('#input-id-dato-ingreso').val());
+			var inputMonto = parseInt($('#input-monto').val());
+
+			var formularios = {
+				inputIdDatoIngreso: inputIdDatoIngreso,
+				inputMonto: inputMonto,
+				idPnatural: data,
+				derivadoRutExt: derivadoRutExtArray,
+				caja: idCaja,
+				sucursal: idSucursal,
+				ListaPrestacion: listaPrestaciones,
+				idReservaAtencion: idReservaAtencion,
+				TipoDeMedioPago: formaPago,
+				ListaTratamiento: (esTratamiento == 1) ? TratamientoArray : null,
+				ListaDiferencia: (esDiferencia == 1) ? listaDiferencia : null,
+				ListaDiferenciaSaldo: (esDiferenciaSaldo == 1) ? listaDiferenciaSaldo : null,
+				idDerivadoExterno: idDerivadoExterno
+			};
+
+			parametersArrayCasePay['setSwitchParameter'] = 'cargandoDatosPasoTres';
+			parametersArrayCasePay['type'] = 'GET';
+			parametersArrayCasePay['url'] = Routing.generate('Caja_CasePay');
+			parametersArrayCasePay['async'] = false;
+			parametersArrayCasePay['setParameterId'] = undefined;
+			parametersArrayCasePay['setParametersAdditional'] = formularios;
+			parametersArrayCasePay['data'] = formularios;
+
+			_self.defaultAjax(parametersArrayCasePay);
+
+		},
+		preCargandoDatosPasoTres: function(parametersArray) {
+
+			var _self = this;
+
+			var parametersArrayRealizarPago = parametersArrayRealizarPago || {};
+
+			var respuestaTrim = parametersArray['respuestaTrim'];
+			var idReservaAtencion = parametersArray['idReservaAtencion'];
+
+			if (respuestaTrim === 'ok') {
+
+				var formMedios = $('#formMedios').serializeArray();
+
+				var formMediosUniqueValues = [];
+
+				formMedios.forEach(function(data, key) {
+
+					if (data.value !== '') {
+
+						if ($.inArray(data.value, formMediosUniqueValues) === -1) {
+
+							formMediosUniqueValues.push(data);
+
+						}
+					}
+				});
+
+				$('.bar').css({
+					width: '90%'
+				}).delay(100);
+
+				parametersArrayRealizarPago['setSwitchParameter'] = 'preCargandoDatosPasoTres';
+				parametersArrayRealizarPago['type'] = 'POST';
+				parametersArrayRealizarPago['url'] = Routing.generate('Caja_PagoCuenta_RealizarPago_CuentaPaciente');
+				parametersArrayRealizarPago['async'] = false;
+				parametersArrayRealizarPago['setParameterId'] = undefined;
+				parametersArrayRealizarPago['setParametersAdditional'] = parametersArray;
+				parametersArrayRealizarPago['data'] = formMediosUniqueValues;
+				parametersArrayRealizarPago['parameterErrorAjax'] = 'realizarPago';
+				_self.defaultAjax(parametersArrayRealizarPago);
+
+			} else {
+
+				if (!idReservaAtencion) {
+					bootbox.hideAll();
+				} else {
+					if (cajaAgenda === 0) {
+						$('#calendar').fullCalendar('refetchEvents');
+					} else {
+						bootbox.hideAll();
+					}
+				}
+
+				bootbox.dialog("<strong class='red'>ERROR EN PAGO</strong>,<br><strong>Problemas de Comunicación</strong>,<br>No se ha podido efectuar el pago..", [{
+					"label": "Aceptar",
+					"class": "btn btn-mini alert",
+					"callback": function() {}
+				}]);
+
+			}
+		},
+		resultadoPreCargandoDatosPasoTres: function(parametersArray) {
+
+			var _self = this;
+			var parametersArrayConsultaDatos = parametersArrayConsultaDatos || {};
+			var respuestaTrim = $.trim(parametersArray['getResult']);
+			var idReservaAtencion = $.trim(parametersArray['getParametersAdditional']['idReservaAtencion']);
+
+			if (typeof respuestaTrim !== 'pagado') {
+
+				$('.bar').css({
+					width: '100%'
+				}).delay(1000);
+
+				// $('div.progress').parents('div').fadeOut();
+
+				var mensageBootbox = `<div class='alert alert-block alert-success'>
+				<p><strong><i class='icon-ok'></i> Pagado Correctamente</strong></p></div>`;
+
+				bootbox.dialog(mensageBootbox, [{
+					"label": "Aceptar",
+					"class": "btn btn-mini alert",
+					"callback": function() {
+						if (idReservaAtencion) {
+							if (cajaAgenda === 0) {
+								$('#calendar').fullCalendar('refetchEvents');
+							}
+						}
+						bootbox.hideAll();
+						$('#mediodepago').slideUp('slow');
+						$('#datos-cuenta-paciente').slideDown('slow');
+						$('#volver-mascota').remove();
+						$('#adicional-informacion').addClass('hide');
+					}
+				}]);
+
+				parametersArrayConsultaDatos['setSwitchParameter'] = 'consultaDatosCuentaPaciente';
+				parametersArrayConsultaDatos['type'] = 'POST';
+				parametersArrayConsultaDatos['url'] = Routing.generate('Caja_PagoCuenta_ConsultarDatos_CuentaPaciente');
+				parametersArrayConsultaDatos['async'] = false;
+				parametersArrayConsultaDatos['setParameterId'] = '#datos-cuenta-paciente';
+				parametersArrayConsultaDatos['parameterErrorAjax'] = 'pagado';
+
+				// localStorage.getItem('pagoCuenta.idPaciente')
+				parametersArrayConsultaDatos['data'] = {
+					idPaciente: null
+				};
+
+				_self.defaultAjax(parametersArrayConsultaDatos);
+
+			} else if (typeof respuestaTrim !== 'varios') {
+
+				if (!idReservaAtencion) {
+					creaListaHistoricaPagoCuenta();
+				} else {
+					if (cajaAgenda === 0) {
+						$('#calendar').fullCalendar('refetchEvents');
+					} else {
+						creaListaHistoricaPagoCuenta();
+					}
+				}
+
+				$('.bar').css({
+					width: '100%'
+				}).delay(1000);
+
+				$('div.progress').parents('div').fadeOut();
+
+				var mensageBootbox = `<div class='alert alert-block alert-success'>
+				<p><strong><i class='icon-ok'></i> Pagado Correctamente</strong></p></div>`;
+
+				bootbox.dialog(mensageBootbox, [{
+					"label": "Aceptar",
+					"class": "btn btn-mini alert",
+					"callback": function() {
+
+						if (!idReservaAtencion) {
+							PagadoAceptarDocumentos();
+							bootbox.hideAll();
+						} else {
+							if (cajaAgenda === 0) {
+								$('#calendar').fullCalendar('refetchEvents');
+								verificaCorrelativo();
+								PagadoAceptarDocumentos();
+							} else {
+								PagadoAceptarDocumentos();
+							}
+						}
+
+					}
+				}]);
+
+
+			}
+
+		}
+	};
+
+	function arrayParaDiferencia(i) {
+		switch (i) {
+			case 0:
+				n = 'como';
+				break;
+			case 1:
+				n = 'agrupcion';
+				break;
+			case 2:
+				n = 'tipoDiferenciaGlobal';
+				break;
+			case 3:
+				n = 'subTotal';
+				break;
+			case 4:
+				n = 'DifTotal';
+				break;
+			case 5:
+				n = 'FullTotal';
+				break;
+			case 6:
+				n = 'listadoPrestaciones';
+				break;
+		}
+		return n;
+	}
+
+	function arrayParaDiferenciaSaldo(i) {
+		switch (i) {
+			case 0:
+				n = 'tipoDiferenciaGlobal';
+				break;
+			case 1:
+				n = 'subTotal';
+				break;
+			case 2:
+				n = 'DifTotal';
+				break;
+			case 3:
+				n = 'FullTotal';
+				break;
+		}
+		return n;
+	}
+
+
+
+	if (document.readyState === 'complete') {
+		return new DEFAULT_PAGO_CUENTA;
+	}
+
+
+
+
+}(jQuery, document, window));

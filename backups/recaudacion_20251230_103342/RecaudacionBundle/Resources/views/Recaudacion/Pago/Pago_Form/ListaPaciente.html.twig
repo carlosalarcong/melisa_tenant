@@ -1,0 +1,114 @@
+{% block postcss %}
+<style>
+	.dataTables_length{
+		margin-left:8px;
+		text-align: left;
+	}
+	.dataTables_info {
+		margin: 0 0 0 12px;
+		font-size: 14px;
+		text-align: left;
+	}
+</style>
+
+{% endblock %}
+<div class="table-header-grey" style="text-align:left;">
+	<i class="icon-user icon-large text-left"> </i> Resultados Pacientes Relacionados con Búsqueda de:
+	<b>
+		<span id="parametrosBusquedaResumenNombre" class="white"></span>
+
+		<span id="parametrosBusquedaResumenApep" class="white"></span>
+
+		<span id="parametrosBusquedaResumenApem" class="white"></span>
+	</b>
+
+	<div class="btn-group pull-right">
+		<button  id="btnNuevaBuscaAvanzadoPaciente" class="btn btn-small btn-primary  btnNuevaBuscaAvanzadoPaciente">Nueva Búsqueda</button>
+	</div>
+</div>
+{#
+ <div id="divCarga" class="alert alert-info">
+	<i class="icon-spinner icon-spin"></i> <span id="infoCarga">Cargando los Resultados...</span>
+</div>
+#}
+
+<div id="table_report_wrapper" class="dataTables_wrapper">
+	{% if pacientes is not empty %}
+	<table class="table table-hover" id="table_report" >
+		<thead>
+			<tr>
+				<th> Tipo de Documento </th>
+				<th> Documento </th>
+				<th> Nombre del paciente </th>
+				<th> Sexo </th>
+				<th> Fecha de Nacimiento </th>
+				<th> Teléfono Móvil </th>
+				<th> Teléfono Fijo </th>
+				<th class="sorting_disabled"> </th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for paciente in pacientes %}
+			<tr id="{{ paciente.idPersona }}">
+				<td> {{ paciente.nombreTipoIdentificacion }} </td>
+				<td>
+					{{ paciente.documentoExtranjero }}
+				</td>
+				<td>
+					{{ paciente.nombre}} {{ paciente.apellidoPaterno}} {{ paciente.apellidoMaterno}}
+				</td>
+				<td>
+					{{ paciente.sexo }}
+				</td>
+				<td >
+					{{ paciente.fechaNacimiento | date("d-m-Y") }}
+				</td>
+				<td>
+					{{ paciente.telefonoMovil }}
+				</td>
+				<td >
+					{{ paciente.telefonoFijo }}
+				</td>
+				<td>
+					<button class="btn btn-mini btn-warning edit" title='Editar Datos' data-rut="{{ paciente.rutPaciente }}-{{ paciente.dvPaciente }}">
+						<i class='icon-edit icon-large'></i>
+					</button>
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+
+{% else %}
+<div class="alert alert-error">
+	<i class='icon-remove'></i>
+	No se encontraron resultados de búsqueda con los parametros ingresados
+</div>
+{% endif %}
+</br>
+{% block scripts %}
+{# <script src="{{ asset('js/jquery-1.9.1.min.js') }}"></script> #}
+
+<script>
+	$(document).ready(function(){
+		$("#btnNuevaBuscaAvanzadoPaciente").on('click', function() {
+			$("#resultadosBusquedaAvanzadaPaciente").slideUp(1000);
+			$("#resultadosBusquedaAvanzadaPaciente").load(location.href + " #resultadosBusquedaAvanzadaPaciente");
+			$("#busquedaPacientesForm").slideDown(1000);
+			$("#busquedaAvanzadaPaciente_nombres , #busquedaAvanzadaPaciente_apPaterno , #busquedaAvanzadaPaciente_apMaterno").val('');
+		});
+
+		$(".edit").on('click',function(e){
+			$('.obtener-rut').val( $(this).data('rut') );
+			$('#continuar-busqueda-por-Rut').trigger('click');
+			$('#resultadosBusquedaAvanzadaPaciente').hide();
+		});
+		$('#table_report').dataTable({
+			"oLanguage": {
+				"sUrl": "{{ asset('js/datatables/dataTables.es.txt') }}"
+			}
+		});
+	});
+</script>
+{% endblock %}

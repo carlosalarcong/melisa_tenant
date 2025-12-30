@@ -1,0 +1,66 @@
+{% extends 'RecaudacionBundle:Supervisor:layoutformulariosajax.html.twig' %}
+{% block body -%}
+<div class="table-header">
+	Crear Ubicación Cajero
+</div>
+<form id="new_form" class="form-horizontal" action="{{ path('Caja_Supervisor_UbicacionCajero_create') }}" method="post">
+	<table class="table table-bordered table-condensed table-hover">
+		<tr>
+			<th>
+				{{ form_label(form.idUbicacionCaja) }}
+			</th>
+			<td>
+				{{ form_widget(form.idUbicacionCaja) }}
+				<div class="clearfix"></div>
+				{% for error in form.idUbicacionCaja.vars.errors %}
+				<span class="text-error">
+					{{ error.message }}
+				</span>
+				{% endfor %}
+			</td>
+		</tr>
+		<tr>
+			<th>
+				{{ form_label(form.idUsuario) }}
+			</th>
+			<td>
+				{{ form_widget(form.idUsuario) }}
+				<div class="clearfix"></div>
+				{% for error in form.idUsuario.vars.errors %}
+				<span class="text-error">
+					{{ error.message }}
+				</span>
+				{% endfor %}
+			</td>
+		</tr>
+		<tr>
+			<th>
+				{{ form_label(form.montoInicial) }}
+			</th>
+			<td>
+				{{ form_widget(form.montoInicial) }}
+				<div class="clearfix"></div>
+				{% for error in form.montoInicial.vars.errors %}
+				<span class="text-error">
+					{{ error.message }}
+				</span>
+				{% endfor %}
+			</td>
+		</tr>
+	</table>
+	{{ form_rest(form) }}
+	<script type="text/javascript">
+		{#Script que bloquea letras y símbolos, sólo permite números.#}
+		$("#rebsol_hermesbundle_ubicacioncajeroType_montoInicial").bind("keypress", function(event) {
+		   if (event.charCode !== 0) {
+			   var regex = new RegExp("^[0-9,]+$");
+			   var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+			   if (!regex.test(key)) {
+				   event.preventDefault();
+				   return false;
+			   }
+		   }
+	   });
+	</script>
+</form>
+{% endblock %}

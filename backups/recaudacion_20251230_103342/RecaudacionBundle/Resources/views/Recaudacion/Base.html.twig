@@ -1,0 +1,173 @@
+{% extends 'RecaudacionBundle::Recaudacion/sublayout.html.twig' %}
+{% import 'RecaudacionBundle:UI/Macros:WidgetsCaja.html.twig' as WidgetCaja %}
+{% block css %}
+	{#{% if coreApi == 1 %}
+		<link rel="stylesheet" href="{{ asset('css/chosen.css') }}">
+	{% endif %}#}
+	<link rel="stylesheet" href="{{ asset('css/tipped/tipped.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/chosen.css') }}">
+	<link href="{{ asset('css/datepicker.css') }}" rel="stylesheet">
+{% endblock %}
+{% block Caja %}
+
+	{%  if tipoPago == 'PagoCuenta' %}
+		<li class="active">Pago Cuenta</li>
+	{% else %}
+		<li class="active">Recaudación</li>
+	{% endif %}
+
+{% endblock %}
+{# este bloque, manda al breadcoms el avance y el estado activo de la navegacion del modulo#}
+{% block body %}
+	{# inicia el Index de Caja-Recaudación #}
+	{% include 'RecaudacionBundle:Recaudacion:index.html.twig' %}
+	<div class="hide" id="basicModal">
+		<div id="oscuro"></div>
+		<div class="modal caja"  tabindex="-1" role="dialog" aria-labelledby="basicModal">
+			<div class="modal-dialog ">
+				<div class="modal-content ">
+					<div class="modal-header ">
+						<h4 class="modal-title alert alert-success" id="myModalLabel">Buscando Mascota</h4>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+{% block scripts %}
+	<script type="text/javascript" src="{{ asset('js/uncompressed/Caja/jquery.dataTables.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('js/jquery.dataTables.bootstrap.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('js/fuelux/fuelux.spinner.min.js') }}"></script>
+	<script src="{{ asset('js/chosen.jquery.min.js') }}"></script>
+	<script type="text/javascript" src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
+	<script type="text/javascript"  src="{{ asset('js/tipped/spinners.min.js') }}"></script>
+	<script type="text/javascript"  src="{{ asset('js/tipped/tipped.js') }}"></script>
+	<script type="text/javascript"  src="{{ asset('js/chosen.jquery.min.js') }}"></script>
+	<script type="text/javascript"  src="{{ asset('js/ace.min.js') }}"></script>
+	<script type="text/javascript"  src="{{ asset('js/uncompressed/bootbox.js') }}"></script>
+	<script src="{{ asset('js/bootstrap-datepicker.min.js') }}"></script>
+	<script src="{{ asset('js/date-time/locales/bootstrap-datepicker.es.js') }}" charset="UTF-8"></script>
+	{{ WidgetCaja.resources() }}
+	{{ WidgetCaja.Diferencia() }}
+	{% if caja%}
+		<script type='text/javascript'>
+			var idReservaAtencion                    = null;
+			var idSucursal                           = $.trim("{{ sucursal }}");
+			var idCaja                               = $.trim("{{ caja.id }}");
+			var TipoAtencion                         = $.trim("{{ tipoAtencion }}");
+			var extranjero                           = $.trim("{{ extranjero}}");
+			var cantidadPrestacionArticulo           = 0;
+			var garantiaAuxPrestacion                = 0;
+			var identificacion                       = null;
+			var coreApi                              = $.trim("{{coreApi}}");
+			var cajaAgenda                           = 1;
+			var tratamientoCreadoDesdeAgenda         = 0;
+			var garantia                             = 0;
+			//Variables Globales de Tratamiento
+			var tratamiento                          = 1;
+			var nuevoTratamiento                     = 0;
+			var editTratamiento                      = 0;
+			var esTratamiento                        = 0;
+			var esDiferencia                         = 0;
+			var esDiferenciaSaldo                    = 0;
+			var TratamientoArray                     = [];
+			var ListaDetallesDiferencia              = [];
+			var ListaInformacionDiferencia           = [];
+			var ListaInformacionDiferenciaSaldo      = [];
+			var esTratamientoAgenda                  = 0;
+			var idTratamiento                        = null;
+			var idDerivadoExterno                    = null;
+			var verificaRutDocumentoExtranjeroexiste = 0;
+			var crearUsuarioSinRut                   = 0;
+			var bonoTipo                             = 0;
+			var datosCompletos                       = $.trim("{{ datosCompletos }}");
+			var arrayBonosFormasPago                 = {{ arrayBonosFormasPago|json_encode|raw }};
+			var habilitaRestriccionesDePago          = {{ habilitaRestriccionesDePago }};
+			var habilitarPaisExtranjero              = {{ habilitarPaisExtranjero }};
+			var imedUrl          					 = $.trim("{{ imedUrl }}");
+			$("#limpiar, #limpiaradv,  .text-error, .ocultarDiv").hide();
+			$(document).on('ready', function() {
+
+				setTimeout(function() { $('#buscarPaciente_identificacion').focus() }, 1000);
+				$("#limpiar, #limpiaradv,  .text-error, .ocultarDiv").removeClass('hide');
+				loadScriptvalidakeyup();
+				loadScriptEventosDivBusqueda();
+				loadScriptBusquedaRutDv();
+				loadScriptEventosDivBusquedaMacro();
+				loadScriptBusquedaAvanzada();
+				GestionCaja_CajaSinCerrar();
+				GestionCaja_InformesCaja();
+				anulacionAjax();
+				$(".btn-gestionCaja-AbrirCerrar, .dropdown").show();
+
+				$('#tipoIdentificacionExtranjero_documento').chosen({
+					max_selected_options: 3,
+					display_selected_options: true,
+				});
+				// $('#tipoIdentificacionExtranjero_documento_chzn').style('width', '220px', 'important');
+				// $('#tipoIdentificacionExtranjero_documento_chzn').style('margin', '6px', 'auto');
+			});
+		</script>
+	{% else %}
+		<script type='text/javascript'>
+			$(document).on('ready', function() {
+				loadScriptvalidakeyup();
+				loadScriptEventosDivBusqueda();
+				loadScriptBusquedaRutDv();
+				loadScriptEventosDivBusquedaMacro();
+				loadScriptBusquedaAvanzada();
+				GestionCaja_CajaSinCerrar();
+				GestionCaja_InformesCaja();
+				anulacionAjax();
+			//booton en gestion caja para cerrar//
+			$(".btn-gestionCaja-AbrirCerrar").show();
+		});
+		</script>
+	{% endif %}
+	<style type="text/css">
+		.imedFace {
+			display:block;
+			-webkit-transform: rotate(90deg);
+			-moz-transform: rotate(90deg);
+			filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+			font-family:  initial;
+			font-weight: 200;
+			color: #FFF;
+		}
+	</style>
+	{{ macroDependencias.datetime() }}
+	<script language="javascript" type="text/javascript">
+	// $(".fc-event-vert").css('pointer-events','none');
+	// $(".fc-event-vert").css('pointer-events','auto');
+	window.onbeforeunload = function() {
+		if($('.AlertImedMedioPago').is(':visible')){
+			$('.AlertImedMedioPago').parent().parent().find('.btn-group').show();
+			$('.AlertImedMedioPago').hide();
+			var numAux = $('.AlertImedMedioPago').parent().parent().find('.formularios_Pago').attr('id').replace('tabla_','')
+			$('#exedente_'+numAux).hide();
+			$('#rebsol_hermesbundle_MediosPagoType_exedente_'+numAux).val('');
+			$(".Input_checkbox_"+numAux).click();
+			$(".bElectronico").prop('readonly', false);
+			bootbox.dialog(
+				"<div class='alert alert-block alert-warning'>" +
+					"<br><i class='icon-warning-sign '></i><strong>Operación Cancelada</strong>,<br>Se ha anulado Correctamente Bono Electrónico IMED."+
+				"</div>"
+				, [
+				{
+					"label": "Aceptar",
+					"class": "btn btn-mini",
+					"callback": function() {
+					}
+				}
+				]);
+			var ruta = Routing.generate("Caja_Cierre_Anula_Imed");
+			$.ajax({type: 'get',
+				url: ruta,
+				async: false
+			});
+			return 'Ud, a elegido no terminar el Pago en Caja, y se registra venta de Bono Electónico Imed Activa, Por Precaución, el Bono ha sido Anulado, si decide no salir y continuar, deberá volver a realizar la venta del Bono Electrónico IMED.';
+		}
+	}
+	</script>
+{% endblock %}

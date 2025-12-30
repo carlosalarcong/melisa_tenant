@@ -1,0 +1,56 @@
+{% set NumeroForm = cantidad + 1 %}
+    {% set claseForm = 'class_' ~ listadoMediosPago.id %}
+        {% set claseFormTabla = 'form_' ~ listadoMediosPago.id %}
+<div id="tabla_{{ listadoMediosPago.id }}_{{ cantidad }}"class="transbank-table">
+    <div class="table-header header-color-grey MedioPagoTransbank" style="text-align:left;">
+        Pago de {{ listadoMediosPago.nombre }} N° {{ NumeroForm }}
+    </div>
+    <table width="100%" class="table-bordered table-condensed {{ claseFormTabla }}">
+        <tr>
+            <td width="20%"> Monto</td>
+            <td width="50%">
+                {% set nombreCampoMonto = 'monto_' ~ listadoMediosPago.id ~  '_' ~ cantidad %}
+                {{ form_widget(mediospago_form[nombreCampoMonto], {'attr': {'class': 'transbank saldoMedio Input_num readOnlyConsolidado ' ~ claseForm , 'MaxLength': 12,  'onkeyup':'javascript:SumaSaldoVsMediosPago()'}} ) }}
+
+                {% set nombreCampoVoucher = 'voucher_' ~ listadoMediosPago.id ~ '_' ~ cantidad %}
+                {% set nombreCampoTarjetaCredito = 'nombreTarjeta_' ~ listadoMediosPago.id ~ '_' ~ cantidad %}
+                {% set nombreCampoCodAutorizacion = 'codAutorizacion_' ~ listadoMediosPago.id ~ '_' ~ cantidad %}
+                {% set nombreCampoUltimos4Numeros = 'ultimos4Numeros_' ~ listadoMediosPago.id ~ '_' ~ cantidad %}
+                {% set nombreCampoTarjetaTipo = 'tarjetaTipo_' ~ listadoMediosPago.id ~ '_' ~ cantidad %}
+
+                <div class="hidden">
+                    {{ form_widget(mediospago_form[nombreCampoVoucher], {'attr': {'MaxLength': 12, 'novalidate': 'novalidate'}} ) }}
+                    {{ form_widget(mediospago_form[nombreCampoTarjetaCredito], {'attr': {'MaxLength': 12, 'novalidate': 'novalidate'}} ) }}
+                    {{ form_widget(mediospago_form[nombreCampoCodAutorizacion], {'attr': {'MaxLength': 12, 'novalidate': 'novalidate'}} ) }}
+                    {{ form_widget(mediospago_form[nombreCampoUltimos4Numeros], {'attr': {'MaxLength': 12, 'novalidate': 'novalidate'}} ) }}
+                    {{ form_widget(mediospago_form[nombreCampoTarjetaTipo], {'attr': {'MaxLength': 12, 'novalidate': 'novalidate'}} ) }}
+                </div>
+            </td>
+
+            <td width="30%">
+                <button type="button" class="btn btn-mini btn-success btn_transbank_pagar" id="btn_tbk_pagar_{{ listadoMediosPago.id }}_{{ cantidad }}"
+                        onclick="javascript:PagarTransbank('{{ listadoMediosPago.id }}', '{{ cantidad }}');">
+                    Pagar
+                </button>
+                <button type="button" class="btn btn-mini btn-danger btn_transbank_anular" id="btn_tbk_anular_{{ listadoMediosPago.id }}_{{ cantidad }}"
+                        style="visibility:hidden;"
+                        onclick="javascript:AnularTransbank('{{ listadoMediosPago.id }}', '{{ cantidad }}');">
+                    Anular
+                </button>
+            </td>
+        </tr>
+        {% if desdeAdmision is defined and desdeAdmision %}
+            {% set nombreCampoNumeroGarantia = 'folioGarantia_' ~ listadoMediosPago.id ~ cantidad %}
+            {{ form_widget(mediospago_form[nombreCampoNumeroGarantia] ) }}
+        {% endif %}
+    </table>
+    <br>
+    <div class="btn-group pull-right clonar_{{ listadoMediosPago.id }}_{{ cantidad }} hideConsolidado">
+        <button type="button" class="btn btn-mini btn-success"
+                onclick="javascript:NuevoFormDinamico({{ listadoMediosPago.id }});">
+            <i class="icon-plus"></i></button>
+        <button type="button" class="btn btn-mini btn-danger"
+                onclick="javascript:EliminarTransbank('{{ listadoMediosPago.id }}', '{{ cantidad }}');">
+            <i class="icon-minus"></i></button>
+    </div>
+</div>

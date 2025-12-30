@@ -1,0 +1,11 @@
+parameters:
+    #########################################
+    # Parametros para identificar el módulo.
+    #########################################
+    caja.idModulo: 11
+    caja.codigoModulo: Caja
+    caja.nombreModulo: Caja
+    #########################################
+    # Parametros del módulo
+    #########################################
+    caja.acme: 'Mi primer parámetro'

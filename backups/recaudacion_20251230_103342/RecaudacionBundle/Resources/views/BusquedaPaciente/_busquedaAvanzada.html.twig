@@ -1,0 +1,119 @@
+<div id="BloqueBusquedaAvanzada" class="" style="">
+    <table class="table table-noborder">
+        <tr>
+            <td>
+                <div id="divFormularioBusqueda">
+                    <form id="busquedaAvanzadaPaciente" name="busquedaAvanzadaPaciente" method="POST" action="" autocomplete="off">
+                        <div style="padding-left:15%" >
+                            <div style="float:left">
+                                <div>
+                                    <strong> Nombre </strong>
+                                </div>
+                                <div>
+                                    <div class="input-append">
+                                        {{ form_widget(form.nombres, {'attr': {'class':'campoBusquedaAvanzado limpiarCampos'}} ) }}
+                                        <span class="add-on"><i class="icon-asterisk"></i></span><span class="add-on"><i class="icon-asterisk"></i></span>
+                                    </div>
+                                    <div class="clear-fix"></div>
+                                    <span id="error-nombres" class="text-error hide "><i class="icon-remove"></i> Minimo 3 caracteres</span>
+                                </div>
+                            </div>
+                            <div style="float:left">
+                                <div class="clear-fix"></div>
+                                <span> &nbsp&nbsp &nbsp&nbsp</span>
+                            </div>
+                            <div style="float:left" >
+                                <div>
+                                    <strong> Apellido Paterno </strong>
+                                </div>
+                                <div>
+                                    <div class="input-append">
+                                        {{ form_widget(form.apPaterno,{'attr': {'class':'campoBusquedaAvanzado limpiarCampos'}}) }}
+                                        <span class="add-on"><i class="icon-asterisk"></i></span><span class="add-on"><i class="icon-asterisk"></i></span>
+                                    </div>
+                                    <div class="clear-fix"></div>
+                                    <span id="error-apPaterno" class="text-error hide"><i class="icon-remove"></i> Minimo 3 caracteres</span>
+                                </div>
+                            </div>
+                            <div style="float:left">
+                                <div class="clear-fix"></div>
+                                <span> &nbsp&nbsp &nbsp&nbsp</span>
+                            </div>
+                            <div style="float:left">
+                                <div>
+                                    <strong> Apellido Materno </strong>
+                                </div>
+                                <div>
+                                    <div class="input-append">
+                                        {{ form_widget(form.apMaterno,{'attr': {'class':'campoBusquedaAvanzado limpiarCampos'}}) }}
+                                        <span class="add-on"><i class="icon-asterisk"></i></span><span class="add-on"><i class="icon-asterisk"></i></span>
+                                    </div>
+                                    <div class="clear-fix"></div>
+                                    <span id ="error-apMaterno" class="text-error hide"><i class="icon-remove"></i> Minimo 3 caracteres</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clear-fix"></div>
+                        <div ><br>
+                            <table width="50%" align="center">
+                                <tr>
+                                    <td colspan=" {{form.opcionBusqueda|length}}" class="center center-align centrado"> <strong class="center center-align centrado"> Parametros de Búsqueda</strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    {% for choiceFormView in form.opcionBusqueda %}
+                                        <td width="33%">{{ form_widget(choiceFormView) }}</td>
+                                    {% endfor %}
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="clear-fix"></div>
+                        <div  class="center center-align">
+                            <br>
+                            <div class="input-append">
+                                <button id="btnBuscaAvanzadoPaciente" class="btn btn-primary left" >
+                                    <i class='icon-search'></i> Buscar
+                                </button>
+                            </div>
+                            <div style="float:left">
+                                <div class="clear-fix"></div>
+                                <span> &nbsp;&nbsp;</span>
+                            </div>
+                            <div class="input-append">
+                                <button id="btnLimpiaAvanzadoPaciente" class="btn btn-primary left" type="reset">
+                                    <i class='icon-eraser'></i> Limpiar
+                                </button>
+                            </div>
+                        </div>
+                        <div id="busquedaAvanzadaPaciente_error"
+                             class="ocultarDiv oculto campoError">
+                            <i class="icon-remove"></i> Debe ingresar un dato valido en
+                            al menos uno de los campos
+                        </div>
+                    </form>
+                    {{ macroDependencias.DobleAsterisco() }}
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="clearfix " ></div>
+<div class="alert alert-block alert-success alertaNoexisteadv hide ocultarDiv">
+    <p>
+        <strong>
+            <i class="icon-warning-sign"></i>
+            No se han encontrado resultados.
+        </strong>
+        </br>
+        ¿Desea agregar nuevo paciente para continuar con Pago?.
+    </p>
+    <p>
+        <button class="btn btn-small btn-success agregarnuevo">Si, Agregar nuevo
+            paciente
+        </button>
+        <button class="btn btn-small noagregarnuevo">No, Buscar nuevamente</button>
+    </p>
+</div>
+<div id="erroradv" class="clearfix alertrutno  red" style='display:none'>
+    <i class="icon-remove"> </i> <span id="errormsjadv"></span>
+</div>

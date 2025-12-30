@@ -1,0 +1,35 @@
+#_Caja_Supervisor_MantenedorFolios:
+#    path:  /
+#    defaults: { _controller: RecaudacionBundle:Supervisor/MantenedorFolios/MantenedorFolios:index }
+
+Caja_Supervisor_MantenedorFolios:
+    path:  /index
+    defaults: { _controller: RecaudacionBundle:_Default/Supervisor/MantenedorFolios/MantenedorFolios:index }
+
+Caja_Supervisor_MantenedorFolios_VerDetalle:
+    path:  /verDetalle/{idTipoDocumento}
+    defaults: { _controller: RecaudacionBundle:_Default/Supervisor/MantenedorFolios/MantenedorFoliosVer:ver }
+
+Caja_Supervisor_MantenedorFolios_Anular:
+    path:  /anular/{idDetalleTalonario}
+    defaults: { _controller: RecaudacionBundle:_Default/Supervisor/MantenedorFolios/MantenedorFoliosAnular:anular }
+
+Caja_Supervisor_MantenedorFolios_AnularPorEmitir:
+    path:  /anularPorEmitir
+    defaults: { _controller: RecaudacionBundle:_Default/Supervisor/MantenedorFolios/MantenedorFoliosAnular:anularPorEmitir }
+
+Caja_Supervisor_MantenedorFolios_Habilitar:
+    path:  /habilitar/{idDetalleTalonario}
+    defaults: { _controller: RecaudacionBundle:_Default/Supervisor/MantenedorFolios/MantenedorFoliosHabilitar:habilitar }
+
+Caja_Supervisor_MantenedorFolios_Auditoria:
+    path:  /auditoria/{idDetalleTalonario}
+    defaults: { _controller: RecaudacionBundle:_Default/Supervisor/MantenedorFolios/MantenedorFoliosAuditoria:auditoria }
+
+Caja_Supervisor_MantenedorFolios_editar:
+    path:  /editar/{idDetalleTalonario}
+    defaults: { _controller: RecaudacionBundle:_Default/Supervisor/MantenedorFolios/MantenedorFoliosEditar:editar }
+
+Caja_Supervisor_MantenedorFolios_actualizar:
+    path:  /actualizar/{idDetalleTalonario}
+    defaults: { _controller: RecaudacionBundle:_Default/Supervisor/MantenedorFolios/MantenedorFoliosEditar:actualizar }

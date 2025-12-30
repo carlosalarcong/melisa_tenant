@@ -1,0 +1,43 @@
+<div class="tablaInformacion">
+    <div class="table-header headerAuditoria">
+        Información de Auditoría
+    </div>
+    <table class="table">
+        <tbody>
+            {% if arrAuditoria['solicitud'] != null and arrAuditoria['sinautorizacion'] == null %}
+                <tr>
+                    <th class="input-large">
+                        <i class="icon-plus-sign-alt"></i>{{ arrAuditoria['solicitud']['titulo'] }} :
+                    </th>
+                    <td>{{ arrAuditoria['solicitud']['nombre'] }} (<i>{{ arrAuditoria['solicitud']['fecha']|date('d-m-Y H:i') }}</i>)</td>
+                </tr>  
+            {% endif %}
+            {% if arrAuditoria['anulacion'] != null %}
+                <tr>
+                    <th class="input-large">
+                        <i class="icon-plus-sign-alt"></i>{{ arrAuditoria['anulacion']['titulo'] }} :
+                    </th>
+                    <td>{{ arrAuditoria['anulacion']['nombre'] }} (<i>{{ arrAuditoria['anulacion']['fecha']|date('d-m-Y H:i') }}</i>)</td>
+                </tr>  
+            {% endif %}
+            {% if arrAuditoria['autorizacion'] != null %}
+                <tr>
+                    <th class="input-large">
+                        
+                        <i class="icon-plus-sign-alt"></i>{{ arrAuditoria['autorizacion']['titulo'] }} :
+                    </th>
+                    <td>{{ arrAuditoria['autorizacion']['nombre'] }} (<i>{{ arrAuditoria['autorizacion']['fecha']|date('d-m-Y H:i') }}</i>)</td>
+                </tr>  
+            {% endif %}  
+            {% if arrAuditoria['sinautorizacion'] != null %}
+                <tr>
+                    <th class="input-large">
+                        
+                        <i class="icon-plus-sign-alt"></i>{{ arrAuditoria['sinautorizacion']['titulo'] }} :
+                    </th>
+                    <td>{{ arrAuditoria['sinautorizacion']['nombre'] }} (<i>{{ arrAuditoria['sinautorizacion']['fecha']|date('d-m-Y H:i') }}</i>)</td>
+                </tr>  
+            {% endif %}
+        </tbody>
+    </table>
+</div>

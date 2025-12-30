@@ -1,0 +1,303 @@
+{% block body %}
+<style>
+	body .modal {
+		width: 70%;
+		left: 15%;
+		height: 650px;
+		/*height: 70%;   */
+		margin-right: auto;
+		margin-left: 0%;
+	}
+
+	body .modal-body{
+		padding: 5px;
+		max-height: 100%;
+		height: 100%;
+	}
+
+	body .modal.fade.in {
+		top: 5%;
+		bottom: 5%;
+	}
+	.bottom {
+
+	}
+	{% if count > 5%}
+	.scollDivdiferencia{
+		overflow-y: scroll;
+		width:100%;
+		height:200px;
+	}
+	{% endif %}
+</style>
+<div class="alert alert-warning hide errorfaltaDiferencia">
+	<button type="button" class="close" data-dismiss="alert">
+		<i class="icon-remove"></i>
+	</button>
+	<strong>Faltan Datos en Formulario </strong>
+	<div class="clearfix"></div>
+	Debe ingresar alguna modificación ó valor para poder generar Diferencia.
+	<br>
+</div>
+
+<div class="alert alert-success hide exito">
+	<button type="button" class="close" data-dismiss="alert">
+		<i class="icon-remove"></i>
+	</button>
+	<strong>Diferencia Aprobada por Supervisor</strong>
+	<div class="clearfix"></div>
+	Puede continuar con el proceso de Pago con la diferencia Aplicada.
+	<br>
+</div>
+
+<div class="alert alert-warning hide rechazo">
+	<button type="button" class="close" data-dismiss="alert">
+		<i class="icon-remove"></i>
+	</button>
+	<strong>Diferencia Rechazada por Supervisor</strong>
+	<div class="clearfix"></div>
+	Puede continuar con el proceso de Pago pero no estará la diferencia aplicada.
+	<br>
+</div>
+
+<div class="table-header-grey" style="text-align:left;">
+	<i class="icon-check-sign  icon-large text-left space"></i> Diferencia
+</div>
+<div id="generandoDiferencia" class="hide"></div>
+
+<div id="formDiferenciaFull">
+
+	<form id="formDiferencia" action="{{ path('Caja_Diferencia_Aplicar') }}" method="post">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-condensed  grey">
+			<tr>
+				<th width="15%" >Tipo de Diferencia:</th>
+				<td width="35%">
+					<div class="controls">
+						{{ form_widget(diferencia_form.tipoDiferencia, {'attr':{'class':'disableDiferencia', 'onchange':'javascript:tipoDiferencia()'} }) }}
+						{# <span class="help-button" data-rel="popover">?</span> #}
+						<div class="clearfix"></div> <div class="hide red mensajeErrorFormularioDiferencia mensajeErrorFormularioTipoDiferencia"> <i class="icon-remove"></i>
+						<span id="mensajeErrorFormularioTipoDiferencia"></span>
+					</div>
+
+				</div>
+			</td>
+			<th>Motivo de Diferencia:</th>
+			<td>   {{ form_widget(diferencia_form.motivoDiferencia, { 'attr': {'class':'disableDiferencia', 'onchange':'javascript:motivoDiferencia()'} }) }}
+				<div class="clearfix"></div><div class="hide red mensajeErrorFormularioDiferencia mensajeErrorFormularioMotivoDiferencia"> <i class="icon-remove"></i>
+				<span id="mensajeErrorFormularioMotivoDiferencia"></span>
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<th>Agrupación:</th>
+		<td>
+			<div class="control-group">
+				<div class="controls">
+{#					<label>
+						<input name="agrupacion-radio" type="radio" class="ace agrupacion-radio" onclick="javascript:agrupacion(1);">
+						<span class="lbl"> Todos </span>
+					</label>#}
+					<label>
+						<input name="agrupacion-radio" type="radio" class="ace agrupacion-radio" onclick="javascript:agrupacion(0);">
+						<span class="lbl"> Individual</span>
+					</label>
+				</div>
+			</div>
+		</td>
+		<th>Aplicar Como:</th>
+		<td>
+			<div class="control-group">
+				<div class="controls">
+					<label>
+						<input name="como-radio" type="radio" class="ace como-radio" onclick="javascript:aplicarComo(1);">
+						<span class="lbl"> Porcentaje </span>
+					</label>
+					<label>
+						<input name="como-radio" type="radio" class="ace como-radio" onclick="javascript:aplicarComo(0);">
+						<span class="lbl"> Monto </span>
+					</label>
+				</div>
+			</div>
+		</td>
+	</tr>
+</table>
+		{# <div class="widget-body">
+		<div class="widget-main no-padding">
+		<div class="content">
+			<div id="table_report_wrapper" class="dataTables_wrapper"> #}
+				<table  class='table table-bordered table-condensed table-hover'>
+					<thead>
+						<th width="20%">Código</th>
+						<th>Nombre</th>
+						<th>Cantidad</th>
+						<th>Valor</th>
+						<th>Total</th>
+					</thead>
+					<tbody>
+						{% set count = 1 %}
+						{% set total = 0 %}
+						{% for prestacion in listaPrestaciones %}
+						{% set monto = 'monto_' ~ count%}
+						{% set porcentaje = 'porcentaje_' ~ count%}
+						{% set classTotalFila = 'total_' ~ prestacion[0] %}
+						{% set totalFila = prestacion[6] %}
+						<tr class="todoDetallePrestacionesArticulos" id-tipo={{prestacion[3]}} id-item={{prestacion[0]}}>
+							<td>{{prestacion[4]}}
+							</td>
+							<td>{{prestacion[5]}}
+							</td>
+							<td>{{prestacion[1]}}
+							</td>
+							<td><div style="text-align:right">$ {{prestacion[2]}}</div>
+							</td>
+							<td class="{{ classTotalFila }}"><div style="text-align:right">$ <span class="monto">{{ prestacion[6]|number_format('0', '.',',') }}</span></div>
+								{% set classMontoTotalFila = 'montoTotalFila_' ~ prestacion[6] %}
+								<div class="clearfix"></div>
+								<div align="right" class="divInput">
+									<div class="inputPorcentajeIn hide {{ classMontoTotalFila }}">
+										<div class="knob-container inline">
+											<div style="display:inline;">
+												<span class="input-icon input-icon-right">
+												 {{ form_widget(diferencia_form[porcentaje], {'attr':{'class':'disableDiferencia disableDiferenciaInput DiferenciaInputPorcentajeIn DiferenciaInputPorcentaje input-small knob', 'data-step':'10', 'data-width':'64', 'data-height':'64', 'data-thickness':'.2' } }) }}
+												 <span style=" font-size: small; position: absolute; left: 46px; top: 22px " class="grey"><b>%</b></span>
+											 </span>
+										 </div>
+									 </div>
+								 </div>
+								 <div class="inputMontoIn hide {{ classMontoTotalFila }}">
+									 <span class="input-icon">
+										 <i class="icon-usd"></i>
+										 {{ form_widget(diferencia_form[monto], {'attr':{ 'class':'disableDiferencia disableDiferenciaInput DiferenciaMontoIn DiferenciaInputMontoIn input-small'} }) }}
+									 </span>
+								 </div>
+							 </div>
+						 </td>
+					 </tr>
+					 {% set total = total + prestacion[6] %}
+					 {% set count = count + 1 %}
+					 {% endfor %}
+				 </tbody>
+				 <tr >
+					<th colspan="4">
+						<div style="text-align:right">Sub-Total</div>
+
+					</th>
+					<td >
+						<div style="text-align:right" >$ <span id="subTotal">{{total|number_format('0', '.',',')}}</span> </div>
+					</td>
+				</tr>
+				<tr class="hide aplicarDiferenciaTotal" style=" background-color: #F2F5A9">
+					<th colspan="4">
+						<div style="text-align:right">Monto Generado en Diferencia</div>
+					</th>
+					<td >
+						<div style="text-align:right" >$ <span id="diferenciaTotalGenerada" ></span></div>
+					</td>
+				</tr>
+				<tr class="hide aplicarDiferenciaTotal" style=" background-color: #E0E0F8">
+					<th colspan="4">
+						<div style="text-align:right">Total Aplicando Diferencia</div>
+					</th>
+					<td >
+						<div style="text-align:right">$ <span id="TotalConDiferenciaGenerada"></span> </div>
+					</td>
+				</tr>
+
+				<tr id="inputDiferenciaGrupal" class="hide">
+					<th valign="middle">
+						<b>
+							<div class="inputPorcentajeGr hide">
+								{{ form_label(diferencia_form.porcentajeGrupal)}}
+								<span class="help-button helpInputPorcentajeGr" data-rel="popover">?</span>
+							</div>
+							<div class="inputMontoGr hide">
+								{{ form_label(diferencia_form.montoGrupal)}}
+							</div>
+						</b>
+					</th>
+					<td colspan="5" style="padding: 10px 0 0 30px" valign="middle" >
+
+						<div class="inputPorcentajeGr divInput hide">
+							<div class="knob-container inline">
+								<div style="display:inline">
+									<span class="input-icon input-icon-right">
+									 {% set grupal = 'g'%}
+									 {{ form_widget(diferencia_form.porcentajeGrupal, {'attr':{'class':'disableDiferencia disableDiferenciaInput DiferenciaInputPorcentaje DiferenciaInputPorcentajeGr input-small knob', 'data-step':'10', 'data-width':'80', 'data-height':'80', 'data-thickness':'.2'} }) }}
+
+									 <span style=" font-size: medium; position: absolute; left: 53px; top: 28px " class="grey"><b>%</b></span>
+								 </span>
+							 </div>
+						 </div>
+					 </div>
+					 <div class="inputMontoGr divInput hide">
+						 <span class="input-icon">
+							 <i class="icon-usd"></i>
+							 {{ form_widget(diferencia_form.montoGrupal, {'attr':{ 'class':'disableDiferencia disableDiferenciaInput DiferenciaMontoGr DiferenciaInputMontoGr input-small'} }) }}
+						 </span>
+					 </div>
+				 </td>
+			 </tr>
+		 </table>
+		 {{ form_errors(diferencia_form) }}
+		 <div class="hide">
+		 	{{ form_rest(diferencia_form) }}
+		</div>
+	 </form>
+	 <div class="btn-group pull-right" style="padding: 65px  0 15px 0">
+		<button id="btn-volver-solicitada" class="btn btn-success hide hidden" type="button"  onclick="javascript:$(this).closest('.modal').modal('hide');">
+			<i class='icon-ok'></i>Volver a Caja con Diferecia Aplicada
+		</button>
+		<button id="btn-volver-rechazada" class="btn hide hidden" type="button"  onclick="javascript:$(this).closest('.modal').modal('hide');">
+			<i class='icon-ok'></i>Volver a Caja
+		</button>
+		<button id="btn-diferencia-solicitar" class="btn btn-success diferenciaPostSolicitud" type="button" >
+			<i id="id-icon-diferencia" class='icon-sort'></i>Generar Diferencia
+		</button>
+			{# <button id="btn-cancelar-operacion-desde-diferencia" class="btn btn-danger" type="button" onclick="javascript:abortarMisionDiferencia();">
+				<i class='icon-arrow-left'></i> Cancelar Operación
+			</button>
+			#}
+			<button id="btn-cancelar-desde-diferencia" class="btn diferenciaPostSolicitud" type="button" onclick="javascript:$(this).closest('.modal').modal('hide');">
+				<i class='icon-arrow-left'></i> Cancelar
+			</button>
+
+		</div>
+	</div>
+	{% endblock %}
+	{% block scripts %}
+
+	<script type="text/javascript" src="{{ asset('js/uncompressed/Caja/Events-Diferencias.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('js/jquery.knob.min.js') }}"></script>
+	<script type='text/javascript'>
+		$('[data-rel=popover]').popover({
+			trigger:'click',
+			content:'A Favor: Aumenta monto que debe cancelar Paciente. <br/> En Contra: Disminuye el Monto que debe Pagar Paciente.',
+			title:'Ayuda',
+			html:true
+		});
+
+		$('.helpInputPorcentajeGr').popover({
+			title: "Diferencia por Porcentaje",
+			trigger:'click',
+			content:'Puede Modificar mediante SCROLL de Mouse o Ingresando Cantidad de POrcentaje deseado<br/>para APlicar la Diferencia.',
+			html:true,
+			placement:'top'
+		}).show();
+
+		setTimeout(function() {
+
+		   $(".knob").knob();
+		   $('#rebsol_hermesbundle_DiferenciaType_motivoDiferencia').prop('disabled', 'disabled');
+		   $("#rebsol_hermesbundle_DiferenciaType_motivoDiferencia").chosen({width: "215px",
+			  allow_single_deselect: true, no_results_text: "No se ha encontrado Motivo"
+		  });
+		   $("#rebsol_hermesbundle_DiferenciaType_tipoDiferencia").chosen({width: "215px",
+			allow_single_deselect: true, no_results_text: "No se ha encontrado Tipo"
+		});
+		   $(".agrupacion-radio, .como-radio").attr('disabled',true);
+	   }, 500);
+
+
+	</script>
+
+	{% endblock %}

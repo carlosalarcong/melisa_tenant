@@ -1,0 +1,44 @@
+Caja_Supervisor:
+  path:  /Inicio
+  defaults: { _controller: RecaudacionBundle:_Default/Supervisor/Supervisor:index }
+
+Rutas_Caja_Supervisor_UbicacionCaja:
+  resource: "@RecaudacionBundle/Resources/config/routing/_Default/Servet/Supervisor/UbicacionCaja/ubicacionCaja.yml"
+  prefix: /UbicacionCaja
+
+Rutas_Caja_Supervisor_UbicacionCajero:
+  resource: "@RecaudacionBundle/Resources/config/routing/_Default/Servet/Supervisor/UbicacionCajero/ubicacionCajero.yml"
+  prefix: /UbicacionCajero
+
+Rutas_Caja_Supervisor_CorrelativoBoletas:
+  resource: "@RecaudacionBundle/Resources/config/routing/_Default/Servet/Supervisor/CorrelativoBoletas/correlativoBoletas.yml"
+  prefix: /CorrelativoBoletas
+
+Rutas_Caja_Supervisor_AutorizacionDescuentos:
+  resource: "@RecaudacionBundle/Resources/config/routing/_Default/Servet/Supervisor/AutorizacionDescuentos/autorizacionDescuentos.yml"
+  prefix: /AutorizacionDescuentos
+
+Rutas_Caja_Supervisor_ConsolidadoCaja:
+  resource: "@RecaudacionBundle/Resources/config/routing/_Default/Servet/Supervisor/ConsolidadoCaja/consolidadoCaja.yml"
+  prefix: /ConsolidadoCaja
+
+Rutas_Caja_Supervisor_MantenedorFolios:
+  resource: "@RecaudacionBundle/Resources/config/routing/_Default/Servet/Supervisor/MantenedorFolios/mantenedorFolios.yml"
+  prefix: /MantenedorFolios
+
+Rutas_Caja_Supervisor_AsientoContable:
+  resource: "@RecaudacionBundle/Resources/config/routing/_Default/Servet/Supervisor/AsientoContable/asientoContable.yml"
+  prefix: /AsientoContable
+
+#Rutas_Caja_Supervisor_PepleSoft:
+#  resource: "@RecaudacionBundle/Resources/config/routing/_Default/Servet/Supervisor/PeopleSoft/peopleSoft.yml"
+#  prefix: /PeopleSoft
+
+Rutas_Caja_Supervisor_ReporteProduccion:
+  resource: "@RecaudacionBundle/Resources/config/routing/_Default/Servet/Supervisor/ReporteProduccion/reporteProduccion.yml"
+  prefix: /ReporteProduccion
+
+
+Rutas_Caja_Supervisor_ApoyoFacturacion:
+  resource: "@RecaudacionBundle/Resources/config/routing/_Default/Servet/Supervisor/ApoyoFacturacion/apoyoFacturacion.yml"
+  prefix: /ApoyoFacturacion

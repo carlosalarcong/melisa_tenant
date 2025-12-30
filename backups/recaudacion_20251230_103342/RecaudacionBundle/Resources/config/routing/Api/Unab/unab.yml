@@ -1,0 +1,7 @@
+#Caja_Recaudacion_Inicio_Unab:
+#    path:   /Recaudacion/Inicio
+#    defaults: { _controller: CajaBundle:Api/Caja/Recaudacion/Recaudacion:recaudacionIndex }
+
+Rutas_Caja_Pago_Cuenta_Api_Unab:
+    resource: "@RecaudacionBundle/Resources/config/routing/Api/Unab/PagoCuenta/pagoCuenta.yml"
+    prefix: /PagoCuenta

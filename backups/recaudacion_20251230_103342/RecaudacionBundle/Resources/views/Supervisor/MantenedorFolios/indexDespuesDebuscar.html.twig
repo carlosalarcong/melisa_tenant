@@ -1,0 +1,79 @@
+<table id="table_report" class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+        <th>Pila</th>
+        <th>Sub-Empresa</th>
+        <th>Sucursal</th>
+        <th>Ubicación</th>
+        <th>Estado</th>
+        <th>Número Inicio</th>
+        <th>Número Término</th>
+        <th class="sorting_disabled"></th>
+    </tr>
+    </thead>
+    <tbody>
+
+    {% for talonario in oTalonario %}
+
+        <tr>
+            <td>
+                {{ talonario.numeroPila }}
+            </td>
+            <td>
+                {{ talonario.idSubempresa.nombre }}
+            </td>
+            <td>
+                {{ talonario.idSucursal.nombreSucursal }}
+            </td>
+            <td>
+
+            <td>
+                {% if talonario.idUbicacionCaja.nombre is defined %}
+
+                    {{ talonario.idUbicacionCaja.nombre }}
+
+                {% else %}
+                    Talonario Global
+
+                {% endif %}
+            </td>
+
+{#             {{ talonario.idUbicacionCaja.nombre }} #}
+            </td>
+            <td>
+                {{ talonario.idEstado.NombreEstado }}
+            </td>
+            <td>
+                {{ talonario.numeroInicio }}
+            </td>
+            <td>
+                {{ talonario.numeroTermino }}
+            </td>
+            <td class="span2">
+                <div class="btn-group">
+                    <a class="btn btn-mini btn-info show" title="Ver Detalle"
+                       href="{{ path('Caja_Supervisor_MantenedorFolios_VerDetalle', {'idTipoDocumento': talonario.id}) }}">
+                        <i class="icon-eye-open"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<script type="text/javascript">
+    quitarbarra();
+    quitarSelect();
+    // crearDataTable('#table_report');
+    $('#table_report').dataTable({
+        "oLanguage": {
+            "sUrl": "{{ asset('js/datatables/dataTables.es.txt') }}"
+        }
+    });
+    $('.verSolicitudesPendientes').on('click', function (e) {
+        e.preventDefault();
+        var idPaciente = $(this).data('idpaciente');
+        mostrarSolicitudesdPaciente(idPaciente);
+    });
+
+</script>

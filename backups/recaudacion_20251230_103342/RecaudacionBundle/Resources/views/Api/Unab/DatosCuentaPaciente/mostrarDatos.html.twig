@@ -1,0 +1,257 @@
+<style type="text/css">
+	.modificar-bootbox {
+		left: 19.3%;
+		width: 98%;
+	}
+	.modificar-bootbox.fade.in {
+		top: 1%;
+	}
+	.body-hidden {
+		overflow: hidden;
+	}
+	.color-blue-head {
+		background-color: #307ECC;
+		color: #FFF;
+		font-size: 14px;
+		line-height: 38px;
+		padding-left: 12px;
+		padding-right: 12px;
+		margin-bottom: 1px;
+	}
+</style>
+{% import 'RecaudacionBundle:UI/Macros:WidgetsCaja.html.twig' as WidgetCaja %}
+<div class="table-header-grey" style="text-align:left;">
+	<i class="icon-usd text-left space"></i> Pago - Cuenta Paciente
+</div>
+<table id="mostrar-datos-cuenta-pago-paciente" class="table table-bordered table-condensed table-hover">
+	<thead>
+		<tr>
+			<th>N°</th>
+			<th>Fecha Admisión</th>
+			<th>Total Cuenta</th>
+			<th>Saldo Cuenta</th>
+			<th>Estado Pago</th>
+			<th>Tutor</th>
+			<th> </th>
+		</tr>
+	</thead>
+	<tbody id="div-mostrar-cuenta-pago">
+		{% for  cuentaPago in datosCuentaPagoPaciente %}
+			<tr>
+				<td>{{ cuentaPago.idDatoIngreso }}</td>
+				<td>
+					{{ cuentaPago.fechaIngreso|hermes_datetime_format() }}
+				</td>
+				<td>{{ obtenerMonto(cuentaPago.totalCuenta) }}</td>
+				<td>{{ obtenerMonto(cuentaPago.saldoCuenta) }}</td>
+				<td>{{ cuentaPago.nombreEstadoCuentaPaciente }}</td>
+				<td>
+					{% if cuentaPago.nombreTutor is not null %}
+						[<b>{{ cuentaPago.rutTutor }}</b>] {{ cuentaPago.nombreTutor }} {{ cuentaPago.apellidoPaternoTutor }} {{ cuentaPago.apellidoMaternoTutor }}
+					{% else %}
+						Sin Tutor	
+					{% endif %}
+				 </td>
+				<td  style="text-align: center;">
+					{% set codicionesdePago %}
+					{% set estadoAnulado          = (cuentaPago.idEstadoCuentaPaciente != hermesObtenerParametro('EstadoCuenta.anulado')) %}
+					{% set estadoCerradaPagada    = (cuentaPago.idEstadoCuentaPaciente != hermesObtenerParametro('EstadoCuenta.cerradaPagada')) %}
+					{% set estadoCerraPagadaTotal = (cuentaPago.idEstadoCuentaPaciente != hermesObtenerParametro('EstadoCuenta.cerradaPagadaTotal')) %}
+					{% if estadoAnulado and estadoCerradaPagada and estadoCerraPagadaTotal %}
+						{{ '' }}
+					{% else %}
+						{{ 'hidden' }}
+					{% endif %}
+				{% endset %}
+				{% if cuentaPago.saldoCuenta is  not null %}
+					{% set saldoCuenta = cuentaPago.saldoCuenta %}
+				{% else %}
+					{% set saldoCuenta = 0 %}
+				{% endif %}
+				{% set datosAdicionalesCuenta =  {
+				'idDatoIngreso': cuentaPago.idDatoIngreso,
+				'idCuentaPaciente': cuentaPago.idCuentaPaciente,
+				'idPaciente': cuentaPago.idPaciente,
+				'fechaEstadoCuentaLog': cuentaPago.fechaEstadoCuentaLog|hermes_datetime_format(),
+				'nombreEstadoCuentaPaciente': cuentaPago.nombreEstadoCuentaPaciente,
+				'totalCuenta': cuentaPago.totalCuenta,
+				'saldoCuenta': saldoCuenta,
+				'idPagoCuenta': cuentaPago.idPagoCuenta,
+				'nombreTipoCuenta': cuentaPago.nombreTipoCuenta,
+				'totalCuentaPaquetizado': cuentaPago.totalCuentaPaquetizado,
+				'idTipoCuenta': cuentaPago.idTipoCuenta,
+				'esTutor': false,
+				} %}
+				<input id="datos-adicionales" type="hidden" value="{{ datosAdicionalesCuenta|json_encode }}">
+				<a id="btn-pre-pagar" class="btn-pre-pagar btn btn-mini btn-success  pagar-cuenta-pago {{ codicionesdePago|trim }}"> Realizar Pago </a>
+			</td>
+		</tr>
+	{% endfor %}
+</tbody>
+</table>
+
+{% if datosCuentaPagoPacienteTutor  is not empty %}
+<div class="table-header-grey" style="text-align:left;">
+	<i class="icon-usd text-left space"></i> Pago - Cuenta Tutor
+</div>
+<table id="mostrar-datos-cuenta-pago-paciente-tutor" class="table table-bordered table-condensed table-hover">
+	<thead>
+		<tr>
+			<th>N°</th>
+			<th>Fecha Admisión</th>
+			<th>Nombre Paciente</th>
+			<th>Rut Paciente/N° Identificación</th>
+			<th>Total Cuenta</th>
+			<th>Saldo Cuenta</th>
+			<th>Estado Pago</th>
+			<th> </th>
+		</tr>
+	</thead>
+	<tbody id="div-mostrar-cuenta-pago">
+		{% for  cuentaPago in datosCuentaPagoPacienteTutor %}
+			<tr>
+				<td>{{ cuentaPago.idDatoIngreso }}</td>
+				<td>{{ cuentaPago.fechaIngreso|hermes_datetime_format() }}</td>
+				<td>{{ cuentaPago.nombrePnatural}} {{ cuentaPago.apellidoPaterno}} {{ cuentaPago.apellidoMaterno}}</td>
+				<td>{{ cuentaPago.rutPaciente}}</td>
+				<td>{{ obtenerMonto(cuentaPago.totalCuenta) }}</td>
+				<td>{{ obtenerMonto(cuentaPago.saldoCuenta) }}</td>
+				<td>{{ cuentaPago.nombreEstadoCuentaPaciente }}</td>
+				<td  style="text-align: center;">
+					{% set codicionesdePago %}
+					{% set estadoAnulado          = (cuentaPago.idEstadoCuentaPaciente != hermesObtenerParametro('EstadoCuenta.anulado')) %}
+					{% set estadoCerradaPagada    = (cuentaPago.idEstadoCuentaPaciente != hermesObtenerParametro('EstadoCuenta.cerradaPagada')) %}
+					{% set estadoCerraPagadaTotal = (cuentaPago.idEstadoCuentaPaciente != hermesObtenerParametro('EstadoCuenta.cerradaPagadaTotal')) %}
+					{% if estadoAnulado and estadoCerradaPagada and estadoCerraPagadaTotal %}
+						{{ '' }}
+					{% else %}
+						{{ 'hidden' }}
+					{% endif %}
+				{% endset %}
+				{% if cuentaPago.saldoCuenta is  not null %}
+					{% set saldoCuenta = cuentaPago.saldoCuenta %}
+				{% else %}
+					{% set saldoCuenta = 0 %}
+				{% endif %}
+				{% set datosAdicionalesCuenta =  {
+				'idDatoIngreso': cuentaPago.idDatoIngreso,
+				'idCuentaPaciente': cuentaPago.idCuentaPaciente,
+				'idPaciente': cuentaPago.idPaciente,
+				'fechaEstadoCuentaLog': cuentaPago.fechaEstadoCuentaLog|hermes_datetime_format(),
+				'nombreEstadoCuentaPaciente': cuentaPago.nombreEstadoCuentaPaciente,
+				'totalCuenta': cuentaPago.totalCuenta,
+				'saldoCuenta': saldoCuenta,
+				'idPagoCuenta': cuentaPago.idPagoCuenta,
+				'rutPaciente': cuentaPago.rutPaciente,
+				'nombrePnatural': cuentaPago.nombrePnatural,
+				'apellidoPaterno': cuentaPago.apellidoPaterno,
+				'apellidoMaterno': cuentaPago.apellidoMaterno,
+				'fechaNacimiento': cuentaPago.fechaNacimiento|date('d-m-Y'),
+				'esTutor': true,
+				} %}
+				<input id="datos-adicionales" type="hidden" value="{{ datosAdicionalesCuenta|json_encode }}">
+				<a id="btn-pre-pagar" class="btn-pre-pagar btn btn-mini btn-success  pagar-cuenta-pago {{ codicionesdePago|trim }}"> Realizar Pago </a>
+			</td>
+		</tr>
+	{% endfor %}
+</tbody>
+</table>
+{% endif %}
+
+<div id="adicional-informacion" class="hide">
+<div class="table-header-grey color-blue-head" style="text-align:left;">
+	<i class="icon-usd  icon-large text-left space"></i>&nbsp;Información de Pago
+</div>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-condensed  grey">
+	<tbody>
+		<tr>
+			<th width="25%" style=" background-color: whitesmoke "> N° de Admisión: </th>
+			<td width="25%">
+				<span id="agregar-numero-admision"></span>
+			</td>
+			<th width="25%" style=" background-color: whitesmoke "> Fecha: </th>
+			<td width="25%">
+				<span id="agregar-fecha-cuenta"></span>
+			</td>
+		</tr>
+		<tr>
+			<th width="25%" style=" background-color: whitesmoke "> Estado de Cuenta: </th>
+			<td width="25%">
+				<span id="agregar-estado-cuenta"></span>
+			</td>
+			<th width="25%" style=" background-color: whitesmoke "> Total Cuenta: </th>
+			<td width="25%">
+				<span id="agregar-total-cuenta">
+					{{ obtenerMonto(0) }}
+				</span>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<div class="clearfix " > </div>
+<div class="table-header-grey color-blue-head" style="text-align:left;">
+	<i class="icon-usd"></i>&nbsp;Resguardo Financiero
+</div>
+<div id="insertar-resguardo-financiero">  </div>
+<div class="clearfix " > </div>
+
+<div class="clearfix " > </div>
+<div class="table-header-grey color-blue-head" style="text-align:left;">
+	<i class="icon-usd"></i>&nbsp;Servicio Paquetizado
+</div>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-condensed  grey">
+		<tbody>
+		<tr>
+			<th width="25%" style=" background-color: whitesmoke "> Paquete: </th>
+			<td width="25%">
+				<span id="agregar-paquete"></span>
+			</td>
+			<th width="25%" style=" background-color: whitesmoke "> Monto del Paquete: </th>
+			<td width="25%">
+				<span id="agregar-monto-paquete">
+					{{ obtenerMonto(0) }}
+				</span>
+			</td>
+		</tr>
+		</tbody>
+	</table>
+
+<div id="prestaciones" >
+	<div class="table-header-grey color-blue-head" style="text-align:left;">
+		<i class="icon-align-justify  icon-large text-left space"> </i> Listado Servicios Pago <b><span id="tituloTratamientoListadoServicio"></span></b>
+		<div id="btneditListaPrestacionesDiv" class="btn-group pull-right  btn-edit-lista-prestaciones hide">
+			<button title="Editar" id="btneditListaPrestaciones" class="btn btn-small btn-warning  btn-edit-lista-prestaciones  hide ocultarDiv" type="button"><i class='icon-edit icon-large'></i>Editar</button>
+		</div>
+	</div>
+	<table id='tablePrestacionHeader' class='table table-bordered table-condensed table-hover'>
+		<thead>
+		<th>Código</th>
+		<th>Pabellón</th>
+		<th>Nombre</th>
+		<th>Cantidad</th>
+		<th>Valor</th>
+		<th>Total</th>
+		<th width="30"></th>
+		</thead>
+		<tbody id="prestacionesTable">
+		</tbody>
+	</table>
+</div>
+<div id="datosprestador" >
+</div>
+
+<div class="clearfix" > </div>
+<input type="hidden" id="input-id-dato-ingreso"> </input>
+<input type="hidden" id="input-monto"> </input>
+</div>
+
+<script type="text/javascript">
+	var URL_DATATABLES = "{{ asset('js/datatables/dataTables.es.txt') }}";
+</script>
+
+{% javascripts '@RecaudacionBundle/Resources/public/js/_default/pago.cuenta/pago.cuenta.js' %}
+<script type="text/javascript" src="{{ asset_url }}">
+</script>
+
+
+{% endjavascripts %}

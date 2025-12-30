@@ -1,0 +1,31 @@
+#_Caja_Supervisor_UbicacionCaja:
+#    path:  /
+#    defaults: { _controller: RecaudacionBundle:_Default/Supervisor/UbicacionCaja/UbicacionCaja:index }
+
+Caja_Supervisor_UbicacionCaja:
+    path:  /listado
+    defaults: { _controller: RecaudacionBundle:_Default/Supervisor/UbicacionCaja/UbicacionCaja:index }
+
+Caja_Supervisor_UbicacionCaja_show:
+    path:  /{id}/ver
+    defaults: { _controller: RecaudacionBundle:_Default/Supervisor/UbicacionCaja/UbicacionCajaVer:ver }
+
+Caja_Supervisor_UbicacionCaja_new:
+    path:  /nuevo
+    defaults: { _controller: RecaudacionBundle:_Default/Supervisor/UbicacionCaja/UbicacionCajaNuevo:nuevo }
+
+Caja_Supervisor_UbicacionCaja_create:
+    path:  /crear
+    defaults: { _controller: RecaudacionBundle:_Default/Supervisor/UbicacionCaja/UbicacionCajaNuevo:crear }
+
+Caja_Supervisor_UbicacionCaja_edit:
+    path:  /{id}/editar
+    defaults: { _controller: RecaudacionBundle:_Default/Supervisor/UbicacionCaja/UbicacionCajaEditar:editar }
+
+Caja_Supervisor_UbicacionCaja_update:
+    path:  /{id}/actualizar
+    defaults: { _controller: RecaudacionBundle:_Default/Supervisor/UbicacionCaja/UbicacionCajaEditar:actualizar }
+
+Caja_Supervisor_UbicacionCaja_delete:
+    path:  /{id}/eliminar
+    defaults: { _controller: RecaudacionBundle:_Default/Supervisor/UbicacionCaja/UbicacionCajaEliminar:eliminar }

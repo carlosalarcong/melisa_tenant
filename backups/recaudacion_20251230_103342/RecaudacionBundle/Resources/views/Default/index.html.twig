@@ -1,0 +1,83 @@
+{% extends 'RecaudacionBundle::Recaudacion/sublayout.html.twig' %}
+{% import 'RecaudacionBundle:UI/Macros:WidgetsCaja.html.twig' as WidgetCaja %}
+{% block css %}
+    <link rel="stylesheet" href="{{ asset('css/tipped/tipped.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/chosen.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/datepicker.css') }}">
+{% endblock %}
+{% block Caja %}<li class="active">Recaudación</li>{% endblock %}
+{% block body %}
+    {% include 'RecaudacionBundle:Recaudacion:index.html.twig' %}
+{% endblock %}
+{% block scripts %}
+    <script type="text/javascript" src="{{ asset('js/uncompressed/Caja/jquery.dataTables.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/jquery.dataTables.bootstrap.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/fuelux/fuelux.spinner.min.js') }}"></script>
+    <script src="{{ asset('js/chosen.jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
+    <script type="text/javascript"  src="{{ asset('js/tipped/spinners.min.js') }}"></script>
+    <script type="text/javascript"  src="{{ asset('js/tipped/tipped.js') }}"></script>
+    <script type="text/javascript"  src="{{ asset('js/chosen.jquery.min.js') }}"></script>
+    <script type="text/javascript"  src="{{ asset('js/ace.min.js') }}"></script>
+    <script type="text/javascript"  src="{{ asset('js/uncompressed/bootbox.js') }}"></script>
+    <script src="{{ asset('js/bootstrap-datepicker.min.js') }}"></script>
+    <script src="{{ asset('js/date-time/locales/bootstrap-datepicker.es.js') }}" charset="UTF-8"></script>
+    {{ WidgetCaja.resources() }}
+    {{ WidgetCaja.Diferencia() }}
+    {% if caja%}
+        <script type='text/javascript'>
+            let verificaRutDocumentoExtranjeroexiste = 0;
+            let habilitarPaisExtranjero      = {{ habilitarPaisExtranjero }};
+            const idSucursal = {{ idSucursal }};
+            let cajaAgenda = 1;
+            let editTratamiento = 0;
+            let esTratamiento = 0;
+            let esTratamientoAgenda = 0;
+            let esDiferencia = 0;
+            let tratamiento = 1;
+            let TipoAtencion = $.trim("{{ tipoAtencion }}");
+            let habilitaRestriccionesDePago = {{ habilitaRestriccionesDePago }};
+            let garantia  = 0;
+            let esDiferenciaSaldo = 0;
+            let idCaja = $.trim("{{ caja.id }}");
+            let idDerivadoExterno = null;
+            let garantiaAuxPrestacion        = 0;
+            $("#limpiar, #limpiaradv,  .text-error, .ocultarDiv").hide();
+            $(document).on('ready', function() {
+
+                setTimeout(function() { $('#buscarPaciente_identificacion').focus() }, 1000);
+                $("#limpiar, #limpiaradv,  .text-error, .ocultarDiv").removeClass('hide');
+                loadScriptvalidakeyup();
+                loadScriptEventosDivBusqueda();
+                loadScriptBusquedaRutDv();
+                loadScriptEventosDivBusquedaMacro();
+                loadScriptBusquedaAvanzada();
+                GestionCaja_CajaSinCerrar();
+                GestionCaja_InformesCaja();
+                anulacionAjax();
+                $(".btn-gestionCaja-AbrirCerrar, .dropdown").show();
+
+                $('#tipoIdentificacionExtranjero_documento').chosen({
+                    max_selected_options: 3,
+                    display_selected_options: true,
+                });
+                // $('#tipoIdentificacionExtranjero_documento_chzn').style('width', '220px', 'important');
+                // $('#tipoIdentificacionExtranjero_documento_chzn').style('margin', '6px', 'auto');
+            });
+        </script>
+    {% endif %}
+
+    <style type="text/css">
+        .imedFace {
+            display:block;
+            -webkit-transform: rotate(90deg);
+            -moz-transform: rotate(90deg);
+            filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+            font-family:  initial;
+            font-weight: 200;
+            color: #FFF;
+        }
+    </style>
+    {{ macroDependencias.datetime() }}
+{% endblock %}

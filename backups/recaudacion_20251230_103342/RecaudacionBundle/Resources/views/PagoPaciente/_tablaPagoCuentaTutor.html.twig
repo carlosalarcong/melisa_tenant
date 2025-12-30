@@ -1,0 +1,103 @@
+<div class="table-header-grey" style="text-align:left;">
+    <i class="icon-usd text-left space"></i> Pago - Cuenta Tutor
+</div>
+<table id="mostrar-datos-cuenta-pago-paciente-tutor" class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+        <th>N°</th>
+        <th>Fecha Admisión</th>
+        <th>Nombre Paciente</th>
+        <th>Rut Paciente/N° Identificación</th>
+        <th>Total Cuenta</th>
+        <th>Saldo Cuenta</th>
+        <th>Estado Pago</th>
+        <th> </th>
+        <th> </th>
+        <th> </th>
+    </tr>
+    </thead>
+    {% set idPnaturalTutor = null %}
+    <tbody id="div-mostrar-cuenta-pago">
+    {% if datosCuentaPagoPacienteTutor is defined and datosCuentaPagoPacienteTutor is not null %}
+        {% for cuentaPago in datosCuentaPagoPacienteTutor %}
+            {% if idPnaturalTutor != cuentaPago.idPnaturalTutor %}
+                {% set idPnaturalTutor = cuentaPago.idPnaturalTutor %}
+            {% endif %}
+            <tr>
+                <td>{{ cuentaPago.idDatoIngreso }}</td>
+                <td>{{ cuentaPago.fechaIngreso|hermes_datetime_format() }}</td>
+                <td>{{ cuentaPago.nombrePnatural}} {{ cuentaPago.apellidoPaterno}} {{ cuentaPago.apellidoMaterno}}</td>
+                <td>{{ cuentaPago.rutPaciente}}</td>
+                <td>{{ obtenerMonto(cuentaPago.totalCuenta) }}</td>
+                <td>{{ obtenerMonto(cuentaPago.saldoCuenta) }}</td>
+                <td>{{ cuentaPago.nombreEstadoPago }}</td>
+                <td  style="text-align: center;">
+                    {% set codicionesdePago %}
+                        {% set estadoAnulado          = (cuentaPago.idEstadoCuentaPaciente != hermesObtenerParametro('EstadoCuenta.anulado')) %}
+                        {% set estadoCerradaPagada    = (cuentaPago.idEstadoCuentaPaciente != hermesObtenerParametro('EstadoCuenta.cerradaPagada')) %}
+                        {% set estadoCerraPagadaTotal = (cuentaPago.idEstadoCuentaPaciente != hermesObtenerParametro('EstadoCuenta.cerradaPagadaTotal')) %}
+                        {% if estadoAnulado and estadoCerradaPagada and estadoCerraPagadaTotal %}
+                            {{ '' }}
+                        {% else %}
+                            {{ 'hidden' }}
+                        {% endif %}
+                    {% endset %}
+                    {% if cuentaPago.saldoCuenta is  not null %}
+                        {% set saldoCuenta = cuentaPago.saldoCuenta %}
+                    {% else %}
+                        {% set saldoCuenta = 0 %}
+                    {% endif %}
+                    {% set datosAdicionalesCuenta =  {
+                        'idDatoIngreso': cuentaPago.idDatoIngreso,
+                        'idCuentaPaciente': cuentaPago.idCuentaPaciente,
+                        'idPaciente': cuentaPago.idPaciente,
+                        'fechaEstadoCuentaLog': cuentaPago.fechaEstadoCuentaLog|hermes_datetime_format(),
+                        'nombreEstadoCuentaPaciente': cuentaPago.nombreEstadoCuentaPaciente,
+                        'totalCuenta': cuentaPago.totalCuenta,
+                        'saldoCuenta': saldoCuenta,
+                        'idPagoCuenta': cuentaPago.idPagoCuenta,
+                        'rutPaciente': cuentaPago.rutPaciente,
+                        'nombrePnatural': cuentaPago.nombrePnatural,
+                        'apellidoPaterno': cuentaPago.apellidoPaterno,
+                        'apellidoMaterno': cuentaPago.apellidoMaterno,
+                        'fechaNacimiento': cuentaPago.fechaNacimiento|date('d-m-Y'),
+                        'esTutor': true,
+                    } %}
+                    <input id="datos-adicionales" type="hidden" value="{{ datosAdicionalesCuenta|json_encode }}">
+                    {% if cuentaPago.idEstadoPagoCuenta == hermesObtenerParametro('EstadoPago.pendientePago')%}
+                        <a id="btn-pre-pagar" class="btn-pre-pagar btn btn-mini btn-success  pagar-cuenta-pago {{ codicionesdePago|trim }}"> Realizar Pago </a>
+                    {% else %}
+                        <div class="btn-group">
+                            <a title="Ver Detalle Pago" class="btn btn-mini btn-mini-doc btn-primary Print-Detalle-Pago"
+                               href="{{ path('Caja_PostPago_PrintDetallePago', { 'id':  cuentaPago.idPagoCuenta }) }}"
+                            >
+                                <i class="icon-dollar icon-large"></i>
+                            </a>
+
+                            {% if app.user.tienePerfil('CAJA_ANULAR_PAGO_PAGO_CUENTA_INDIVIDUAL') and cuentaPago.idEstadoPagoCuenta == hermesObtenerParametro('EstadoPago.pagadoNormal') and VarCajaHoy == cuentaPago.idCaja %}
+                                <a title="Anular Pago" class="btn btn-mini btn-danger anular"
+                                   data-id="{{ cuentaPago.idPaciente }}"
+                                   href="{{ path('Caja_PagoCuenta_AnulacionPagoCaja', { 'id':  cuentaPago.idPagoCuenta }) }}">
+                                    <i class="icon-remove icon-large"></i>
+                                </a>
+                            {% else %}
+                                <a class="btn btn-mini btn-light">
+                                    <i class="icon-remove icon-large"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </td>
+                <td>{{ cuentaPago.idPaciente }}  </td>
+                <td>{{ cuentaPago.idEstadoDetalleTalonario }}  </td>
+            </tr>
+        {% endfor %}
+    {% endif %}
+    </tbody>
+</table>
+<div class="clearfix" > </div>
+{% if datosCuentaPagoPacienteTutor is defined and datosCuentaPagoPacienteTutor is not null %}
+<script type="text/javascript">
+    localStorage.setItem('pagoCuenta.idPnaturalTutor', {{ idPnaturalTutor }});
+</script>
+{% endif %}

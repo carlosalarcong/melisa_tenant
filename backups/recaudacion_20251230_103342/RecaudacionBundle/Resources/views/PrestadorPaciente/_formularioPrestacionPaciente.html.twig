@@ -1,0 +1,100 @@
+<div class="hide">{{form_widget(prestacion_form.archivo)}}</div>
+<form id="formPrestaciones" method="post">
+    <div id="formprestador">
+        <div class="table-header-grey" style="text-align:left;">
+            <i class="icon-hospital  icon-large text-left space"></i> Datos Prestación
+        </div>
+        <table width="100%" border="0" cellspacing="10" cellpadding="10"
+               class="table table-bordered table-condensed table-hover grey">
+            <tr>
+                <th width="15%">Financiador</th>
+                    <td width="25%">{{ form_widget(prestacion_form.prevision, {'attr':{ 'class':'PlanSelect'} }) }}</td>
+                <th width="15%">Origen:</th>
+                    <td width="45%">
+                        <div style="float:left" id="origenSelect">{{ form_widget(prestacion_form.origenSelect) }} </div>
+                        <span style="cursor:pointer;" class="btn ocultarDiv" onclick="javascript:limpiarCampo('')">
+                      <i class="icon-eraser"></i></span>
+                    </td>
+            </tr>
+            <tr>
+                <th> Convenio:</th>
+                <td>
+
+                    <div id="ConvenioSelect" class="input-append">
+                        {{ form_widget(prestacion_form.convenio, {'attr':{ 'class':'PlanSelect'} }) }}
+                        <span style="cursor:pointer;" data-tooltip-id="tooltipborrarconvenio"
+                              class="btn LimpiarConvenioSelect  tooltip-from-element ocultarDiv">
+				  <i class="icon-eraser"></i></span>
+                    </div>
+                </td>
+
+                <th rowspan="2">Derivado por:</th>
+                <td rowspan="2">
+                    <div style="float:left"
+                         class="derivadoSelect">{{ form_widget(prestacion_form.derivadoSelect) }} </div>
+                    <div style="float:left" class="derivadoSelect"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+                    <span style="float:left" class="ExternoField"><b>Derivado Externo: </b>&nbsp;&nbsp;</span>
+                    <div style="float:left" class="ExternoField">{{ form_widget(prestacion_form.derivadoCheck) }} </div>
+                    <div class="clearfix"></div>
+                    <table class="derivadoExterno hide ocultarDiv table table-bordered table-condensed table-hover grey"
+                           width="100%">
+                        <tr>
+                            <td>
+                                Rut
+                                :{# <span id="rutExterno" class="hide"></span><span id="textoExterno">Buscar :</span> #}
+                            </td>
+                            <td id="busquedaExternoField">
+                                <div id="alertInputExternosGroupColor" class="input-append control-group">
+							<span class="input-icon input-icon-right">
+								{{ form_widget(prestacion_form.derivadoExternoRut) }}
+							</span>
+                                    <span class="add-on"><i id="iconExternoBuscar"
+                                                            class="icon-question-sign"></i></span>
+                                </div>
+                                <div class="clearfix"></div>
+                                <span class="hide" id="alertInputExternosMensajeNo">No Existen Registros, Ingrese Nombre Completo para Registrar</span>
+                                <span class="hide" id="alertInputExternosMensajeNoValido"> Rut No valido. </span>
+                            </td>
+                        </tr>
+                        <tr id="divExternoBuscar" class="hide">
+                            <td colspan="2">
+                                <div id="resultadoExternosBuscar">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Nombre Completo :
+                            </td>
+                            <td>
+                                {{ form_widget(prestacion_form.derivadoExterno, {'attr':{'disabled':'true', 'class':'span3'} }) }}
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th>Plan:</th>
+                <td>
+                    <div id="selectplan"> {{ form_widget(prestacion_form.plan, {'attr':{ 'class':'PlanSelect planupdate'} }) }}</div>
+
+                    <div class="alertaSinDatos red hide ocultarDiv">
+                        <i class="icon-remove"></i>
+                        No se encontró Planes.
+                        <br>
+                    </div>
+                </td>
+
+            </tr>
+        </table>
+    </div>
+    <div class="hide datosTratamiento">
+        {% include 'RecaudacionBundle:TratamientoPaciente:_formularioCrearTratamientoPaciente.html.twig' %}
+    </div>
+    {% include 'RecaudacionBundle:TratamientoPaciente:_formularioAgregarItemsTratamientoPaciente.html.twig' %}
+    {% include 'RecaudacionBundle:TratamientoPaciente:_formularioProfesionalTratamientoPaciente.html.twig' %}
+    {% include 'RecaudacionBundle:PagoPaciente:_tablaListaServicioPago.html.twig' %}
+    <div class="hide datosTratamiento">
+        {% include 'RecaudacionBundle:TratamientoPaciente:_btnTratamientoPaciente.html.twig' %}
+    </div>
+</form>

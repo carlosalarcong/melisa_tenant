@@ -1,0 +1,254 @@
+<div>
+    <div class="widget-header header-color-grey">
+        <div  style="text-align:left; vertical-align: middle" class="encabezadoDeGlosa"> 
+            <h8> <i class="icon-align-justify icon-large text-left space"></i> Glosa Tratamiento: <b>'{{nombreTratamiento}}'</b></h8> 
+        </div>
+        <div class="widget-toolbar">
+                {#<a href="#" data-action="collapse" >
+                    <i class="icon-chevron-down icon-list-historico"></i>
+                </a>#}
+                <a href="#" id="closeGlosaTratamiento">
+                    <i style=" color:#DDD" class="icon-remove icon-large icon-list-historico"></i>
+                </a>
+            </div>
+        </div>
+        <div class="widget-body">
+            <div class="widget-main no-padding">
+                <div class="content">       
+                    <div id="table_report_wrapper" class="dataTables_wrapper">
+                        <table id="table_report_tratamiento_full" class="table table-bordered table-condensed table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nombre Detalle</th>
+                                    <th>Tratamiento Realizado</th>
+                                    <th>Tratamiento Pagado</th>
+                                </tr>
+                            </thead>
+                            <tbody> 
+                                {% for individual in Tratamiento%}
+                                {% if individual.accionClinica %}
+                                    {% set tipo         = 'AC'%}
+                                    {% set idPrestacionArticulo = individual.idAccionClinica%}
+                                {% endif %}
+                                {% if individual.articulo %}
+                                    {% set tipo         = 'AR'%}
+                                    {% set idPrestacionArticulo = individual.idArticulo%}
+                                {% endif %}
+                                
+                                {% set idDtDoit         = 'check_'~individual.detalleTratamiento %}
+                                    {% set classPagoField   = 'cantidad_'~individual.detalleTratamiento%}
+                                    {% set classAumentar    = 'aumentar_'~individual.detalleTratamiento%}
+                                    {% set classReducir     = 'reducir_'~individual.detalleTratamiento%}
+                                    
+                                    {% set porcentRealizados = (individual.cantidadRealizada / individual.cantidadTotal)*100 %}
+                                        {% set porcentPagados = (individual.cantidadPagada / individual.cantidadTotal)*100 %}
+                                            <tr class="cantidadTratamiento" 
+                                            id-dt="{{individual.detalleTratamiento}}" 
+                                            id-tipo="{{tipo}}" 
+                                            id-acar="{{idPrestacionArticulo}}" 
+                                            id-max="{{individual.maximoPorPagar}}" 
+                                            id-total="{{individual.cantidadTotal}}"
+                                            id-realizada="{{individual.cantidadRealizada}}" 
+                                            id-pagada="{{individual.cantidadPagada}}"
+                                            id-nombre="{{nombreTratamiento}}">
+                                            
+                                            <td width="46%">
+                                                {% if individual.accionClinica %}
+                                                    {{ individual.accionClinica }}
+                                                {% endif %}
+                                                {% if individual.articulo %}
+                                                    {{ individual.articulo }}
+                                                {% endif %}
+                                                {% if individual.cantidadTotal <= individual.cantidadPagada %}
+                                                   <input type="text" class="cambioCantidadTratamiento hidden hide" id="{{individual.detalleTratamiento}}" maxlength="3" value= 0 >
+                                               {% endif %}
+                                           </td>
+                                           
+                                {#<td>
+                                    <h4>{% if individual.cantidadTotal <= individual.cantidadRealizada %}
+                                        <span style=" color:#DDD">
+                                        {% else %}
+                                        <span class="red">    
+                                        {% endif %}
+                                            <b>{{ individual.porcentajeRealizada }} porcentaje de {{porcentRealizados}}</b>
+                                        </span>
+                                    </h4>
+                                </td>#}
+                                
+                                <td width="27%">
+                                    <div>
+                                        <div style="float:left; outline:0px; padding: 2px 60px 10px 2px" class="infobox infobox-blue infobox-small">
+                                            <div class="infobox-progress">
+                                                <div class="easy-pie-chart percentage easyPieChart" data-percent="{{porcentRealizados}}" data-size="50">
+                                                    <span class="percent">{{porcentRealizados|number_format(0, '.', ',')}}</span>
+                                                    %
+                                                </div>
+                                            </div>
+
+                                            <div class="infobox-data">
+                                                <div class="infobox-content">&nbsp;Tratamientos </div>
+                                                {% if porcentRealizados == 100%}
+                                                <div class="infobox-content">&nbsp;Completado&nbsp;{{individual.porcentajeRealizada}}</div>
+                                                {%else%}
+                                                <div class="infobox-content">&nbsp;Realizados&nbsp;{{individual.porcentajeRealizada}}</div>
+                                                {%endif%}
+                                            </div>
+                                        </div>
+                                        
+                                        <div style="float:left" >
+                                            
+                                            {% if individual.cantidadTotal <= individual.cantidadRealizada %}
+                                                <span class="label label-large label-success"><span class="white"><b>COMPLETO</b></span></span>                            
+                                            {% endif %}
+                                            {% if individual.cantidadTotal > individual.cantidadRealizada %}
+                                             
+                                                <label style="zoom: 1.15;">
+                                                    <input type="checkbox" id="{{idDtDoit}}" name="{{idDtDoit}}" class="checkboxTratamiento ace-switch ace-switch-7" value="0" 
+                                                    onclick="javascript:GlosaActivarDesactivarRealizarTratamiento(
+                                                    '{{individual.detalleTratamiento}}', 
+                                                    '{{idDtDoit}}', 
+                                                    '{{individual.maximoPorPagar}}',
+                                                    '{{individual.cantidadPagada}}', 
+                                                    '{{individual.cantidadRealizada}}', 
+                                                    '{{individual.idAccionClinica}}', 
+                                                    '{{individual.esAccionClinica}}',
+                                                    '{{individual.idArticulo}}', 
+                                                    '{{individual.esArticulo}}',
+                                                    '{{individual.detalleTratamiento}}');">
+                                                    <span class="lbl"></span>
+                                                </label>
+                                                <div class="clearfix"></div>
+                                                
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                
+                               {# <td>
+                                    <h4>{% if individual.cantidadTotal <= individual.cantidadPagada%}
+                                        <span style=" color:#DDD">
+                                        {% else %}
+                                        <span class="red">    
+                                        {% endif %}
+                                             <b>{{ individual.porcentajePagada }}</b>
+                                        </span>
+                                    </h4>
+                                </td>#}
+                                <td width="27%">
+                                 <div>
+                                    <div style="float:left; padding: 2px 60px 10px 2px" class="infobox infobox-green infobox-small">
+                                        <div class="infobox-progress">
+                                            <div class="easy-pie-chart percentage easyPieChart" data-percent="{{porcentPagados}}" data-size="50">
+                                                <span class="percent">{{porcentPagados|number_format(0, '.', ',')}}</span>
+                                                %
+                                            </div>
+                                        </div>
+
+                                        <div class="infobox-data">
+                                            <div class="infobox-content">&nbsp;Pagos </div>
+                                            {% if porcentRealizados == 100%}
+                                            <div class="infobox-content">&nbsp;Completado&nbsp;{{individual.porcentajePagada}}</div>
+                                            {%else%}
+                                            <div class="infobox-content">&nbsp;Regularizados&nbsp;{{individual.porcentajePagada}}</div>
+                                            {%endif%}
+                                        </div>
+                                    </div>
+                                    <div style="float:left" >
+                                        {% if individual.cantidadTotal <= individual.cantidadPagada %}
+                                           <span class="label label-large label-success"><span class="white"><b>COMPLETO</b></span></span> 
+                                       {% endif %}
+                                       {% if individual.cantidadTotal > individual.cantidadPagada %}
+                                        <div class="ace-spinner">
+                                            <div class="input-append btn-group btn-group-vertical">
+                                                <div class="ace-spinner">
+                                                    <div class="input-append">
+                                                        <input type="text" class="input-mini spinner-input cambioCantidadTratamiento classCantidadTratamiento {{classPagoField}}" id="{{individual.detalleTratamiento}}" maxlength="3" value=0 style="width: 30px;"
+                                                        onchange="GlosaCambioCantidadPagoTratamiento(
+                                                        this.value, 
+                                                        '{{individual.maximoPorPagar}}', 
+                                                        '{{individual.cantidadPagada}}', 
+                                                        '{{individual.cantidadRealizada}}', 
+                                                        '{{individual.idAccionClinica}}', 
+                                                        '{{individual.esAccionClinica}}',
+                                                        '{{individual.idArticulo}}', 
+                                                        '{{individual.esArticulo}}',
+                                                        '{{individual.detalleTratamiento}}');">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                        
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+</div>
+<br/> 
+</div>
+{% block scripts %}
+    <script>
+        $(document).ready(function(){
+         esTratamiento = 1;
+         {% for individual in Tratamiento%} 
+         
+         var idDetalleTratamiento    = {{individual.detalleTratamiento}};
+         var maximoPorPagar          = {{individual.maximoPorPagar}};
+         var classAumentar           = 'aumentar_'+{{individual.detalleTratamiento}}
+         var classReducir            = 'reducir_'+{{individual.detalleTratamiento}}
+         $(".cantidad_" + idDetalleTratamiento).ace_spinner({
+            value: 0,  
+            maxlength: 3,
+            min: 0, 
+            max: maximoPorPagar, 
+            step: 1, 
+            icon_up: 'icon-plus', 
+            icon_down: 'icon-minus', 
+            btn_up_class: "btn-success up" + classAumentar + "", 
+            btn_down_class: "btn-danger down" + classReducir + ""});
+         
+         {% endfor %} 
+         
+         $('#table_report_tratamiento_full').dataTable( {
+           "oLanguage": {
+            "sUrl": "{{ asset('js/datatables/dataTables.es.txt') }}"
+        }
+    } );
+         
+         $("#closeGlosaTratamiento").on('click', function(e) {
+            esTratamiento = 0;
+            nuevoTratamiento = 0;
+            $('#btn-Carga-DatosTratamiento').addClass("hidden").hide(); 
+            if($("#prestadorresumen").is(":visible")){
+                
+                $(".opcionTratamiento").show();
+            }
+            $('#tratamientoGlosa').slideUp('slow').html("");
+        });
+         $('.easy-pie-chart.percentage').each(function(){
+            var $box = $(this).closest('.infobox');
+            var barColor = $(this).data('color') || (!$box.hasClass('infobox-dark') ? $box.css('color') : 'rgba(255,255,255,0.95)');
+            var trackColor = barColor == 'rgba(255,255,255,0.95)' ? 'rgba(255,255,255,0.25)' : '#E2E2E2';
+            var size = parseInt($(this).data('size')) || 50;
+            $(this).easyPieChart({
+                barColor: barColor,
+                trackColor: trackColor,
+                scaleColor: false,
+                lineCap: 'butt',
+                lineWidth: parseInt(size/10),
+                animate: /msie\s*(8|7|6)/.test(navigator.userAgent.toLowerCase()) ? false : 1000,
+                size: 75
+            });
+        });
+         
+     });
+</script>
+{% endblock %}

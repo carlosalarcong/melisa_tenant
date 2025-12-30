@@ -1,0 +1,151 @@
+{% extends 'RebsolHermesBundle::layout.html.twig' %}
+{% block postcss %}
+<style type="text/css">
+	#sidebar {
+		margin-left: -15px;
+	}
+	#menu-toggler {
+		opacity: 1;
+		margin-top: -38px;
+		height: 33px;
+	}
+	#contenedorMentenedor {
+		margin: 0px;
+		margin-top: -3px;
+		margin-right: -15px;
+		width: calc(100% - 160px);
+		float: right;
+	}
+	@media (max-width: 979px) {
+		#sidebar {
+			margin-left: 0;
+			margin-top: -5px;
+			border: 0;
+		}
+		.breadcrumb {
+			margin-left: 35px;
+		}
+		#contenedorMentenedor {
+			margin: 0px;
+			margin-top: -3px;
+			margin-right: 0px;
+			margin-left: -15px;
+			width: calc( 100% + 30px );
+			float: none;
+		}
+	}
+</style>
+{% endblock %}
+{% block body %}
+{% spaceless %}
+
+{% if esucursal or eTipoDocumento or eUsuariosRebsol is not empty %}
+<br>
+<div class="alert alerta-regulariza-mantenedor">
+	<strong>¡Importante!</strong>
+	No puede ingresar a la aplicación del Supervisor del módulo de Caja, mientras no regularice y/o ingrese datos en los siguientes mantenedores:
+	<br>
+	<br>
+	{% if esucursal %}
+	{{ esucursal }}<br>
+	{% endif %}
+	{% if eTipoDocumento%}
+	{{ eTipoDocumento }}<br>
+	{% endif %}
+	{% if eUsuariosRebsol%}
+	{{ eUsuariosRebsol }}<br>
+	{% endif %}
+</div>
+{% else %}
+<a id="menu-toggler" href="#"></a>
+<div id="sidebar">
+	<script type="text/javascript">
+		try{ace.settings.check('sidebar' , 'fixed')}catch(e){}
+	</script>
+	<ul class="nav nav-list">
+		<li id="UbicacionCaja" class="menuSUpervisor active">
+			<a href="{{ path('Caja_Supervisor_UbicacionCaja') }}">
+				<i class="icon-archive"></i>
+				<span>Ubicación Caja</span>
+			</a>
+		</li>
+		<li id="UbicacionCajero" class="menuSUpervisor">
+			<a href="{{ path('Caja_Supervisor_UbicacionCajero') }}">
+				<i class="icon-archive"></i>
+				<span>Ubicación Cajero</span>
+			</a>
+		</li>
+		<li id="CorrelativoBoletas" class="menuSUpervisor">
+			<a href="{{ path('Caja_Supervisor_CorrelativoBoletas') }}">
+				<i class="icon-archive"></i>
+				<span>Talonario</span>
+			</a>
+		</li>
+
+		<li id="AutorizacionDescuentos" class="menuSUpervisor">
+			<a href="{{ path('Caja_Supervisor_AutorizacionDescuentos') }}">
+				<i class="icon-archive"></i>
+				<span>Autoriz. Diferencias</span>
+			</a>
+		</li>
+
+
+		<li id="ConsolidadoCaja" class="menuSUpervisor">
+			<a href="{{ path('Caja_Supervisor_ConsolidadoCaja') }}">
+				<i class="icon-archive"></i>
+				<span>Consolidado de Caja</span>
+			</a>
+		</li>
+
+
+		{% if coreApi == 1 %}
+			<li id="ConsolidadoCajaPagoProfesional" class="menuSUpervisor">
+				<a href="{{ path('Caja_Supervisor_ConsolidadoCajaPorProfesional_PV') }}" style="height:auto;">
+					<i class="icon-archive"></i>
+					<span>Consolidado de Caja por Profesional</span>
+				</a>
+			</li>
+		{% endif %}
+
+		<li id="MantenedorFolios" class="menuSUpervisor">
+			<a href="{{ path('Caja_Supervisor_MantenedorFolios') }}">
+				<i class="icon-archive"></i>
+				<span>Mantenedor de Folio</span>
+			</a>
+		</li>
+		<li id="AsientoContable" class="menuSUpervisor">
+			<a href="{{ path('Caja_Supervisor_AsientoContable') }}">
+				<i class="icon-archive"></i>
+				<span>Asiento Contable</span>
+			</a>
+		</li>
+
+		<li id="ReporteProduccion" class="menuSUpervisor">
+			<a href="{{ path('Caja_Supervisor_ReporteProduccion') }}">
+				<i class="icon-archive"></i>
+				<span>Reporte Produccion</span>
+			</a>
+		</li>
+
+		<li id="ReporteApoyoFacturacion" class="menuSUpervisor">
+			<a href="{{ path('Caja_Supervisor_ApoyoFacturacion') }}">
+				<i class="icon-archive"></i>
+				<span>Apoyo Facturación</span>
+			</a>
+		</li>
+
+		{% if coreApi == 0 %}
+		<li id="PeopleSoft" class="menuSUpervisor">
+			<a href="{{ path('Caja_Supervisor_PeopleSOft') }}">
+				<i class="icon-archive"></i>
+				<span>People Soft</span>
+			</a>
+		</li>
+		{% endif %}
+	</div>
+	<div id="contenedorMentenedor">
+		{% block contenedorMantenedor %}{% endblock %}
+	</div>
+	{% endif %}
+	{% endspaceless %}
+	{% endblock %}

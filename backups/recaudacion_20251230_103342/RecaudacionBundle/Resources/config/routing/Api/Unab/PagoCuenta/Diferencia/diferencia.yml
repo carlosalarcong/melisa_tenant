@@ -1,0 +1,46 @@
+# DIFERENCIA
+Caja_PagoCuenta_Diferencia_Generar:
+    path:   /GenerarDiferencia
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Diferencia/Diferencia:generarDiferencia }
+
+Caja_PagoCuenta_DiferenciaSaldo_Generar:
+    path:   /GenerarDiferenciaSaldo
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Diferencia/Diferencia:generarDiferenciaSaldo }
+
+# Caja_PagoCuenta_Diferencia_Aplicar:
+#     path:   /Aplicar_diferencia
+#     defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Diferencia/Diferencia:aplicarDiferencia }
+#     requirements: { _method: post }
+
+# Caja_PagoCuenta_DiferenciaSaldo_Aplicar:
+#     path:   /Aplicar_diferenciaSaldo
+#     defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Diferencia/Diferencia:aplicarDiferenciaSaldo }
+#     requirements: { _method: post }
+
+Caja_PagoCuenta_Diferencia_GetMotivosDiferencia:
+    path:   /GetMotivosDiferencia
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Diferencia/Diferencia:getMotivosDiferencia }
+
+Caja_PagoCuenta_Diferencia_GetTipoSentido:
+    path:   /GetTipoSentido
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Diferencia/Diferencia:getTipoSentido }
+
+Caja_PagoCuenta_Diferencia_SendCountPrestacionArticulo:
+    path:   /SendCountPrestacionArticulo
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Diferencia/Diferencia:countPrestacionesArticulos }
+
+Caja_PagoCuenta_Diferencia_SOlicitar:
+    path:   /Solicitar_diferencia
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Diferencia/Diferencia:solicitarDiferencia }
+
+Caja_PagoCuenta_Diferencia_SOlicitar_Saldo:
+    path:   /Solicitar_diferencia_saldo
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Diferencia/Diferencia:solicitarDiferenciaSaldo }
+
+Caja_PagoCuenta_Diferencia_Anular:
+    path:   /Anular_diferencia
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Diferencia/Diferencia:anularDiferencia }
+
+Caja_PagoCuenta_Diferencia_Respuesta_SUpervisor:
+    path:   /Respuesta_SUpervisor_diferencia
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Diferencia/Diferencia:respuestaSupervisorDiferencia }

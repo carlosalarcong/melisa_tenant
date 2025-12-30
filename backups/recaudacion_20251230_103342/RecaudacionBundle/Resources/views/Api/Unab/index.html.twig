@@ -1,0 +1,373 @@
+{% extends 'RecaudacionBundle::Recaudacion/sublayout.html.twig' %}
+
+{% import 'RecaudacionBundle:UI/Macros:WidgetsCaja.html.twig' as WidgetCaja %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ asset('css/chosen.css') }}">
+<link rel="stylesheet" href="{{ asset('css/tipped/tipped.css') }}">
+<link href="{{ asset('css/datepicker.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block Caja %}
+<li class="active"> Pago Cuenta </li>
+{% endblock %}
+
+{% block body %}
+
+{% if  errores|length != 0 %}
+
+<div class="alert alert-warning CajaCerrada">
+	<strong> No es posible acceder a Caja mientras no ingrese los siguientes datos:</strong><br>
+	{% for error in errores%}
+	- {{error}} <div class="clearfix"></div>
+	{% endfor %}
+</div>
+
+{% else %}
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
+	<tr>
+		<td width="100%" align="center" valign="top">
+			<br>
+			<div class="tabbable whileload">
+				<div class="tabbable">
+					<ul class="nav nav-tabs" id="RecaudacionTabs">
+
+						{% if sintalonario == 0 %}
+
+						<li>
+							<a>
+								<i class="blue icon-money icon-2x bigge-125"></i> Pago Paciente
+							</a>
+						</li>
+						<li class="active">
+							<a data-toggle="tab" href="#AperturaCierre">
+								<i class="blue icon-bar-chart icon-2x bigger-125"></i> Gestión Caja
+							</a>
+						</li>
+
+						{% else %}
+
+						{% if abierta == 1 %}
+
+						{% if cerrada == 0 %}
+
+						<li >
+							<a>
+								<i class="blue icon-money icon-2x bigge-125"></i> Pago Paciente
+							</a>
+						</li>
+						<li class="active">
+							<a data-toggle="tab" href="#AperturaCierre">
+								<i class="blue icon-bar-chart icon-2x bigger-125"></i> Gestión Caja
+							</a>
+						</li>
+
+						{% else %}
+						{% if sincerrar == 0 %}
+
+						<li>
+							<a>
+								<i class="blue icon-money icon-2x bigge-125"></i> Pago Paciente
+							</a>
+						</li>
+						<li class="active">
+							<a data-toggle="tab" href="#AperturaCierre">
+								<i class="blue icon-bar-chart icon-2x bigger-125"></i> Gestión Caja
+							</a>
+						</li>
+
+						{% else %}
+
+						<li class="active">
+							<a data-toggle="tab" href="#Pago">
+								<i class="blue icon-money icon-2x bigge-125"> </i>Pago Paciente
+							</a>
+						</li>
+						<li >
+							<a data-toggle="tab" href="#AperturaCierre">
+								<i class="blue icon-bar-chart icon-2x bigger-125"> </i>Gestión Caja
+							</a>
+						</li>
+
+						{% endif %}
+
+						{% endif %}
+
+						{% else %}
+
+						<li>
+							<a>
+								<i class="blue icon-money icon-2x bigge-125"> </i>Pago Paciente
+							</a>
+						</li>
+						<li class="active">
+							<a data-toggle="tab" href="#AperturaCierre">
+								<i class="blue icon-bar-chart icon-2x bigger-125"> </i>Gestión Caja
+							</a>
+						</li>
+
+						{% endif %}
+						{% endif %}
+
+						<li class="dropdown hide">
+							<a data-toggle="dropdown" class="dropdown-toggle yellow">
+								<i class="icon-print icon-2x"></i> Informes
+								<i class="icon-chevron-sign-down icon-on-right"></i>
+							</a>
+							<ul class="dropdown-menu dropdown-info">
+								<li >
+
+									{% if caja %}
+									<a title="Informe Caja" class="detalleCaja pull-left" href="{{ path('Caja_Gestion_InformeCaja', { 'id': caja.id }) }}">
+										<i class="icon-file-alt"></i>Informe Caja Actual
+									</a>
+									{% endif %}
+
+									<a title="Informe Garantias" class="InformesGarantiaS pull-left"  href="{{ path('Caja_Gestion_InformesGarantias') }}">
+										<i class="icon-file-alt"></i>Informe General Garantías
+									</a>
+								</li>
+								<li class="pull-left">____________________</li>
+								<li>
+									<a title="Informe de Cajas" class="InformesCajaS pull-left" href="{{ path('Caja_Gestion_InformesCajas', { 'id': cajero.usuario }) }}">
+										<i class="icon-list-ul"></i>  Listado Cajas
+									</a>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<div class="tab-content">
+					{% if sintalonario == 0 %}
+					<div>
+					</div>
+					<div id="AperturaCierre" class="tab-pane in active">
+						{% include 'RecaudacionBundle:Api/Unab/GestionCaja:index.html.twig' %}
+					</div>
+					{% else %}
+					{% if abierta == 1 %}
+					{% if cerrada == 0 %}
+					<div>
+					</div>
+					<div id="AperturaCierre" class="tab-pane in active">
+						{% include 'RecaudacionBundle:Api/Unab/GestionCaja:index.html.twig' %}
+					</div>
+					{% else %}
+					{% if sincerrar == 0 %}
+					<div>
+					</div>
+					<div id="AperturaCierre" class="tab-pane in active">
+						{% include 'RecaudacionBundle:Api/Unab/GestionCaja:index.html.twig' %}
+					</div>
+					{% else %}
+					{# Caja abierta sin restricción #}
+					<div id="Pago" class="tab-pane in active">
+						{% include 'RecaudacionBundle:PagoCuenta/Pago:index.html.twig' %}
+					</div>
+					<div id="AperturaCierre" class="tab-pane ">
+						{% include 'RecaudacionBundle:Api/Unab/GestionCaja:index.html.twig' %}
+					</div>
+					{# Caja abierta sin restricción #}
+					{% endif %}
+
+					{% endif %}
+					{% else%}
+					<div>
+					</div>
+					<div id="AperturaCierre" class="tab-pane in active">
+						{% include 'RecaudacionBundle:Api/Unab/GestionCaja:index.html.twig' %}
+					</div>
+					{% endif %}
+
+					{% endif %}
+
+				</div>
+			</div>
+			<br>
+		</td>
+	</tr>
+</table>
+
+<div class="modalVerA hide"></div>
+<div class="modalSinCerrar hide"></div>
+<div class="modalInformeCajas hide"></div>
+<div class="modalVerDocs hide"></div>
+<div class="modalOpcionBonoE hide"></div>
+
+{% endif %}
+
+<form id="form_IntefazImed" action="" target="_BLANK" method="POST" class="hide">
+	<input name="NroAuditoria" id="NroAuditoria" type="text" value="">
+	<input name="NumTransac" id="NumTransac" type="text" value="">
+	<input name="rut" id="Rut" type="text" value="">
+	<input name="lugar" id="Lugar" type="text" value="">
+</form>
+
+{% endblock %}
+
+{% block scripts %}
+
+{{ WidgetCaja.EventosDivBusqueda() }}
+{{ WidgetCaja.PagoGarantia() }}
+{{ WidgetCaja.PagoReserva() }}
+
+<script type="text/javascript"  src="{{ asset('js/uncompressed/Caja/jquery.dataTables.js') }}"></script>
+<script type="text/javascript"  src="{{ asset('js/jquery.dataTables.bootstrap.js') }}"></script>
+<script type="text/javascript"  src="{{ asset('js/fuelux/fuelux.spinner.min.js') }}"></script>
+<script type="text/javascript"  src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+<script type="text/javascript"  src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
+<script type="text/javascript"  src="{{ asset('js/tipped/spinners.min.js') }}"></script>
+<script type="text/javascript"  src="{{ asset('js/tipped/tipped.js') }}"></script>
+<script type="text/javascript"  src="{{ asset('js/chosen.jquery.min.js') }}"></script>
+<script type="text/javascript"  src="{{ asset('js/ace.min.js') }}"></script>
+<script type="text/javascript"  src="{{ asset('js/uncompressed/bootbox.js') }}"></script>
+<script src="{{ asset('js/bootstrap-datepicker.min.js') }}"></script>
+<script src="{{ asset('js/date-time/locales/bootstrap-datepicker.es.js') }}" charset="UTF-8"></script>
+
+{{ WidgetCaja.resources() }}
+
+
+{{ WidgetCaja.Diferencia() }}
+
+{% if caja %}
+
+<script type='text/javascript'>
+
+	var idReservaAtencion                    = null;
+	var idSucursal                           = $.trim("{{ sucursal }}");
+	var idCaja                               = $.trim("{{ caja.id }}");
+	var TipoAtencion                         = $.trim("{{ tipoAtencion }}");
+	var extranjero                           = $.trim("{{ extranjero}}");
+	var cantidadPrestacionArticulo           = 0;
+	var garantiaAuxPrestacion                = 0;
+	var identificacion                       = null;
+	var coreApi                              = $.trim("{{coreApi}}");
+	var cajaAgenda                           = 1;
+	var tratamientoCreadoDesdeAgenda         = 0;
+	var garantia                             = 0;
+	/** Variables Globales de Tratamiento */
+	var tratamiento                          = 1;
+	var nuevoTratamiento                     = 0;
+	var editTratamiento                      = 0;
+	var esTratamiento                        = 0;
+	var esDiferencia                         = 0;
+	var esDiferenciaSaldo                    = 0;
+	var TratamientoArray                     = [];
+	var ListaDetallesDiferencia              = [];
+	var ListaInformacionDiferencia           = [];
+	var ListaInformacionDiferenciaSaldo      = [];
+	var esTratamientoAgenda                  = 0;
+	var idTratamiento                        = null;
+	var idDerivadoExterno                    = null;
+	var verificaRutDocumentoExtranjeroexiste = 0;
+	var crearUsuarioSinRut                   = 0;
+	var bonoTipo                             = 0;
+	var datosCompletos                       = $.trim("{{ datosCompletos }}");
+	var habilitaRestriccionesDePago          = {{ habilitaRestriccionesDePago }};
+	var habilitarPaisExtranjero              = {{ habilitarPaisExtranjero }};
+
+	$("#limpiar, #limpiaradv,  .text-error, .ocultarDiv").hide();
+	$(document).on('ready', function() {
+
+		setTimeout(function() { $('#buscarPaciente_identificacion').focus() }, 1000);
+		$("#limpiar, #limpiaradv,  .text-error, .ocultarDiv").removeClass('hide');
+		loadScriptvalidakeyup();
+		loadScriptEventosDivBusqueda();
+		loadScriptBusquedaRutDvPagoCuenta();
+		loadScriptEventosDivBusquedaMacro();
+		loadScriptBusquedaAvanzadaPagoCuenta();
+		GestionCaja_CajaSinCerrar();
+		GestionCaja_InformesCaja();
+		anulacionAjax();
+		$(".btn-gestionCaja-AbrirCerrar, .dropdown").show();
+
+		$('#buscarPaciente_tipoIdentificacion').chosen({
+			max_selected_options: 3,
+			display_selected_options: true,
+		});
+	});
+
+</script>
+
+{% else %}
+
+<script type='text/javascript'>
+
+	$(document).on('ready', function() {
+
+		loadScriptvalidakeyup();
+		loadScriptEventosDivBusqueda();
+		loadScriptBusquedaRutDv();
+		loadScriptEventosDivBusquedaMacro();
+		loadScriptBusquedaAvanzada();
+		GestionCaja_CajaSinCerrar();
+		GestionCaja_InformesCaja();
+		anulacionAjax();
+
+		/** Boton en gestion caja para cerrar */
+		$(".btn-gestionCaja-AbrirCerrar").show();
+
+	});
+
+</script>
+
+{% endif %}
+
+<style type="text/css">
+
+	.imedFace {
+		display:block;
+		-webkit-transform: rotate(90deg);
+		-moz-transform: rotate(90deg);
+		filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+		font-family:  initial;
+		font-weight: 200;
+		color: #FFF;
+	}
+
+</style>
+
+{{ macroDependencias.datetime() }}
+
+<script language="javascript" type="text/javascript">
+
+	window.onbeforeunload = function() {
+
+		if($('.AlertImedMedioPago').is(':visible')){
+
+			$('.AlertImedMedioPago').parent().parent().find('.btn-group').show();
+			$('.AlertImedMedioPago').hide();
+
+			var numAux = $('.AlertImedMedioPago').parent().parent().find('.formularios_Pago').attr('id').replace('tabla_','')
+
+			$('#exedente_'+numAux).hide();
+			$('#rebsol_hermesbundle_MediosPagoType_exedente_'+numAux).val('');
+			$(".Input_checkbox_"+numAux).click();
+			$(".bElectronico").prop('readonly', false);
+
+			bootbox.dialog(
+				"<div class='alert alert-block alert-warning'>" +
+				"<br><i class='icon-warning-sign '></i><strong>Operación Cancelada</strong>,<br>Se ha anulado Correctamente Bono Electrónico IMED."+
+				"</div>"
+				, [ {
+					"label": "Aceptar",
+					"class": "btn btn-mini",
+					"callback": function() {
+					}
+				} ]);
+
+
+			var ruta = Routing.generate('Caja_Cierre_Anula_Imed');
+
+			$.ajax({type: 'get',
+				url: ruta,
+				async: false
+			});
+
+			return 'Ud, a elegido no terminar el Pago en Caja, y se registra venta de Bono Electrónico Imed Activa, Por Precaución, el Bono ha sido Anulado, si decide no salir y continuar, deberá volver a realizar la venta del Bono Electrónico IMED.';
+		}
+	}
+
+</script>
+{% endblock %}

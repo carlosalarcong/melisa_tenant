@@ -1,0 +1,14 @@
+{% set claseForm = 'class_' ~ listadoMediosPago.id %}
+<table  width="100%" class="table-bordered table-condensed localizacion-input-efectivo">
+	<tr>
+		<td width="30%"> Monto </td>
+		<td width="70%">
+			{% set nombreCampoMonto = 'monto_' ~ listadoMediosPago.id ~ '_0' %}
+			{{ form_widget(mediospago_form[nombreCampoMonto], {'attr': {'class': 'saldoMedio Input_num ' ~ claseForm , 'MaxLength': 8, 'data-dinamico-efectivo': listadoMediosPago.id ,'onkeyup':'javascript:SumaSaldoVsMediosPago()'}} ) }}
+		</td>
+		{% if desdeAdmision is defined and desdeAdmision %}
+			{% set nombreCampoNumeroGarantia = 'folioGarantia_' ~ listadoMediosPago.id ~ '_0' %}
+			{{ form_widget(mediospago_form[nombreCampoNumeroGarantia] ) }}
+		{% endif %}
+	</tr>
+</table>

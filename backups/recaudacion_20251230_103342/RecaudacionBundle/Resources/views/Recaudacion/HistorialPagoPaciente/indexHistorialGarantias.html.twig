@@ -1,0 +1,81 @@
+<table id="table_report_history_garantia" class="table table-bordered table-condensed table-hover">
+ <thead>
+  <tr>
+    <th>Atención</th>
+    <th>Fecha Atención</th>
+    <th>Financiador</th>
+    <th>Estado Cuenta</th>
+    <th>Tipo Atención
+      <div class="hide"> {{ VarCajaHoy }}</div>
+    </th>
+    <th class="sorting_disabled span2" ></th>
+  </tr>
+</thead>
+<tbody>
+
+{% for individual in historicoGarantia if  individual.estadoPagoCuenta != 0 %}
+        <tr style=" background-color: #FFC">
+        <td>{{ individual.evento }}</td>
+        <td>
+            <div class="hidden">{{ individual.fechaIngreso | date("m-d-Y H:i") }}</div> {{ individual.fechaIngreso | date("d-m-Y H:i") }}
+        </td>
+        <td> {{ individual.prevision }}  {% if individual.convenio %} &nbsp;/&nbsp;{{ individual.convenio }} {% endif %}  </td>
+        <td> {{ individual.nombrePagoCuenta }} </td>
+        <td> {{ individual.tipoAtencion }} </td>
+        <td class="span2">
+            <div class="btn-group">
+                {% if individual.estadoPagoCuenta == 2 %}
+                    <a  title="Regularizar Garantía" class="btn btn-mini btn-success pagar-Garantia" data-id="{{ individual.idPago }}" >
+                        <i class=" icon-ok-sign icon-large"></i>
+                    </a>
+                {% endif %}
+                {% if VarCajaHoy ==  individual.idCaja %}
+                    <a title="Anular Garantía" class="btn btn-mini btn-danger anular"
+                       data-id="{{ individual.idPaciente }}"
+                       href="{{ path('Caja_PostPago_AnulacionPagoCaja', { 'id':  individual.idPago }) }}">
+                        <i class="icon-remove icon-large"></i>
+                    </a>
+                {% else %}
+                    <a class="btn btn-mini btn-light">
+                        <i class="icon-remove icon-large"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </td>
+        </tr>
+{% endfor %}
+</tbody>
+</table>
+<div class="modalAnular hide"></div>
+<div class="modalVerAA hide"></div>
+{% block scripts %}
+  <script>
+    $(document).ready(function(){
+      $(".pagar-Garantia").on('click', function(e) {
+       var idPago = $(this).data('id');
+       e.preventDefault();
+       bootbox.dialog("<div class='alert alert-block alert-success AvisoGarantiaCarga'>" +
+                      "    <p>" +
+                      "    <strong>Regularizará la Garantía</strong>" +
+                      "    <br>¿Desea continuar?"+
+                      "    </p>" +
+                      "</div>"
+                      , [{
+                        "label": "Cancelar",
+                        "class": "btn btn-mini",
+                        "callback": function() {
+                        }
+                      },
+                      {
+                        "label": "Regularizar Garantía",
+                        "class": "btn btn-mini btn-success",
+                        "callback": function() {
+                          PreparaVistaGarantia(idPago);
+                        }
+                      }
+                      ]);
+     });
+
+    });
+</script>
+{% endblock %}

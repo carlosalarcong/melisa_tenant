@@ -1,0 +1,37 @@
+# I-MED
+Caja_PagoCuenta_Imed_Index:
+    path:   /CajaImedIndex
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Imed/Imed:index }
+
+#@todo revisar este routing - function  verificaTalonarioPrestacion not exits in  Recaudacioncontroller
+Caja_PagoCuenta_Imed_VerificaTalonarioPrestacion:
+    path:   /VerificaTalonarioPrestacion
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Imed/Imed:verificaTalonarioPrestacion }
+
+Caja_PagoCuenta_Imed_Post_Trans_Auditoria:
+    path:   /PostTransAuditoria
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Imed/Imed:sendPostLogin }
+
+# Caja_PagoCuenta_Imed_Post_Trans_Auditoria_Prueba:
+#     path:   /PostTransAuditoriaPrueba
+#     defaults: { _controller: RebsolHermesBundle:Pruebas\Pruebas:Index }
+
+Caja_PagoCuenta_Imed_SendGetObtBonInterfaz:
+    path:   /SendGetObtBonInterfaz
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Imed/Imed:sendGetObtBonInterfaz }
+
+Caja_PagoCuenta_Valida_Prevision_EsImed:
+    path:   /CajaImedValidaPrevisionEsImed
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Imed/Imed:cajaImedValidaPrevisionEsImed }
+
+Caja_PagoCuenta_Pregunta_Pago_esImed:
+    path:   /CajaAnulaPagoEsImed
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Imed/Imed:cajaAnulaPagoEsImed }
+
+# Caja_PagoCuenta_Cierre_Anula_Imed:
+#     path:   /CajaCierreAnulaPagoImed
+#     defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Imed/Imed:CajaCierreAnulaPagoImed }
+
+Caja_PagoCuenta_Imed_Mensaje_Fracaso:
+    path:   /imedUrlFracaso
+    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/Imed/Imed:imedMensaje }

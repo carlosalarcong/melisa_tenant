@@ -1,0 +1,176 @@
+{% block body %}
+<br>
+<table width="100%">
+	<tr>
+		<td width="50%" style="padding-left: 10px;">
+			<a class="brand" href="#">
+				{#<img class="logo_empresa" src="{{ asset('uploads/images/logos_empresas/'~app.session.get('Rebsol_Empresa_Logo')) }}" alt="Logo" />#}
+				<img src="{{ obtenerRecurso(hermesImagesLogosEmpresas ~ app.session.get('logoEmpresaLogin')) | imagine_filter('imagen_logo_empresa') }}?{{"now"|date("YmdHis")}}"/>
+			</a>
+			<div class="clearfix " ></div>
+		</td>
+		<td style="padding-right: 5px;">
+			<div style="text-align:right;"><strong>Fecha : {{ "now"|date("d-m-Y") }}</strong><br><strong>Hora   : {{ "now"|date("H:i") }}</strong> </div>
+		</td>
+	</tr>
+</table >
+<br>
+<div style="text-align:center;">
+	<h4><b>DETALLE {{detalles.tipoDocumento|upper}} <span id="numeroBoletaVariable"> {{detalles.numeroDocumento}} </span></b></h4>
+	<div class="clearfix " ></div>
+	<div style="text-align:center;">Sub-Empresa: {{detalles.nombresubEmpresa}}</div>
+	<div class="clearfix " ></div>
+	<br>
+	<div style="text-align:left;">Con Fecha  {{ "now"|date("d-m-Y") }}, Hemos recibido de:</div>
+	<br>
+	<table border="1"  width="100%" bordercolor="#CED3D5">
+		{% if coreApi == 0%}
+		<tr height="30px">
+			<td style=" background-color: whitesmoke; padding-left: 5px; font-weight: bold " width="20%">NOMBRE PACIENTE</td>
+			<td style="padding-left: 5px " width="30%" >{{detalles.nombrePersona|upper}}</td>
+			<td style=" background-color: whitesmoke; padding-left: 5px; font-weight: bold " width="20%">RAZA-ESPECIE</td>
+			<td style="padding-left: 5px " width="30%" colspan="2">{{detalles.raza|upper}}-{{detalles.especie|upper}}</td>
+		</tr>
+		<tr height="30px">
+			<td style=" background-color: whitesmoke; padding-left: 5px; font-weight: bold " width="20%">NOMBRE CLIENTE</td>
+			<td  style="padding-left: 5px " width="30%">{{detalles.nombreCliente|upper}} {{detalles.aPaterno|upper}} {{detalles.aMaterno|upper}}</td>
+			<td style=" background-color: whitesmoke;  padding-left: 5px ; font-weight: bold" width="20%">
+				{% if detalles.nombreTipoIdentificacionExtranjero  is  defined %}
+				{{ detalles.nombreTipoIdentificacionExtranjero }}
+				{% endif %}
+			</td>
+			<td style="padding-left: 5px " width="30%" colspan="2">
+				{% if detalles.identificacionExtranjero  is not empty %}
+				{{ detalles.identificacionExtranjero }}
+				{% else %}
+				{{ detalles.rut }}-{{ detalles.dv }}
+				{% endif %}
+			</td>
+		</tr>
+		{% else %}
+		<tr height="30px">
+			<td style=" background-color: whitesmoke; padding-left: 5px; font-weight: bold " width="20%">NOMBRE PACIENTE</td>
+			<td  style="padding-left: 5px " width="30%">{{detalles.nombrePersona|upper}} {{detalles.aPaterno|upper}} {{detalles.aMaterno|upper}}</td>
+			<td style=" background-color: whitesmoke;  padding-left: 5px ; font-weight: bold" width="20%">
+				{% if detalles.nombreTipoIdentificacionExtranjero  is  defined %}
+				{{ detalles.nombreTipoIdentificacionExtranjero }}
+				{% endif %}
+			</td>
+			<td style="padding-left: 5px " width="30%">
+				{% if detalles.identificacionExtranjero  is not empty %}
+				{{ detalles.identificacionExtranjero }}
+				{% else %}
+				{{ detalles.rut }}-{{ detalles.dv }}
+				{% endif %}
+			</td>
+		</tr>
+		{% endif %}
+
+		{% if detalles.idDiferencia != null %}
+		<tr>
+			<td colspan="4"  width="100%" >
+				<table  border="0" width="100%">
+					<tr height="25px">
+						<td  width="50%" style=" font-weight: bold; padding-left: 20%"><h5><b>Total</b></h5></td>
+						<td  width="50%"  style="  text-align: left; padding-left: 5px">
+							<h4>
+								{{ obtenerMonto(detalles.monto) }}
+							</h4>
+						</td>
+					</tr>
+					<tr height="25px" style="background-color: #F2F5A9">
+						<td  width="50%" style=" font-weight: bold; padding-left: 20%"><h5><b>Diferencia Aplicada</b></h5></td>
+						<td  width="50%"  style="  text-align: left; padding-left: 5px">
+							<h4> {{ obtenerMonto(detalles.totalDescuento) }} </h4>
+						</td>
+					</tr style="background-color: #F2F5A9">
+					<tr height="25px">
+						<td  width="50%" style=" font-weight: bold; padding-left: 20%"><h5><b>Total Cuenta con Diferencia</b></h5></td>
+						<td  width="50%"  style="  text-align: left; padding-left: 5px">
+							<h4> {{ obtenerMonto(detalles.totalCuentaConDescuento) }} </h4>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		{% else %}
+		<tr>
+			<td colspan="4"  width="100%" >
+				<table  border="0" width="100%">
+					<tr height="25px">
+						<td  width="50%" style=" font-weight: bold; padding-left: 20%"><h5><b>Total</b></h5></td>
+						<td  width="50%"  style="  text-align: left; padding-left: 5px">
+							<h3>
+								{{ obtenerMonto(detalles.monto) }}
+							</h3>
+						</h4>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	{% endif %}
+	<tr height="30px">
+		<td style=" background-color: whitesmoke;  padding-left: 5px; font-weight: bold ">USUARIO</td>
+		<td colspan="3" style="padding-left: 5px ">{{detalles.nombreCajero}} {{detalles.aPaternoCajero}} {{detalles.aMaternoCajero}}</td>
+	</tr>
+</table>
+<br>
+<div style="text-align:left;"><b>{{empresa.nombreEmpresa}}</b></div>
+<div class="clearfix " ></div>
+<div style="text-align:left;">{{empresa.direccion}}</div>
+<div class="clearfix " ></div>
+<div style="text-align:left;">{{empresa.telefonoFijo}}</div>
+<br>
+<div id="editBoletaForm" class=" editBoletaForm hide">
+	<div class="table-header-grey" style="text-align:left;">
+		<i class="icon icon-edit icon-large"> </i> Modificación de Boleta
+	</div>
+	<table  width="100%"class=" table table-bordered table-condensed ">
+		<tr>
+			<td colspan="2"><b> Modificár Numero De boleta</b>
+			</td>
+		</tr>
+		<tr>
+			<td width="35%"><b class="red">El Número de la Boleta se Modificará</b>,<div class="clearfix " ></div>está seguro de generar Modificación?
+			</td>
+			<td><a title="Modificar Boleta" id="btnBoletaEditNumero" class="btn btn-small btn-danger btn-editar-Boleta" type="button" onclick="javascript:AnulacionBoleta({{detalles.idRuc}});"><i class='icon-edit icon-large'></i>Modificar</a>
+			</td>
+		</tr>
+
+	</table>
+	<div>
+		<div class="btn-group pull-right ">
+			<a title="Listo" id="btnListoDatosBoleta" class="btn btn-small btn-default  btn-edit-boleta-Listo" type="button" onClick="$('#editBoletaForm, .editBoletaForm').slideUp(); $('#editBoleta, .editBoleta').fadeIn();"><i class='icon-arrow-left icon-large'></i>Listo</a>
+		</div>
+	</div>
+</div>
+{% if edicion  == 1%}
+<div id="editBoleta" class="editBoleta">
+	<div class="btn-group pull-left ">
+		<a title="Editar" id="btneditDatosBoleta" class="btn btn-small btn-warning  btn-edit-boleta " type="button" onClick="   $('#editBoleta, .editBoleta').hide();
+		$('#editBoletaForm, .editBoletaForm').slideDown();"><i class='icon-edit icon-large'></i>Modificar Boleta</a>
+	</div>
+</div>
+{% endif %}
+<div class="modalAdvertenciaBoleta hide"></div>
+<form id="formBoleta" method="POST" class="form-horizontal hide" action="{{ path("Caja_PostPago_PrintDetalleBoleta_ImpresionPDF") }}" method="post" target="_blank" >
+	<input id ="valoridBoleta" type="text" name="valoridBoleta"  value=" {{detalles.idRuc}}"><br>
+</form>
+<script type='text/javascript'>
+	setTimeout(function(){
+		$('.modal').css({'width': '70%',
+			'left': '10%',
+			'height': '90%',
+			'margin-right': 'auto',
+			'margin-left': '5%'});
+		$('.modal-body').css({ 'padding': '5px',
+			'max-height': '90%',
+			'height': '90%' });
+		$('.modal.fade.in').css({'top': '5%',
+			'height': '90%' });
+	},500);
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,38 @@
+{% set NumeroForm = cantidad + 1 %}
+    {% set claseForm = 'class_' ~ listadoMediosPago.id %}   
+        {% set claseFormTabla = 'form_' ~ listadoMediosPago.id %}   
+            <div class="table-header header-color-grey MedioPagoBono" style="text-align:left;">
+                Pago de {{listadoMediosPago.nombre}} N° {{NumeroForm}}
+            </div>
+
+    {% set nombreCampoValida = 'validaBonoOculto_' ~ listadoMediosPago.id ~  '_' ~ cantidad %}
+    <input type="hidden" value="0" name="xxx">
+            <table width="100%" class="table-bordered table-condensed {{claseFormTabla}}" >
+                {{ form_widget(mediospago_form[nombreCampoValida],{'attr': { 'class': ' validaBonoOculto ', 'value': '2'}}) }}
+                <tr>
+                    <td width="30%"> N° bono </td>
+                    <td width="70%">
+                       {% set nombreCampobono = 'bono_' ~ listadoMediosPago.id ~  '_' ~ cantidad %}
+                           {% set nombreClassbono = 'bono_' ~ listadoMediosPago.id %}
+                              {{ form_widget(mediospago_form[nombreCampobono], {'attr': {'class': 'Input_num obligatorioConsolidado valida-bono ' ~ claseForm ~ ' ' ~ nombreClassbono ~ ' ' ~ nombreCampobono ,'MaxLength': 12,  'onkeyup':'javascript:SumaSaldoVsMediosPago()', 'onmouseout': 'javascript:validaBonoInput($(this));', 'onmouseleave': 'javascript:validaBonoInput($(this));' }} ) }}
+                          </td>
+                      </tr>
+                      <tr>
+                        <td width="30%"> Monto </td>
+                        <td width="70%">
+                            {% set nombreCampoMonto = 'monto_' ~ listadoMediosPago.id ~  '_' ~ cantidad %}
+                              {{ form_widget(mediospago_form[nombreCampoMonto], {'attr': {'class': 'saldoMedio Input_num readOnlyConsolidado ' ~ claseForm , 'MaxLength': 12,  'onkeyup':'javascript:SumaSaldoVsMediosPago()' }} ) }}
+                          </td>
+                      </tr>
+                {% if desdeAdmision is defined and desdeAdmision %}
+                    {% set nombreCampoNumeroGarantia = 'folioGarantia_' ~ listadoMediosPago.id ~ cantidad %}
+                    {{ form_widget(mediospago_form[nombreCampoNumeroGarantia] ) }}
+                {% endif %}
+                  </table>
+                  <br>
+                  <div class="btn-group pull-right clonar_{{listadoMediosPago.id}}_{{cantidad}} hideConsolidado">
+                    <button type="button" class="btn btn-mini btn-success" onclick="javascript:NuevoFormDinamico({{listadoMediosPago.id}});">
+                        <i class="icon-plus"></i></button>
+                        <button type="button" class="btn btn-mini btn-danger" onclick="javascript:Eliminar('{{listadoMediosPago.id}}', '{{cantidad}}');">
+                            <i class="icon-minus"></i></button>
+                        </div>

@@ -1,0 +1,50 @@
+<div id="mediospagoresumen" class="hide" >
+</div><div class="clearfix " ></div>
+<div id="formmediopago">
+    <div class="table-header-grey" style="text-align:left;">
+        <i class="icon-usd  icon-large text-left space"></i> Medios de Pago
+    </div>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
+        <tr>
+            <td width="100%" align="center" valign="top">
+                <br>
+                <div class="tabbable whileload">
+                    <div class="tabbable">
+                        <ul class="nav nav-tabs" id="MediosdePagoTabs">
+                            <li class="active MediosPagoTabs mdp">
+                                <a data-toggle="tab" href="#MediosDePago"><i class="blue icon-usd   icon-2x bigge-125"> </i>Medios de Pago</a>
+                            </li>
+                            <li class="MediosPagoTabs omdp" >
+                                <a data-toggle="tab" href="#OtrosMedios"><i class="blue icon-usd   icon-2x bigger-125"> </i>Otros Medios</a>
+                            </li>
+                            {# <li class="AplicarDiferencia" >
+									<a id="btn-diferencia" type="button" href="{{ path('Caja_Diferencia_Generar') }}"><i class="yellow icon-sort icon-2x bigger-125"> </i>Aplicar Diferencia a Pago</a>
+								</li> #}
+                        </ul>
+                    </div>
+
+                    <div class="tab-content">
+                        <div id="MediosDePago" class="tab-pane in active">
+                            <div id="adicional"> </div>
+                            {% block medios %}
+{#                                {% include 'CajaBundle:Recaudacion/Pago/Pago_Form:MedioPago_MediosDePago.html.twig' %}#}
+                                {% include 'RecaudacionBundle:PagoPaciente:_mediosDePagoNormales.html.twig' %}
+                            {% endblock %}
+                        </div>
+                        <div id="OtrosMedios" class="tab-pane ">
+                            {% block otros %}
+{#                                {% include 'CajaBundle:Recaudacion/Pago/Pago_Form:MedioPago_OtrosMedios.html.twig' %}#}
+                                {% include 'RecaudacionBundle:PagoPaciente:_mediosDePagoOtros.html.twig' %}
+                            {% endblock %}
+                        </div>
+                    </div>
+
+                </div>
+                <br>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="modalVer hide"></div>
+<!-- @todo seguir trabajando aquí < Steven Delgado > -->
+{{ WidgetCaja.Pagar() }}

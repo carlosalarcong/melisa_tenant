@@ -1,0 +1,258 @@
+{% extends 'CajaBundle::layoutAjax.html.twig' %}
+
+{% import 'CajaBundle:UI/Macros:WidgetsCaja.html.twig' as WidgetCaja %}
+
+{% block Content %}
+
+{% block body %}
+
+{% if FechaPagoAgenda == 0%}
+
+{% if  PagoEfectuado == 1%}
+<div class="alert alert-warning CajaCerrada">
+	<strong>Alerta: Fecha de Pago</strong>
+	<div class="clearfix"></div>
+	Solo está autorizado a pagar reservas de el día de hoy y regularizar garantías previamente generadas.
+</div>
+{% endif %}
+
+
+{% if PagoesGarantia ==1 %}
+{% if PagoesGarantia == 1%}
+<div id="ExitosoGarantia">
+	{% include 'CajaBundle:Recaudacion/PostPago:ExitosoGarantia.html.twig' %}
+</div>
+{% endif%}
+<div id="PagoIndex">
+
+	{% include 'CajaBundle:Recaudacion/Pago:index.html.twig' %}
+</div>
+{% endif %}
+
+{% else %}
+{% if caja %}
+{% if noCajero == 1%}
+<div class="alert alert-warning CajaCerrada">
+	<strong>Sin Acceso a Caja</strong>
+	<div class="clearfix"></div>
+	Ud. no es Cajero, para efectuar pago, debe ser Cajero.
+</div>
+{% else %}
+{% if sintalonario == 1%}
+{%if sincerrar == 1%}
+{% if abierta == 1 %}
+{% if cerrada == 0 %}
+<div class="alert alert-warning CajaCerrada">
+	<strong>Caja Cerrada</strong>
+	<div class="clearfix"></div>
+	La caja para hoy ha sido cerrada, contacte al supervisor si desea una Reapertura de Caja.
+</div>
+{% else%}
+
+
+{% if subEmpresaTalonarioPrestacion == 1%}
+{% if PagoesGarantia == 1%}
+<div id="ExitosoGarantia">
+	{% include 'CajaBundle:Recaudacion/PostPago:ExitosoGarantia.html.twig' %}
+</div>
+{% endif%}
+<div id="PagoIndex">
+   {# AQUIIIIII DESDE AGENDAAAAAAAAAA #}
+   {% include 'CajaBundle:Api/Caja/Recaudacion/Pago:indexApi.html.twig' %}
+</div>
+
+
+{% else%}
+
+<div class="alert alert-warning CajaCerrada">
+	<i class="icon-warning-sign text-left space"> </i><strong>La prestación que intenta pagar, no corresponde a los talonarios que tiene asociados</strong>
+	<div class="clearfix"></div>
+	Debe ponerse en contacto con el Supervisor para regularizar la situación.
+</div>
+{% endif%}
+{% endif%}
+{% else%}
+<div class="alert alert-warning CajaCerrada">
+	<strong>Caja Cerrada</strong>
+	<div class="clearfix"></div>
+	Debe Abrir una Nueva Caja.
+</div>
+{% endif%}
+{% else%}
+<div class="alert alert-warning CajaCerrada">
+	<i class="icon-warning-sign text-left space"> </i><strong>Caja Abierta sin Cerrar</strong>
+	<div class="clearfix"></div>
+	Debe Cerrar Caja anterior que se encuentra actualmente sin Cerrar.
+</div>
+{% endif%}
+{% else%}
+
+{% if sintalonarioAE == 0%}
+<div class="alert alert-warning CajaCerrada">
+	<strong>No cuenta con Documentos requeridos mínimos para generar pagos.</strong>
+	<div class="clearfix"></div>
+	Debe Contactar a Supervisor para generar Talonario:<div class="clearfix"></div>
+	{% set a = 0%}
+	{% for talonario in talonarios%}
+	{% if  talonario.idRelEmpresaTipoDocumento.idTipoDocumento.id == 1%}
+	{% set a = a +1%}
+	{% endif %}
+
+	{% endfor %}
+	{% if a < 1%}
+	- Boleta Afecta<div class="clearfix"></div>
+
+	{% endif %}
+</div>
+{% else %}
+<div class="alert alert-warning CajaCerrada">
+	<strong>Se ha excedido limite de número de Boleta</strong>
+	<div class="clearfix"></div>
+	Debe Contactar a Supervisor para iniciar nuevo Talonario
+</div>
+{% endif %}
+
+{% endif%}
+{% endif%}
+{% else%}
+
+{% if noCajero == 1%}
+<div class="alert alert-warning CajaCerrada">
+	<strong>Sin Acceso a Caja</strong>
+	<div class="clearfix"></div>
+	Ud. no es Cajero, para efectuar pago, debe ser Cajero.
+</div>
+{% else %}
+<div class="alert alert-warning CajaCerrada">
+	<strong>Caja Cerrada</strong>
+	<div class="clearfix"></div>
+	Debe Abrir una Nueva Caja.
+</div>
+{% endif%}
+
+{% endif%}
+{% endif %}
+
+<script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('js/jquery.dataTables.bootstrap.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/fuelux/fuelux.spinner.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/jquery-ui-1.10.3.custom.min.js') }}"></script>
+<script type="text/javascript" src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
+<input type="hidden" id="rutdv" value="{{ datosPacienteVista['rut'] }}{{ datosPacienteVista['dv'] }}">
+
+{{ WidgetCaja.resources() }}
+{{ WidgetCaja.FormPrestacion() }}
+{{ WidgetCaja.EventosDivBusqueda() }}
+{{ WidgetCaja.BusquedaRutDv() }}
+{# {{ WidgetCaja.Diferencia() }} #}
+
+<script type='text/javascript'>
+	var d                               = 0;
+	var rut                             = $.trim("{{ datosPacienteVista['rut'] }}");
+	var dv                              = $.trim("{{ datosPacienteVista['dv'] }}");
+	var rut1                            = "{{ datosPacienteVista['rut'] }}";
+	var dv1                             = "{{ datosPacienteVista['dv'] }}";
+	var idFinanciador                   = $.trim("{{ datosPacienteVista['financiador'] }}");
+	var idCovenio                       = $.trim("{{ datosPacienteVista['covenio'] }}");
+	var idReservaAtencion               = $.trim("{{ datosPacienteVista['id'] }}");
+	var extranjero                      = null;
+	var idSucursal                      = $.trim("{{ sucursal }}");
+	var idProfesional                   = $.trim("{{ datosPacienteVista['profesional'] }}");
+	var cajaAgenda                      = 0;
+	var tratamiento                     = 0;
+	var nuevoTratamiento                = 0;
+	var editTratamiento                 = 0;
+	var garantia                        = 0;
+	var esTratamiento                   = 0;
+	var esDiferencia                    = 0;
+	var esDiferenciaSaldo               = 0;
+	var TratamientoArray                = [];
+	var ListaDetallesDiferencia         = [];
+	var ListaInformacionDiferencia      = [];
+	var esTratamientoAgenda             = 0;
+	var tratamientoCreadoDesdeAgenda    = 0;
+	var idTratamiento                   = null;
+	var idDerivadoExterno               = null;
+	var verificaRutDocumentoExtranjeroexiste = 0;
+	var crearUsuarioSinRut           = 0;
+	var bonoTipo                     = 0;
+	var fechanacimiento1    =null;
+	var datosCompletos               = $.trim("{{ datosCompletos }}");
+
+	{% if caja %}
+	var idCaja = $.trim("{{ caja.id }}");
+	{% endif %}
+	var nombre1 = "{{ datosPacienteVista['nombre'] }}";
+	var apep1 = "{{ datosPacienteVista['ApellidoPaterno'] }}";
+	var apem1 = "{{ datosPacienteVista['ApellidoMaterno'] }}";
+	var mail11 = "{{ datosPacienteVista['correoElectronico'] }}";
+	var celu1 = "{{ datosPacienteVista['telefonoMovil'] }}";
+	var fijo1 = "{{ datosPacienteVista['telefonoFijo'] }}";
+	var trabajo1 = "{{ datosPacienteVista['telefonoTrabajo'] }}";
+	var direccion1 = "{{ datosPacienteVista['direccion'] }}";
+	var numero1 = "{{ datosPacienteVista['numero'] }}";
+	var resto1 = "{{ datosPacienteVista['restoDireccion'] }}";
+	var idComuna1 = $.trim("{{ datosPacienteVista['idComuna'] }}");
+	var usuario1 = $.trim("{{ datosPacienteVista['usuario'] }}");
+	var TipoAtencion = $.trim("{{ tipoAtencion }}");
+	var garantias = $.trim("{{ datosPacienteVista['garantias']  }}");
+	var PagoEsGarantia = "{{PagoesGarantia}}";
+	var idPersona = "{{ datosPacienteVista['idPersona']}}";
+	var coreApi = $.trim("{{ coreApi }}");
+
+	$("#limpiar, #limpiaradv,  .text-error, .ocultarDiv, #busquedaPacientesForm, .btn-salvar-edit, .btn-salvar").hide();
+	$('#rutdv').val(rut + "-" + dv);
+	if (idCovenio) {
+		$('#rebsol_hermesbundle_PrestacionType_convenio').val(idCovenio);
+	}
+	$("#limpiar, #limpiaradv,  .text-error, .ocultarDiv").removeClass('hide');
+
+	var Listaprestaciones = new Array();
+	if (PagoEsGarantia == 1) {
+		$("#PagoIndex").hide();
+	} else {
+		{% for prestacion in prestaciones %}
+		{% if prestacion %}
+		var prestacion = $.trim("{{ prestacion }}");
+		Listaprestaciones['{{ loop.index }}'] = prestacion;
+		{% endif %}
+		{% endfor %}
+	}
+	var FechaPagoAgenda = "{{FechaPagoAgenda}}";
+
+	loadScriptvalidakeyup();
+	loadScriptEventosDivBusqueda();
+	loadScriptBusquedaRutDv();
+	loadScriptEventosDivBusquedaMacro();
+	ValidaRut();
+	loadScriptBusquedaAvanzada();
+	cargaDatos(idFinanciador);
+	GestionCaja_CajaSinCerrar();
+	GestionCaja_InformesCaja();
+
+	(idCovenio)?$('#rebsol_hermesbundle_PrestacionType_convenio').val(idCovenio).attr('readonly', true):null;
+
+	$('#rebsol_hermesbundle_PrestacionType_prevision').val(idFinanciador).attr('readonly', true);
+
+</script>
+<style type="text/css">
+	.imedFace {
+		display:block;
+		-webkit-transform: rotate(90deg);
+		-moz-transform: rotate(90deg);
+		filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+		font-family:  initial;
+		font-weight: 200;
+		color: #FFF;
+	}
+</style>
+<script src="{{ asset('js/tipped/spinners.min.js') }}"></script>
+<script src="{{ asset('js/tipped/tipped.js') }}"></script>
+<script src="{{ asset('js/chosen.jquery.min.js') }}"></script>
+<script src="{{ asset('js/ace.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/uncompressed/bootbox.js') }}"></script>
+{{ macroDependencias.datetime() }}
+{{ WidgetCaja.PagoGarantia() }}
+{% endblock %}
+{% endblock %}

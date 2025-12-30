@@ -1,0 +1,9 @@
+Caja_Recaudacion_PV_Imprimir_Medios_De_Pago:
+    path:  /{id}/ImprimirMediosDePago
+    defaults: { _controller: RecaudacionBundle:ApiPV\Recaudacion\Recaudacion:imprimirMediosDePago }
+    requirements: { id: \d+ }
+
+#Caja_Recaudacion_PV_Imprimir_Medios_De_Pago_PDF:
+#    path:  ImprimirMediosDePagoPDF
+#    defaults: { _controller: RecaudacionBundle:ApiPV\Recaudacion\Recaudacion:imprimirMediosDePagoPDF }
+#    methods: [POST]

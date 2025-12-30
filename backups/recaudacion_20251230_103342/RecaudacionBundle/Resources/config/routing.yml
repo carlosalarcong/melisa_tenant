@@ -1,0 +1,400 @@
+recaudacion_index:
+    path:     /
+    defaults: { _controller: RecaudacionBundle:Recaudacion:index }
+
+############### RECURSOS RUTAS  _DEFAULT ###############
+Rutas_Caja_Recaudacion_Servet:
+    resource: "@RecaudacionBundle/Resources/config/routing/_Default/Servet/servet.yml"
+
+############### RECURSOS RUTAS  API ###############
+Rutas_Caja_Recaudacion_Unab:
+    resource: "@RecaudacionBundle/Resources/config/routing/Api/Unab/unab.yml"
+
+Rutas_Caja_Recaudacion_PV:
+    resource: "@RecaudacionBundle/Resources/config/routing/ApiPV/routingpv.yml"
+
+
+#recaudacion_busqueda_historial_paciente:
+#    path:     /historialPaciente
+#    defaults: { _controller: RecaudacionBundle:BusquedaPaciente:historialPaciente }
+
+
+#recaudacion_gestion_caja_cerrar:
+#    path:  /{id}/GestionCajaCerrar
+#    defaults: { _controller:  RecaudacionBundle:GestionCaja:gestionCerrarCaja}
+#    requirements: { id: \d+ }
+
+#recaudacion_gestion_caja_cerrar_cerrado:
+#    path: /{id}/GestionCerrarCajaCerrado
+#    defaults: { _controller: RecaudacionBundle:GestionCaja:gestionCerrarCajaCerrado }
+#    requirements: { id: \d+ }
+
+#recaudacion_gestion_caja_abrir:
+#    path:  /GestionAbrirCaja
+#    defaults: { _controller: RecaudacionBundle:GestionCaja:gestionAbrirCaja}
+
+
+#Caja_PostPago_SubirPDF:
+#    path:   /CajaPostPagoSubirPDF
+#    defaults: { _controller: RecaudacionBundle:_Default/Recaudacion/Pago/PostPago:subirPDF }
+#    methods: [POST]
+
+#Caja_Verifica_UsuarioNuevo:
+#    path:  /VerificaUsuarioNuevoAntiguo
+#    defaults: { _controller: CajaBundle:_Default/Servicios/BuscaUsuarioNuevoAntiguo:index  }
+
+#Caja_PagoCuenta_Prevision_CuentaPaciente:
+#    path: /PrevisionPaciente
+#    defaults: { _controller: RecaudacionBundle:PagoCuenta/CuentaPaciente:mostrarFinanciadorPaciente }
+
+#Caja_PostPago_PagoGarantia:
+#    path:  /PagoGarantia
+#    defaults: { _controller: RecaudacionBundle:Pago/PostPago:pagoGarantia }
+
+#Caja_PostPago_PagoGarantia_VerificaSubEmpresaActualCajero_PrestacionesInsumos:
+#    path:   /VerificaSubEmpresaActualCajero_PrestacionesInsumos
+#    defaults: { _controller: RecaudacionBundle:Pago/PostPago:reservaVerificaSubEmpresaActualCajeroPrestacionesInsumos }
+
+#Caja_PostPago_PagoGarantia_BuscarHonorario:
+#    path:   /PagoGarantiaBuscarHonorario
+#    defaults: { _controller: RecaudacionBundle:Pago/PostPago:pagoGarantiaBuscarHonorario }
+
+#Caja_PostPago_PagoGarantia_BuscarPrestaciones:
+#    path:   /PagoGarantiaBuscarPrestaciones
+#    defaults: { _controller: RecaudacionBundle:Pago/PostPago:pagoGarantiaBuscarPrestaciones }
+
+#Caja_PostPago_PagoGarantia_BuscarArticulos:
+#    path:   /PagoGarantiaBuscarArticulos
+#    defaults: { _controller: RecaudacionBundle:Pago/PostPago:pagoGarantiaBuscarArticulos }
+
+#Caja_PostPago_PagoGarantia_BuscaOtrosMedios:
+#    path:   /BuscaOtrosMedios
+#    defaults: { _controller: RecaudacionBundle:Pago/PostPago:pagoGarantiaBuscaOtrosMedios }
+
+#Caja_PostPago_PagoReserva:
+#    path:  /PagoReserva
+#    defaults: { _controller: CajaBundle:_Default/Recaudacion/Pago/PostPago:pagoReserva }
+
+#Caja_PostPago_PagoReserva_VerificaSubEmpresaActualCajero_PrestacionesInsumos:
+#    path:   /ReservaVerificaSubEmpresaActualCajeroPrestacionesInsumos
+#    defaults: { _controller: CajaBundle:_Default/Recaudacion/Pago/PostPago:reservaVerificaSubEmpresaActualCajeroPrestacionesInsumos }
+
+#Caja_PostPago_PagoReserva_BuscarPrestaciones:
+#    path:   /PagoReservaBuscarPrestaciones
+#    defaults: { _controller: CajaBundle:_Default/Recaudacion/Pago/PostPago:pagoReservaBuscarPrestaciones }
+
+#Caja_Diferencia_SendCountPrestacionArticulo:
+#    path:   /SendCountPrestacionArticulo
+#    defaults: { _controller: RecaudacionBundle:Recaudacion/Diferencia/Diferencia:countPrestacionesArticulos }
+
+#Caja_Diferencia_Anular:
+#    path:   /Anular_diferencia
+#    defaults: { _controller: RecaudacionBundle:Recaudacion/Diferencia/Diferencia:anularDiferencia }
+
+#Caja_Valmacena_Total_Suma:
+#    path:  /CajaValmacenaTotalSuma
+#    defaults: { _controller: RecaudacionBundle:Pago/MedioPago:cajaValmacenaTotalSuma}
+
+#Caja_Diferencia_Generar:
+#    path:   /GenerarDiferencia
+#    defaults: { _controller: RecaudacionBundle:Recaudacion/Diferencia/Diferencia:generarDiferencia }
+
+#Caja_PeopleId:
+#    path:  /PeopleId
+#    defaults: { _controller: RecaudacionBundle:Pago/Pagar:persona}
+
+
+#Caja_PostPago_Regularizar_Garantia:
+#    path:  /postRegularizarGarantia
+#    defaults: { _controller: CajaBundle:_Default/Recaudacion/Pago/PostPago:regularizaGarantia }
+
+#Caja_CasePay:
+#    path:  /CasePay
+#    defaults: { _controller: RecaudacionBundle:Pago/Pagar:setSessionCajaPagar }
+
+#Caja_CasePayMediosPago:
+#    path:  /CasePayMediosPago
+#    defaults: { _controller: RecaudacionBundle:Pago/Pagar:cajaPagarMediosPago}
+
+#Caja_PostPago_Boleta:
+#    path:  /postPagoBoleta
+#    defaults: { _controller: RecaudacionBundle:Pago/PostPago:postPagoBoleta }
+
+#Caja_CasePayApi:
+#    path:  /CasePayApi
+#    defaults: { _controller: CajaBundle:_Default/Recaudacion/Pago/Pagar:cajaPagarApi}
+
+#Caja_PostPago_DocumentosPostPago:
+#    path:  /DocumentosPostPago
+#    defaults: { _controller: CajaBundle:_Default/Recaudacion/Pago/PostPago:documentosPostPago }
+
+#Caja_reservarFolio:
+#    path:  /CajareservarFolio
+#    defaults: { _controller: RecaudacionBundle:Servicios/BuscarPrestaciones:reservarFolio }
+
+#Caja_PostPago_Boleta_Dte:
+#    path:  /postPagoBoletaDte
+#    defaults: { _controller: CajaBundle:_Default/Recaudacion/Pago/PostPago:postPagoBoletaDte }
+
+#Caja_Recaudacion_Pago_ValExtranjeros:
+#    path:  /BusquedaExtranjero
+#    defaults: { _controller: RecaudacionBundle:Pago/Dependencias/Valrut:indexExtranjero }
+
+#Caja_Recaudacion_Pago_ValRut:
+#    path:  /BusquedaRut
+#    defaults: { _controller: RecaudacionBundle:Pago/Dependencias/Valrut:indexRut}
+
+#Caja_ProvinciaporComuna:
+#    path:  /ProvinciaporComuna
+#    defaults: { _controller: RecaudacionBundle:Recaudacion/BuscaProvinciaporComuna:index }
+
+#Caja_Recaudacion_ConsultaMascotas:
+#    path:  /BuscaMascotasPorDueno
+#    defaults: { _controller: CajaBundle:_Default/Recaudacion/Pago/Pago:buscaMascotasPorDueno }
+
+#Caja_Recaudacion_Pago_ObtieneDomicilio:
+#    path:  /ObtieneDomicilio
+#    defaults: { _controller: RecaudacionBundle:Pago/Dependencias/Avanzada:domicilio  }
+
+#Caja_Recaudacion_Pago_Avanzada:
+#    path:  /BusquedaAvanzada
+#    defaults: { _controller: CajaBundle:_Default/Recaudacion/Pago/Dependencias/Avanzada:indexAdv }
+
+#Caja_Recaudacion_Pago_ObtieneDatosNUsuarios:
+#    path:  /ObtieneDatosNUsuarios
+#    defaults: { _controller: CajaBundle:_Default/Recaudacion/Pago/Dependencias/Avanzada:obtieneDatosNUsuarios  }
+
+#Caja_Recaudacion_Pago_ObtieneDatosUnUsuario:
+#    path:  /ObtieneDatosUnUsuario
+#    defaults: { _controller: CajaBundle:_Default/Recaudacion/Pago/Dependencias/Avanzada:obtieneDatosUnUsuario  }
+
+#Caja_CreaPaciente:
+#    path:  /creaPaciente
+#    defaults: { _controller: RecaudacionBundle:Pago/Pago:creaPaciente }
+
+#Caja_ConsultaPacienteIdPnatural:
+#    path:  /consultaIpPnatural
+#    defaults: { _controller: RecaudacionBundle:Pago/Pago:consultaPaciente }
+
+#Caja_CreaPacienteApi:
+#    path:  /creaPacienteMascota
+#    defaults: { _controller: CajaBundle:_Default/Recaudacion/Pago/Pago:CreaPacienteApi }
+
+#Caja_ActualizaPacienteSinRut:
+#    path:  /ActualizaPacienteSinRut
+#    defaults: { _controller: CajaBundle:_Default/Recaudacion/Pago/Pago:actualizaPacienteSinRut }
+
+#Caja_ActualizaPaciente:
+#    path:  /actualizaPaciente
+#    defaults: { _controller: CajaBundle:_Default/Recaudacion/Pago/Pago:actualizaPaciente }
+
+#Caja_ActualizaPaciente_Api1:
+#    path:  /actualizaPacienteMascota
+#    defaults: { _controller: CajaBundle:_Default/Recaudacion/Pago/Pago:actualizaPacienteApi1 }
+
+#Caja_Consulta_Planes:
+#    path:  /consulaPlanes
+#    defaults: { _controller: RecaudacionBundle:Pago/Pago:consulaPlanes }
+
+#Caja_Consulta_Profesionales:
+#    path:  /consulaProfesionales
+#    defaults: { _controller: RecaudacionBundle:Pago/Pago:consulaProfesionales }
+
+#Caja_Consulta_Origen:
+#    path:  /consulaOrigen
+#    defaults: { _controller: RecaudacionBundle:Pago/Pago:consulaOrigen }
+
+#Caja_getPrestacion:
+#    path:  /CajagetPrestacion
+#    defaults: { _controller: RecaudacionBundle:Servicios/BuscarPrestaciones:obtenerPrestacionJson }
+
+#Caja_getInsumo:
+#    path:  /CajagetInsumos
+#    defaults: { _controller: CajaBundle:_Default/Servicios/BuscarInsumos:obtenerInsumosJson }
+
+#Caja_getPrestacionHonorarios:
+#    path:  /CajagetPrestacionHonorarios
+#    defaults: { _controller: RecaudacionBundle:Servicios/BuscarPrestaciones:obtenerPrestacionHonorariosJson }
+
+#Caja_getPaquete:
+#    path:  /CajagetPaquete
+#    defaults: { _controller: CajaBundle:_Default/Servicios/BuscarPaquete:obtenerPaqueteJson }
+
+#Caja_BuscarPrestacion:
+#    path:  /CajabuscarPrestacion
+#    defaults: { _controller: RecaudacionBundle:Servicios/BuscarPrestaciones:index }
+
+#Caja_BuscarInsumos:
+#    path:  /CajabuscarInsumos
+#    defaults: { _controller: CajaBundle:_Default/Servicios/BuscarInsumos:index }
+
+#Caja_BuscarPaquete:
+#    path:  /CajabuscarPaquete
+#    defaults: { _controller: RecaudacionBundle:Servicios/BuscarPaquete:index }
+
+#Caja_Valor_Pagar:
+#    path:  /CajaValorPagar
+#    defaults: { _controller: RecaudacionBundle:Pago/MedioPago:cajaValorPagar}
+
+#Caja_Valor_Pagar_Pago_Cuenta:
+#    path:  /CajaValorPagarPagoCuenta
+#    defaults: { _controller: RecaudacionBundle:Pago/MedioPago:cajaValorPagarPagoCuenta}
+
+#Caja_Valor_Pagar_Comparar_Tabs:
+#    path:  /CajaValorPagarCompararTabs
+#    defaults: { _controller: CajaBundle:_Default/Recaudacion/Pago/MedioPago:cajaValorPagarCompararTabs}
+
+#Caja_getNuevoFormDinamico:
+#    path:  /Caja_getNuevoFormDinamico
+#    defaults: { _controller: CajaBundle:_Default/Recaudacion/Pago/MedioPago:nuevoFormDinamico}
+
+#Caja_Supervisor:
+#    path:  /Inicio
+#    defaults: { _controller: RecaudacionBundle:Supervisor/Supervisor:index }
+
+#Caja_Supervisor_UbicacionCaja:
+#    path:  /listado
+#    defaults: { _controller: RecaudacionBundle:Supervisor/UbicacionCaja/UbicacionCaja:index }
+
+
+#Caja_Supervisor_UbicacionCajero:
+#    path: /listado
+#    defaults: { _controller: RecaudacionBundle:Supervisor/UbicacionCajero/UbicacionCajero:index }
+
+#Caja_Supervisor_CorrelativoBoletas:
+#    path:  /listado
+#    defaults: { _controller: CajaBundle:_Default/Supervisor/CorrelativoBoletas/CorrelativoBoletas:index }
+
+#Caja_Supervisor_AutorizacionDescuentos:
+#    path:  /index
+#    defaults: { _controller: CajaBundle:_Default/Supervisor/AutorizacionDescuentos/AutorizacionDescuentos:index }
+
+#Caja_Supervisor_UbicacionCaja_new:
+#    path:  /nuevo
+#    defaults: { _controller: RecaudacionBundle:Supervisor/UbicacionCaja/UbicacionCajaNuevo:nuevo }
+
+#Caja_Supervisor_UbicacionCaja_show:
+#    path:  /{id}/ver
+#    defaults: { _controller: RecaudacionBundle:Supervisor/UbicacionCaja/UbicacionCajaVer:ver }
+
+#Caja_Supervisor_UbicacionCaja_edit:
+#    path:  /{id}/editar
+#    defaults: { _controller: RecaudacionBundle:Supervisor/UbicacionCaja/UbicacionCajaEditar:editar }
+
+#Caja_Supervisor_UbicacionCaja_update:
+#    path:  /{id}/actualizar
+#    defaults: { _controller: RecaudacionBundle:Supervisor/UbicacionCaja/UbicacionCajaEditar:actualizar }
+
+#Caja_Supervisor_UbicacionCaja_delete:
+#    path:  /{id}/eliminar
+#    defaults: { _controller: RecaudacionBundle:Supervisor/UbicacionCaja/UbicacionCajaEliminar:eliminar }
+
+#Caja_Supervisor_UbicacionCaja_create:
+#    path:  /crear
+#    defaults: { _controller: RecaudacionBundle:Supervisor/UbicacionCaja/UbicacionCajaNuevo:crear }
+
+
+#Caja_Supervisor_ConsolidadoCaja:
+#    path:  /index
+#    defaults: { _controller: CajaBundle:_Default/Supervisor/ConsolidadoCaja/ConsolidadoCaja:index }
+
+#Caja_Supervisor_ConsolidadoCajaPorProfesional_PV:
+#    path:  /index
+#    defaults: { _controller: CajaBundle:ApiPV/Supervisor/ConsolidadoCajaPorProfesional/ConsolidadoCajaPorProfesional:index }
+
+#Caja_Supervisor_MantenedorFolios:
+#    path:  /index
+#    defaults: { _controller: CajaBundle:_Default/Supervisor/MantenedorFolios/MantenedorFolios:index }
+
+#Caja_Supervisor_AsientoContable:
+#    path:  /
+#    defaults: { _controller: CajaBundle:_Default/Supervisor/AsientoContable/AsientoContable:index }
+
+#Caja_Supervisor_ReporteProduccion:
+#    path:  /
+#    defaults: { _controller: CajaBundle:_Default/Supervisor/ReporteProduccion/ReporteProduccion:index }
+
+#Caja_Supervisor_ApoyoFacturacion:
+#    path:  /
+#    defaults: { _controller: CajaBundle:_Default/Supervisor/ApoyoFacturacion/ApoyoFacturacion:index }
+
+#Caja_PagoCuenta_Inicio:
+#    path: /Inicio
+#    defaults: { _controller: CajaBundle:Api/Unab/PagoCuenta/PagoCuenta:index }
+
+#Caja_PostPago_Historial:
+#    path:  /PostPagoHistorial
+#    defaults: { _controller: RecaudacionBundle:Pago\PostPago:historialPaciente}
+
+#Caja_PagoCuenta_ConsultarDatos_CuentaPaciente:
+#    path: /CuentaPaciente
+#    defaults: { _controller: RecaudacionBundle:PagoCuenta\CuentaPaciente:mostrarCuenta }
+
+#Caja_PostPago_PrintDetalleAtencion:
+#    path:  /{id}/DetalleAtencion
+#    defaults: { _controller: RecaudacionBundle:Pago\PostPago:detallesAtencion }
+#    requirements: { id: \d+ }
+
+#Caja_PostPago_PrintDetallePago:
+#    path:  /DetallePago/{id}
+#    defaults: { _controller: RecaudacionBundle:Pago\PostPago:detallesPago }
+#    requirements: { id: \d+ }
+
+#Caja_PostPago_PrintDetalleBoleta:
+#    path:  /{id}/DetalleBoleta
+#    defaults: { _controller: RecaudacionBundle:Pago\PostPago:detallesBoleta }
+#    requirements: { id: \d+ }
+
+#Caja_PostPago_AnulacionPagoCaja:
+#    path:  /{id}/AnulacionPagoCaja
+#    defaults: { _controller: RecaudacionBundle:Pago/PostPago:anulacionPagoCaja }
+#    requirements: { id: \d+ }
+
+#Caja_PagoCuenta_ConsultarDatos_CuentaPaciente_InsertarReguardoFinanciero:
+#    path: /insertarReguardoFinanciero
+#    defaults: { _controller: RecaudacionBundle:PagoCuenta/CuentaPaciente:insertarReguardoFinanciero }
+
+#Caja_DiferenciaSaldo_Generar:
+#    path:   /GenerarDiferenciaSaldo
+#    defaults: { _controller: RecaudacionBundle:Recaudacion/Diferencia/Diferencia:generarDiferenciaSaldo }
+
+#Caja_Gestion_InformeCaja:
+#    path:   /{id}/InformeCaja
+#    defaults: { _controller: RecaudacionBundle:GestionCaja:gestionInformeCaja}
+#    requirements: { id: \d+ }
+
+#Caja_Gestion_InformesGarantias:
+#    path:   /InformeGarantias
+#    defaults: { _controller: RecaudacionBundle:GestionCaja:gestionInformeGrantias}
+
+#Caja_Recaudacion_PV_Imprimir_Medios_De_Pago:
+#    path:  /{id}/ImprimirMediosDePago
+#    defaults: { _controller: RecaudacionBundle:Recaudacion:imprimirMediosDePago }
+#    requirements: { id: \d+ }
+
+#Caja_Gestion_InformesCajas:
+#    path:   /{id}/InformeCajas
+#    defaults: { _controller: RecaudacionBundle:GestionCaja:gestionInformeCajas}
+#    requirements: { id: \d+ }
+
+#Caja_TraeCorrelativo:
+#    path:  /TraeCorrelativo
+#    defaults: { _controller: RecaudacionBundle:GestionCaja:traeCorrelativo}
+
+#Caja_Gestion_verificaCorrelativo:
+#    path:   /verificaCorrelativo
+#    defaults: { _controller: RecaudacionBundle:Pago/PostPago:verificaCorrelativo }
+
+#Caja_Recaudacion:
+#    path:  /Recaudacion
+#    defaults: { _controller: RecaudacionBundle:_Default/Recaudacion/Recaudacion:index }
+
+#Caja_PostPago_PrintDetalleBoleta_ImpresionPDF:
+#    path:  /DetalleBoletaPrinter
+#    defaults: { _controller: RecaudacionBundle:Pago/PostPago:imprimirDetalleBoleta }
+#    methods: [POST]
+
+#Caja_Diferencia_Aplicar:
+#    path:   /Aplicar_diferencia
+#    defaults: { _controller: RecaudacionBundle:Recaudacion/Diferencia/Diferencia:aplicarDiferencia }
+#    methods: [POST]

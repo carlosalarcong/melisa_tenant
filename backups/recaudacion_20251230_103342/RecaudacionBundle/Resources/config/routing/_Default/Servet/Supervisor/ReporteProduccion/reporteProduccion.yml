@@ -1,0 +1,7 @@
+Caja_Supervisor_ReporteProduccion:
+    path:  /
+    defaults: { _controller: RecaudacionBundle:_Default/Supervisor/ReporteProduccion/ReporteProduccion:index }
+
+Caja_Supervisor_ReporteProduccion_Descargas:
+    path:  /Descarga/{fechaIni}/{fechaFin}
+    defaults: { _controller: RecaudacionBundle:_Default/Supervisor/ReporteProduccion/Descarga:excel }

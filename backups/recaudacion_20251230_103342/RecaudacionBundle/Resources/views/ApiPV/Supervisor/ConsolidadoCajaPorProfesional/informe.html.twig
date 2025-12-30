@@ -1,0 +1,92 @@
+{% extends 'RecaudacionBundle:Supervisor:sublayout.html.twig' %}
+
+{% block contenedorMantenedor -%}
+
+    <div class="table-header">
+		Informe de Caja Consolidado por Profesional
+		<div id="div-volver" class="btn-group pull-right">
+			<a id="volverListado" class="btn btn-mini" href="{{ path('Caja_Supervisor_ConsolidadoCajaPorProfesional_PV') }}">
+				<i class="icon-arrow-left"></i> Volver
+			</a>
+		</div>
+	</div>
+
+    <table id="table_report" class="table table-bordered table-condensed table-hover">
+		<thead>
+			<tr>
+				<th>Profesional</th>
+				<th class="sorting_disabled"></th>
+			</tr>
+		</thead>
+        <tbody>
+            {% for oProfesional in arrProfesionales %}
+                <tr>
+                    <td>{{oProfesional.nombres}} {{oProfesional.apellidoPaterno}} {{oProfesional.apellidoMaterno}}</td>
+                    <td class="span2">
+                        <div class="btn-group">
+                            <a class="btn btn-mini btn-info informacionPDF" title="Informe por Profesional" href="{{path('Caja_Supervisor_Informe_Caja_Por_Profesional', {'id': oProfesional.idUR})}}">
+								<i class="icon-eye-open"></i>
+							</a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="table-footer">
+		<div class="btn-group pull-right">
+			<a class="btn btn-mini" href="{{ path('Caja_Supervisor_ConsolidadoCajaPorProfesional_PV') }}">
+				<i class="icon-arrow-left"></i> Volver
+			</a>
+		</div>
+	</div>
+	<div class="modalSinCerrar hide"></div>
+	<div class="modalVer hide"></div>
+
+{% endblock %}
+{% block scripts -%}
+    <script src="{{ asset('js/bootbox.min.js') }}"></script>
+	<script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
+	<script src="{{ asset('js/jquery.dataTables.bootstrap.js') }}"></script>
+	<script src="{{ asset('js/uncompressed/Caja/fnCommon.js') }}"></script>
+    <script type="text/javascript">
+        $(document).on('ready', function(){
+            $('#table_report, #table_report2, #table_report').dataTable({
+                "oLanguage": {
+                    "sUrl": "{{ asset('js/datatables/dataTables.es.txt') }}"
+                }
+            });
+            $('.menuSUpervisor').removeClass('active');
+            $('#ConsolidadoCajaPagoProfesional').addClass('active');
+
+            $(".informacionPDF").on('click', function(e) {
+                e.preventDefault();
+                if($(this).attr('href')) {
+                    $.post($(this).attr('href'), null, function(response) {
+                        var vistaHtml = response;
+
+                        $(".modalVer").html('');
+                        bootbox.dialog(vistaHtml, [{
+                                "label": "<i class='icon-arrow-left'></i> Volver",
+                                "class": "btn btn-mini"
+                            }, 
+                            {
+                                "label": "<i class='icon-print'></i> Imprimir",
+                                "class": "btn btn-mini btn-success btn-print-InfoCaja",
+                                "callback": function() {
+                                    $("#formInfoCajaDetallePV").submit();
+
+                                }
+
+                            }
+
+                        ]);
+
+                    }).error(function(xhr,textResponse,errorThrown){
+                        xhr.textResponse;
+                    });
+                }
+            });
+        });
+    </script>
+{% endblock %}

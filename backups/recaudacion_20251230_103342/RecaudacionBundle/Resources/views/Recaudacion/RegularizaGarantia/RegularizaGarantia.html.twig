@@ -1,0 +1,60 @@
+<style>
+    .ocultoBtn {
+        display:none;
+    }
+</style>
+<div class="table-header-grey" style="text-align:left;">
+ <i class="icon-exchange  icon-large text-left space"></i> Regularizar Garantía
+</div>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-condensed  grey">
+    <tr >
+        <th width="20%" style=" background-color: whitesmoke ">Regulariza:</th>
+        <td  width="30%">
+            <input class="ace" type="checkbox" id="checkRegularizar" onclick="habilitarObservacion();">
+            <label class="lbl" for="checkRegularizar"> <i class="icon-ok"></i> Regularizar</label>
+        </td>
+    </tr>
+    <tr >
+        <th width="20%" style=" background-color: whitesmoke "> Descripción de Regularización: </th>
+        <td  width="30%">
+            <textarea id="observacionRegularizacion" class="btn-block" disabled name="observacionRegularizacion" rows="5" onkeyup="validaObservacion()" placeholder=" Escriba un comentario."></textarea>
+        </td>
+    </tr>
+</table>
+
+<div class="clearfix"></div>
+<div class="btn-group pull-right">
+    <button id="btn-Regularizar" class="btn btn-success regularizar hide ocultoBtn" type="button" onclick="regulariza();"><i class='icon-usd'></i> Regularizar </button>
+
+    <button id="cancelar-desde-regularizar" class="btn btn-volver2 cancelar-desde-regularizar ocultoBtn" type="button"><i class='icon-arrow-left'></i> Cancelar </button>
+
+</div>
+<div id="saltosTeporales">
+    </br> <div class="clearfix"></div></br> <div class="clearfix"></div></br><div class="clearfix"></div></br><div class="clearfix"></div></br>
+</div>
+<script>
+    function habilitarObservacion()
+    {
+        if ($('#checkRegularizar').is(":checked")) {
+            $('#observacionRegularizacion').attr('disabled', false);
+            validaObservacion();
+        } else {
+            $('#observacionRegularizacion').attr('disabled', true);
+            $('#btn-Regularizar').hide();
+        }
+    }
+
+    function validaObservacion()
+    {
+        if ($('#observacionRegularizacion').val().length > 10) {
+            $('#btn-Regularizar').show();
+        }else{
+            $('#btn-Regularizar').hide();
+        }
+    }
+    function regulariza() {
+        regulatizaGarantia();
+    }
+</script>
+
+

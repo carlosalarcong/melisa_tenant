@@ -1,0 +1,34 @@
+{% block body -%}
+    <div class="table-header">
+        Editar Número de Boleta
+    </div>
+    <form id="edit_form" class="form-horizontal" action="{{ path('Caja_Supervisor_MantenedorFolios_actualizar', {'idDetalleTalonario': idDetalleBoleta }) }}" method="post">
+        <input type="hidden" name="_method" value="post" />
+        <table class="table table-bordered table-condensed table-hover">
+            <tr>
+                <th>Ingrese número de boleta que desee cambiar</th>
+                <td>
+                    {{ form_widget(edit_form.numeroDocumento) }}
+                    <div class="clearfix"></div>
+                    {% for error in edit_form.numeroDocumento.vars.errors %}
+                        <span class="text-error">{{ error.message }}</span>
+                    {% endfor %}
+                </td>
+            </tr>
+        </table>
+        {{ form_rest(edit_form) }}
+        <script type="text/javascript">
+            {#Script que bloquea letras y símbolos, sólo permite números.#}
+            $("#editar_numero_numeroDocumento").bind("keypress", function(event) {
+             if (event.charCode !== 0) {
+                 var regex = new RegExp("^[0-9,]+$");
+                 var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+                 if (!regex.test(key)) {
+                     event.preventDefault();
+                     return false;
+                 }
+             }
+         });
+        </script>
+    </form>
+{% endblock %}

@@ -1,0 +1,90 @@
+<style>
+	body .modal.fade.in { top: 2%; bottom: 2%; }
+</style>
+<div class="table-header header-color-blue " style="text-align:left;">
+	<span class="white"><b>HISTORIAL DE CAJAS:</b></span>
+</div>
+<div class="table-header-grey" style="text-align:left;">
+	<i class="icon-user text-left space"> </i> Información Cajero
+</div>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-condensed  grey">
+	<tr >
+		<th width="6%" style=" background-color: whitesmoke ">
+			<strong>
+				{% if cajero.nombreDocumento is not null %}
+					{{ cajero.nombreDocumento }}
+					{% else %}
+					Sin Identificación
+				{% endif %}
+			</strong> :
+		</th>
+		<td width="14%"> {{ cajero.identificacionExtranjero }} </td>
+		<th width="10%" style=" background-color: whitesmoke ">Nombre:</th>
+		<td width="25%">
+			<span  >{{cajero.nombreUser}}</span>
+		</td>
+		<th  width="10%" style=" background-color: whitesmoke ">Apellidos:</th>
+		<td width="35%">
+			<span  >{{cajero.apellidoP}} {{cajero.apellidoM}}</span>
+		</td>
+	</tr>
+</table>
+<div class="table-header-grey" style="text-align:left;">
+	<i class="icon-file-text text-left space"> </i> Listado Cajas
+</div>
+<table id="table_Informe_Cajas" class="table table-bordered table-condensed table-hover">
+	<thead>
+		<tr>
+			<th >Sucursal </th>
+			<th>Ubicación </th>
+			<th>Monto Inicial</th>
+			<th>Fecha Apertura</th>
+			<th>Fecha Cierre</th>
+			<th width="10%" class="sorting_disabled " ></th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for caja in cajas %}
+			<tr >
+				<td >{{ caja.sucursal }}</td>
+				<td >{{ caja.ubicacion}}</td>
+				<td>{{ obtenerMonto(caja.montoIni) }} </td>
+				<td> {{ caja.fechaApertura | date("d-m-Y H:i")}} </td>
+				<td> {%if caja.fechaCierre%}{{ caja.fechaCierre | date("d-m-Y H:i")}}{% else %}<span>Caja Abierta</span>{% endif %} </td>
+				<td>
+					<div class="btn-group">
+						<a title="Informe Caja" class="btn btn-mini btn-info informeCaja dCaja"href="{{ path('Caja_Gestion_InformeCaja', { 'id': caja.id }) }}">
+							<i class="icon-eye-open icon-large"></i> Ver Detalle
+						</a>
+					</div>
+				</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+<div class="modalInformeCaja hide"></div>
+{% block scripts -%}
+	<script type="text/javascript">
+		$(".dCaja").on('click', function(e) {
+			e.preventDefault();
+			$.post($(this).attr('href'), null, function(response) {
+				var vistaHtml = response;
+				informacion(vistaHtml);
+			}).error(function(xhr,textResponse,errorThrown){
+				xhr.textResponse;
+			});
+		});
+		$('#table_Informe_Cajas').dataTable({
+			"oLanguage": { "sUrl": "{{ asset('js/datatables/dataTables.es.txt') }}" }
+		});
+		$('.modal').css({
+			width:'80%',
+			height:'96%',
+			left:'10%',
+			'margin-left': 'auto'});
+		$('.modal-body').css({
+			padding: '5px',
+			'max-height': '92%',
+			height: '91%'});
+	</script>
+{% endblock %}

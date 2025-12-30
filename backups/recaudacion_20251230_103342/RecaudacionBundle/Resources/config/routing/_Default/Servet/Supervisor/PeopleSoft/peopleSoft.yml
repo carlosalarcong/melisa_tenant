@@ -1,0 +1,16 @@
+Caja_Supervisor_PeopleSOft:
+    path:  /index
+    defaults: { _controller: CajaBundle:_Default/Supervisor/PeopleSoft/PeopleSoft:index }
+
+Caja_Supervisor_PeopleSoft_Crear:
+    path:  /crear
+    defaults: { _controller: CajaBundle:_Default/Supervisor/PeopleSoft/PeopleSoft:crear }
+
+Caja_Supervisor_PeopleSoft_GenerarArchivo:
+    path:  /generarArchivo
+    defaults: { _controller: CajaBundle:_Default/Supervisor/PeopleSoft/PeopleSoft:generarArchivo }
+
+Caja_Supervisor_PeopleSOft_Descargar_Archivo_Txt:
+    path:  /DescargarArchivo/{nombreArchivo}
+    defaults: { _controller: CajaBundle:_Default/Supervisor/PeopleSoft/DescargarArchivo:descargarArchivoTxt }
+

@@ -1,0 +1,68 @@
+<div id="saldototalpagarOtros" class="alert alert-danger">
+	<table width="30%">
+		<tr>
+			<th width="50%"><span class="black">Total Cuenta</span></th>
+			<td width="50%"><div align='right'><b><span>$</span><span  class="sumaTotalMediosDePago" id='sumaTotalOtrosMedios'></span></b></div></td>
+		</tr>
+		<tr>
+			<th><span class="black">Saldo Cuenta</span></th>
+			<td>
+				<div align='right'><b><span>$</span><span class="SaldoTotalMediosDePago" id='SaldoTotalOtrosMedios'></span></b></div>
+			</td>
+		</tr>
+	</table>
+	<div class="alerta_exceso hide"></br>Porfavor, modifique valores, no puede ser un monto <u>Negativo</u></div>
+	<div class="alerta_falta hide"></br>Porfavor, ingrese información en todos los campos requeridos</div>
+</div>
+<form id="formOtros" method="POST" >
+ <table width="100%" cellpadding="10" cellpacing="10" id="Tabla_OtrosMedios_Tab">
+	{% set aux =0 %}
+	<tr>
+		{% for listadoMediosPago in listadoOtrosMedios %}
+		{% set medioPago = 'medioPago_' ~ listadoMediosPago.id %}
+		{% set aux =aux+1%}
+		<td align="center" valign="top"width="50%">
+			<div class="table-header header-color-blue " style="text-align:left;">
+			 {{listadoMediosPago.nombre}}
+			 <div class="btn-group pull-right"  style=" padding: 8px 0 0 0" >
+				<label>
+					<input id="Input_checkbox_{{listadoMediosPago.id}}"  class="ace ace-switch ace-switch-6 Input_checkbox " type="checkbox"  onclick="javascript:showTablas({{listadoMediosPago.id}});" onmouseout="javascript:SumaSaldoVsMediosPago();" data-listado-medios-pago="{{ listadoMediosPago.id }}" >
+					<span class="lbl"></span>
+				</label>
+				<div class="hide">
+				 {{ form_widget(mediospago_form[medioPago], {'attr': {'class': ' Input_checkbox_Bool'}} ) }}
+			 </div>
+		 </div>
+	 </div>
+	 <div id="tabla_{{listadoMediosPago.id}}" class="hide tabla_{{listadoMediosPago.id}} formularios_Pago">
+		{% include listadoMediosPago.ruta %}
+	</div>
+	<br>
+</td>
+{% if aux ==2 %}
+</tr>
+{% set aux =0 %}
+{% endif %}
+{% endfor %}
+</table>
+</form>
+<div class="btn-group pull-right  ">
+	<button id="btn-pagar-Otros" class="btn btn-pagar-Otros btn-success hide ocultarDiv  spcb" type="button"><i class='icon-usd'></i>Realizar Pago</button>
+	{% if idReservaAtencion%}
+	{% else %}
+	<button id="cancelar-desde-mediopago" class="btn  btn-volver2 cancelar-desde-mediopago " type="button"><i class='icon-arrow-left'></i>Cancelar </button>
+	{% endif %}
+
+</div>
+
+{% block scripts %}
+<script>
+	setTimeout(function(){
+		$(".Input_checkbox" ).click(function() {
+			setTimeout(function(){
+				SumaSaldoVsMediosPago();
+			},1000);
+		});
+	},1000);
+</script>
+{% endblock %}
