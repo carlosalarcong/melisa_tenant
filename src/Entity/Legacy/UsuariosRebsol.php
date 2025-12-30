@@ -1,6 +1,6 @@
 <?php
 
-namespace Rebsol\HermesBundle\Entity;
+namespace App\Entity\Legacy;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -836,7 +836,7 @@ class UsuariosRebsol implements UserInterface
 
     private $perfilesCalculados = null;
 
-    public function getRoles() {
+    public function getRoles(): array {
         // $em = $this->getDoctrine();
         if(is_array($this->perfilesCalculados)){
             return $this->perfilesCalculados;

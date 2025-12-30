@@ -14,6 +14,61 @@ parameters:
     tenant.dynamic_resolution.excluded_namespaces:
         - 'Symfony\'
         - 'App\Controller\Mantenedores\'
+    
+    # Parámetros legacy de Symfony 3 para compatibilidad
+    estado_activo: 1
+    estado_inactivo: 0
+    estado_usuario_activo: 1
+    estado_usuario_inactivo: 0
+    estado_usuario_bloqueado: 2
+    parametro_rebsol: 1
+    parametro_empresa: 0
+    arancel_publico: 1
+    arancel_privado: 2
+    arancel_pubpriv: 3
+    rol_medico: 1
+    ambulatoria: 1
+    modulo_caja: 11
+    
+    # Parámetros de entidades (formato nuevo)
+    Estado.activo: 1
+    Estado.inactivo: 0
+    EstadoPila.activo: 1
+    EstadoPila.inactivo: 0
+    EstadoReapertura.cerrada: 0
+    EstadoReapertura.abierta: 1
+    EstadoPago.anulado: 0
+    EstadoPago.pagadoNormal: 1
+    EstadoPago.garantia: 2
+    EstadoPago.garantiaRegularizada: 3
+    EstadoPago.pendientePago: 4
+    EstadoCuenta.cerradaPagada: 1
+    EstadoCuenta.anulado: 2
+    EstadoCuenta.abiertaEnGarantia: 3
+    EstadoCuenta.cerradaRevisionInterna: 4
+    EstadoCuenta.cerradaPendientePago: 6
+    EstadoCuenta.cerradaPagadaTotal: 10
+    EstadoCuenta.abiertaPendientePago: 11
+    EstadoCuenta.abiertaPagadaTotal: 12
+    EstadoDetalleTalonario.porEmitir: 0
+    EstadoDetalleTalonario.emitidas: 1
+    EstadoDetalleTalonario.anulada: 2
+    EstadoTalonarioDetalle.disponible: 0
+    EstadoTalonarioDetalle.reservada: 1
+    EstadoTalonarioDetalle.ocupada: 2
+    EstadoDiferencia.cajeroPideAutorizacion: 0
+    EstadoDiferencia.autorizada: 1
+    EstadoAccionClinica.solicitado: 1
+    EstadoAccionClinica.planificado: 10
+    EstadoTratamiento.Finalizado: 0
+    EstadoTratamiento.EnProceso: 1
+    EstadoTratamiento.Anulado: 2
+    EstadoRelUbicacionCajero.Inactivo: 0
+    EstadoRelUbicacionCajero.Activo: 1
+    EstadoUsuarios.activo: 1
+    TipoAtencion.ambulatoria: 1
+    TipoAtencion.urgencia: 3
+    caja.idModulo: 11
 
 services:
     # default configuration for services in *this* file

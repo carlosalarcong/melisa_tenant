@@ -13,6 +13,7 @@ use App\Form\Recaudacion\Pago\MediosPagoType;
 use App\Form\Recaudacion\Pago\PagoType;
 use App\Form\Recaudacion\Pago\PrestacionType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Process\Process;
 
 
@@ -27,8 +28,10 @@ class DefaultController extends RecaudacionController
     var $arrSessionVarName;
     var $em;
 
-    public function __construct()
+    public function __construct(RequestStack $requestStack)
     {
+        parent::__construct($requestStack);
+        
         $this->arrSessionVarName = array(
             'idPacienteGarantia',
             'idPnaturalMascota',
@@ -95,17 +98,17 @@ class DefaultController extends RecaudacionController
         $process = new Process($this->clearSessionsVar(), $this->AnularDiferenciasAyer());
         $process->run();
 
-        $session = $this->container->get('request_stack')->getCurrentRequest()->getSession();
+        $session = $request->getSession();
 
-        $SucursalUsuario = $this->em->getRepository('RebsolHermesBundle:UsuariosRebsol')->obtenerSucursalUsuario($this->getUser()->getId());
+        $SucursalUsuario = $this->em->getRepository('App\Entity\Legacy\UsuariosRebsol')->obtenerSucursalUsuario($this->getUser()->getId());
 
-        $oUbicacionCajero = $this->em->getRepository('RebsolHermesBundle:RelUbicacionCajero')->findOneBy(array(
+        $oUbicacionCajero = $this->em->getRepository('App\Entity\Legacy\RelUbicacionCajero')->findOneBy(array(
                 'idUsuario' => $idUser,
                 'idEstado' => $this->parametro('Estado.activo')
             )
         );
 
-        $arrParametroHabilitarPaisExtranjero = $this->em->getRepository('RebsolHermesBundle:Parametro')->obtenerParametro('HABILITAR_PAIS_NACIONALIDAD_EXTRANJERO');
+        $arrParametroHabilitarPaisExtranjero = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('HABILITAR_PAIS_NACIONALIDAD_EXTRANJERO');
         $habilitarPaisExtranjero = intval($arrParametroHabilitarPaisExtranjero['valor']);
 
 
@@ -114,7 +117,7 @@ class DefaultController extends RecaudacionController
          */
         if ($estadoApi !== 'core') {
 
-            return $this->redirect($this->generateUrl('Dashboard_ingresar', array('idModulo' => $this->container->getParameter("caja.idModulo"))));
+            return $this->redirect($this->generateUrl('Dashboard_ingresar', array('idModulo' => $this->getParameter("caja.idModulo"))));
         }
 
 //        dump('3');exit;
@@ -122,15 +125,15 @@ class DefaultController extends RecaudacionController
 
             $session->getFlashBag()->add('errorCajaRecaudacion', $this->ErrorImedHermes('errorCajaRecaudacion'));
 
-            return $this->redirect($this->generateUrl('Dashboard_ingresar', array('idModulo' => $this->container->getParameter("caja.idModulo"))));
+            return $this->redirect($this->generateUrl('Dashboard_ingresar', array('idModulo' => $this->getParameter("caja.idModulo"))));
         }
 
-        $folioGlobal = $this->em->getRepository('RebsolHermesBundle:Parametro')->obtenerParametro('FOLIO_GLOBAL');
-        $oTalonario = $this->em->getRepository('RebsolHermesBundle:Talonario')->findBy(
+        $folioGlobal = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('FOLIO_GLOBAL');
+        $oTalonario = $this->em->getRepository('App\Entity\Legacy\Talonario')->findBy(
             array(
                 'idUbicacionCaja' => $folioGlobal['valor'] === '0' ? $oUbicacionCajero->getidUbicacionCaja()->getid() : null,
                 'idEstado' => $this->parametro('Estado.activo'),
-                'idEstadoPila' => $this->container->getParameter('EstadoPila.activo')
+                'idEstadoPila' => $this->getParameter('EstadoPila.activo')
             )
         );
 
@@ -138,7 +141,7 @@ class DefaultController extends RecaudacionController
 
             $session->getFlashBag()->add('errorCajaRecaudacionSinDOcumento', 'No se ha asignado Boleta a esta Caja');
 
-            return $this->redirect($this->generateUrl('Dashboard_ingresar', array('idModulo' => $this->container->getParameter("caja.idModulo"))));
+            return $this->redirect($this->generateUrl('Dashboard_ingresar', array('idModulo' => $this->getParameter("caja.idModulo"))));
         }
 
 
@@ -176,11 +179,11 @@ class DefaultController extends RecaudacionController
         $form = $this->Forms($arrayParams);
         $datosCompletos = 0;
 
-        $habilitaAplicarDiferenciaIndividual = $this->em->getRepository('RebsolHermesBundle:Parametro')->obtenerParametro('APLICAR_DIFERENCIA_INDIVIDUAL');
-        $habilitaAplicarDiferenciaSaldo = $this->em->getRepository('RebsolHermesBundle:Parametro')->obtenerParametro('APLICAR_DIFERENCIA_SALDO');
-        $habilitaRestriccionesDePago = $this->em->getRepository('RebsolHermesBundle:Parametro')->obtenerParametro('HABILITAR_RESTRICCIONES_DE_PAGO');
-        $imedUrl = $this->em->getRepository('RebsolHermesBundle:Parametro')->obtenerParametro('IMED_URL_INTERFAZ_PROD');
-        $formasPagoBono = $this->em->getRepository('RebsolHermesBundle:Parametro')->obtenerParametro('TIPO_FORMAS_PAGO_BONOS');
+        $habilitaAplicarDiferenciaIndividual = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('APLICAR_DIFERENCIA_INDIVIDUAL');
+        $habilitaAplicarDiferenciaSaldo = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('APLICAR_DIFERENCIA_SALDO');
+        $habilitaRestriccionesDePago = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('HABILITAR_RESTRICCIONES_DE_PAGO');
+        $imedUrl = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('IMED_URL_INTERFAZ_PROD');
+        $formasPagoBono = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('TIPO_FORMAS_PAGO_BONOS');
         $formasPagoBono = explode(',', $formasPagoBono['valor']);
 
         $arrayBonosFormasPago = array();
@@ -279,11 +282,11 @@ class DefaultController extends RecaudacionController
         $arrayFormasPago = array();
         $arrayOtrosFormasPago = array();
 
-        $arrParametroHabilitarPaisExtranjero = $this->em->getRepository('RebsolHermesBundle:Parametro')->obtenerParametro('HABILITAR_PAIS_NACIONALIDAD_EXTRANJERO');
+        $arrParametroHabilitarPaisExtranjero = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('HABILITAR_PAIS_NACIONALIDAD_EXTRANJERO');
         $habilitarPaisExtranjero = intval($arrParametroHabilitarPaisExtranjero['valor']);
 
         /** Informacion API */
-        $idModulo = $this->container->getParameter('modulo_caja');
+        $idModulo = $this->getParameter('modulo_caja');
         $estadoApi = $this->obtenerApiModulo($idModulo);
 
         $idReserva = $id;
@@ -310,15 +313,15 @@ class DefaultController extends RecaudacionController
 
         $session = $request->getSession();
 
-        $oUbicacionCajero = $this->em->getRepository('RebsolHermesBundle:RelUbicacionCajero')->findOneBy(
+        $oUbicacionCajero = $this->em->getRepository('App\Entity\Legacy\RelUbicacionCajero')->findOneBy(
             array(
                 'idUsuario' => $idUser->getId(),
                 'idEstado' => $this->parametro('Estado.activo')
             )
         );
 
-        $oReservaAtencion = $this->em->getRepository('RebsolHermesBundle:ReservaAtencion')->find($id);
-        $SucursalUsuario = $this->em->getRepository('RebsolHermesBundle:UsuariosRebsol')->obtenerSucursalUsuario($idUser->getId());
+        $oReservaAtencion = $this->em->getRepository('App\Entity\Legacy\ReservaAtencion')->find($id);
+        $SucursalUsuario = $this->em->getRepository('App\Entity\Legacy\UsuariosRebsol')->obtenerSucursalUsuario($idUser->getId());
 
         if (!$oUbicacionCajero || !$this->getUser()->getVerCaja()) {
             echo "<div class='alert alert-warning'> <button type='button' class='close' data-dismiss='alert'> <i class='icon-remove'></i> </button>
@@ -326,13 +329,13 @@ class DefaultController extends RecaudacionController
             exit(-1);
         }
 
-        $folioGlobal = $this->em->getRepository('RebsolHermesBundle:Parametro')->obtenerParametro('FOLIO_GLOBAL');
+        $folioGlobal = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('FOLIO_GLOBAL');
 
-        $oTalonario = $this->em->getRepository('RebsolHermesBundle:Talonario')->findBy(
+        $oTalonario = $this->em->getRepository('App\Entity\Legacy\Talonario')->findBy(
             array(
                 'idUbicacionCaja' => $folioGlobal['valor'] === '0' ? $oUbicacionCajero->getidUbicacionCaja()->getid(): null,
                 'idEstado' => $this->parametro('Estado.activo'),
-                'idEstadoPila' => $this->container->getParameter('EstadoPila.activo')
+                'idEstadoPila' => $this->getParameter('EstadoPila.activo')
             )
         );
 
@@ -358,7 +361,7 @@ class DefaultController extends RecaudacionController
 
             if ($estadoPago == 2) {
                 $datosPago = array('fechaPago' => $oReservaAtencion->getIdPagoCuenta()->getFechaPago());
-                $oPaciente = $this->em->getRepository("RebsolHermesBundle:Paciente")
+                $oPaciente = $this->em->getRepository("App\Entity\Legacy\Paciente")
                     ->find($oReservaAtencion->getIdPaciente());
                 $dhp = $this->rPaciente()->HistoricoPagosIdPacienteGarantia($oPaciente->getId());
                 $estadoPago = 1;
@@ -473,13 +476,13 @@ class DefaultController extends RecaudacionController
 
         $datosProfesionalDefecto = null;
         if ($idReserva != null) {
-            $oReserva = $this->em->getRepository("RebsolHermesBundle:ReservaAtencion")->find($idReserva);
+            $oReserva = $this->em->getRepository("App\Entity\Legacy\ReservaAtencion")->find($idReserva);
 
             if (!is_null($oReserva) && !is_null($oReserva->getIdHorarioConsulta())
                 && !is_null($oReserva->getIdHorarioConsulta()->getIdHorarioConsultaSala()) && !is_null($oReserva->getIdHorarioConsulta()->getIdHorarioConsultaSala()->getIdUsuario())) {
                 $oPersona = $oReserva->getIdHorarioConsulta()->getIdHorarioConsultaSala()->getIdUsuario()->getIdPersona();
 
-                $oPnatural = $this->em->getRepository("RebsolHermesBundle:Pnatural")->findOneBy(['idPersona' => $oPersona]);
+                $oPnatural = $this->em->getRepository("App\Entity\Legacy\Pnatural")->findOneBy(['idPersona' => $oPersona]);
 
                 $datosProfesionalDefecto = [
                     'rutDefecto' => $oPersona->getIdentificacionExtranjero(),
@@ -490,11 +493,11 @@ class DefaultController extends RecaudacionController
                 ];
             }
         }
-        $habilitaRestriccionesDePago = $this->em->getRepository('RebsolHermesBundle:Parametro')->obtenerParametro('HABILITAR_RESTRICCIONES_DE_PAGO');
-        $habilitaAplicarDiferenciaIndividual = $this->em->getRepository('RebsolHermesBundle:Parametro')->obtenerParametro('APLICAR_DIFERENCIA_INDIVIDUAL');
-        $habilitaAplicarDiferenciaSaldo = $this->em->getRepository('RebsolHermesBundle:Parametro')->obtenerParametro('APLICAR_DIFERENCIA_SALDO');
-        $imedUrl = $this->em->getRepository('RebsolHermesBundle:Parametro')->obtenerParametro('IMED_URL_INTERFAZ_PROD');
-        $formasPagoBono = $this->em->getRepository('RebsolHermesBundle:Parametro')->obtenerParametro('TIPO_FORMAS_PAGO_BONOS');
+        $habilitaRestriccionesDePago = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('HABILITAR_RESTRICCIONES_DE_PAGO');
+        $habilitaAplicarDiferenciaIndividual = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('APLICAR_DIFERENCIA_INDIVIDUAL');
+        $habilitaAplicarDiferenciaSaldo = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('APLICAR_DIFERENCIA_SALDO');
+        $imedUrl = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('IMED_URL_INTERFAZ_PROD');
+        $formasPagoBono = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('TIPO_FORMAS_PAGO_BONOS');
         $formasPagoBono = explode(',', $formasPagoBono['valor']);
 
         $arrayBonosFormasPago = array();
@@ -526,7 +529,7 @@ class DefaultController extends RecaudacionController
                 'getPrestacionesCaja' => $validacion['getPrestacionesCaja'],
                 'subEmpresaTalonarioPrestacion' => $validacion['subEmpresaTalonarioPrestacion'],
                 /** Estados desde 'EstadosCaja' */
-                'estadoReapertura' => $this->container->getParameter('EstadoReapertura.abierta'),
+                'estadoReapertura' => $this->getParameter('EstadoReapertura.abierta'),
                 'coreApi' => ($estadoApi === "core") ? 1 : 0,
                 'from' => $this->getSession('from'),
                 /** Estados Caja */
@@ -577,13 +580,13 @@ class DefaultController extends RecaudacionController
     protected function PagoGenerado($oReservaAtencion, $PagoesGarantia, $Fecha)
     {
 
-        $oPago = $this->em->getRepository('RebsolHermesBundle:PagoCuenta')->find($oReservaAtencion->getIdPagoCuenta()->getId());
+        $oPago = $this->em->getRepository('App\Entity\Legacy\PagoCuenta')->find($oReservaAtencion->getIdPagoCuenta()->getId());
         $datosPago = array('fechaPago' => $oPago->getFechaPago());
-        $oPaciente = $this->em->getRepository('RebsolHermesBundle:Paciente')->find($oReservaAtencion->getIdPaciente());
+        $oPaciente = $this->em->getRepository('App\Entity\Legacy\Paciente')->find($oReservaAtencion->getIdPaciente());
 
         $dhp = $this->rPaciente()->HistoricoPagosIdPaciente($oPaciente->getId());
         $oEstadoTalonarioEmitida = $this->estado('EstadoBoletaActiva');
-        $oHorario = $this->em->getRepository("RebsolHermesBundle:HorarioConsulta")->find($oReservaAtencion->getidHorarioConsulta()->getid());
+        $oHorario = $this->em->getRepository("App\Entity\Legacy\HorarioConsulta")->find($oReservaAtencion->getidHorarioConsulta()->getid());
         $oHorario = $oHorario->getFechaInicioHorario();
         $FechaHorario = $oHorario->format("Y-m-d");
 
@@ -622,7 +625,7 @@ class DefaultController extends RecaudacionController
     protected function ClienteDataArray($oReservaAtencion, $idEmpresa, $garan)
     {
 
-        $oPersona = $this->em->getRepository('RebsolHermesBundle:Persona')->findOneBy(array(
+        $oPersona = $this->em->getRepository('App\Entity\Legacy\Persona')->findOneBy(array(
                 'idTipoIdentificacionExtranjero' => $oReservaAtencion->getIdTipoIdentificacionExtranjero()
             , 'identificacionExtranjero' => $oReservaAtencion->getIdentificacionExtranjero()
             )
@@ -725,16 +728,16 @@ class DefaultController extends RecaudacionController
         $countPlan = 0;
         $countProf = 0;
 
-        $oOrigen = $this->em->getRepository('RebsolHermesBundle:Origen')->findBy(array(
+        $oOrigen = $this->em->getRepository('App\Entity\Legacy\Origen')->findBy(array(
             "idSucursal" => $SucursalUsuario,
             "idEstado" => $estado));
-        $oRolProfesional = $this->em->getRepository('RebsolHermesBundle:RolProfesional')->findBy(array(
-            "idRol" => $this->container->getParameter('rol_medico'),
+        $oRolProfesional = $this->em->getRepository('App\Entity\Legacy\RolProfesional')->findBy(array(
+            "idRol" => $this->getParameter('rol_medico'),
             "idEstado" => $estado));
-        $oPrevision = $this->em->getRepository('RebsolHermesBundle:Prevision')->findBy(array(
+        $oPrevision = $this->em->getRepository('App\Entity\Legacy\Prevision')->findBy(array(
             "idEmpresa" => $oEmpresa,
             "idEstado" => $estado));
-        $oTipoPrevision = $this->em->getRepository('RebsolHermesBundle:TipoPrevision')->findBy(array(
+        $oTipoPrevision = $this->em->getRepository('App\Entity\Legacy\TipoPrevision')->findBy(array(
             "idEmpresa" => $oEmpresa,
             "esConvenio" => 1,
             "idEstado" => $estado));
@@ -767,7 +770,7 @@ class DefaultController extends RecaudacionController
 
         $auxRelSucPre = array();
         foreach ($oPrevision as $pr) {
-            $oRelSucursalPrevision = $this->em->getRepository('RebsolHermesBundle:RelSucursalPrevision')->findOneBy(array(
+            $oRelSucursalPrevision = $this->em->getRepository('App\Entity\Legacy\RelSucursalPrevision')->findOneBy(array(
                 "idSucursal" => $SucursalUsuario,
                 "idPrevision" => $pr->getid(),
                 "idEstado" => $estado
@@ -780,7 +783,7 @@ class DefaultController extends RecaudacionController
 
         foreach ($auxRelSucPre as $c) {
 
-            $oPrPlan = $this->em->getRepository('RebsolHermesBundle:PrPlan')->findBy(array(
+            $oPrPlan = $this->em->getRepository('App\Entity\Legacy\PrPlan')->findBy(array(
                 "idRelSucursalPrevision" => $c,
                 "idEstado" => $estado
             ));
@@ -811,12 +814,12 @@ class DefaultController extends RecaudacionController
         $arrTalonario[] = array();
         $subEmpresa[] = array();
         $arrTalonarioNumeroActual = array();
-        $oCajaFindByUser = $this->em->getRepository('RebsolHermesBundle:Caja')->findBy(array("idUsuario" => $idUser));
+        $oCajaFindByUser = $this->em->getRepository('App\Entity\Legacy\Caja')->findBy(array("idUsuario" => $idUser));
 
         if ($oCajaFindByUser) {
             foreach ($oCajaFindByUser as $c) {
                 $estadoTemp = (!is_null($c->getIdEstadoReapertura())) ? $c->getIdEstadoReapertura()->getId() : null;
-                if ($estadoTemp && $estadoTemp == $this->container->getParameter('EstadoReapertura.abierta')) {
+                if ($estadoTemp && $estadoTemp == $this->getParameter('EstadoReapertura.abierta')) {
                     $auxReaperturaCount = $auxReaperturaCount + 1;
                     $oCajaTemp = $c;
                     $fechaReapertura = $c->getFechaReapertura();
@@ -837,10 +840,10 @@ class DefaultController extends RecaudacionController
             $open = 1;
             $close = 1;
             $oCaja = $oCajaTemp;
-            $oTalonario = $this->em->getRepository('RebsolHermesBundle:Talonario')->findOneBy(array(
+            $oTalonario = $this->em->getRepository('App\Entity\Legacy\Talonario')->findOneBy(array(
                 "idUbicacionCaja" => $oCaja->getidUbicacionCajero()->getidUbicacionCaja()->getid(),
                 "idEstado" => $this->parametro('Estado.activo'),
-                "idEstadoPila" => $this->container->getParameter('EstadoPila.activo')
+                "idEstadoPila" => $this->getParameter('EstadoPila.activo')
             ));
         } else {
 
@@ -893,15 +896,15 @@ class DefaultController extends RecaudacionController
                 }
             }
         }
-        $folioGlobal = $this->em->getRepository('RebsolHermesBundle:Parametro')->obtenerParametro('FOLIO_GLOBAL');
+        $folioGlobal = $this->em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('FOLIO_GLOBAL');
 
         if ($oCaja) {
 
-            $oTalonario = $this->em->getRepository('RebsolHermesBundle:Talonario')->findBy(
+            $oTalonario = $this->em->getRepository('App\Entity\Legacy\Talonario')->findBy(
                 array(
                     'idUbicacionCaja' => $folioGlobal['valor'] === '0' ? $oCaja->getidUbicacionCajero()->getidUbicacionCaja()->getid() : null,
                     'idEstado' => $this->parametro('Estado.activo'),
-                    'idEstadoPila' => $this->container->getParameter('EstadoPila.activo')
+                    'idEstadoPila' => $this->getParameter('EstadoPila.activo')
                 )
             );
 
@@ -915,19 +918,19 @@ class DefaultController extends RecaudacionController
                 $this->get('session')->set('idTalonario', $arrTalonario);
             } else {
                 $session->getFlashBag()->add('errorCajaRecaudacion', 'No se ha asignado Boleta a ésta Caja');
-                return $this->redirect($this->generateUrl('Dashboard_ingresar', array('idModulo' => $this->container->getParameter("caja.idModulo"))));
+                return $this->redirect($this->generateUrl('Dashboard_ingresar', array('idModulo' => $this->getParameter("caja.idModulo"))));
             }
         } else {
-            $UbicacionCajero = $this->em->getRepository('RebsolHermesBundle:RelUbicacionCajero')->findOneBy(array(
+            $UbicacionCajero = $this->em->getRepository('App\Entity\Legacy\RelUbicacionCajero')->findOneBy(array(
                 "idEstado" => $this->parametro('Estado.activo'),
                 "idUsuario" => $idUser
             ));
 
-            $oTalonario = $this->em->getRepository('RebsolHermesBundle:Talonario')->findBy(
+            $oTalonario = $this->em->getRepository('App\Entity\Legacy\Talonario')->findBy(
                 array(
                     'idUbicacionCaja' => $folioGlobal['valor'] === '0' ? $UbicacionCajero->getIdUbicacionCaja()->getid() : null,
                     'idEstado' => $this->parametro('Estado.activo'),
-                    'idEstadoPila' => $this->container->getParameter('EstadoPila.activo')
+                    'idEstadoPila' => $this->getParameter('EstadoPila.activo')
                 )
             );
         }
@@ -945,7 +948,7 @@ class DefaultController extends RecaudacionController
             }
 
             $TalonarioNumeroActual = $this->rCaja()->GetNumeroActualSinAnulacionTalonario($arrTalonarioId,
-                $this->container->getParameter('EstadoDetalleTalonario.anulada'),
+                $this->getParameter('EstadoDetalleTalonario.anulada'),
                 $this->em);
 
             foreach ($oTalonario as $t) {
@@ -1000,7 +1003,7 @@ class DefaultController extends RecaudacionController
         if ($reserva == 1) {
 
             //////// valida fecha de registro ////////
-            $oHorario = $this->em->getRepository("RebsolHermesBundle:HorarioConsulta")->find($idHorarioConsulta);
+            $oHorario = $this->em->getRepository("App\Entity\Legacy\HorarioConsulta")->find($idHorarioConsulta);
             $oHorario = $oHorario->getFechaInicioHorario();
             $FechaHorario = $oHorario->format("Y-m-d");
 
@@ -1014,7 +1017,7 @@ class DefaultController extends RecaudacionController
 
 
             if (!$oCaja) {
-                $oUbicacionCajero = $this->em->getRepository('RebsolHermesBundle:RelUbicacionCajero')->findOneBy(array(
+                $oUbicacionCajero = $this->em->getRepository('App\Entity\Legacy\RelUbicacionCajero')->findOneBy(array(
                     "idUsuario" => $idUser,
                     "idEstado" => $this->parametro('Estado.activo')
                 ));
@@ -1038,7 +1041,7 @@ class DefaultController extends RecaudacionController
         }
 
         $parametroPagoTodosLosDias = $this->rParametro()->obtenerParametro('SOLO_PAGOS_DEL_DIA')['valor'];
-        $getPrestacionesCaja = $this->em->getRepository("RebsolHermesBundle:Parametro")
+        $getPrestacionesCaja = $this->em->getRepository("App\Entity\Legacy\Parametro")
             ->obtenerParametro('BUSQUEDA_PRESTACION_CAJA');
         return array(
             'pagoTodosLosDias' => $parametroPagoTodosLosDias,
@@ -1070,7 +1073,7 @@ class DefaultController extends RecaudacionController
         $habilitarPaisExtranjero = isset($arrayParams['habilitarPaisExtranjero']) ? $arrayParams['habilitarPaisExtranjero'] : null;
 
         $em = $this->getDoctrine()->getManager();
-        $idTipoIdentificacionDefault = $em->getReference('RebsolHermesBundle:Empresa', $oEmpresa)->getIdTipoIdentificacionDefault();
+        $idTipoIdentificacionDefault = $em->getReference('App\Entity\Legacy\Empresa', $oEmpresa)->getIdTipoIdentificacionDefault();
         $form = $this->createForm(BusquedaAvanzadaDirectorioPacienteType::class, null);
 
         $mediosPagoform = $this->createForm(MediosPagoType::class, null,
@@ -1133,7 +1136,7 @@ class DefaultController extends RecaudacionController
 
     protected function GetIdPnaturalProfesional($oR)
     {
-        $Pnatural = $this->em->getRepository("RebsolHermesBundle:Pnatural")->findOneBy(array('idPersona' => $oR));
+        $Pnatural = $this->em->getRepository("App\Entity\Legacy\Pnatural")->findOneBy(array('idPersona' => $oR));
         return $Pnatural->getId();
     }
 
@@ -1155,7 +1158,7 @@ class DefaultController extends RecaudacionController
 
         if (count($oDiferencias) > 0) {
             foreach ($oDiferencias as $d) {
-                $oDiferencia = $em->getRepository('RebsolHermesBundle:Diferencia')->find($d);
+                $oDiferencia = $em->getRepository('App\Entity\Legacy\Diferencia')->find($d);
                 $oDiferencia->setFechaAnulacion($oFecha);
                 $oDiferencia->setIdUsuarioAnulacion($oUser);
                 $oDiferencia->setIdEstadoDiferencia($this->estado('DiferenciacajeroCancelaSolicitud'));

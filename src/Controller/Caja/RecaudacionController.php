@@ -11,10 +11,15 @@ use App\Form\Recaudacion\Pago\PrestacionType;
 use App\Entity\Legacy\PersonaDomicilio;
 use App\Controller\Legacy\DefaultController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 
 class RecaudacionController extends DefaultController
 {
+    public function __construct(
+        protected RequestStack $requestStack
+    ) {
+    }
 
 
     public function indexAction(Request $request)
@@ -26,9 +31,9 @@ class RecaudacionController extends DefaultController
         $esCajero = 'false';
         $esUbicacionCajero = 'false';
 
-        $oUbicacionCajero = $em->getRepository('RebsolHermesBundle:RelUbicacionCajero')->findOneBy(array(
+        $oUbicacionCajero = $em->getRepository('App\Entity\Legacy\RelUbicacionCajero')->findOneBy(array(
                 'idUsuario' => $idUser,
-                'idEstado' => $this->container->getParameter('Estado.activo')
+                'idEstado' => $this->getParameter('Estado.activo')
             )
         );
 
@@ -60,7 +65,7 @@ class RecaudacionController extends DefaultController
 
         $em = $this->getDoctrine()->getManager();
         $oUsuarioRebsol = $this->getUser();
-        $rRepository = $this->getDoctrine()->getRepository('RebsolHermesBundle:UsuariosRebsol');
+        $rRepository = $this->getDoctrine()->getRepository('App\Entity\Legacy\UsuariosRebsol');
         $entities = $rRepository->obtenerSucursalPorUsuario($oUsuarioRebsol->getId());
         $arrReturn = count($entities);
 
@@ -73,9 +78,9 @@ class RecaudacionController extends DefaultController
         $em = $this->getDoctrine()->getManager();
         $oUsuarioRebsol = $this->getUser();
 
-        $oCajero = $this->getDoctrine()->getRepository('RebsolHermesBundle:RelUbicacionCajero')->findBy(array(
+        $oCajero = $this->getDoctrine()->getRepository('App\Entity\Legacy\RelUbicacionCajero')->findBy(array(
                 'idUsuario' => $oUsuarioRebsol->getId(),
-                'idEstado' => $this->container->getParameter('EstadoRelUbicacionCajero.Activo')
+                'idEstado' => $this->getParameter('EstadoRelUbicacionCajero.Activo')
             )
         );
 
@@ -112,7 +117,7 @@ class RecaudacionController extends DefaultController
     {
 
         $em = $this->getDoctrine()->getManager();
-        $entities = $em->getRepository('RebsolHermesBundle:' . $strNombreEntidad . '')->findBy(array("idEmpresa" => $oEmpresa->getId()));
+        $entities = $em->getRepository("App\\Entity\\Legacy\\" . $strNombreEntidad)->findBy(array("idEmpresa" => $oEmpresa->getId()));
 
         foreach ($entities as $entity) {
             if ($entity->getValorDefault() == 1) {
@@ -167,53 +172,53 @@ class RecaudacionController extends DefaultController
 
     protected function rFormaPago()
     {
-        return $this->getDoctrine()->getRepository("RebsolHermesBundle:FormaPago");
+        return $this->getDoctrine()->getRepository("App\Entity\Legacy\FormaPago");
     }
 
 
     protected function rPaciente()
     {
-        return $this->getDoctrine()->getRepository("RebsolHermesBundle:Paciente");
+        return $this->getDoctrine()->getRepository("App\Entity\Legacy\Paciente");
     }
 
     protected function rPnatural()
     {
-        return $this->getDoctrine()->getRepository("RebsolHermesBundle:Pnatural");
+        return $this->getDoctrine()->getRepository("App\Entity\Legacy\Pnatural");
     }
 
     protected function rPagoCuenta()
     {
-        return $this->getDoctrine()->getRepository("RebsolHermesBundle:PagoCuenta");
+        return $this->getDoctrine()->getRepository("App\Entity\Legacy\PagoCuenta");
     }
 
     protected function rCaja()
     {
-        return $this->getDoctrine()->getRepository("RebsolHermesBundle:Caja");
+        return $this->getDoctrine()->getRepository("App\Entity\Legacy\Caja");
     }
 
     protected function rDetalleCaja()
     {
-        return $this->getDoctrine()->getRepository("RebsolHermesBundle:DetalleCaja");
+        return $this->getDoctrine()->getRepository("App\Entity\Legacy\DetalleCaja");
     }
 
     protected function rDocumentoPago()
     {
-        return $this->getDoctrine()->getRepository("RebsolHermesBundle:DocumentoPago");
+        return $this->getDoctrine()->getRepository("App\Entity\Legacy\DocumentoPago");
     }
 
     protected function rDiferencia()
     {
-        return $this->getDoctrine()->getRepository("RebsolHermesBundle:Diferencia");
+        return $this->getDoctrine()->getRepository("App\Entity\Legacy\Diferencia");
     }
 
     protected function rParametro()
     {
-        return $this->getDoctrine()->getRepository("RebsolHermesBundle:Parametro");
+        return $this->getDoctrine()->getRepository("App\Entity\Legacy\Parametro");
     }
 
     protected function rUsuariosRebsol()
     {
-        return $this->getDoctrine()->getRepository("RebsolHermesBundle:UsuariosRebsol");
+        return $this->getDoctrine()->getRepository("App\Entity\Legacy\UsuariosRebsol");
     }
 
     /**
@@ -223,12 +228,12 @@ class RecaudacionController extends DefaultController
 
     protected function request($a)
     {
-        return $this->container->get('request_stack')->getCurrentRequest()->get($a);
+        return $this->requestStack->getCurrentRequest()->get($a);
     }
 
     protected function ajax($a)
     {
-        return $this->container->get('request_stack')->getCurrentRequest()->query->get($a);
+        return $this->requestStack->getCurrentRequest()->query->get($a);
     }
 
     /**
@@ -238,17 +243,17 @@ class RecaudacionController extends DefaultController
 
     protected function getSession($n)
     {
-        return $this->get('session')->get($n);
+        return $this->requestStack->getSession()->get($n);
     }
 
     protected function setSession($n, $v)
     {
-        return $this->get('session')->set($n, $v);
+        return $this->requestStack->getSession()->set($n, $v);
     }
 
     protected function killSession($n)
     {
-        return $this->get('session')->remove($n);
+        return $this->requestStack->getSession()->remove($n);
     }
 
     /**
@@ -329,94 +334,94 @@ class RecaudacionController extends DefaultController
 
         switch ($var) {
             case "EstadoPilaActiva":
-                return $em->getRepository('RebsolHermesBundle:EstadoPila')->find($this->container->getParameter('EstadoPila.activo'));
+                return $em->getRepository('App\Entity\Legacy\EstadoPila')->find($this->getParameter('EstadoPila.activo'));
                 break;
             case "EstadoPilaInaciva":
-                return $em->getRepository('RebsolHermesBundle:EstadoPila')->find($this->container->getParameter('EstadoPila.inactivo'));
+                return $em->getRepository('App\Entity\Legacy\EstadoPila')->find($this->getParameter('EstadoPila.inactivo'));
                 break;
             case "EstadoReaperturaCerrada":
-                return $em->getRepository('RebsolHermesBundle:EstadoReapertura')->find($this->container->getParameter('EstadoReapertura.cerrada'));
+                return $em->getRepository('App\Entity\Legacy\EstadoReapertura')->find($this->getParameter('EstadoReapertura.cerrada'));
                 break;
             case "EstadoReaperturaAbierta":
-                return $em->getRepository('RebsolHermesBundle:EstadoReapertura')->find($this->container->getParameter('EstadoReapertura.abierta'));
+                return $em->getRepository('App\Entity\Legacy\EstadoReapertura')->find($this->getParameter('EstadoReapertura.abierta'));
                 break;
             case "EstadoActivo":
-                return $em->getRepository('RebsolHermesBundle:Estado')->find($this->container->getParameter('Estado.activo'));
+                return $em->getRepository('App\Entity\Legacy\Estado')->find($this->getParameter('Estado.activo'));
                 break;
             case "EstadoInc":
-                return $em->getRepository('RebsolHermesBundle:Estado')->find($this->container->getParameter('Estado.inactivo'));
+                return $em->getRepository('App\Entity\Legacy\Estado')->find($this->getParameter('Estado.inactivo'));
                 break;
             case "EstadoPagoActiva":
-                return $em->getRepository('RebsolHermesBundle:EstadoPago')->find($this->container->getParameter('EstadoPago.pagadoNormal'));
+                return $em->getRepository('App\Entity\Legacy\EstadoPago')->find($this->getParameter('EstadoPago.pagadoNormal'));
                 break;
             case "EstadoPagoAnulada":
-                return $em->getRepository('RebsolHermesBundle:EstadoPago')->find($this->container->getParameter('EstadoPago.anulado'));
+                return $em->getRepository('App\Entity\Legacy\EstadoPago')->find($this->getParameter('EstadoPago.anulado'));
                 break;
             case "EstadoPagoGarantia":
-                return $em->getRepository('RebsolHermesBundle:EstadoPago')->find($this->container->getParameter('EstadoPago.garantia'));
+                return $em->getRepository('App\Entity\Legacy\EstadoPago')->find($this->getParameter('EstadoPago.garantia'));
                 break;
             case "EstadoPagoRegularizada":
-                return $em->getRepository('RebsolHermesBundle:EstadoPago')->find($this->container->getParameter('EstadoPago.garantiaRegularizada'));
+                return $em->getRepository('App\Entity\Legacy\EstadoPago')->find($this->getParameter('EstadoPago.garantiaRegularizada'));
                 break;
             case "EstadoPagoPendientePago":
-                return $em->getRepository('RebsolHermesBundle:EstadoPago')->find($this->container->getParameter('EstadoPago.pendientePago'));
+                return $em->getRepository('App\Entity\Legacy\EstadoPago')->find($this->getParameter('EstadoPago.pendientePago'));
                 break;
             case "EstadoCuentaCerradaPagada":
-                return $em->getRepository('RebsolHermesBundle:EstadoCuenta')->find($this->container->getParameter('EstadoCuenta.cerradaPagada'));
+                return $em->getRepository('App\Entity\Legacy\EstadoCuenta')->find($this->getParameter('EstadoCuenta.cerradaPagada'));
                 break;
             case "EstadoCuentaAnulada":
-                return $em->getRepository('RebsolHermesBundle:EstadoCuenta')->find($this->container->getParameter('EstadoCuenta.anulado'));
+                return $em->getRepository('App\Entity\Legacy\EstadoCuenta')->find($this->getParameter('EstadoCuenta.anulado'));
                 break;
             case "EstadoAbiertaPendientePago":
-                return $em->getRepository('RebsolHermesBundle:EstadoCuenta')->find($this->container->getParameter('EstadoCuenta.abiertaPendientePago'));
+                return $em->getRepository('App\Entity\Legacy\EstadoCuenta')->find($this->getParameter('EstadoCuenta.abiertaPendientePago'));
                 break;
             case "EstadoAbiertaPagadaTotal":
-                return $em->getRepository('RebsolHermesBundle:EstadoCuenta')->find($this->container->getParameter('EstadoCuenta.abiertaPagadaTotal'));
+                return $em->getRepository('App\Entity\Legacy\EstadoCuenta')->find($this->getParameter('EstadoCuenta.abiertaPagadaTotal'));
                 break;
             case "EstadoCerradaPendientePago":
-                return $em->getRepository('RebsolHermesBundle:EstadoCuenta')->find($this->container->getParameter('EstadoCuenta.cerradaPendientePago'));
+                return $em->getRepository('App\Entity\Legacy\EstadoCuenta')->find($this->getParameter('EstadoCuenta.cerradaPendientePago'));
                 break;
             case "EstadoCerradaRevisionInterna":
-                return $em->getRepository('RebsolHermesBundle:EstadoCuenta')->find($this->container->getParameter('EstadoCuenta.cerradaRevisionInterna'));
+                return $em->getRepository('App\Entity\Legacy\EstadoCuenta')->find($this->getParameter('EstadoCuenta.cerradaRevisionInterna'));
                 break;
             case "EstadoCerradaPagadaTotal":
-                return $em->getRepository('RebsolHermesBundle:EstadoCuenta')->find($this->container->getParameter('EstadoCuenta.cerradaPagadaTotal'));
+                return $em->getRepository('App\Entity\Legacy\EstadoCuenta')->find($this->getParameter('EstadoCuenta.cerradaPagadaTotal'));
                 break;
             case "EstadoBoletaActiva":
-                return $em->getRepository('RebsolHermesBundle:EstadoDetalleTalonario')->find($this->container->getParameter('EstadoDetalleTalonario.emitidas'));
+                return $em->getRepository('App\Entity\Legacy\EstadoDetalleTalonario')->find($this->getParameter('EstadoDetalleTalonario.emitidas'));
                 break;
             case "EstadoBoletaAnulada":
-                return $em->getRepository('RebsolHermesBundle:EstadoDetalleTalonario')->find($this->container->getParameter('EstadoDetalleTalonario.anulada'));
+                return $em->getRepository('App\Entity\Legacy\EstadoDetalleTalonario')->find($this->getParameter('EstadoDetalleTalonario.anulada'));
                 break;
             case "EstadoAccionClinicaSolicitado":
-                return $em->getRepository('RebsolHermesBundle:EstadoAccionClinica')->find($this->container->getParameter('EstadoAccionClinica.solicitado'));
+                return $em->getRepository('App\Entity\Legacy\EstadoAccionClinica')->find($this->getParameter('EstadoAccionClinica.solicitado'));
                 break;
             case "EstadoTratamientoFinalizado":
-                return $em->getRepository('RebsolHermesBundle:EstadoTratamiento')->find($this->container->getParameter('EstadoTratamiento.Finalizado'));
+                return $em->getRepository('App\Entity\Legacy\EstadoTratamiento')->find($this->getParameter('EstadoTratamiento.Finalizado'));
                 break;
             case "EstadoTratamientoEnProceso":
-                return $em->getRepository('RebsolHermesBundle:EstadoTratamiento')->find($this->container->getParameter('EstadoTratamiento.EnProceso'));
+                return $em->getRepository('App\Entity\Legacy\EstadoTratamiento')->find($this->getParameter('EstadoTratamiento.EnProceso'));
                 break;
             case "EstadoTratamientoAnulado":
-                return $em->getRepository('RebsolHermesBundle:EstadoTratamiento')->find($this->container->getParameter('EstadoTratamiento.Anulado'));
+                return $em->getRepository('App\Entity\Legacy\EstadoTratamiento')->find($this->getParameter('EstadoTratamiento.Anulado'));
                 break;
             case "EstadoApi":
-                return $this->obtenerApiModulo($this->container->getParameter("modulo_caja"));
+                return $this->obtenerApiModulo($this->getParameter("modulo_caja"));
                 break;
             case "DiferenciacajeroPideAutorizacion":
-                return $em->getRepository('RebsolHermesBundle:EstadoDiferencia')->find($this->container->getParameter('EstadoDiferencia.cajeroPideAutorizacion'));
+                return $em->getRepository('App\Entity\Legacy\EstadoDiferencia')->find($this->getParameter('EstadoDiferencia.cajeroPideAutorizacion'));
                 break;
             case "Diferenciaautorizada":
-                return $em->getRepository('RebsolHermesBundle:EstadoDiferencia')->find($this->container->getParameter('EstadoDiferencia.autorizada'));
+                return $em->getRepository('App\Entity\Legacy\EstadoDiferencia')->find($this->getParameter('EstadoDiferencia.autorizada'));
                 break;
             case "DiferenciadescuentoNoRequiereAutorizacion":
-                return $em->getRepository('RebsolHermesBundle:EstadoDiferencia')->find($this->container->getParameter('EstadoDiferencia.descuentoNoRequiereAutorizacion'));
+                return $em->getRepository('App\Entity\Legacy\EstadoDiferencia')->find($this->getParameter('EstadoDiferencia.descuentoNoRequiereAutorizacion'));
                 break;
             case "DiferenciacajeroCancelaSolicitud":
-                return $em->getRepository('RebsolHermesBundle:EstadoDiferencia')->find($this->container->getParameter('EstadoDiferencia.cajeroCancelaSolicitud'));
+                return $em->getRepository('App\Entity\Legacy\EstadoDiferencia')->find($this->getParameter('EstadoDiferencia.cajeroCancelaSolicitud'));
                 break;
             case "Diferenciarechazada":
-                return $em->getRepository('RebsolHermesBundle:EstadoDiferencia')->find($this->container->getParameter('EstadoDiferencia.rechazada'));
+                return $em->getRepository('App\Entity\Legacy\EstadoDiferencia')->find($this->getParameter('EstadoDiferencia.rechazada'));
                 break;
             default:
                 return null;
@@ -431,82 +436,82 @@ class RecaudacionController extends DefaultController
 
         switch ($var) {
             case "Estado.activo":
-                return $this->container->getParameter('Estado.activo');
+                return $this->getParameter('Estado.activo');
                 break;
             case "Estado.inactivo":
-                return $this->container->getParameter('Estado.inactivo');
+                return $this->getParameter('Estado.inactivo');
                 break;
             case "EstadoUsuarios.activo":
-                return $this->container->getParameter('EstadoUsuarios.activo');
+                return $this->getParameter('EstadoUsuarios.activo');
                 break;
             case "EstadoUsuarios.inactivo":
-                return $this->container->getParameter('EstadoUsuarios.inactivo');
+                return $this->getParameter('EstadoUsuarios.inactivo');
                 break;
             case "EstadoEspecialidadMedica.activo":
-                return $this->container->getParameter('EstadoEspecialidadMedica.activo');
+                return $this->getParameter('EstadoEspecialidadMedica.activo');
                 break;
             case "EstadoEspecialidadMedica.inactivo":
-                return $this->container->getParameter('EstadoEspecialidadMedica.inactivo');
+                return $this->getParameter('EstadoEspecialidadMedica.inactivo');
                 break;
             case "EstadoRelUsuarioServicio.Activo":
-                return $this->container->getParameter('EstadoRelUsuarioServicio.Activo');
+                return $this->getParameter('EstadoRelUsuarioServicio.Activo');
                 break;
             case "EstadoRelUsuarioServicio.Inactivo":
-                return $this->container->getParameter('EstadoRelUsuarioServicio.Inactivo');
+                return $this->getParameter('EstadoRelUsuarioServicio.Inactivo');
                 break;
             case "EstadoRelUsuarioServicio.Bloqueado":
-                return $this->container->getParameter('EstadoRelUsuarioServicio.Bloqueado');
+                return $this->getParameter('EstadoRelUsuarioServicio.Bloqueado');
                 break;
             case "EstadoPago.garantia":
-                return $this->container->getParameter('EstadoPago.garantia');
+                return $this->getParameter('EstadoPago.garantia');
                 break;
             case "EstadoPago.pagadoNormal":
-                return $this->container->getParameter('EstadoPago.pagadoNormal');
+                return $this->getParameter('EstadoPago.pagadoNormal');
                 break;
             case "EstadoPila.inactivo":
-                return $this->container->getParameter('EstadoPila.inactivo');
+                return $this->getParameter('EstadoPila.inactivo');
                 break;
             case "FormaPagoTipo.Efectivo":
-                return $this->container->getParameter('FormaPagoTipo.Efectivo');
+                return $this->getParameter('FormaPagoTipo.Efectivo');
                 break;
             case "FormaPagoTipo.Gratuidad":
-                return $this->container->getParameter('FormaPagoTipo.Gratuidad');
+                return $this->getParameter('FormaPagoTipo.Gratuidad');
                 break;
             case "FormaPagoTipo.BonoElectronico":
-                return $this->container->getParameter('FormaPagoTipo.BonoElectronico');
+                return $this->getParameter('FormaPagoTipo.BonoElectronico');
                 break;
             case "FormaPagoTipo.TarjetaCredito":
-                return $this->container->getParameter('FormaPagoTipo.TarjetaCredito');
+                return $this->getParameter('FormaPagoTipo.TarjetaCredito');
                 break;
             case "FormaPagoTipo.BonoManual":
-                return $this->container->getParameter('FormaPagoTipo.BonoManual');
+                return $this->getParameter('FormaPagoTipo.BonoManual');
                 break;
             case "FormaPagoTipo.TarjetaDebito":
-                return $this->container->getParameter('FormaPagoTipo.TarjetaDebito');
+                return $this->getParameter('FormaPagoTipo.TarjetaDebito');
                 break;
             case "FormaPagoTipo.ChequeFecha":
-                return $this->container->getParameter('FormaPagoTipo.ChequeFecha');
+                return $this->getParameter('FormaPagoTipo.ChequeFecha');
                 break;
             case "FormaPagoTipo.ChequeDia":
-                return $this->container->getParameter('FormaPagoTipo.ChequeDia');
+                return $this->getParameter('FormaPagoTipo.ChequeDia');
                 break;
             case "FormaPagoTipo.ConvenioLasik":
-                return $this->container->getParameter('FormaPagoTipo.ConvenioLasik');
+                return $this->getParameter('FormaPagoTipo.ConvenioLasik');
                 break;
             case "FormaPagoTipo.ConvenioImed":
-                return $this->container->getParameter('FormaPagoTipo.ConvenioImed');
+                return $this->getParameter('FormaPagoTipo.ConvenioImed');
                 break;
             case "FormaPagoTipo.SeguroComplementario":
-                return $this->container->getParameter('FormaPagoTipo.SeguroComplementario');
+                return $this->getParameter('FormaPagoTipo.SeguroComplementario');
                 break;
             case "EstadoDetalleTalonario.emitidas":
-                return $this->container->getParameter('EstadoDetalleTalonario.emitidas');
+                return $this->getParameter('EstadoDetalleTalonario.emitidas');
                 break;
             case "FormaPagoTipo.Excedente":
-                return $this->container->getParameter('FormaPagoTipo.Excedente');
+                return $this->getParameter('FormaPagoTipo.Excedente');
                 break;
             case "FormaPagoTipo.Transbank":
-                return $this->container->getParameter('FormaPagoTipo.Transbank');
+                return $this->getParameter('FormaPagoTipo.Transbank');
                 break;
             default:
                 return null;
@@ -519,21 +524,21 @@ class RecaudacionController extends DefaultController
     protected function Tipos($em, $oEmpresa)
     {
 
-        $oTipoDocumentoAfecto = $em->getRepository('RebsolHermesBundle:TipoDocumento')->find($this->container->getParameter('tipo_documento_afecto'));
-        $oTipoDOcumentoExento = $em->getRepository('RebsolHermesBundle:TipoDocumento')->find($this->container->getParameter('tipo_documento_Exento'));
+        $oTipoDocumentoAfecto = $em->getRepository('App\Entity\Legacy\TipoDocumento')->find($this->getParameter('tipo_documento_afecto'));
+        $oTipoDOcumentoExento = $em->getRepository('App\Entity\Legacy\TipoDocumento')->find($this->getParameter('tipo_documento_Exento'));
 
         $datosArray = [
-            'TipoAtencionFcAmbulatoria' => $em->getRepository('RebsolHermesBundle:TipoAtencionFc')->find($this->container->getParameter('ambulatoria')),
-            'BoletaAfecta' => $em->getRepository('RebsolHermesBundle:RelEmpresaTipoDocumento')->findOneBy(array(
+            'TipoAtencionFcAmbulatoria' => $em->getRepository('App\Entity\Legacy\TipoAtencionFc')->find($this->getParameter('ambulatoria')),
+            'BoletaAfecta' => $em->getRepository('App\Entity\Legacy\RelEmpresaTipoDocumento')->findOneBy(array(
                 'idTipoDocumento' => $oTipoDocumentoAfecto->getid(),
                 'idEmpresa' => $oEmpresa->getid()
             )),
-            'BoletaExenta' => $em->getRepository('RebsolHermesBundle:RelEmpresaTipoDocumento')->findOneBy(array(
+            'BoletaExenta' => $em->getRepository('App\Entity\Legacy\RelEmpresaTipoDocumento')->findOneBy(array(
                 'idTipoDocumento' => $oTipoDOcumentoExento->getid(),
                 'idEmpresa' => $oEmpresa->getid()
             )),
-            'TipoLogRecepcion' => $em->getRepository('RebsolHermesBundle:ReservaAtencionTipoLog')->find($this->container->getParameter('tipo_log_recepcion')),
-            'TipoLogPagoReserva' => $em->getRepository('RebsolHermesBundle:ReservaAtencionTipoLog')->find($this->container->getParameter('tipo_log_pago_Reserva'))
+            'TipoLogRecepcion' => $em->getRepository('App\Entity\Legacy\ReservaAtencionTipoLog')->find($this->getParameter('tipo_log_recepcion')),
+            'TipoLogPagoReserva' => $em->getRepository('App\Entity\Legacy\ReservaAtencionTipoLog')->find($this->getParameter('tipo_log_pago_Reserva'))
         ];
 
         return $datosArray;
@@ -556,24 +561,24 @@ class RecaudacionController extends DefaultController
 
         switch ($var) {
             case "TipoAtencionFcAmbulatoria":
-                return $em->getRepository('RebsolHermesBundle:TipoAtencionFc')->find($this->container->getParameter('ambulatoria'));
+                return $em->getRepository('App\Entity\Legacy\TipoAtencionFc')->find($this->getParameter('ambulatoria'));
                 break;
             case "BoletaAfecta":
-                $oTipoDocumentoAfecto = $em->getRepository('RebsolHermesBundle:TipoDocumento')->find($this->container->getParameter('tipo_documento_afecto'));
-                return $em->getRepository('RebsolHermesBundle:RelEmpresaTipoDocumento')->findOneBy(array("idTipoDocumento" => $oTipoDocumentoAfecto->getid(), "idEmpresa" => $oEmpresa->getid()));
+                $oTipoDocumentoAfecto = $em->getRepository('App\Entity\Legacy\TipoDocumento')->find($this->getParameter('tipo_documento_afecto'));
+                return $em->getRepository('App\Entity\Legacy\RelEmpresaTipoDocumento')->findOneBy(array("idTipoDocumento" => $oTipoDocumentoAfecto->getid(), "idEmpresa" => $oEmpresa->getid()));
                 break;
             case "BoletaExenta":
-                $oTipoDocumentoExento = $em->getRepository('RebsolHermesBundle:TipoDocumento')->find($this->container->getParameter('tipo_documento_Exento'));
-                return $em->getRepository('RebsolHermesBundle:RelEmpresaTipoDocumento')->findOneBy(array("idTipoDocumento" => $oTipoDocumentoExento->getid(), "idEmpresa" => $oEmpresa->getid()));
+                $oTipoDocumentoExento = $em->getRepository('App\Entity\Legacy\TipoDocumento')->find($this->getParameter('tipo_documento_Exento'));
+                return $em->getRepository('App\Entity\Legacy\RelEmpresaTipoDocumento')->findOneBy(array("idTipoDocumento" => $oTipoDocumentoExento->getid(), "idEmpresa" => $oEmpresa->getid()));
                 break;
             case "TipoLogRecepcion":
-                return $em->getRepository('RebsolHermesBundle:ReservaAtencionTipoLog')->find($this->container->getParameter('tipo_log_recepcion'));
+                return $em->getRepository('App\Entity\Legacy\ReservaAtencionTipoLog')->find($this->getParameter('tipo_log_recepcion'));
                 break;
             case "TipoLogPagoReserva":
-                return $em->getRepository('RebsolHermesBundle:ReservaAtencionTipoLog')->find($this->container->getParameter('tipo_log_pago_Reserva'));
+                return $em->getRepository('App\Entity\Legacy\ReservaAtencionTipoLog')->find($this->getParameter('tipo_log_pago_Reserva'));
                 break;
             case "TipoLogAnulado":
-                return $em->getRepository('RebsolHermesBundle:ReservaAtencionTipoLog')->find(11);
+                return $em->getRepository('App\Entity\Legacy\ReservaAtencionTipoLog')->find(11);
                 break;
             default:
                 return null;
@@ -661,10 +666,10 @@ class RecaudacionController extends DefaultController
         $EstadoPagoAnulada = $this->estado('EstadoPagoAnulada');
         $EstadoReaperturaAbierta = $this->estado('EstadoReaperturaAbierta');
         $em = $this->getDoctrine()->getManager();
-        $oCajaDetalles = $em->getRepository("RebsolHermesBundle:Caja")->find($id);
+        $oCajaDetalles = $em->getRepository("App\Entity\Legacy\Caja")->find($id);
         $idUser = $oCajaDetalles->getIdUsuario();
-        $folio = $em->getRepository('RebsolHermesBundle:Parametro')->obtenerParametro('FOLIO_GLOBAL');
-        $pCajaUsaDeposito = $em->getRepository("RebsolHermesBundle:Parametro")->obtenerParametro('CAJA_USA_DEPOSITO');
+        $folio = $em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('FOLIO_GLOBAL');
+        $pCajaUsaDeposito = $em->getRepository("App\Entity\Legacy\Parametro")->obtenerParametro('CAJA_USA_DEPOSITO');
 
         /**
          * SI ES EXCEL INFORME CAJAS COMPLETAS
@@ -682,11 +687,11 @@ class RecaudacionController extends DefaultController
             $fechaFormat = $fechaFormat->format('Y-m-d');
             $fecha = explode("-", $this->getSession('fecha'));
             $fechaIngresada = $fecha[2] . "-" . $fecha[1] . "-" . $fecha[0] . "%";
-            $oFormaPago = $em->getRepository("RebsolHermesBundle:FormaPago")->findBy(array("idEstado" => $EstadoActivo));
-            $oTiposFormaPago = $em->getRepository("RebsolHermesBundle:FormaPagoTipo")->findBy(array("idEstado" => $EstadoActivo));
+            $oFormaPago = $em->getRepository("App\Entity\Legacy\FormaPago")->findBy(array("idEstado" => $EstadoActivo));
+            $oTiposFormaPago = $em->getRepository("App\Entity\Legacy\FormaPagoTipo")->findBy(array("idEstado" => $EstadoActivo));
 
             foreach ($oTiposFormaPago as $tfp) {
-                $arrMediosMonto[] = $em->getRepository('RebsolHermesBundle:PagoCuenta')->obtenerCopago($id, $tfp);
+                $arrMediosMonto[] = $em->getRepository('App\Entity\Legacy\PagoCuenta')->obtenerCopago($id, $tfp);
             }
             foreach ($oFormaPago as $tipos) {
                 $arrayTipos[$tipos->getid()] = $this->rPagoCuenta()->obtenerMontoCierreCajayBonos($id, $tipos->getId(), $EstadoActivo);
@@ -859,7 +864,7 @@ class RecaudacionController extends DefaultController
         $EstadoApi = ($estadoApi == "core") ? 1 : 0;
 
 
-        $folio = $em->getRepository('RebsolHermesBundle:Parametro')->obtenerParametro('FOLIO_GLOBAL');
+        $folio = $em->getRepository('App\Entity\Legacy\Parametro')->obtenerParametro('FOLIO_GLOBAL');
         /** INFORMES->CORE */
         $oCajaPrincipal = $this->rCaja()->GetInformacionDetalladaCaja(null, null, $folio['valor'], $oFecha);
         $oCajaConBoleta = $this->rCaja()->GetInformacionDetalladaCajaSecundaria(null, null, $EstadoBoletaActiva, $EstadoPagoActiva, $folio['valor'], $oFecha);
@@ -955,11 +960,11 @@ class RecaudacionController extends DefaultController
         return $this->getDoctrine()->getManager()
             ->createQueryBuilder()
             ->select('pc')
-            ->from('RebsolHermesBundle:PagoCuenta', 'pc')
-            ->join('RebsolHermesBundle:DetallePagoCuenta', 'dpg', 'WITH', 'dpg.idPagoCuenta = pc.id')
+            ->from('App\Entity\Legacy\PagoCuenta', 'pc')
+            ->join('App\Entity\Legacy\DetallePagoCuenta', 'dpg', 'WITH', 'dpg.idPagoCuenta = pc.id')
             ->innerJoin('dpg.idFormaPago', 'fp')
             ->innerJoin('pc.idPaciente', 'paciente')
-            ->join('RebsolHermesBundle:ReservaAtencion', 'ra', 'WITH', 'ra.idPaciente = paciente.id')
+            ->join('App\Entity\Legacy\ReservaAtencion', 'ra', 'WITH', 'ra.idPaciente = paciente.id')
             ->innerJoin('ra.idHorarioConsulta', 'hc')
             ->where('pc.idPagoWeb IS NOT NULL')
             ->andWhere('pc.fechaPago >= :fechaPago')

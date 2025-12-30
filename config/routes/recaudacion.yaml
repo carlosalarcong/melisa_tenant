@@ -3,7 +3,7 @@
 
 recaudacion_index:
     path: /recaudacion
-    controller: App\Controller\Caja\Recaudacion\DefaultController::index
+    controller: App\Controller\Caja\Recaudacion\DefaultController::indexAction
 
 # Importar rutas de sub-módulos
 recaudacion_servet:

@@ -1,6 +1,6 @@
 <?php
 
-namespace Rebsol\HermesBundle\Entity;
+namespace App\Entity\Legacy;
 
 use Doctrine\ORM\Mapping as ORM;
 
