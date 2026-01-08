@@ -9,22 +9,26 @@
 ## **FASE 1: Preparación y Análisis** (2-3 días)
 
 ### 1.1 Crear Branch de Migración
+
 - [ ] Crear branch `feature/upgrade-symfony-7.4`
 - [ ] Verificar que estamos en un punto estable del proyecto
 
 ### 1.2 Actualizar PHP
+
 - [ ] Verificar versión actual de PHP: `php -v`
 - [ ] Actualizar servidor a PHP 8.2 o 8.3
 - [ ] Actualizar `composer.json`: `"php": ">=8.2"`
 - [ ] Verificar extensiones PHP requeridas instaladas
 
 ### 1.3 Auditar Deprecaciones
+
 - [ ] Habilitar modo estricto en `.env.local`: `SYMFONY_DEPRECATIONS_HELPER=max[direct]=0`
 - [ ] Ejecutar `php bin/console cache:clear --env=dev`
 - [ ] Ejecutar tests para detectar deprecaciones: `php bin/phpunit`
 - [ ] Documentar todas las deprecaciones encontradas
 
 ### 1.4 Revisar Dependencias
+
 - [ ] Ejecutar `composer outdated` y documentar paquetes desactualizados
 - [ ] Verificar compatibilidad: `composer why-not symfony/framework-bundle:^7.4`
 - [ ] Verificar compatibilidad de `hakam/multi-tenancy-bundle` (✅ ya confirmado v2.9.3)
@@ -35,35 +39,41 @@
 ## **FASE 2: Corrección de Deprecaciones** (3-5 días)
 
 ### 2.1 Controllers
+
 - [ ] Buscar uso de `$request->get()` deprecado
 - [ ] Reemplazar por `$request->query->get()` o `$request->request->get()`
 - [ ] Verificar uso de `AbstractController` en todos los controllers
 - [ ] Actualizar type hints en métodos de controllers
 
 ### 2.2 Security
+
 - [ ] Revisar configuración en `config/packages/security.yaml`
 - [ ] Actualizar firewalls si usan guards antiguos
 - [ ] Verificar atributos `@IsGranted` y convertir a `#[IsGranted]`
 - [ ] Probar sistema de voters
 
 ### 2.3 Forms
+
 - [ ] Convertir anotaciones a atributos PHP 8 en entidades
 - [ ] Actualizar constraints de validación: `@Assert\*` → `#[Assert\*]`
 - [ ] Verificar FormTypes personalizados
 - [ ] Probar forms principales del sistema
 
 ### 2.4 Services
+
 - [ ] Verificar que servicios usen autowiring
 - [ ] Remover configuraciones obsoletas en `services.yaml`
 - [ ] Verificar inyección de dependencias
 - [ ] Actualizar servicios a servicios privados si aplica
 
 ### 2.5 Routes
+
 - [ ] Convertir anotaciones de rutas a atributos PHP 8: `@Route` → `#[Route]`
 - [ ] Verificar configuración de rutas en `config/routes/`
 - [ ] Probar generación de URLs
 
 ### 2.6 Doctrine
+
 - [ ] Verificar configuración de Entity Managers (default y tenant)
 - [ ] Actualizar anotaciones de Doctrine a atributos en entidades
 - [ ] Verificar repositorios personalizados
@@ -73,15 +83,18 @@
 ## **FASE 3: Actualización de Composer** (1 día)
 
 ### 3.1 Backup
+
 - [ ] Crear backup: `cp composer.json composer.json.backup`
 - [ ] Crear backup: `cp composer.lock composer.lock.backup`
 - [ ] Commit de estado actual antes de actualizar
 
 ### 3.2 Actualizar restricción de Symfony
+
 - [ ] Actualizar `extra.symfony.require` a `"7.4.*"` en composer.json
 - [ ] Actualizar `"php": ">=8.2"` en composer.json
 
 ### 3.3 Actualizar paquetes Symfony
+
 - [ ] `composer require "symfony/framework-bundle:7.4.*" --no-update`
 - [ ] `composer require "symfony/console:7.4.*" --no-update`
 - [ ] `composer require "symfony/doctrine-messenger:7.4.*" --no-update`
@@ -92,19 +105,22 @@
 - [ ] `composer require "symfony/twig-bundle:7.4.*" --no-update`
 - [ ] `composer require "symfony/validator:7.4.*" --no-update`
 - [ ] `composer require "symfony/translation:7.4.*" --no-update`
-- [ ] Actualizar todos los demás paquetes symfony/* a 7.4.*
+- [ ] Actualizar todos los demás paquetes `symfony/*` a 7.4.*
 
 ### 3.4 Actualizar paquetes dev
+
 - [ ] `composer require --dev "symfony/debug-bundle:7.4.*" --no-update`
 - [ ] `composer require --dev "symfony/web-profiler-bundle:7.4.*" --no-update`
 - [ ] `composer require --dev "symfony/browser-kit:7.4.*" --no-update`
 
 ### 3.5 Ejecutar actualización
+
 - [ ] `composer update symfony/* --with-all-dependencies`
 - [ ] Resolver conflictos de dependencias si aparecen
 - [ ] Verificar que no hay errores de composer
 
 ### 3.6 Actualizar otros paquetes
+
 - [ ] `composer update hakam/multi-tenancy-bundle --with-all-dependencies`
 - [ ] Actualizar doctrine packages si es necesario
 - [ ] `composer update` para actualizar todo
@@ -114,11 +130,13 @@
 ## **FASE 4: Testing Multi-Tenancy** (4-6 días) 🔥 **CRÍTICO**
 
 ### 4.1 Tests Unitarios
+
 - [ ] Ejecutar `php bin/phpunit tests/Unit/`
 - [ ] Verificar que todos los tests unitarios pasan
 - [ ] Corregir tests fallidos
 
 ### 4.2 Tests de Conexión Multi-Tenant
+
 - [ ] Verificar evento `SwitchDbEvent` funciona correctamente
 - [ ] Probar cambio dinámico de base de datos entre tenants
 - [ ] Validar `TenantEntityManager` se conecta correctamente
@@ -126,6 +144,7 @@
 - [ ] Probar creación de conexiones dinámicas
 
 ### 4.3 Tests de Migraciones
+
 - [ ] Verificar migraciones en `migrations/Main/` funcionan
 - [ ] Verificar migraciones en `migrations/Tenant/` funcionan
 - [ ] `php bin/console doctrine:schema:validate --em=default`
@@ -133,12 +152,14 @@
 - [ ] Probar ejecución de migraciones en tenant nuevo
 
 ### 4.4 Tests de Entidades
+
 - [ ] Verificar entidades en `src/Entity/` (entidades legacy)
 - [ ] Verificar funcionamiento de repositorios
 - [ ] Probar relaciones entre entidades
 - [ ] Verificar cascadas y eventos de Doctrine
 
 ### 4.5 Tests Funcionales
+
 - [ ] Probar login en diferentes tenants
 - [ ] Verificar sistema de traducciones por tenant
 - [ ] Validar carga de configuraciones específicas por tenant
@@ -151,12 +172,14 @@
 ## **FASE 5: Migraciones y Assets** (2-3 días)
 
 ### 5.1 Regenerar Cache
+
 - [ ] `php bin/console cache:clear --env=dev`
 - [ ] `php bin/console cache:clear --env=prod --no-warmup`
 - [ ] `php bin/console cache:warmup --env=prod`
 - [ ] Verificar que no hay errores en warmup
 
 ### 5.2 Verificar Assets
+
 - [ ] `php bin/console importmap:install`
 - [ ] `php bin/console asset-map:compile`
 - [ ] Verificar que assets se cargan correctamente en navegador
@@ -165,11 +188,13 @@
 - [ ] Probar carga de archivos CSS y JS
 
 ### 5.3 Migraciones de Base de Datos
+
 - [ ] `php bin/console doctrine:migrations:status`
 - [ ] Verificar que no hay cambios de schema no esperados
 - [ ] Probar migración en BD de prueba si hay cambios
 
 ### 5.4 Sistema de Traducciones
+
 - [ ] Verificar traducciones en `translations/messages.es.yaml`
 - [ ] Verificar traducciones en `translations/messages.en.yaml`
 - [ ] Probar sistema de traducciones por tenant en `translations/demo/`
@@ -180,21 +205,25 @@
 ## **FASE 6: Nuevas Features de SF7.4** (Opcional, 2-3 días)
 
 ### 6.1 Aprovechar Atributos PHP 8
+
 - [ ] Convertir routes a atributos modernos con opciones avanzadas
 - [ ] Usar `#[IsGranted]` en controllers donde aplique
 - [ ] Implementar atributos en services si aplica
 
 ### 6.2 MapRequestPayload (nuevo en SF7)
+
 - [ ] Identificar endpoints API que puedan usar `#[MapRequestPayload]`
 - [ ] Implementar DTOs con MapRequestPayload
 - [ ] Probar serialización automática
 
 ### 6.3 Mejoras de Performance
+
 - [ ] Verificar mejoras de AssetMapper
 - [ ] Revisar configuración de HTTP client
 - [ ] Verificar mejoras de serialización
 
 ### 6.4 Explorar Nuevas Features
+
 - [ ] Revisar changelog de Symfony 7.4
 - [ ] Documentar features útiles para el proyecto
 - [ ] Implementar features prioritarias
@@ -204,6 +233,7 @@
 ## **FASE 7: Testing Integral** (3-4 días)
 
 ### 7.1 Testing Manual Completo
+
 - [ ] Login en tenant principal
 - [ ] Login en tenant secundario/demo
 - [ ] Cambio entre diferentes tenants
@@ -216,18 +246,21 @@
 - [ ] Navegación Turbo sin errores
 
 ### 7.2 Testing Automatizado
+
 - [ ] `php bin/phpunit` - todos los tests
 - [ ] Verificar coverage: `php bin/phpunit --coverage-html var/coverage`
 - [ ] Revisar reporte de coverage
 - [ ] Corregir tests fallidos
 
 ### 7.3 Performance Testing
+
 - [ ] Usar Web Profiler para verificar performance: `/_profiler`
 - [ ] Comparar tiempos de respuesta vs Symfony 6.4
 - [ ] Verificar queries de base de datos optimizadas
 - [ ] Verificar uso de memoria
 
 ### 7.4 Revisión de Logs
+
 - [ ] Revisar `var/log/dev.log` sin errores críticos
 - [ ] Revisar `var/log/prod.log` sin errores críticos
 - [ ] Verificar logs de deprecaciones resueltas
@@ -238,12 +271,14 @@
 ## **FASE 8: Deploy a Staging** (1-2 días)
 
 ### 8.1 Preparar Entorno Staging
+
 - [ ] Actualizar PHP a 8.2+ en servidor staging
 - [ ] Verificar extensiones PHP necesarias instaladas
 - [ ] Backup completo de BD staging
 - [ ] Backup de archivos de staging
 
 ### 8.2 Deploy a Staging
+
 - [ ] Merge branch a staging: `git checkout staging && git merge feature/upgrade-symfony-7.4`
 - [ ] Push a staging
 - [ ] SSH al servidor staging
@@ -254,6 +289,7 @@
 - [ ] Verificar permisos de directorios
 
 ### 8.3 Smoke Testing en Staging
+
 - [ ] Verificar que la aplicación levanta sin errores
 - [ ] Probar login
 - [ ] Probar funcionalidades críticas
@@ -262,6 +298,7 @@
 - [ ] Verificar assets cargan correctamente
 
 ### 8.4 Monitoreo Staging
+
 - [ ] Monitorear logs durante 24 horas
 - [ ] Verificar performance es aceptable
 - [ ] Recopilar feedback de QA/usuarios de prueba
@@ -273,18 +310,21 @@
 ## **FASE 9: Deploy a Producción** (1 día)
 
 ### 9.1 Preparativos Pre-Deploy
+
 - [ ] Definir ventana de mantenimiento (horario bajo tráfico)
 - [ ] Notificar a usuarios sobre mantenimiento
 - [ ] Preparar comunicados
 - [ ] Coordinar equipo para deploy
 
 ### 9.2 Backups Producción
+
 - [ ] Backup completo BD: `mysqldump -u root -p --all-databases > backup_pre_sf74.sql`
 - [ ] Backup de código: `tar -czf backup_code.tar.gz /var/www/html/melisa_tenant`
 - [ ] Verificar backups se crearon correctamente
 - [ ] Almacenar backups en ubicación segura
 
 ### 9.3 Deploy Producción
+
 - [ ] Activar modo mantenimiento
 - [ ] Merge branch a main: `git checkout main && git merge feature/upgrade-symfony-7.4`
 - [ ] Tag de versión: `git tag v2.0.0-sf74`
@@ -299,6 +339,7 @@
 - [ ] Desactivar modo mantenimiento
 
 ### 9.4 Verificación Post-Deploy
+
 - [ ] Verificar aplicación levanta sin errores (5 min)
 - [ ] Probar login (5 min)
 - [ ] Probar funcionalidades críticas (15 min)
@@ -307,6 +348,7 @@
 - [ ] Revisar logs en tiempo real
 
 ### 9.5 Rollback Plan
+
 - [ ] Script de rollback preparado y probado
 - [ ] Procedimiento documentado para restaurar SF 6.4
 - [ ] Tiempo estimado de rollback: < 15 minutos
@@ -317,6 +359,7 @@
 ## **FASE 10: Post-Deploy** (1-2 días)
 
 ### 10.1 Monitoreo Intensivo
+
 - [ ] Revisar logs cada hora durante primer día
 - [ ] Monitorear performance y tiempos de respuesta
 - [ ] Verificar que no hay errores 500
@@ -324,12 +367,14 @@
 - [ ] Monitorear uso de recursos del servidor
 
 ### 10.2 Optimización
+
 - [ ] Ajustar configuraciones de cache si es necesario
 - [ ] Optimizar queries lentas identificadas
 - [ ] Ajustar configuración de Doctrine
 - [ ] Optimizar assets si es necesario
 
 ### 10.3 Documentación
+
 - [ ] Actualizar README.md con versión Symfony 7.4
 - [ ] Documentar nuevas features implementadas
 - [ ] Actualizar guías de desarrollo
@@ -337,6 +382,7 @@
 - [ ] Actualizar requisitos de sistema (PHP 8.2+)
 
 ### 10.4 Cierre del Proyecto
+
 - [ ] Retrospectiva del equipo
 - [ ] Documentar issues y soluciones
 - [ ] Archivar backups
@@ -347,12 +393,14 @@
 ## **Checklist de Verificación Final** ✅
 
 ### Pre-Migración
+
 - [ ] PHP 8.2+ instalado en todos los entornos
 - [ ] Backup de BD y código completo
 - [ ] Branch de migración creado
 - [ ] Deprecaciones documentadas y corregidas
 
 ### Durante Migración
+
 - [ ] Composer actualizado sin errores
 - [ ] Tests unitarios pasando 100%
 - [ ] Tests funcionales pasando 100%
@@ -361,6 +409,7 @@
 - [ ] Sin deprecations warnings
 
 ### Post-Migración
+
 - [ ] Deploy exitoso en staging sin rollback
 - [ ] Testing manual completo sin issues críticos
 - [ ] Performance igual o mejor que SF 6.4
@@ -386,9 +435,9 @@
 
 - **Responsable técnico:** _[Nombre]_
 - **Backup técnico:** _[Nombre]_
-- **Documentación Symfony 7.4:** https://symfony.com/doc/7.4/
-- **Upgrade Guide:** https://github.com/symfony/symfony/blob/7.4/UPGRADE-7.4.md
-- **Multi-tenancy Bundle:** https://github.com/RamyHakam/multi_tenancy_bundle
+- **Documentación Symfony 7.4:** <https://symfony.com/doc/7.4/>
+- **Upgrade Guide:** <https://github.com/symfony/symfony/blob/7.4/UPGRADE-7.4.md>
+- **Multi-tenancy Bundle:** <https://github.com/RamyHakam/multi_tenancy_bundle>
 
 ---
 
