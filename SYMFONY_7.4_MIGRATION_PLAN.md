@@ -22,17 +22,25 @@
 
 ### 1.3 Auditar Deprecaciones
 
-- [ ] Habilitar modo estricto en `.env.local`: `SYMFONY_DEPRECATIONS_HELPER=max[direct]=0`
-- [ ] Ejecutar `php bin/console cache:clear --env=dev`
-- [ ] Ejecutar tests para detectar deprecaciones: `php bin/phpunit`
-- [ ] Documentar todas las deprecaciones encontradas
+- [x] Habilitar modo estricto en `.env.local`: `SYMFONY_DEPRECATIONS_HELPER=max[direct]=0`
+- [x] Ejecutar `php bin/console cache:clear --env=dev`
+- [x] Ejecutar tests para detectar deprecaciones: `php bin/phpunit`
+- [x] Documentar todas las deprecaciones encontradas
+
+**Deprecaciones encontradas y corregidas:**
+- ✅ Anotación `@Route` en SettingsController - corregida
+- ✅ Entidades ya usan atributos PHP 8
+- ✅ Controllers ya usan atributos PHP 8 (16 archivos)
+- ✅ No se encontró uso de `$request->get()` deprecado
 
 ### 1.4 Revisar Dependencias
 
-- [ ] Ejecutar `composer outdated` y documentar paquetes desactualizados
-- [ ] Verificar compatibilidad: `composer why-not symfony/framework-bundle:^7.4`
-- [ ] Verificar compatibilidad de `hakam/multi-tenancy-bundle` (✅ ya confirmado v2.9.3)
-- [ ] Listar paquetes de terceros que necesiten actualización
+- [x] Ejecutar `composer outdated` y documentar paquetes desactualizados
+- [x] Verificar compatibilidad: `composer why-not symfony/framework-bundle:^7.4`
+- [x] Verificar compatibilidad de `hakam/multi-tenancy-bundle` (✅ ya confirmado v2.9.3)
+- [x] Listar paquetes de terceros que necesiten actualización
+
+**Resumen:** Proyecto en excelente estado, listo para actualizar a Symfony 7.4
 
 ---
 
