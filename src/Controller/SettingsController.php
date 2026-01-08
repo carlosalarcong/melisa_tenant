@@ -429,9 +429,6 @@ class SettingsController extends AbstractTenantAwareController
         $this->formData[$key] = $fieldValue;
     }
 
-    /**
-     * @Route("/image/{slug}", name="settings_image")
-     */
     #[Route('/image/{slug}', name: 'app_settings_image')]
     public function imageAction($slug)
     {
