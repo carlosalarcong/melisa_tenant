@@ -10,15 +10,15 @@
 
 ### 1.1 Crear Branch de Migración
 
-- [ ] Crear branch `feature/upgrade-symfony-7.4`
-- [ ] Verificar que estamos en un punto estable del proyecto
+- [x] Crear branch `feature/upgrade-symfony-7.4`
+- [x] Verificar que estamos en un punto estable del proyecto
 
 ### 1.2 Actualizar PHP
 
-- [ ] Verificar versión actual de PHP: `php -v`
-- [ ] Actualizar servidor a PHP 8.2 o 8.3
-- [ ] Actualizar `composer.json`: `"php": ">=8.2"`
-- [ ] Verificar extensiones PHP requeridas instaladas
+- [x] Verificar versión actual de PHP: `php -v` (PHP 8.3.26 ✅)
+- [x] Actualizar servidor a PHP 8.2 o 8.3 (Ya instalado PHP 8.3.26)
+- [x] Actualizar `composer.json`: `"php": ">=8.2"`
+- [x] Verificar extensiones PHP requeridas instaladas (ctype, iconv, intl, json, mbstring, pdo, tokenizer, xml ✅)
 
 ### 1.3 Auditar Deprecaciones
 
