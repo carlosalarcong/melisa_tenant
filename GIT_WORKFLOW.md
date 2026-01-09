@@ -8,7 +8,7 @@ Este proyecto utiliza **Git Flow** para mantener un flujo de trabajo ordenado y 
 
 ## 🌳 Estructura de Branches
 
-```
+```text
 master (producción)
   └── develop (integración)
        ├── feature/nombre-feature
@@ -19,12 +19,14 @@ master (producción)
 ### **Branches principales:**
 
 #### 🟢 `master`
+
 - **Propósito:** Código en producción
 - **Protección:** Solo merge desde `develop` con Pull Request
 - **Deploy:** Automático o manual a producción
 - **Regla:** NUNCA commit directo
 
 #### 🟡 `develop`
+
 - **Propósito:** Integración y testing
 - **Protección:** Solo merge desde features/bugfixes con Pull Request
 - **Deploy:** Automático a staging
@@ -116,13 +118,15 @@ git commit -m "test: agregar tests para TenantResolver"
 
 ### **Configuración recomendada en GitHub:**
 
-#### `master`:
+#### master
+
 - ✅ Require pull request reviews (1 aprobación mínimo)
 - ✅ Require status checks to pass (CI/CD)
 - ✅ No force push
 - ✅ No delete branch
 
-#### `develop`:
+#### develop
+
 - ✅ Require pull request reviews (opcional)
 - ✅ Require status checks to pass
 - ✅ No force push
@@ -133,31 +137,33 @@ git commit -m "test: agregar tests para TenantResolver"
 
 ### **Branches Activos:**
 
-| Branch | Propósito | Estado |
-|--------|-----------|--------|
-| `master` | Producción | ✅ Estable (Symfony 6.4) |
-| `develop` | Integración | ✅ Symfony 7.4.3 LTS |
-| `feature/upgrade-symfony-7.4` | Migración SF7 | ✅ Mergeado a develop |
-| `feature/recaudacion` | Módulo Recaudación | 🟡 En desarrollo |
-| `feature/administrador-usuarios-bundle` | Admin Usuarios | 🟡 En desarrollo |
+| Branch                                  | Propósito          | Estado                    |
+|-----------------------------------------|--------------------|---------------------------|
+| `master`                                | Producción         | ✅ Estable (Symfony 6.4)  |
+| `develop`                               | Integración        | ✅ Symfony 7.4.3 LTS      |
+| `feature/upgrade-symfony-7.4`           | Migración SF7      | ✅ Mergeado a develop     |
+| `feature/recaudacion`                   | Módulo Recaudación | 🟡 En desarrollo          |
+| `feature/administrador-usuarios-bundle` | Admin Usuarios     | 🟡 En desarrollo          |
 
 ### **Próximos Pasos:**
 
-1. ✅ **Testing en Develop** - Verificar Symfony 7.4 en staging
-2. ⏳ **Merge a Master** - Después de testing exitoso
-3. ⏳ **Deploy a Producción** - Con plan de rollback
+1. 🔄 **Testing en Develop** - Verificar Symfony 7.4 en staging
+2. ⏳ **Merge a Master** - Después de testing exhaustivo en develop
+3. ⏳ **Deploy a Producción** - Con plan de rollback preparado
 
 ---
 
 ## 🛠️ Comandos Útiles
 
 ### **Ver branches:**
+
 ```bash
 git branch -a                    # Todos los branches
 git branch -vv                   # Con info de tracking
 ```
 
 ### **Limpiar branches:**
+
 ```bash
 git branch -d feature/nombre     # Eliminar local
 git push origin --delete feature/nombre  # Eliminar remoto
@@ -165,6 +171,7 @@ git fetch --prune                # Limpiar referencias
 ```
 
 ### **Actualizar desde remoto:**
+
 ```bash
 git fetch origin                 # Traer cambios
 git pull origin develop          # Actualizar develop
@@ -172,6 +179,7 @@ git rebase origin/develop        # Rebase sobre develop
 ```
 
 ### **Ver historial:**
+
 ```bash
 git log --oneline --graph --all  # Gráfico de commits
 git log --author="nombre"        # Commits por autor
