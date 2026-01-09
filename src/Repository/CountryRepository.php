@@ -7,20 +7,20 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * Repository para manejo de países
+ * Repository for country management
  */
-class PaisRepository extends ServiceEntityRepository
+class CountryRepository extends ServiceEntityRepository
 {
     private Connection $connection;
 
     public function __construct(ManagerRegistry $registry, Connection $connection)
     {
         $this->connection = $connection;
-        // No llamamos al constructor padre porque no tenemos entidad
+        // No parent constructor call because we don't have an entity
     }
 
     /**
-     * Encuentra todos los países activos
+     * Finds all active countries
      */
     public function findAllActive(): array
     {
@@ -29,7 +29,7 @@ class PaisRepository extends ServiceEntityRepository
     }
 
     /**
-     * Encuentra un país por ID
+     * Finds a country by ID
      */
     public function findById(int $id): ?array
     {
@@ -39,7 +39,7 @@ class PaisRepository extends ServiceEntityRepository
     }
 
     /**
-     * Encuentra todos los países
+     * Finds all countries
      */
     public function findAll(): array
     {
@@ -48,30 +48,30 @@ class PaisRepository extends ServiceEntityRepository
     }
 
     /**
-     * Crea un nuevo país
+     * Creates a new country
      */
     public function create(array $data): int
     {
         $sql = 'INSERT INTO pais (nombre_pais, nombre_gentilicio, activo) VALUES (?, ?, ?)';
         $this->connection->executeStatement($sql, [
-            $data['nombre_pais'] ?? $data['nombrePais'],
-            $data['nombre_gentilicio'] ?? $data['nombreGentilicio'],
-            $data['activo'] ? 1 : 0
+            $data['nombre_pais'] ?? $data['name'],
+            $data['nombre_gentilicio'] ?? $data['demonym'],
+            $data['activo'] ?? $data['isActive'] ? 1 : 0
         ]);
 
         return (int) $this->connection->lastInsertId();
     }
 
     /**
-     * Actualiza un país existente
+     * Updates an existing country
      */
     public function update(int $id, array $data): bool
     {
         $sql = 'UPDATE pais SET nombre_pais = ?, nombre_gentilicio = ?, activo = ? WHERE id = ?';
         $affected = $this->connection->executeStatement($sql, [
-            $data['nombre_pais'] ?? $data['nombrePais'],
-            $data['nombre_gentilicio'] ?? $data['nombreGentilicio'],
-            $data['activo'] ? 1 : 0,
+            $data['nombre_pais'] ?? $data['name'],
+            $data['nombre_gentilicio'] ?? $data['demonym'],
+            $data['activo'] ?? $data['isActive'] ? 1 : 0,
             $id
         ]);
 
@@ -79,7 +79,7 @@ class PaisRepository extends ServiceEntityRepository
     }
 
     /**
-     * Elimina un país
+     * Deletes a country
      */
     public function delete(int $id): bool
     {

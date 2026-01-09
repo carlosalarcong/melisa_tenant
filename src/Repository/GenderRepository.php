@@ -7,7 +7,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * Repository para Gender usando TenantEntityManager
+ * @extends ServiceEntityRepository<Gender>
  */
 class GenderRepository extends ServiceEntityRepository
 {
@@ -17,48 +17,46 @@ class GenderRepository extends ServiceEntityRepository
     }
 
     /**
-     * Busca géneros activos
-     * 
-     * @return Gender[]
+     * Searches genders by search term
+     */
+    public function findBySearchTerm(string $searchTerm): array
+    {
+        return $this->createQueryBuilder('g')
+            ->andWhere('g.name LIKE :term OR g.code LIKE :term')
+            ->setParameter('term', '%' . $searchTerm . '%')
+            ->orderBy('g.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Finds active genders
      */
     public function findActive(): array
     {
         return $this->createQueryBuilder('g')
-            ->andWhere('g.isActive = :active')
-            ->setParameter('active', true)
+            ->andWhere('g.isActive = :isActive')
+            ->setParameter('isActive', true)
             ->orderBy('g.name', 'ASC')
             ->getQuery()
             ->getResult();
     }
 
     /**
-     * Busca géneros para personas
-     * 
-     * @return Gender[]
+     * Checks if a specific code exists
      */
-    public function findForPersons(): array
+    public function existsByCode(string $code, ?int $excludeId = null): bool
     {
-        return $this->createQueryBuilder('g')
-            ->andWhere('g.isPerson = :isPerson')
-            ->andWhere('g.isActive = :active')
-            ->setParameter('isPerson', true)
-            ->setParameter('active', true)
-            ->orderBy('g.name', 'ASC')
-            ->getQuery()
-            ->getResult();
-    }
+        $qb = $this->createQueryBuilder('g')
+            ->select('COUNT(g.id)')
+            ->andWhere('g.code = :code')
+            ->setParameter('code', $code);
 
-    /**
-     * Busca por código HL7
-     */
-    public function findByHl7Code(string $code): ?Gender
-    {
-        return $this->createQueryBuilder('g')
-            ->andWhere('g.genderCodeHl7 = :code')
-            ->andWhere('g.isActive = :active')
-            ->setParameter('code', $code)
-            ->setParameter('active', true)
-            ->getQuery()
-            ->getOneOrNullResult();
+        if ($excludeId) {
+            $qb->andWhere('g.id != :excludeId')
+                ->setParameter('excludeId', $excludeId);
+        }
+
+        return $qb->getQuery()->getSingleScalarResult() > 0;
     }
 }
