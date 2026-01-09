@@ -83,6 +83,7 @@ use Symfony\Component\HttpFoundation\Request;
 class TenantResolverTest extends TestCase
 {
     private TenantResolver $tenantResolver;
+    private string $databaseUrl = 'mysql://melisa:melisamelisa@localhost:3306/melisa_central';
 
     /**
      * Inicializa el objeto TenantResolver antes de cada test
@@ -92,7 +93,7 @@ class TenantResolverTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->tenantResolver = new TenantResolver();
+        $this->tenantResolver = new TenantResolver($this->databaseUrl);
     }
 
     /**
@@ -128,6 +129,7 @@ class TenantResolverTest extends TestCase
 
         // 2. MOCK: Crear objeto falso para simular respuesta de BD
         $resolverMock = $this->createPartialMock(TenantResolver::class, ['getTenantBySlug']);
+        $resolverMock->__construct($this->databaseUrl);
         $resolverMock->expects($this->once())                    // ← Debe llamarse exactamente 1 vez
                     ->method('getTenantBySlug')                  // ← Mock este método específico
                     ->with('melisahospital')                     // ← Debe recibir este parámetro exacto

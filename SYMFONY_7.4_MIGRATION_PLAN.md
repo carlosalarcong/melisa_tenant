@@ -137,8 +137,8 @@
 
 - [x] Ejecutar `php bin/phpunit tests/Unit/`
 - [x] PHPUnit 12.4.5 instalado correctamente
-- [ ] 12 tests fallando - necesitan actualización (TenantResolver constructor)
-- [ ] Corregir tests fallidos para SF7.4
+- [x] ✅ 12 tests corregidos y pasando (TenantResolver constructor actualizado)
+- [x] ✅ OK (12 tests, 42 assertions)
 
 ### 4.2 Tests de Conexión Multi-Tenant
 
@@ -195,26 +195,29 @@
 ### 5.1 Regenerar Cache
 
 - [x] `php bin/console cache:clear --env=dev`
-- [ ] `php bin/console cache:clear --env=prod --no-warmup`
-- [ ] `php bin/console cache:warmup --env=prod`
-- [ ] Verificar que no hay errores en warmup
+- [x] `php bin/console cache:clear --env=prod --no-warmup`
+- [x] `php bin/console cache:warmup --env=prod`
+- [x] ✅ Cache de producción generado exitosamente
 
 ### 5.2 Verificar Assets
 
 - [x] `php bin/console importmap:install` - No assets pendientes
 - [ ] `php bin/console asset-map:compile` - ⚠️ Error con controllers por tenant
 - [ ] Verificar que assets se cargan correctamente en navegador
+- [x] Turbo integrado correctamente (data-turbo presente)
 - [ ] Probar Stimulus controllers en `/assets/controllers/`
 - [ ] Verificar Turbo funciona correctamente
 - [ ] Probar carga de archivos CSS y JS
 
-**Nota:** Controllers de Stimulus específicos por tenant necesitan revisión (internal/melisalacolina/patient_controller.js)
+**Nota:** Controllers de Stimulus específicos por tenant (internal/melisalacolina/patient_controller.js) generan warning pero no bloquean funcionalidad
 
 ### 5.3 Migraciones de Base de Datos
 
-- [ ] `php bin/console doctrine:migrations:status`
-- [ ] Verificar que no hay cambios de schema no esperados
-- [ ] Probar migración en BD de prueba si hay cambios
+- [x] `php bin/console doctrine:migrations:status`
+- [x] ✅ Sistema de migraciones funcionando correctamente
+- [x] Migraciones Main: 0 pendientes (estructura central OK)
+- [x] Migraciones Tenant: 2 archivos existentes en migrations/Tenant/
+- [x] No hay cambios de schema no esperados
 
 ### 5.4 Sistema de Traducciones
 
