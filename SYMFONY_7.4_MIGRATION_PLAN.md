@@ -135,9 +135,10 @@
 
 ### 4.1 Tests Unitarios
 
-- [ ] Ejecutar `php bin/phpunit tests/Unit/`
-- [ ] Verificar que todos los tests unitarios pasan
-- [ ] Corregir tests fallidos
+- [x] Ejecutar `php bin/phpunit tests/Unit/`
+- [x] PHPUnit 12.4.5 instalado correctamente
+- [ ] 12 tests fallando - necesitan actualización (TenantResolver constructor)
+- [ ] Corregir tests fallidos para SF7.4
 
 ### 4.2 Tests de Conexión Multi-Tenant
 
@@ -169,6 +170,8 @@
 
 ### 4.5 Tests Funcionales
 
+- [x] Cache limpiado exitosamente en modo dev
+- [x] Rutas registradas correctamente (login, logout, dashboard, settings)
 - [ ] Probar login en diferentes tenants
 - [ ] Verificar sistema de traducciones por tenant
 - [ ] Validar carga de configuraciones específicas por tenant
@@ -177,6 +180,7 @@
 - [ ] Verificar Dashboard funciona correctamente
 
 **Resultado parcial:** ✅ **Multi-tenancy funciona correctamente con SF7.4.3**
+**Pendiente:** Tests unitarios necesitan actualización, assets con controllers por tenant
 
 ---
 
@@ -184,19 +188,21 @@
 
 ### 5.1 Regenerar Cache
 
-- [ ] `php bin/console cache:clear --env=dev`
+- [x] `php bin/console cache:clear --env=dev`
 - [ ] `php bin/console cache:clear --env=prod --no-warmup`
 - [ ] `php bin/console cache:warmup --env=prod`
 - [ ] Verificar que no hay errores en warmup
 
 ### 5.2 Verificar Assets
 
-- [ ] `php bin/console importmap:install`
-- [ ] `php bin/console asset-map:compile`
+- [x] `php bin/console importmap:install` - No assets pendientes
+- [ ] `php bin/console asset-map:compile` - ⚠️ Error con controllers por tenant
 - [ ] Verificar que assets se cargan correctamente en navegador
 - [ ] Probar Stimulus controllers en `/assets/controllers/`
 - [ ] Verificar Turbo funciona correctamente
 - [ ] Probar carga de archivos CSS y JS
+
+**Nota:** Controllers de Stimulus específicos por tenant necesitan revisión (internal/melisalacolina/patient_controller.js)
 
 ### 5.3 Migraciones de Base de Datos
 
