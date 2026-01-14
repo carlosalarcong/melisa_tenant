@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity\Tenant;
 
 use Doctrine\ORM\Mapping as ORM;
+use Hakam\MultiTenancyBundle\Model\TenantEntityInterface;
 
 /**
  * ProfessionalType - Type of professional relationship
@@ -16,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'professional_type')]
-class ProfessionalType
+class ProfessionalType implements TenantEntityInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]

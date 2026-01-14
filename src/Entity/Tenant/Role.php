@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity\Tenant;
 
 use Doctrine\ORM\Mapping as ORM;
+use Hakam\MultiTenancyBundle\Model\TenantEntityInterface;
 
 /**
  * Role entity - User roles in the system
@@ -14,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'role')]
-class Role
+class Role implements TenantEntityInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
