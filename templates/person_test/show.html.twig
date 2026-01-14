@@ -1,0 +1,113 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Persona #{{ person.id }} - Test Permisos{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-user-check"></i> Persona #{{ person.id }}
+                    </h3>
+                    <small class="text-white-50">Vista protegida con #[IsGranted(VIEW)]</small>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        <strong>¡Permiso concedido!</strong> Si ves esta página, el usuario tiene permiso VIEW sobre esta persona.
+                    </div>
+
+                    <h5>Datos de la Persona</h5>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th width="200">ID</th>
+                            <td>{{ person.id }}</td>
+                        </tr>
+                        <tr>
+                            <th>Nombre Completo</th>
+                            <td>
+                                {{ person.name }} {{ person.lastName }}
+                                {% if can_edit_field(person, 'name') %}
+                                    <span class="badge bg-success">Puede editar</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Solo lectura</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        
+                        {# Campo Email - Solo se muestra si tiene permiso VIEW #}
+                        {% if can_view_field(person, 'email') %}
+                        <tr>
+                            <th>Email</th>
+                            <td>
+                                {{ person.email ?? 'N/A' }}
+                                {% if can_edit_field(person, 'email') %}
+                                    <span class="badge bg-success">Puede editar</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Solo lectura</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endif %}
+                        
+                        {# Campo Teléfono - Solo se muestra si tiene permiso VIEW #}
+                        {% if can_view_field(person, 'mobilePhone') %}
+                        <tr>
+                            <th>Teléfono</th>
+                            <td>
+                                {{ person.mobilePhone ?? 'N/A' }}
+                                {% if can_edit_field(person, 'mobilePhone') %}
+                                    <span class="badge bg-warning text-dark">Editable</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endif %}
+                        
+                        {# Campo Identificación - Ejemplo con is_granted + field_access #}
+                        {% if is_granted('VIEW', field_access(person, 'identification')) %}
+                        <tr>
+                            <th>Identificación</th>
+                            <td>
+                                {{ person.identification ?? 'N/A' }}
+                                {% if is_granted('EDIT', field_access(person, 'identification')) %}
+                                    <span class="badge bg-warning text-dark">Editable</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endif %}
+                    </table>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Nuevo:</strong> Esta vista ahora usa las funciones Twig 
+                        <code>can_view_field()</code>, <code>can_edit_field()</code> y <code>field_access()</code>
+                        para control granular de campos.
+                    </div>
+
+                    <div class="mt-4">
+                        <a href="{{ path('person_test_list') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                        
+                        {% if is_granted(constant('App\\Security\\Voter\\PermissionVoter::EDIT'), person) %}
+                            <a href="{{ path('person_test_edit', {id: person.id}) }}" class="btn btn-primary">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                        {% endif %}
+
+                        <a href="{{ path('person_test_field_demo', {id: person.id}) }}" class="btn btn-success">
+                            <i class="fas fa-lock"></i> Demo Permisos Campos
+                        </a>
+
+                        <a href="{{ path('person_test_manual_check', {id: person.id}) }}" class="btn btn-info">
+                            <i class="fas fa-check-circle"></i> Ver todos los permisos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
