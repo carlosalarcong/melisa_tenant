@@ -5,6 +5,23 @@ Todos los cambios notables de este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Sistema de permisos a nivel de campo (FieldAccess)
+- Voter personalizado (PermissionVoter) con lógica de cascada de permisos
+- Extensión Twig para verificación de permisos en templates
+- Tests unitarios: SecurityExtensionTest (9 tests) y FieldAccessTest (10 tests)
+- Documentación completa de migraciones Hakam en `docs/MIGRACIONES_HAKAM.md`
+- Cache in-memory para optimización de permisos
+- Implementación de SecuredResourceInterface en entidades
+- Controlador y vistas de testing para sistema de permisos
+
+### Changed
+
+- Total de tests aumentado a 41 con 118 assertions
+
 ## [1.0.0] - 2026-01-14
 
 ### Added
