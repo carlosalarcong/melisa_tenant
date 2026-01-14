@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Editar Persona #{{ person.id }}{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h3 class="mb-0">
+                        <i class="fas fa-edit"></i> Editar Persona #{{ person.id }}
+                    </h3>
+                    <small>Vista protegida con #[IsGranted(EDIT)]</small>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        <strong>¡Permiso concedido!</strong> Si ves esta página, el usuario tiene permiso EDIT sobre esta persona.
+                    </div>
+
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" class="form-control" value="{{ person.name }}" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Apellido</label>
+                            <input type="text" class="form-control" value="{{ person.lastName }}" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" value="{{ person.email ?? '' }}" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Teléfono</label>
+                            <input type="text" class="form-control" value="{{ person.mobilePhone ?? '' }}" readonly>
+                        </div>
+                    </form>
+
+                    <div class="mt-4">
+                        <a href="{{ path('person_test_show', {id: person.id}) }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
