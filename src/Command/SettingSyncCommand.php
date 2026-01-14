@@ -74,7 +74,7 @@ EOT
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $environment = $input->getArgument('environment');
         $parts = explode('.', $environment);
@@ -91,7 +91,7 @@ EOT
         }
         if (!is_array($config)) {
             $output->writeln("Archivo de settings inválido.");
-            return;
+            return Command::FAILURE;
         }
 
         //traer el switch connection y buscar todas las instancias activas

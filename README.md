@@ -12,6 +12,7 @@
 ## 🎯 Instalación Rápida
 
 ### 📋 Prerrequisitos
+
 - **PHP 8.1 o superior**
 - **MySQL 8.0**
 - **Composer**
@@ -20,17 +21,20 @@
 ### 🚀 Pasos de Instalación
 
 #### 1. **Clonar el repositorio**
+
 ```bash
 git clone [URL_TFS] melisa_tenant
 cd melisa_tenant
 ```
 
 #### 2. **Instalar dependencias**
+
 ```bash
 composer install
 ```
 
 #### 3. **Configurar entornos**
+
 ```bash
 # Crear archivos de configuración por entorno
 cp .env .env.dev.local
@@ -39,6 +43,7 @@ cp .env .env.local
 ```
 
 **Configuración `.env` (base):**
+
 ```env
 # Configuración base del proyecto
 APP_SECRET=change_me_in_production
@@ -46,6 +51,7 @@ MESSENGER_TRANSPORT_DSN=doctrine://default?auto_setup=0
 ```
 
 **Configuración `.env.dev.local` (desarrollo):**
+
 ```env
 DATABASE_URL="mysql://melisa:melisamelisa@127.0.0.1:3306/melisa_central"
 APP_ENV=dev
@@ -54,6 +60,7 @@ CORS_ALLOW_ORIGIN='^https?://(localhost|127\.0\.0\.1|.*\.localhost)(:[0-9]+)?$'
 ```
 
 **Configuración `.env.dev.test` (testing):**
+
 ```env
 DATABASE_URL="mysql://melisa_test:melisa_test@127.0.0.1:3306/melisa_central_test"
 APP_ENV=test
@@ -62,6 +69,7 @@ CORS_ALLOW_ORIGIN='*'
 ```
 
 **Configuración `.env.local` (local override):**
+
 ```env
 # Configuraciones locales específicas del desarrollador
 # Este archivo se ignora en git para configuraciones personales
@@ -70,6 +78,7 @@ APP_DEBUG=1
 ```
 
 #### 4. **Configurar base de datos multi-tenant**
+
 ```bash
 # Crear base de datos central
 php bin/console doctrine:database:create
@@ -79,6 +88,7 @@ php bin/console app:migrate-tenant
 ```
 
 **Nota:** El comando `app:migrate-tenant` es personalizado y realiza:
+
 - Migración de la base de datos central `melisa_central`
 - Creación automática de bases de datos por tenant
 - Migración de esquemas específicos para cada tenant
@@ -87,32 +97,37 @@ php bin/console app:migrate-tenant
 #### 5. **Configurar hosts del sistema (Windows)**
 
 **Windows:**
+
 1. Abrir **Bloc de notas como Administrador**
 2. Abrir: `C:\Windows\System32\drivers\etc\hosts`
 3. Cambiar filtro a **"Todos los archivos (*.*)"**
 
 Agregar estas líneas:
-```
+
+```text
 127.0.0.1 melisahospital.localhost
 127.0.0.1 melisalacolina.localhost
 127.0.0.1 melisawiclinic.localhost
 ```
 
 #### 6. **Compilar assets**
+
 ```bash
 php bin/console asset-map:compile
 ```
 
 #### 7. **Ejecutar servidor**
+
 ```bash
 php -S 0.0.0.0:8081 -t public/
 ```
 
 #### 8. **Verificar instalación**
-- 🏥 **Hospital:** http://melisahospital.localhost:8081
-- 🌿 **La Colina:** http://melisalacolina.localhost:8081
-- 💻 **Wi Clinic:** http://melisawiclinic.localhost:8081
-- 📖 **API Docs:** http://melisahospital.localhost:8081/api/docs
+
+- 🏥 **Hospital:** <http://melisahospital.localhost:8081>
+- 🌿 **La Colina:** <http://melisalacolina.localhost:8081>
+- 💻 **Wi Clinic:** <http://melisawiclinic.localhost:8081>
+- 📖 **API Docs:** <http://melisahospital.localhost:8081/api/docs>
 
 ---
 
@@ -127,16 +142,18 @@ php bin/console app:migrate-tenant
 ```
 
 **Funcionalidades del comando:**
+
 1. **Migración Central**: Ejecuta migraciones en `melisa_central`
 2. **Creación de Tenants**: Crea automáticamente bases de datos por tenant:
    - `melisahospital_db`
-   - `melisalacolina_db` 
+   - `melisalacolina_db`
    - `melisawiclinic_db`
 3. **Migraciones por Tenant**: Ejecuta migraciones específicas en cada tenant
 4. **Configuración Dinámica**: Configura conexiones de base de datos dinámicas
 5. **Datos de Prueba**: Opcionalmente carga fixtures por tenant
 
 **Parámetros disponibles:**
+
 ```bash
 # Migrar solo un tenant específico
 php bin/console app:migrate-tenant --tenant=melisahospital
@@ -157,18 +174,20 @@ php bin/console app:migrate-tenant --dry-run
 
 ### 🌐 Multi-Tenant por Subdominios
 
-| Tenant | URL | Descripción |
-|--------|-----|-------------|
-| **🏥 Hospital** | `melisahospital.localhost:8081` | Dashboard para hospitales |
-| **🌿 La Colina** | `melisalacolina.localhost:8081` | Dashboard para clínicas |
-| **💻 Wi Clinic** | `melisawiclinic.localhost:8081` | Dashboard tecnológico |
+| Tenant           | URL                             | Descripción               |
+|------------------|---------------------------------|---------------------------|
+| **🏥 Hospital**  | `melisahospital.localhost:8081` | Dashboard para hospitales |
+| **🌿 La Colina** | `melisalacolina.localhost:8081` | Dashboard para clínicas   |
+| **💻 Wi Clinic** | `melisawiclinic.localhost:8081` | Dashboard tecnológico     |
 
 ### 🗄️ Bases de Datos
+
 - **`melisa_central`** - Gestión de tenants y configuración
 - **Por tenant** - Base de datos independiente por cada clínica
 
 ### ⚡ Sistema de Controllers Stimulus
-```
+
+```text
 assets/controllers/
 ├── dynamic_loader.js              # Sistema de fallback automático
 └── internal/                      # Controllers internos (formularios, UI)
@@ -179,6 +198,7 @@ assets/controllers/
 ```
 
 **Sistema de Fallback:**
+
 1. Busca controller específico del tenant: `internal/melisalacolina/patient_controller.js`
 2. Si no existe, usa default: `internal/default/patient_controller.js`
 
@@ -187,18 +207,22 @@ assets/controllers/
 ## 🧪 Testing y Datos de Prueba
 
 ### 👤 Usuarios de Prueba
+
 ```bash
 Usuario: admin
 Password: password
 ```
 
 ### 📋 Datos de Prueba API
+
 Los State Providers generan automáticamente:
+
 - **Hospital**: HSP001, HSP002, HSP003...
 - **La Colina**: LC001, LC002, LC003...
 - **Wi Clinic**: WC001, WC002, WC003...
 
 ### 🧪 Verificar Multi-tenant
+
 ```bash
 # Probar diferentes tenants
 curl -H "X-Tenant-Context: melisahospital" "http://melisahospital.localhost:8081/api/patients"
@@ -236,18 +260,8 @@ php bin/console asset-map:compile
 
 ## 🐛 Solución de Problemas
 
-### ❌ **Error: Database connection**
-```bash
-# Verificar configuración en .env.dev.local
-# DATABASE_URL="mysql://usuario:password@127.0.0.1:3306/melisa_central"
-```
-```
-
----
-
-## 🐛 Solución de Problemas
-
 ### ❌ **Error: "No route found for GET /api"**
+
 ```bash
 # Verificar que API Platform está instalado
 composer show api-platform/core
@@ -260,6 +274,7 @@ php bin/console cache:clear
 ```
 
 ### ❌ **Error: Database connection**
+
 ```bash
 # Verificar configuración en .env.dev.local
 # DATABASE_URL="mysql://usuario:password@127.0.0.1:3306/melisa_central"
@@ -274,6 +289,7 @@ php bin/console app:migrate-tenant
 ### ❌ **Error: Subdomain no resuelve**
 
 **Windows:**
+
 ```cmd
 # Verificar hosts
 type C:\Windows\System32\drivers\etc\hosts | findstr localhost
@@ -283,6 +299,7 @@ ipconfig /flushdns
 ```
 
 ### ❌ **Error: Assets/Controllers Stimulus no cargan**
+
 ```bash
 # Recompilar assets
 php bin/console asset-map:compile
@@ -299,26 +316,27 @@ php bin/console debug:asset-map
 ### � Documentación Técnica
 
 **Sistema Multi-Tenant:**
+
 - **[Sistema Transparente de Tenant](docs/TRANSPARENT_TENANT_SYSTEM.md)** - Arquitectura completa sin inyección manual
 - **[Ejemplos de Controladores](docs/CONTROLLER_EXAMPLES.md)** - 7 patrones de implementación
 - **[Flujo del Sistema](docs/SYSTEM_FLOW_DETAILED.md)** - Diagramas de ejecución completos
 - **[Migración Completada](docs/MIGRATION_COMPLETED.md)** - Reporte de migración
 
 **Localización y Traducciones:**
+
 - **[Comparativa de Sistemas](docs/LOCALIZATION_SYSTEM_COMPARISON.md)** - melisa_base vs melisa_tenant (1,117 líneas)
 - **[Flujo de TranslatorInterface](docs/TRANSLATOR_FLOW.md)** - Arquitectura completa de traducciones
-
-**Ver carpeta `docs/` para más guías técnicas**
 
 ---
 
 ### 📧 Contacto
+
 - **API Testing**: Usar `/api/docs` para pruebas interactivas
 - **Debug**: Usar `/_profiler` en desarrollo
 
 ---
 
-**🩺 Desarrollado con ❤️ por el equipo de RayenSalud para revolucionar la gestión médica digital**
+Desarrollado con ❤️ por el equipo de RayenSalud para revolucionar la gestión médica digital
 
 ---
 

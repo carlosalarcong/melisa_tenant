@@ -1,12 +1,11 @@
 <?php
+
 namespace App\Entity\Tenant;
 
-use App\Repository\GenderRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: GenderRepository::class)]
+#[ORM\Entity]
+#[ORM\Table(name: 'sexo')]
 class Gender
 {
     #[ORM\Id]
@@ -14,31 +13,17 @@ class Gender
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(type: "string", length: 50, nullable: false)]
     private ?string $name = null;
 
-    #[ORM\Column]
-    private ?bool $isPerson = null;
+    #[ORM\Column(type: "string", length: 10, nullable: false)]
+    private ?string $code = null;
 
-    #[ORM\Column(length: 25)]
-    private ?string $icon = null;
-
-    #[ORM\Column(length: 15, nullable: true)]
-    private ?string $genderCodeHl7 = null;
-
-    #[ORM\Column(options: ["default" => true])]
+    #[ORM\Column(type: "boolean", options: ["default" => true])]
     private ?bool $isActive = true;
 
-    /**
-     * @var Collection<int, Person>
-     */
-    #[ORM\OneToMany(targetEntity: Person::class, mappedBy: 'gender')]
-    private Collection $people;
-
-    public function __construct()
-    {
-        $this->people = new ArrayCollection();
-    }
+    #[ORM\Column(name: "id_estado", type: "boolean", options: ["default" => true])]
+    private bool|null|Estado $status = true;
 
     public function getId(): ?int
     {
@@ -50,46 +35,20 @@ class Gender
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(?string $name): static
     {
         $this->name = $name;
-
         return $this;
     }
 
-    public function isPerson(): ?bool
+    public function getCode(): ?string
     {
-        return $this->isPerson;
+        return $this->code;
     }
 
-    public function setIsPerson(bool $isPerson): static
+    public function setCode(?string $code): static
     {
-        $this->isPerson = $isPerson;
-
-        return $this;
-    }
-
-    public function getIcon(): ?string
-    {
-        return $this->icon;
-    }
-
-    public function setIcon(string $icon): static
-    {
-        $this->icon = $icon;
-
-        return $this;
-    }
-
-    public function getGenderCodeHl7(): ?string
-    {
-        return $this->genderCodeHl7;
-    }
-
-    public function setGenderCodeHl7(?string $genderCodeHl7): static
-    {
-        $this->genderCodeHl7 = $genderCodeHl7;
-
+        $this->code = $code;
         return $this;
     }
 
@@ -98,40 +57,25 @@ class Gender
         return $this->isActive;
     }
 
-    public function setIsActive(bool $isActive): static
+    public function setIsActive(?bool $isActive): static
     {
         $this->isActive = $isActive;
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Person>
-     */
-    public function getPeople(): Collection
+    public function getStatus(): ?Estado
     {
-        return $this->people;
+        return $this->status;
     }
 
-    public function addPerson(Person $person): static
+    public function setStatus(?Estado $status): static
     {
-        if (!$this->people->contains($person)) {
-            $this->people->add($person);
-            $person->setGender($this);
-        }
-
+        $this->status = $status;
         return $this;
     }
 
-    public function removePerson(Person $person): static
+    public function __toString(): string
     {
-        if ($this->people->removeElement($person)) {
-            // set the owning side to null (unless already changed)
-            if ($person->getGender() === $this) {
-                $person->setGender(null);
-            }
-        }
-
-        return $this;
+        return $this->name ?? 'Gender without name';
     }
 }
