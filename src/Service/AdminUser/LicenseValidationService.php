@@ -61,9 +61,13 @@ class LicenseValidationService
         }
         
         // Contar usuarios activos
-        $usedCount = $this->em->getRepository(Member::class)->count([
-            'isActive' => true
-        ]);
+        $usedCount = (int) $this->em->createQueryBuilder()
+            ->select('COUNT(m.id)')
+            ->from(Member::class, 'm')
+            ->where('m.isActive = :active')
+            ->setParameter('active', true)
+            ->getQuery()
+            ->getSingleScalarResult();
         
         $total = $license->getQuantity();
         $available = max(0, $total - $usedCount);
