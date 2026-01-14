@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity\Tenant;
 
 use Doctrine\ORM\Mapping as ORM;
+use Hakam\MultiTenancyBundle\Model\TenantEntityInterface;
 
 /**
  * State (Estado) - Generic state entity for various entities
@@ -14,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'state')]
-class State
+class State implements TenantEntityInterface
 {
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: 'integer')]

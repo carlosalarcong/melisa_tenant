@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity\Tenant;
 
 use Doctrine\ORM\Mapping as ORM;
+use Hakam\MultiTenancyBundle\Model\TenantEntityInterface;
 
 /**
  * License - Organization license information
@@ -14,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'license')]
-class License
+class License implements TenantEntityInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
