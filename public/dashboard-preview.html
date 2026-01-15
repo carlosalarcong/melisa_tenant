@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Moderno - Melisa Preview</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            --gradient-info: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-warning: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .dashboard-header {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+        
+        .welcome-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .metric-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            height: 100%;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+        }
+        
+        .metric-card.primary::before { background: var(--gradient-primary); }
+        .metric-card.success::before { background: var(--gradient-success); }
+        .metric-card.info::before { background: var(--gradient-info); }
+        .metric-card.warning::before { background: var(--gradient-warning); }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+        
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+        
+        .metric-label {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            color: #6c757d;
+        }
+        
+        .metric-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .module-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+        }
+        
+        .module-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        }
+        
+        .module-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .quick-actions {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+        
+        .action-btn {
+            padding: 1rem;
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+            background: white;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+        }
+        
+        .action-btn:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+            transform: translateX(5px);
+        }
+        
+        .action-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+        
+        .activity-item {
+            padding: 1rem;
+            border-left: 3px solid #e9ecef;
+            margin-left: 1rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .activity-item:hover {
+            background: #f8f9fa;
+            border-left-color: #667eea;
+        }
+        
+        .activity-icon {
+            position: absolute;
+            left: -1.8rem;
+            top: 1rem;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border: 3px solid #e9ecef;
+            font-size: 0.875rem;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid px-4 py-4">
+        <!-- Header -->
+        <div class="dashboard-header animate-in">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <div class="welcome-text mb-2">👋 Bienvenido, Dr. Juan Pérez</div>
+                    <p class="text-muted mb-0">
+                        <i class="fas fa-building me-2"></i>Clínica Melisa Hospital
+                        <span class="mx-2">•</span>
+                        <i class="fas fa-calendar me-2"></i>Lunes, 14 de Enero de 2026
+                    </p>
+                </div>
+                <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                    <button class="btn btn-primary me-2">
+                        <i class="fas fa-search me-2"></i>Búsqueda Global
+                    </button>
+                    <button class="btn btn-outline-secondary">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge bg-danger rounded-pill ms-1">3</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alertas -->
+        <div class="alert alert-warning border-0 rounded-4 shadow-sm mb-3">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                <div class="flex-grow-1">
+                    <h5 class="alert-heading mb-1">⚠️ Licencias por agotarse</h5>
+                    <p class="mb-0">Solo quedan 5 licencias disponibles de 50</p>
+                </div>
+                <a href="#" class="btn btn-sm btn-warning">Gestionar</a>
+            </div>
+        </div>
+
+        <!-- Métricas -->
+        <div class="row g-4 mb-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="metric-card primary">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <div class="metric-label">Usuarios Activos</div>
+                            <div class="metric-value text-primary">45</div>
+                            <div class="text-success small">
+                                <i class="fas fa-arrow-up me-1"></i>+12.5% este mes
+                            </div>
+                        </div>
+                        <div class="metric-icon" style="background: var(--gradient-primary)">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="metric-card success">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <div class="metric-label">Citas Hoy</div>
+                            <div class="metric-value text-success">23</div>
+                            <div class="text-info small">
+                                <i class="fas fa-clock me-1"></i>5 en curso
+                            </div>
+                        </div>
+                        <div class="metric-icon" style="background: var(--gradient-success)">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="metric-card info">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <div class="metric-label">Ingresos Hoy</div>
+                            <div class="metric-value text-info">$450K</div>
+                            <div class="text-success small">
+                                <i class="fas fa-arrow-up me-1"></i>+8.5%
+                            </div>
+                        </div>
+                        <div class="metric-icon" style="background: var(--gradient-info)">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="metric-card warning">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <div class="metric-label">Citas Semana</div>
+                            <div class="metric-value text-warning">142</div>
+                            <div class="text-success small">
+                                <i class="fas fa-arrow-up me-1"></i>+12%
+                            </div>
+                        </div>
+                        <div class="metric-icon" style="background: var(--gradient-warning)">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido Principal -->
+        <div class="row g-4">
+            <!-- Módulos -->
+            <div class="col-lg-8">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="fw-bold">
+                        <i class="fas fa-th-large me-2 text-primary"></i>Módulos del Sistema
+                    </h3>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-primary">Todos</button>
+                        <button class="btn btn-outline-primary">Destacados</button>
+                        <button class="btn btn-outline-primary">Recientes</button>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <!-- Módulo 1 -->
+                    <div class="col-md-6">
+                        <a href="#" class="module-card">
+                            <div style="position: absolute; top: 0; left: 0; right: 0; height: 5px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)"></div>
+                            <div class="module-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">
+                                <i class="fas fa-users-cog"></i>
+                            </div>
+                            <h5 class="fw-bold">Administración de Usuarios</h5>
+                            <p class="text-muted small mb-0">Gestión de usuarios, roles y permisos</p>
+                            <span class="badge bg-primary position-absolute top-0 end-0 m-3">
+                                <i class="fas fa-star me-1"></i>Destacado
+                            </span>
+                        </a>
+                    </div>
+
+                    <!-- Módulo 2 -->
+                    <div class="col-md-6">
+                        <a href="#" class="module-card">
+                            <div style="position: absolute; top: 0; left: 0; right: 0; height: 5px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"></div>
+                            <div class="module-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%)">
+                                <i class="fas fa-hospital-user"></i>
+                            </div>
+                            <h5 class="fw-bold">Directorio de Pacientes</h5>
+                            <p class="text-muted small mb-0">Registro y gestión de pacientes</p>
+                            <span class="badge bg-primary position-absolute top-0 end-0 m-3">
+                                <i class="fas fa-star me-1"></i>Destacado
+                            </span>
+                        </a>
+                    </div>
+
+                    <!-- Módulo 3 -->
+                    <div class="col-md-6">
+                        <a href="#" class="module-card">
+                            <div style="position: absolute; top: 0; left: 0; right: 0; height: 5px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"></div>
+                            <div class="module-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <h5 class="fw-bold">Agenda</h5>
+                            <p class="text-muted small mb-0">Gestión de citas y horarios</p>
+                        </a>
+                    </div>
+
+                    <!-- Módulo 4 -->
+                    <div class="col-md-6">
+                        <a href="#" class="module-card">
+                            <div style="position: absolute; top: 0; left: 0; right: 0; height: 5px; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%)"></div>
+                            <div class="module-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%)">
+                                <i class="fas fa-file-medical"></i>
+                            </div>
+                            <h5 class="fw-bold">Registro Clínico</h5>
+                            <p class="text-muted small mb-0">Fichas clínicas y atenciones</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Acciones Rápidas -->
+                <div class="quick-actions mb-4">
+                    <h5 class="fw-bold mb-3">
+                        <i class="fas fa-bolt me-2 text-warning"></i>Acciones Rápidas
+                    </h5>
+                    <div class="d-grid gap-2">
+                        <button class="action-btn">
+                            <div class="action-icon" style="background: var(--gradient-success)">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold">Nuevo Paciente</div>
+                                <small class="text-muted">Registrar paciente</small>
+                            </div>
+                        </button>
+                        <button class="action-btn">
+                            <div class="action-icon" style="background: var(--gradient-info)">
+                                <i class="fas fa-calendar-plus"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold">Agendar Cita</div>
+                                <small class="text-muted">Nueva reserva</small>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Actividad Reciente -->
+                <div class="quick-actions">
+                    <h5 class="fw-bold mb-3">
+                        <i class="fas fa-history me-2 text-info"></i>Actividad Reciente
+                    </h5>
+                    <div class="position-relative">
+                        <div class="activity-item">
+                            <div class="activity-icon text-white" style="background: var(--gradient-success); border-color: #11998e;">
+                                <i class="fas fa-sign-in-alt"></i>
+                            </div>
+                            <div class="fw-bold">Usuario María López inició sesión</div>
+                            <div class="small text-muted">5 min</div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon text-white" style="background: var(--gradient-primary); border-color: #667eea;">
+                                <i class="fas fa-calendar-plus"></i>
+                            </div>
+                            <div class="fw-bold">Nueva cita agendada</div>
+                            <div class="small text-muted">15 min</div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon text-white" style="background: var(--gradient-info); border-color: #4facfe;">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="fw-bold">Nuevo paciente registrado</div>
+                            <div class="small text-muted">1 hora</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

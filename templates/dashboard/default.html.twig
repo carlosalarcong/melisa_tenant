@@ -1,423 +1,789 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'dashboard.title'|trans }} - {{ tenant.name|default('Sistema') }}{% endblock %}
+{% block title %}Dashboard - {{ tenant_info.name|default('Melisa') }}{% endblock %}
 
-{% block dashboard_indicator %}
-    <i class="fas fa-tachometer-alt me-2"></i>{{ 'dashboard.title'|trans }} - {{ tenant.name|default('Sistema') }}
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        :root {
+            --primary-color: #5e72e4;
+            --success-color: #2dce89;
+            --info-color: #11cdef;
+            --warning-color: #fb6340;
+            --danger-color: #f5365c;
+        }
+        
+        /* Ajuste del contenedor principal para que trabaje con el base.html.twig */
+        main {
+            background: #f7fafc;
+            min-height: calc(100vh - 60px);
+            padding: 1.5rem 2rem;
+        }
+        
+        /* Welcome banner */
+        .welcome-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 2rem;
+            color: white;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .welcome-text h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .welcome-text p {
+            opacity: 0.9;
+            font-size: 1rem;
+            margin: 0;
+        }
+        
+        .welcome-illustration {
+            font-size: 5rem;
+            opacity: 0.3;
+        }
+        
+        /* Stats cards */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: white;
+        }
+        
+        .stat-icon.primary { background: linear-gradient(135deg, #5e72e4, #825ee4); }
+        .stat-icon.success { background: linear-gradient(135deg, #2dce89, #2dcecc); }
+        .stat-icon.info { background: linear-gradient(135deg, #11cdef, #1171ef); }
+        .stat-icon.warning { background: linear-gradient(135deg, #fb6340, #fbb140); }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: #8898aa;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #32325d;
+            margin: 0.5rem 0;
+        }
+        
+        .stat-change {
+            font-size: 0.875rem;
+            color: #2dce89;
+        }
+        
+        .stat-change i {
+            margin-right: 0.25rem;
+        }
+        
+        /* Content grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            overflow: hidden;
+            border: none;
+        }
+        
+        .card:hover {
+            transform: none;
+        }
+        
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            background: white;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-header h5 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #32325d;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .card-body.p-0 {
+            padding: 0 !important;
+        }
+        
+        /* Table */
+        .table-modern {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+        }
+        
+        .table-modern thead th {
+            text-align: left;
+            padding: 1rem 1.5rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #8898aa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: #f7fafc;
+            border: none;
+        }
+        
+        .table-modern tbody td {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .table-modern tbody tr:hover {
+            background: #f7fafc;
+        }
+        
+        .patient-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .patient-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 0.875rem;
+        }
+        
+        .patient-details {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .patient-name {
+            font-weight: 600;
+            color: #32325d;
+        }
+        
+        .patient-id {
+            font-size: 0.8rem;
+            color: #8898aa;
+        }
+        
+        .time-badge {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .status-badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .status-badge.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-badge.info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .status-badge.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        /* Quick actions */
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .action-btn {
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-align: left;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+        }
+        
+        .action-btn.primary {
+            background: linear-gradient(135deg, #5e72e4, #825ee4);
+        }
+        
+        .action-btn.success {
+            background: linear-gradient(135deg, #2dce89, #2dcecc);
+        }
+        
+        .action-btn.info {
+            background: linear-gradient(135deg, #11cdef, #1171ef);
+        }
+        
+        .action-btn.warning {
+            background: linear-gradient(135deg, #fb6340, #fbb140);
+        }
+        
+        /* Mini stats */
+        .mini-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .mini-stat {
+            padding: 1.25rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .mini-stat.primary {
+            background: linear-gradient(135deg, #5e72e415, #825ee415);
+        }
+        
+        .mini-stat.success {
+            background: linear-gradient(135deg, #2dce8915, #2dcecc15);
+        }
+        
+        .mini-stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #32325d;
+            margin-bottom: 0.25rem;
+        }
+        
+        .mini-stat-label {
+            font-size: 0.8rem;
+            color: #8898aa;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #4c63d2;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(94, 114, 228, 0.3);
+        }
+        
+        .btn-outline-secondary {
+            background: transparent;
+            border: 2px solid #e9ecef;
+            color: #525f7f;
+        }
+        
+        .btn-outline-secondary:hover {
+            background: #f7fafc;
+            border-color: #cbd3da;
+        }
+        
+        .btn-outline-primary {
+            background: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .btn-outline-primary:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-sm {
+            padding: 0.4rem 0.75rem;
+            font-size: 0.875rem;
+        }
+        
+        .btn-group {
+            display: inline-flex;
+            gap: 0.25rem;
+        }
+        
+        /* Mejoras para el sidebar del base */
+        .sidebar .nav-link {
+            color: #495057;
+            margin: 0.2rem 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            padding: 0.75rem 1rem;
+        }
+        
+        .sidebar .nav-link:hover {
+            background-color: rgba(94, 114, 228, 0.1);
+            color: #5e72e4;
+            transform: translateX(3px);
+        }
+        
+        .sidebar .nav-link.active {
+            background: linear-gradient(135deg, #5e72e4, #825ee4);
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(94, 114, 228, 0.3);
+            font-weight: 600;
+        }
+        
+        .sidebar .nav-link i {
+            width: 20px;
+            text-align: center;
+            margin-right: 0.75rem;
+        }
+        
+        /* Card footer */
+        .card-footer {
+            padding: 1rem 1.5rem;
+            background: #f7fafc;
+            border-top: 1px solid #f0f0f0;
+            text-align: center;
+        }
+        
+        @media (max-width: 1200px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .welcome-banner {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .welcome-illustration {
+                margin-top: 1rem;
+            }
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
 <div class="container-fluid">
     <div class="row">
-        <!-- Sidebar Moderno -->
-        <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar position-fixed">
+        <!-- Sidebar -->
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar position-fixed">
             <div class="position-sticky pt-3">
-                <!-- Encabezado del Tenant -->
+                <!-- Logo/Header -->
                 <div class="text-center mb-4 px-3">
-                    <div class="bg-primary rounded-circle mx-auto mb-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                    <div class="mx-auto mb-3" style="width: 60px; height: 60px; background: linear-gradient(135deg, #5e72e4, #825ee4); border-radius: 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(94, 114, 228, 0.3);">
                         <i class="fas fa-clinic-medical fa-2x text-white"></i>
                     </div>
-                    <h6 class="fw-bold text-primary">{{ tenant.name|default('Sistema Médico') }}</h6>
-                    <small class="text-muted">{{ tenant.subdomain|default('sistema') }}.melisaupgrade.prod</small>
+                    <h5 class="fw-bold mb-1" style="color: #32325d;">{{ tenant_info.name|default('Melisa Health') }}</h5>
+                    <small class="text-muted d-block" style="font-size: 0.75rem;">{{ tenant_info.subdomain|default('sistema') }}</small>
                 </div>
                 
+                <hr class="my-3">
+                
                 <!-- Navegación Principal -->
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                    <span style="font-size: 0.7rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Principal</span>
+                </h6>
                 <ul class="nav flex-column">
-                    <li class="nav-item mb-1">
-                        <a class="nav-link active rounded" href="/dashboard">
-                            <i class="fas fa-tachometer-alt me-2"></i>
-                            {{ 'nav.dashboard'|trans }}
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">
+                            <i class="fas fa-home"></i>
+                            Dashboard
                         </a>
                     </li>
-                    <li class="nav-item mb-1">
-                        <a class="nav-link rounded" href="/pacientes">
-                            <i class="fas fa-users me-2"></i>
-                            {{ 'nav.patients'|trans }}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/users">
+                            <i class="fas fa-users-cog"></i>
+                            Usuarios
                         </a>
                     </li>
-                    <li class="nav-item mb-1">
-                        <a class="nav-link rounded" href="/citas">
-                            <i class="fas fa-calendar-alt me-2"></i>
-                            {{ 'nav.appointments'|trans }}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/patients">
+                            <i class="fas fa-hospital-user"></i>
+                            Pacientes
                         </a>
                     </li>
-                    <li class="nav-item mb-1">
-                        <a class="nav-link rounded" href="/consultas">
-                            <i class="fas fa-stethoscope me-2"></i>
-                            {{ 'nav.consultations'|trans }}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/appointments">
+                            <i class="fas fa-calendar-alt"></i>
+                            Agenda
                         </a>
                     </li>
-                    <li class="nav-item mb-1">
-                        <a class="nav-link rounded" href="/reportes">
-                            <i class="fas fa-chart-bar me-2"></i>
-                            {{ 'nav.reports'|trans }}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/clinical-records">
+                            <i class="fas fa-file-medical"></i>
+                            Ficha Clínica
                         </a>
                     </li>
                 </ul>
                 
-                <!-- Separador -->
-                <hr class="my-4">
-                
-                <!-- Sección de Administración -->
-                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
-                    <span>{{ 'nav.administration'|trans }}</span>
+                <!-- Módulos -->
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                    <span style="font-size: 0.7rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Módulos</span>
                 </h6>
-                <ul class="nav flex-column mb-2">
-                    <li class="nav-item mb-1">
-                        <a class="nav-link rounded" href="/mantenedores">
-                            <i class="fas fa-cogs me-2"></i>
-                            {{ 'nav.maintenance'|trans }}
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/billing">
+                            <i class="fas fa-cash-register"></i>
+                            Caja
                         </a>
                     </li>
-                    <li class="nav-item mb-1">
-                        <a class="nav-link rounded" href="/configuracion">
-                            <i class="fas fa-sliders-h me-2"></i>
-                            {{ 'nav.settings'|trans }}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/pharmacy">
+                            <i class="fas fa-pills"></i>
+                            Farmacia
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/laboratory">
+                            <i class="fas fa-flask"></i>
+                            Laboratorio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/reports">
+                            <i class="fas fa-chart-bar"></i>
+                            Informes
+                        </a>
+                    </li>
+                </ul>
+                
+                <!-- Administración -->
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                    <span style="font-size: 0.7rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Sistema</span>
+                </h6>
+                <ul class="nav flex-column mb-2">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/maintenance">
+                            <i class="fas fa-database"></i>
+                            Mantenedores
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/settings">
+                            <i class="fas fa-cog"></i>
+                            Configuración
                         </a>
                     </li>
                 </ul>
             </div>
         </nav>
 
-        <!-- Contenido Principal -->
+        <!-- Main content -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <!-- IDENTIFICADOR VISUAL: Template Default Universal -->
-            <div class="alert alert-warning border-start border-warning border-4 mb-3 mt-3" role="alert">
-                <div class="d-flex align-items-center">
-                    <i class="fas fa-cog fa-2x text-warning me-3"></i>
-                    <div>
-                        <h5 class="alert-heading mb-1">⚡ Dashboard Universal (Default)</h5>
-                        <p class="mb-0 small">Template genérico para <strong>{{ tenant.subdomain|default('subdomain') }}</strong> - Sin personalización específica</p>
+            <!-- Welcome Banner -->
+            <div class="welcome-banner">
+                <div class="welcome-text">
+                    <h2>Bienvenido, {{ logged_user.first_name|default('Usuario') }}! 👋</h2>
+                    <p>Tienes 23 citas programadas para hoy. ¡Que tengas un excelente día!</p>
+                </div>
+                <div class="welcome-illustration">
+                    <i class="fas fa-user-md"></i>
+                </div>
+            </div>
+            
+            <!-- Stats Row -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Total Pacientes</div>
+                            <div class="stat-value">1,247</div>
+                            <div class="stat-change">
+                                <i class="fas fa-arrow-up"></i> +12% este mes
+                            </div>
+                        </div>
+                        <div class="stat-icon primary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Citas Hoy</div>
+                            <div class="stat-value">23</div>
+                            <div class="stat-change">
+                                <i class="fas fa-clock"></i> 5 en curso
+                            </div>
+                        </div>
+                        <div class="stat-icon success">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Ingresos Hoy</div>
+                            <div class="stat-value">$450K</div>
+                            <div class="stat-change">
+                                <i class="fas fa-arrow-up"></i> +8.5%
+                            </div>
+                        </div>
+                        <div class="stat-icon info">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Citas Semana</div>
+                            <div class="stat-value">142</div>
+                            <div class="stat-change">
+                                <i class="fas fa-arrow-up"></i> +5.2%
+                            </div>
+                        </div>
+                        <div class="stat-icon warning">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Encabezado de Página -->
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2 fw-bold">
-                    <i class="fas fa-home me-2 text-primary"></i>
-                    {{ 'dashboard.welcome'|trans }}
-                </h1>
-                <div class="btn-toolbar mb-2 mb-md-0">
-                    <div class="btn-group me-2">
-                        <button type="button" class="btn btn-sm btn-outline-primary">
-                            <i class="fas fa-plus me-1"></i>{{ 'dashboard.new_appointment'|trans }}
+            <!-- Content Grid -->
+            <div class="content-grid">
+                <!-- Appointments Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5>
+                            <i class="fas fa-calendar-day" style="color: var(--success-color);"></i>
+                            Agenda de Hoy
+                        </h5>
+                        <span class="status-badge success">23 citas</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table-modern">
+                            <thead>
+                                <tr>
+                                    <th>Hora</th>
+                                    <th>Paciente</th>
+                                    <th>Motivo</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="time-badge">09:00</span></td>
+                                    <td>
+                                        <div class="patient-info">
+                                            <div class="patient-avatar" style="background: linear-gradient(135deg, #5e72e4, #825ee4);">
+                                                MG
+                                            </div>
+                                            <div class="patient-details">
+                                                <span class="patient-name">María González</span>
+                                                <span class="patient-id">19.456.789-0</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Control general</td>
+                                    <td><span class="status-badge success">Confirmada</span></td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button class="btn btn-outline-secondary btn-sm">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-stethoscope"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="time-badge">10:30</span></td>
+                                    <td>
+                                        <div class="patient-info">
+                                            <div class="patient-avatar" style="background: linear-gradient(135deg, #11cdef, #1171ef);">
+                                                CR
+                                            </div>
+                                            <div class="patient-details">
+                                                <span class="patient-name">Carlos Ruiz</span>
+                                                <span class="patient-id">18.234.567-8</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Cardiología</td>
+                                    <td><span class="status-badge info">En curso</span></td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button class="btn btn-outline-secondary btn-sm">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-stethoscope"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="time-badge">11:15</span></td>
+                                    <td>
+                                        <div class="patient-info">
+                                            <div class="patient-avatar" style="background: linear-gradient(135deg, #2dce89, #2dcecc);">
+                                                AM
+                                            </div>
+                                            <div class="patient-details">
+                                                <span class="patient-name">Ana Morales</span>
+                                                <span class="patient-id">17.890.123-4</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Seguimiento</td>
+                                    <td><span class="status-badge warning">Pendiente</span></td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button class="btn btn-outline-secondary btn-sm">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-stethoscope"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-calendar-alt"></i>
+                            Ver Agenda Completa
                         </button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary">
-                            <i class="fas fa-download me-1"></i>{{ 'dashboard.export'|trans }}
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tarjetas de Estadísticas Mejoradas -->
-            <div class="row mb-4">
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card shadow-sm border-start border-primary border-4">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs fw-bold text-primary text-uppercase mb-1">
-                                        {{ 'dashboard.total_patients'|trans }}
-                                    </div>
-                                    <div class="h4 mb-0 fw-bold text-gray-800">1,247</div>
-                                    <small class="text-success">
-                                        <i class="fas fa-arrow-up me-1"></i>12% más que el mes pasado
-                                    </small>
-                                </div>
-                                <div class="col-auto">
-                                    <div class="icon-circle bg-primary text-white">
-                                        <i class="fas fa-users"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card shadow-sm border-start border-success border-4">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs fw-bold text-success text-uppercase mb-1">
-                                        {{ 'dashboard.appointments_today'|trans }}
-                                    </div>
-                                    <div class="h4 mb-0 fw-bold text-gray-800">28</div>
-                                    <small class="text-info">
-                                        <i class="fas fa-clock me-1"></i>5 en curso
-                                    </small>
-                                </div>
-                                <div class="col-auto">
-                                    <div class="icon-circle bg-success text-white">
-                                        <i class="fas fa-calendar-check"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card shadow-sm border-start border-warning border-4">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs fw-bold text-warning text-uppercase mb-1">
-                                        {{ 'dashboard.pending_reviews'|trans }}
-                                    </div>
-                                    <div class="h4 mb-0 fw-bold text-gray-800">8</div>
-                                    <small class="text-warning">
-                                        <i class="fas fa-exclamation-triangle me-1"></i>Requieren atención
-                                    </small>
-                                </div>
-                                <div class="col-auto">
-                                    <div class="icon-circle bg-warning text-white">
-                                        <i class="fas fa-file-medical"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card shadow-sm border-start border-info border-4">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs fw-bold text-info text-uppercase mb-1">
-                                        {{ 'dashboard.monthly_revenue'|trans }}
-                                    </div>
-                                    <div class="h4 mb-0 fw-bold text-gray-800">$2.8M</div>
-                                    <small class="text-success">
-                                        <i class="fas fa-arrow-up me-1"></i>8.5% vs mes anterior
-                                    </small>
-                                </div>
-                                <div class="col-auto">
-                                    <div class="icon-circle bg-info text-white">
-                                        <i class="fas fa-dollar-sign"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Contenido Principal en dos columnas -->
-            <div class="row">
-                <!-- Panel de Acciones Rápidas -->
-                <div class="col-lg-4 mb-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-header bg-gradient-primary text-white border-0">
-                            <h5 class="card-title mb-0 fw-bold">
-                                <i class="fas fa-bolt me-2"></i>
-                                {{ 'dashboard.quick_actions'|trans }}
+                <!-- Sidebar Actions -->
+                <div>
+                    <!-- Quick Actions -->
+                    <div class="card" style="margin-bottom: 1.5rem;">
+                        <div class="card-header">
+                            <h5>
+                                <i class="fas fa-bolt" style="color: var(--warning-color);"></i>
+                                Accesos Rápidos
                             </h5>
                         </div>
                         <div class="card-body">
-                            <div class="d-grid gap-2">
-                                <button class="btn btn-outline-primary btn-lg">
-                                    <i class="fas fa-user-plus me-2"></i>{{ 'dashboard.new_patient'|trans }}
+                            <div class="quick-actions">
+                                <button class="action-btn primary">
+                                    <i class="fas fa-user-plus"></i>
+                                    <span>Nuevo Paciente</span>
                                 </button>
-                                <button class="btn btn-outline-success btn-lg">
-                                    <i class="fas fa-calendar-plus me-2"></i>{{ 'dashboard.schedule_appointment'|trans }}
+                                <button class="action-btn success">
+                                    <i class="fas fa-calendar-plus"></i>
+                                    <span>Agendar Cita</span>
                                 </button>
-                                <button class="btn btn-outline-info btn-lg">
-                                    <i class="fas fa-search me-2"></i>{{ 'dashboard.search_patient'|trans }}
+                                <button class="action-btn info">
+                                    <i class="fas fa-search"></i>
+                                    <span>Buscar Paciente</span>
                                 </button>
-                                <button class="btn btn-outline-warning btn-lg">
-                                    <i class="fas fa-prescription-bottle-alt me-2"></i>{{ 'dashboard.prescriptions'|trans }}
+                                <button class="action-btn warning">
+                                    <i class="fas fa-prescription"></i>
+                                    <span>Recetas</span>
                                 </button>
-                            </div>
-                            
-                            <!-- Mini estadísticas -->
-                            <hr class="my-4">
-                            <div class="row text-center">
-                                <div class="col-6">
-                                    <div class="border-end">
-                                        <h4 class="text-primary fw-bold">15</h4>
-                                        <small class="text-muted">Hoy</small>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <h4 class="text-success fw-bold">142</h4>
-                                    <small class="text-muted">Esta semana</small>
-                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Agenda de Hoy -->
-                <div class="col-lg-8 mb-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0 fw-bold text-gray-800">
-                                <i class="fas fa-calendar-day me-2 text-success"></i>
-                                {{ 'dashboard.todays_schedule'|trans }} - {{ "now"|date("d/m/Y") }}
-                            </h5>
-                            <div class="btn-group btn-group-sm">
-                                <button class="btn btn-outline-secondary">
-                                    <i class="fas fa-list"></i>
-                                </button>
-                                <button class="btn btn-outline-secondary">
-                                    <i class="fas fa-calendar"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table table-hover mb-0">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th class="border-0">{{ 'dashboard.time'|trans }}</th>
-                                            <th class="border-0">{{ 'dashboard.patient'|trans }}</th>
-                                            <th class="border-0">{{ 'dashboard.reason'|trans }}</th>
-                                            <th class="border-0">{{ 'dashboard.status'|trans }}</th>
-                                            <th class="border-0 text-center">{{ 'dashboard.actions'|trans }}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td class="fw-bold text-primary">09:00</td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="user-avatar bg-primary me-2" style="width: 32px; height: 32px; font-size: 12px;">
-                                                        MG
-                                                    </div>
-                                                    <div>
-                                                        <div class="fw-bold">María González</div>
-                                                        <small class="text-muted">ID: 12345</small>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>Control general</td>
-                                            <td><span class="badge bg-success">{{ 'dashboard.confirmed'|trans }}</span></td>
-                                            <td class="text-center">
-                                                <div class="btn-group btn-group-sm">
-                                                    <button class="btn btn-outline-primary" title="Ver detalles">
-                                                        <i class="fas fa-eye"></i>
-                                                    </button>
-                                                    <button class="btn btn-outline-success" title="Atender">
-                                                        <i class="fas fa-stethoscope"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="fw-bold text-primary">10:30</td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="user-avatar bg-info me-2" style="width: 32px; height: 32px; font-size: 12px;">
-                                                        CR
-                                                    </div>
-                                                    <div>
-                                                        <div class="fw-bold">Carlos Ruiz</div>
-                                                        <small class="text-muted">ID: 67890</small>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>Consulta cardiología</td>
-                                            <td><span class="badge bg-warning">{{ 'dashboard.pending'|trans }}</span></td>
-                                            <td class="text-center">
-                                                <div class="btn-group btn-group-sm">
-                                                    <button class="btn btn-outline-primary" title="Ver detalles">
-                                                        <i class="fas fa-eye"></i>
-                                                    </button>
-                                                    <button class="btn btn-outline-success" title="Atender">
-                                                        <i class="fas fa-stethoscope"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="fw-bold text-primary">11:15</td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="user-avatar bg-success me-2" style="width: 32px; height: 32px; font-size: 12px;">
-                                                        AM
-                                                    </div>
-                                                    <div>
-                                                        <div class="fw-bold">Ana Morales</div>
-                                                        <small class="text-muted">ID: 11223</small>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>Seguimiento tratamiento</td>
-                                            <td><span class="badge bg-info">{{ 'dashboard.in_progress'|trans }}</span></td>
-                                            <td class="text-center">
-                                                <div class="btn-group btn-group-sm">
-                                                    <button class="btn btn-outline-primary" title="Ver detalles">
-                                                        <i class="fas fa-eye"></i>
-                                                    </button>
-                                                    <button class="btn btn-outline-success" title="Atender">
-                                                        <i class="fas fa-stethoscope"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="card-footer bg-light text-center">
-                            <a href="/citas" class="btn btn-primary btn-sm">
-                                <i class="fas fa-calendar-alt me-1"></i>{{ 'dashboard.view_all_appointments'|trans }}
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Información del Sistema Mejorada -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-header bg-light border-0">
-                            <h5 class="card-title mb-0 fw-bold text-gray-800">
-                                <i class="fas fa-info-circle me-2 text-info"></i>
-                                {{ 'dashboard.system_information'|trans }}
-                            </h5>
+                    
+                    <!-- Mini Stats -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Resumen Diario</h5>
                         </div>
                         <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <div class="text-center">
-                                        <div class="icon-circle bg-primary text-white mx-auto mb-2">
-                                            <i class="fas fa-building"></i>
-                                        </div>
-                                        <h6 class="fw-bold">{{ 'dashboard.medical_center'|trans }}</h6>
-                                        <p class="text-muted mb-0">{{ tenant.name|default('Sistema Médico') }}</p>
-                                    </div>
+                            <div class="mini-stats">
+                                <div class="mini-stat primary">
+                                    <div class="mini-stat-value">15</div>
+                                    <div class="mini-stat-label">Pendientes</div>
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="text-center">
-                                        <div class="icon-circle bg-success text-white mx-auto mb-2">
-                                            <i class="fas fa-globe"></i>
-                                        </div>
-                                        <h6 class="fw-bold">{{ 'dashboard.subdomain'|trans }}</h6>
-                                        <p class="text-muted mb-0">{{ tenant.subdomain|default('sistema') }}.melisaupgrade.prod</p>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="text-center">
-                                        <div class="icon-circle bg-info text-white mx-auto mb-2">
-                                            <i class="fas fa-user"></i>
-                                        </div>
-                                        <h6 class="fw-bold">{{ 'dashboard.active_user'|trans }}</h6>
-                                        <p class="text-muted mb-0">{{ logged_user.username|default('Usuario') }} ({{ logged_user.role|default('Usuario') }})</p>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="text-center">
-                                        <div class="icon-circle bg-warning text-white mx-auto mb-2">
-                                            <i class="fas fa-clock"></i>
-                                        </div>
-                                        <h6 class="fw-bold">{{ 'dashboard.last_connection'|trans }}</h6>
-                                        <p class="text-muted mb-0">{{ "now"|date("d/m/Y H:i") }}</p>
-                                    </div>
+                                <div class="mini-stat success">
+                                    <div class="mini-stat-value">8</div>
+                                    <div class="mini-stat-label">Completadas</div>
                                 </div>
                             </div>
                         </div>
@@ -428,33 +794,10 @@
     </div>
 </div>
 
-<!-- Scripts específicos del dashboard -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Animaciones suaves para las tarjetas
-    const cards = document.querySelectorAll('.card');
-    cards.forEach((card, index) => {
-        card.style.animationDelay = `${index * 0.1}s`;
-        card.classList.add('fade-in');
-    });
-    
-    // Actualizar la hora cada minuto
-    setInterval(function() {
-        const now = new Date();
-        const timeElements = document.querySelectorAll('.current-time');
-        timeElements.forEach(el => {
-            el.textContent = now.toLocaleTimeString('es-CL');
-        });
-    }, 60000);
-    
-    // Tooltip para botones
-    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-    
-    console.log('Dashboard cargado para:', '{{ tenant.name|default("Clínica") }}');
-    console.log('Usuario:', '{{ logged_user.username|default("Usuario") }}');
+    console.log('✨ Melisa Dashboard cargado');
+    console.log('Centro:', '{{ tenant_info.name|default("Melisa Health") }}');
 });
 </script>
 {% endblock %}
