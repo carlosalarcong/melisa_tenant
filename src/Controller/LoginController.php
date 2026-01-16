@@ -15,7 +15,7 @@ class LoginController extends AbstractController
     {
         // Si el usuario ya está autenticado, redirigir al dashboard
         if ($this->getUser()) {
-            return $this->redirectToRoute('app_dashboard_default');
+            return $this->redirectToRoute('app_root');
         }
 
         // Obtener error de login si existe
