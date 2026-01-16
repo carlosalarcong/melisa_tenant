@@ -1,0 +1,27 @@
+<nav class="navbar-top">
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <div style="flex: 1;">
+        <span style="font-weight: 600; color: #32325d;">{% block page_title %}Dashboard{% endblock %}</span>
+    </div>
+    
+    <div style="display: flex; align-items: center; gap: 1rem;">
+        <!-- Selector de idiomas -->
+        <div class="dropdown">
+            <button style="padding: 0.4rem 0.8rem; border: 1px solid #e3e6f0; background: white; border-radius: 6px; cursor: pointer;">
+                🇪🇸 ES <i class="fas fa-chevron-down" style="font-size: 0.75rem; margin-left: 0.25rem;"></i>
+            </button>
+        </div>
+        
+        <!-- Perfil del usuario -->
+        <div style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
+            <div class="user-avatar">{{ app.session.get('user_name')|first|upper|default('U') }}</div>
+            <div style="display: none;" class="d-none d-md-block">
+                <div style="font-weight: 600; color: #32325d; font-size: 0.9rem;">{{ app.session.get('user_name')|default('Usuario') }}</div>
+                <small style="color: #8898aa; font-size: 0.75rem;">{{ app.session.get('username')|default('User') }}</small>
+            </div>
+        </div>
+    </div>
+</nav>
