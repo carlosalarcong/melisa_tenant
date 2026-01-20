@@ -75,10 +75,153 @@
                 </h6>
                 <ul class="nav flex-column mb-2">
                     <li class="nav-item mb-1">
-                        <a class="nav-link rounded" href="/mantenedores">
-                            <i class="fas fa-cogs me-2"></i>
-                            {{ 'nav.maintenance'|trans }}
+                        <a class="nav-link rounded d-flex justify-content-between align-items-center" 
+                           href="#maintainersSubmenu" 
+                           data-bs-toggle="collapse" 
+                           aria-expanded="false">
+                            <span>
+                                <i class="fas fa-cogs me-2"></i>
+                                {{ 'nav.maintenance'|trans }}
+                            </span>
+                            <i class="fas fa-chevron-down transition-transform" id="maintainersChevron"></i>
                         </a>
+                        <!-- Submenú de Mantenedores -->
+                        <div class="collapse" id="maintainersSubmenu">
+                            <ul class="nav flex-column ms-3 mt-2" style="max-height: 400px; overflow-y: auto;">
+                                <!-- Categoría: BÁSICOS -->
+                                <li class="nav-item">
+                                    <small class="text-muted text-uppercase fw-bold px-3 d-block mb-1" style="font-size: 0.7rem; letter-spacing: 0.5px;">
+                                        Básicos
+                                    </small>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link py-1 small" href="/maintainers/basic/gender">
+                                        <i class="fas fa-circle fa-xs me-2" style="font-size: 0.4rem;"></i>Sexo
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link py-1 small" href="/maintainers/basic/religion">
+                                        <i class="fas fa-circle fa-xs me-2" style="font-size: 0.4rem;"></i>Religión
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link py-1 small" href="#" onclick="alert('Próximamente'); return false;">
+                                        <i class="fas fa-circle fa-xs me-2" style="font-size: 0.4rem;"></i>Estado Conyugal
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link py-1 small" href="#" onclick="alert('Próximamente'); return false;">
+                                        <i class="fas fa-circle fa-xs me-2" style="font-size: 0.4rem;"></i>Ocupación
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link py-1 small" href="#" onclick="alert('Próximamente'); return false;">
+                                        <i class="fas fa-circle fa-xs me-2" style="font-size: 0.4rem;"></i>Nivel Instrucción
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link py-1 small" href="#" onclick="alert('Próximamente'); return false;">
+                                        <i class="fas fa-circle fa-xs me-2" style="font-size: 0.4rem;"></i>Pueblo Originario
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link py-1 small" href="#" onclick="alert('Próximamente'); return false;">
+                                        <i class="fas fa-circle fa-xs me-2" style="font-size: 0.4rem;"></i>Detalle Nivel Instrucción
+                                    </a>
+                                </li>
+                                
+                                <!-- Separador visual -->
+                                <li class="nav-item mt-2">
+                                    <hr class="my-1 opacity-50">
+                                </li>
+                                
+                                <!-- Categoría: GEOGRÁFICOS -->
+                                <li class="nav-item">
+                                    <small class="text-muted text-uppercase fw-bold px-3 d-block mb-1 mt-2" style="font-size: 0.7rem; letter-spacing: 0.5px;">
+                                        Geográficos
+                                    </small>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link py-1 small" href="#" onclick="alert('Próximamente'); return false;">
+                                        <i class="fas fa-circle fa-xs me-2" style="font-size: 0.4rem;"></i>País
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link py-1 small" href="#" onclick="alert('Próximamente'); return false;">
+                                        <i class="fas fa-circle fa-xs me-2" style="font-size: 0.4rem;"></i>Región
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link py-1 small" href="#" onclick="alert('Próximamente'); return false;">
+                                        <i class="fas fa-circle fa-xs me-2" style="font-size: 0.4rem;"></i>Provincia
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link py-1 small" href="#" onclick="alert('Próximamente'); return false;">
+                                        <i class="fas fa-circle fa-xs me-2" style="font-size: 0.4rem;"></i>Comuna
+                                    </a>
+                                </li>
+                                
+                                <!-- Separador visual -->
+                                <li class="nav-item mt-2">
+                                    <hr class="my-1 opacity-50">
+                                </li>
+                                
+                                <!-- Categoría: CLÍNICOS -->
+                                <li class="nav-item">
+                                    <small class="text-muted text-uppercase fw-bold px-3 d-block mb-1 mt-2" style="font-size: 0.7rem; letter-spacing: 0.5px;">
+                                        Clínicos
+                                    </small>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link py-1 small" href="#" onclick="alert('Próximamente'); return false;">
+                                        <i class="fas fa-circle fa-xs me-2" style="font-size: 0.4rem;"></i>Tipo Médico
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link py-1 small" href="#" onclick="alert('Próximamente'); return false;">
+                                        <i class="fas fa-circle fa-xs me-2" style="font-size: 0.4rem;"></i>Box
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link py-1 small" href="#" onclick="alert('Próximamente'); return false;">
+                                        <i class="fas fa-circle fa-xs me-2" style="font-size: 0.4rem;"></i>Ubicación
+                                    </a>
+                                </li>
+                                
+                                <!-- Separador visual -->
+                                <li class="nav-item mt-2">
+                                    <hr class="my-1 opacity-50">
+                                </li>
+                                
+                                <!-- Categoría: ADMINISTRATIVOS -->
+                                <li class="nav-item">
+                                    <small class="text-muted text-uppercase fw-bold px-3 d-block mb-1 mt-2" style="font-size: 0.7rem; letter-spacing: 0.5px;">
+                                        Administrativos
+                                    </small>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link py-1 small" href="#" onclick="alert('Próximamente'); return false;">
+                                        <i class="fas fa-circle fa-xs me-2" style="font-size: 0.4rem;"></i>Cargo
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link py-1 small" href="#" onclick="alert('Próximamente'); return false;">
+                                        <i class="fas fa-circle fa-xs me-2" style="font-size: 0.4rem;"></i>Administrador Seguro
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link py-1 small" href="#" onclick="alert('Próximamente'); return false;">
+                                        <i class="fas fa-circle fa-xs me-2" style="font-size: 0.4rem;"></i>Tipo Origen
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link py-1 small" href="#" onclick="alert('Próximamente'); return false;">
+                                        <i class="fas fa-circle fa-xs me-2" style="font-size: 0.4rem;"></i>Origen
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </li>
                     <li class="nav-item mb-1">
                         <a class="nav-link rounded" href="/configuracion">
@@ -455,6 +598,106 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('Dashboard cargado para:', '{{ tenant.name|default("Clínica") }}');
     console.log('Usuario:', '{{ logged_user.username|default("Usuario") }}');
+    
+    // Manejo del menú desplegable de Mantenedores
+    const maintainersSubmenu = document.getElementById('maintainersSubmenu');
+    const maintainersChevron = document.getElementById('maintainersChevron');
+    
+    if (maintainersSubmenu && maintainersChevron) {
+        // Restaurar estado del menú desde localStorage
+        const isExpanded = localStorage.getItem('maintainersMenuExpanded') === 'true';
+        if (isExpanded) {
+            maintainersSubmenu.classList.add('show');
+            maintainersChevron.style.transform = 'rotate(180deg)';
+        }
+        
+        // Toggle del chevron cuando se expande/colapsa
+        maintainersSubmenu.addEventListener('show.bs.collapse', function () {
+            maintainersChevron.style.transform = 'rotate(180deg)';
+            localStorage.setItem('maintainersMenuExpanded', 'true');
+        });
+        
+        maintainersSubmenu.addEventListener('hide.bs.collapse', function () {
+            maintainersChevron.style.transform = 'rotate(0deg)';
+            localStorage.setItem('maintainersMenuExpanded', 'false');
+        });
+    }
 });
 </script>
+
+<style>
+/* Estilos para el menú desplegable de Mantenedores */
+.transition-transform {
+    transition: transform 0.3s ease;
+}
+
+/* Hover effect para items del submenú */
+#maintainersSubmenu .nav-link {
+    transition: all 0.2s ease;
+    border-radius: 0.25rem;
+}
+
+#maintainersSubmenu .nav-link:hover {
+    background-color: rgba(13, 110, 253, 0.1);
+    padding-left: 1.5rem !important;
+    color: #0d6efd;
+}
+
+/* Estilos para categorías */
+#maintainersSubmenu small.text-muted {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    z-index: 10;
+    padding-top: 0.5rem;
+    padding-bottom: 0.25rem;
+}
+
+/* Animación suave del collapse */
+#maintainersSubmenu.collapsing {
+    transition: height 0.35s ease;
+}
+
+/* Scrollbar personalizado para el submenú */
+#maintainersSubmenu ul::-webkit-scrollbar {
+    width: 6px;
+}
+
+#maintainersSubmenu ul::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+#maintainersSubmenu ul::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+#maintainersSubmenu ul::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Destacar item activo */
+#maintainersSubmenu .nav-link.active {
+    background-color: #0d6efd;
+    color: white !important;
+}
+
+/* Ajuste de padding para mejor jerarquía visual */
+#maintainersSubmenu .nav-item .nav-link {
+    padding-left: 1rem;
+    padding-top: 0.35rem;
+    padding-bottom: 0.35rem;
+    font-size: 0.875rem;
+}
+
+/* Icono del chevron con mejor indicación visual */
+.nav-link[data-bs-toggle="collapse"] .fa-chevron-down {
+    opacity: 0.6;
+}
+
+.nav-link[data-bs-toggle="collapse"]:hover .fa-chevron-down {
+    opacity: 1;
+}
+</style>
 {% endblock %}
