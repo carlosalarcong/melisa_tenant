@@ -1092,8 +1092,7 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
         $this->beforeIndex();
         
         $data = $this->getData();
-        $filteredData = $this->applyFilters($data);
-        $processedData = $this->processData($filteredData);
+        $processedData = $this->processData($data);
         
         $this->afterIndex();
         
@@ -1144,11 +1143,6 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
     abstract protected function createNewEntity(): object;
     
     // Métodos con implementación por defecto (pueden sobreescribirse)
-    protected function applyFilters(array $data): array
-    {
-        return $data; // Por defecto no filtra
-    }
-    
     protected function processData(array $data): array
     {
         return $data; // Por defecto no procesa
@@ -1188,7 +1182,69 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
 }
 ```
 
-#### Implementación Concreta: PatientController
+#### Implementación Concreta: CountryController (Mantenedor)
+
+```php
+namespace App\Controller\Mantenedores;
+
+use App\Entity\Country;
+use App\Form\CountryType;
+use App\Repository\CountryRepository;
+
+/**
+ * Los mantenedores son datos maestros compartidos por todos los tenants
+ * No requieren filtros específicos por tenant
+ */
+class CountryController extends AbstractMantenedorController
+{
+    public function __construct(
+        private CountryRepository $countryRepository
+    ) {}
+    
+    protected function getData(): array
+    {
+        // Todos los países - sin filtrar por tenant
+        return $this->countryRepository->findAll();
+    }
+    
+    protected function getColumns(): array
+    {
+        return ['name', 'iso_code', 'phone_code', 'active'];
+    }
+    
+    protected function getTemplatePath(): string
+    {
+        return 'mantenedores/country/index.html.twig';
+    }
+    
+    protected function getFormType(): string
+    {
+        return CountryType::class;
+    }
+    
+    protected function createNewEntity(): Country
+    {
+        return new Country();
+    }
+    
+    // Hook: Validación antes de guardar
+    protected function beforeSave($entity): void
+    {
+        // Normalizar código ISO a mayúsculas
+        if ($entity instanceof Country) {
+            $entity->setIsoCode(strtoupper($entity->getIsoCode()));
+        }
+    }
+    
+    // Hook: Acciones después de guardar
+    protected function afterSave($entity): void
+    {
+        $this->addFlash('success', 'País guardado correctamente');
+    }
+}
+```
+
+#### Implementación Concreta: PatientController (Con filtros por tenant)
 
 ```php
 namespace App\Controller;
@@ -1197,6 +1253,10 @@ use App\Entity\Patient;
 use App\Form\PatientType;
 use App\Repository\PatientRepository;
 
+/**
+ * Los pacientes SÍ son específicos por tenant
+ * Cada tenant solo ve sus propios pacientes
+ */
 class PatientController extends AbstractMantenedorController
 {
     public function __construct(
@@ -1205,6 +1265,7 @@ class PatientController extends AbstractMantenedorController
     
     protected function getData(): array
     {
+        // Solo pacientes del tenant actual
         return $this->patientRepository->findAllForTenant($this->getTenant());
     }
     
@@ -1230,17 +1291,17 @@ class PatientController extends AbstractMantenedorController
         return $patient;
     }
     
-    // Sobreescribir filtros específicos por tenant
-    protected function applyFilters(array $data): array
+    // Hook: Procesar datos según tipo de tenant (opcional)
+    protected function processData(array $data): array
     {
-        // Hospital: Solo pacientes internados
+        // Hospital: Ordenar por urgencia
         if ($this->getTenantType() === 'hospital') {
-            return array_filter($data, fn($p) => $p->isAdmitted());
+            usort($data, fn($a, $b) => $b->getUrgencyLevel() <=> $a->getUrgencyLevel());
         }
         
-        // Clínica: Solo pacientes activos
+        // Clínica: Ordenar por próxima cita
         if ($this->getTenantType() === 'clinic') {
-            return array_filter($data, fn($p) => $p->isActive());
+            usort($data, fn($a, $b) => $a->getNextAppointment() <=> $b->getNextAppointment());
         }
         
         return $data;
@@ -1249,11 +1310,6 @@ class PatientController extends AbstractMantenedorController
     // Hook: Acciones después de guardar
     protected function afterSave($entity): void
     {
-        // Enviar email de bienvenida a pacientes nuevos
-        if ($entity->getId() === null) {
-            $this->emailService->sendWelcome($entity);
-        }
-        
         $this->addFlash('success', 'Paciente guardado correctamente');
     }
 }
