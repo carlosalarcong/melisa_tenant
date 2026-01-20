@@ -6,6 +6,7 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\Religion;
 use App\Form\Maintainers\ReligionType;
 use App\Repository\Tenant\ReligionRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -21,7 +22,7 @@ class ReligionController extends AbstractMantenedorController
 {
     public function __construct(
         private ReligionRepository $religionRepository,
-        $entityManager
+        EntityManagerInterface $entityManager
     ) {
         parent::__construct($entityManager);
     }

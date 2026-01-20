@@ -6,6 +6,7 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\Gender;
 use App\Form\Maintainers\GenderType;
 use App\Repository\Tenant\GenderRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -21,7 +22,7 @@ class GenderController extends AbstractMantenedorController
 {
     public function __construct(
         private GenderRepository $genderRepository,
-        $entityManager
+        EntityManagerInterface $entityManager
     ) {
         parent::__construct($entityManager);
     }
