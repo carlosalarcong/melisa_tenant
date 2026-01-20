@@ -1,41 +1,60 @@
 <?php
 
-namespace App\Entity\Tenant;
+namespace App\Entity\Maintainers;
 
+use App\Repository\Maintainers\GenderRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity]
+/**
+ * Gender (Sexo)
+ * 
+ * Mantenedor de géneros/sexos del sistema
+ * Datos compartidos por todos los tenants
+ */
+#[ORM\Entity(repositoryClass: GenderRepository::class)]
 #[ORM\Table(name: 'sexo')]
 class Gender
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(type: "string", length: 50, nullable: false)]
-    private ?string $name = null;
+    #[ORM\Column(type: 'string', length: 50)]
+    #[Assert\NotBlank(message: 'Name is required')]
+    #[Assert\Length(max: 50)]
+    private string $name;
 
-    #[ORM\Column(type: "string", length: 10, nullable: false)]
+    #[ORM\Column(type: 'string', length: 10, nullable: true)]
+    #[Assert\Length(max: 10)]
     private ?string $code = null;
 
-    #[ORM\Column(type: "boolean", options: ["default" => true])]
-    private ?bool $isActive = true;
+    #[ORM\Column(type: 'boolean')]
+    private bool $active = true;
 
-    #[ORM\Column(name: "id_estado", type: "boolean", options: ["default" => true])]
-    private bool|null|Estado $status = true;
+    #[ORM\Column(type: 'datetime')]
+    private \DateTimeInterface $createdAt;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $updatedAt = null;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function setName(?string $name): static
+    public function setName(string $name): self
     {
         $this->name = $name;
         return $this;
@@ -46,36 +65,47 @@ class Gender
         return $this->code;
     }
 
-    public function setCode(?string $code): static
+    public function setCode(?string $code): self
     {
         $this->code = $code;
         return $this;
     }
 
-    public function isActive(): ?bool
+    public function isActive(): bool
     {
-        return $this->isActive;
+        return $this->active;
     }
 
-    public function setIsActive(?bool $isActive): static
+    public function setActive(bool $active): self
     {
-        $this->isActive = $isActive;
+        $this->active = $active;
         return $this;
     }
 
-    public function getStatus(): ?Estado
+    public function getCreatedAt(): \DateTimeInterface
     {
-        return $this->status;
+        return $this->createdAt;
     }
 
-    public function setStatus(?Estado $status): static
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
-        $this->status = $status;
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
         return $this;
     }
 
     public function __toString(): string
     {
-        return $this->name ?? 'Gender without name';
+        return $this->name;
     }
 }
