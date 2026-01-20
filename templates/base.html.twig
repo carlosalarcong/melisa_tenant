@@ -207,6 +207,49 @@
                 white-space: nowrap;
             }
             
+            /* Menu colapsable styles */
+            .menu-dropdown {
+                padding-left: 0;
+                margin-left: 0;
+            }
+            
+            .menu-dropdown .nav-link {
+                padding-left: 2.5rem;
+                font-size: 0.9rem;
+            }
+            
+            .menu-dropdown .nav-item {
+                margin: 0;
+            }
+            
+            .menu-title {
+                padding: 0.5rem 1.5rem;
+                font-size: 0.65rem;
+                text-transform: uppercase;
+                font-weight: 700;
+                letter-spacing: 0.5px;
+                color: #8898aa;
+                margin-top: 0.5rem;
+                list-style: none;
+            }
+            
+            .menu-link[data-bs-toggle="collapse"]::after {
+                content: '\f077';
+                font-family: 'Font Awesome 6 Free';
+                font-weight: 900;
+                position: absolute;
+                right: 1rem;
+                transition: transform 0.3s ease;
+            }
+            
+            .menu-link[data-bs-toggle="collapse"].collapsed::after {
+                transform: rotate(180deg);
+            }
+            
+            .sidebar.collapsed .menu-dropdown {
+                display: none !important;
+            }
+            
             /* User avatar en navbar */
             .user-avatar {
                 width: 32px;
