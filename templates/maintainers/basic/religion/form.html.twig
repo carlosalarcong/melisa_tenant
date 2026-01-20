@@ -29,16 +29,16 @@
                         </div>
 
                         <div class="mb-3">
-                            {{ form_label(form.code, 'Code', {'label_attr': {'class': 'form-label'}}) }}
-                            {{ form_widget(form.code, {'attr': {'class': 'form-control'}}) }}
-                            {{ form_errors(form.code) }}
-                            <small class="form-text text-muted">Optional short code</small>
+                            {{ form_label(form.religionCodeHl7, 'HL7 Code', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.religionCodeHl7, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.religionCodeHl7) }}
+                            <small class="form-text text-muted">Optional HL7 code</small>
                         </div>
 
                         <div class="mb-3 form-check">
-                            {{ form_widget(form.active, {'attr': {'class': 'form-check-input'}}) }}
-                            {{ form_label(form.active, 'Active', {'label_attr': {'class': 'form-check-label'}}) }}
-                            {{ form_errors(form.active) }}
+                            {{ form_widget(form.isActive, {'attr': {'class': 'form-check-input'}}) }}
+                            {{ form_label(form.isActive, 'Active', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_errors(form.isActive) }}
                         </div>
 
                         <div class="mt-4">

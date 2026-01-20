@@ -5,7 +5,7 @@ namespace App\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Controlador base para Mantenedores (Master Data)
@@ -45,9 +45,9 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
 
     /**
      * Template method: Define el flujo principal del listado
-     * Este método es final para garantizar que todas las subclases sigan el mismo flujo
+     * Las subclases llaman a este método desde sus rutas
      */
-    final public function index(Request $request): Response
+    protected function handleIndex(Request $request): Response
     {
         $this->beforeIndex($request);
         
@@ -68,8 +68,9 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
 
     /**
      * Template method: Define el flujo de creación de entidad
+     * Las subclases llaman a este método desde sus rutas
      */
-    final public function create(Request $request): Response
+    protected function handleCreate(Request $request): Response
     {
         $this->beforeCreate($request);
         
@@ -98,8 +99,9 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
 
     /**
      * Template method: Define el flujo de edición de entidad
+     * Las subclases llaman a este método desde sus rutas
      */
-    final public function edit(Request $request, int $id): Response
+    protected function handleEdit(Request $request, int $id): Response
     {
         $entity = $this->findEntity($id);
         
@@ -133,8 +135,9 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
 
     /**
      * Template method: Define el flujo de eliminación de entidad
+     * Las subclases llaman a este método desde sus rutas
      */
-    final public function delete(Request $request, int $id): Response
+    protected function handleDelete(Request $request, int $id): Response
     {
         $entity = $this->findEntity($id);
         

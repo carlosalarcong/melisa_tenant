@@ -40,7 +40,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
-                                <th>Code</th>
+                                <th>HL7 Code</th>
                                 <th>Status</th>
                                 <th class="text-end">Actions</th>
                             </tr>
@@ -50,9 +50,9 @@
                                 <tr>
                                     <td>{{ item.id }}</td>
                                     <td>{{ item.name }}</td>
-                                    <td>{{ item.code ?? '-' }}</td>
+                                    <td>{{ item.religionCodeHl7 ?? '-' }}</td>
                                     <td>
-                                        {% if item.active %}
+                                        {% if item.isActive %}
                                             <span class="badge bg-success">Active</span>
                                         {% else %}
                                             <span class="badge bg-danger">Inactive</span>

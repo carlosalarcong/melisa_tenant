@@ -21,16 +21,16 @@ class ReligionType extends AbstractType
                     'class' => 'form-control'
                 ]
             ])
-            ->add('code', TextType::class, [
-                'label' => 'Code',
+            ->add('religionCodeHl7', TextType::class, [
+                'label' => 'HL7 Code',
                 'required' => false,
                 'attr' => [
-                    'placeholder' => 'Enter code (optional)',
+                    'placeholder' => 'Enter HL7 code (optional)',
                     'class' => 'form-control',
-                    'maxlength' => 20
+                    'maxlength' => 10
                 ]
             ])
-            ->add('active', CheckboxType::class, [
+            ->add('isActive', CheckboxType::class, [
                 'label' => 'Active',
                 'required' => false,
                 'attr' => [

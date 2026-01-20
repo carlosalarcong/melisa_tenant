@@ -8,7 +8,7 @@ use App\Form\Maintainers\GenderType;
 use App\Repository\Tenant\GenderRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Gender Controller
@@ -29,25 +29,25 @@ class GenderController extends AbstractMantenedorController
     #[Route('', name: 'app_maintainers_gender_index', methods: ['GET'])]
     public function index(Request $request): Response
     {
-        return parent::index($request);
+        return $this->handleIndex($request);
     }
 
     #[Route('/create', name: 'app_maintainers_gender_create', methods: ['GET', 'POST'])]
     public function create(Request $request): Response
     {
-        return parent::create($request);
+        return $this->handleCreate($request);
     }
 
     #[Route('/{id}/edit', name: 'app_maintainers_gender_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, int $id): Response
     {
-        return parent::edit($request, $id);
+        return $this->handleEdit($request, $id);
     }
 
     #[Route('/{id}/delete', name: 'app_maintainers_gender_delete', methods: ['POST'])]
     public function delete(Request $request, int $id): Response
     {
-        return parent::delete($request, $id);
+        return $this->handleDelete($request, $id);
     }
 
     // ========================================================================

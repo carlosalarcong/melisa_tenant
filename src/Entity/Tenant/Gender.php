@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Entity\Maintainers;
+namespace App\Entity\Tenant;
 
-use App\Repository\Maintainers\GenderRepository;
+use App\Repository\Tenant\GenderRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
