@@ -1,1 +1,11 @@
-{% extends 'maintainers/_base_index.html.twig' %}
+{% extends 'maintainers/modern_index.html.twig' %}
+
+{% block title %}Origen - Melisa{% endblock %}
+
+{% set page_title = 'Origen' %}
+{% set icon = 'bx-map-pin' %}
+{% set breadcrumb_section = 'Básico' %}
+{% set description = 'Gestiona los orígenes del sistema' %}
+{% set create_route = 'app_maintainers_origin_create' %}
+{% set edit_route = 'app_maintainers_origin_edit' %}
+{% set delete_route = 'app_maintainers_origin_delete' %}

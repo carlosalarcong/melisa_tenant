@@ -1,1 +1,11 @@
-{% extends 'maintainers/_base_index.html.twig' %}
+{% extends 'maintainers/modern_index.html.twig' %}
+
+{% block title %}Pueblo Originario - Melisa{% endblock %}
+
+{% set page_title = 'Pueblo Originario' %}
+{% set icon = 'bx-group' %}
+{% set breadcrumb_section = 'Básico' %}
+{% set description = 'Gestiona los pueblos originarios del sistema' %}
+{% set create_route = 'app_maintainers_ethnicgroup_create' %}
+{% set edit_route = 'app_maintainers_ethnicgroup_edit' %}
+{% set delete_route = 'app_maintainers_ethnicgroup_delete' %}

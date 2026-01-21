@@ -1,1 +1,11 @@
-{% extends 'maintainers/_base_index.html.twig' %}
+{% extends 'maintainers/modern_index.html.twig' %}
+
+{% block title %}Estado Civil - Melisa{% endblock %}
+
+{% set page_title = 'Estado Civil' %}
+{% set icon = 'bx-heart' %}
+{% set breadcrumb_section = 'Básico' %}
+{% set description = 'Gestiona los estados civiles del sistema' %}
+{% set create_route = 'app_maintainers_maritalstatus_create' %}
+{% set edit_route = 'app_maintainers_maritalstatus_edit' %}
+{% set delete_route = 'app_maintainers_maritalstatus_delete' %}

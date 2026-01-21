@@ -1,84 +1,11 @@
-{% extends 'base.html.twig' %}
+{% extends 'maintainers/modern_index.html.twig' %}
 
-{% block title %}{{ page_title }}{% endblock %}
+{% block title %}Sexo - Melisa{% endblock %}
 
-{% block body %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="page-title-box">
-                <h4 class="page-title">{{ page_title }}</h4>
-                <div class="page-title-right">
-                    <a href="{{ path(create_route) }}" class="btn btn-success">
-                        <i class="mdi mdi-plus"></i> Create New Gender
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    {% for message in app.flashes('success') %}
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    {% endfor %}
-
-                    {% for message in app.flashes('error') %}
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    {% endfor %}
-
-                    <table class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Code</th>
-                                <th>Status</th>
-                                <th class="text-end">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in data %}
-                                <tr>
-                                    <td>{{ item.id }}</td>
-                                    <td>{{ item.name }}</td>
-                                    <td>{{ item.code ?? '-' }}</td>
-                                    <td>
-                                        {% if item.active %}
-                                            <span class="badge bg-success">Active</span>
-                                        {% else %}
-                                            <span class="badge bg-danger">Inactive</span>
-                                        {% endif %}
-                                    </td>
-                                    <td class="text-end">
-                                        <a href="{{ path('app_maintainers_gender_edit', {id: item.id}) }}" class="btn btn-sm btn-primary">
-                                            <i class="mdi mdi-pencil"></i> Edit
-                                        </a>
-                                        <form action="{{ path('app_maintainers_gender_delete', {id: item.id}) }}" method="post" style="display: inline-block;" onsubmit="return confirm('Are you sure you want to delete this item?');">
-                                            <button type="submit" class="btn btn-sm btn-danger">
-                                                <i class="mdi mdi-delete"></i> Delete
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            {% else %}
-                                <tr>
-                                    <td colspan="5" class="text-center">No genders found</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
+{% set page_title = 'Sexo' %}
+{% set icon = 'bx-male-female' %}
+{% set breadcrumb_section = 'Básico' %}
+{% set description = 'Gestiona los tipos de sexo del sistema' %}
+{% set create_route = 'app_maintainers_gender_create' %}
+{% set edit_route = 'app_maintainers_gender_edit' %}
+{% set delete_route = 'app_maintainers_gender_delete' %}

@@ -1,1 +1,11 @@
-{% extends 'maintainers/_base_index.html.twig' %}
+{% extends 'maintainers/modern_index.html.twig' %}
+
+{% block title %}Ocupación - Melisa{% endblock %}
+
+{% set page_title = 'Ocupación' %}
+{% set icon = 'bx-briefcase' %}
+{% set breadcrumb_section = 'Básico' %}
+{% set description = 'Gestiona las ocupaciones del sistema' %}
+{% set create_route = 'app_maintainers_occupation_create' %}
+{% set edit_route = 'app_maintainers_occupation_edit' %}
+{% set delete_route = 'app_maintainers_occupation_delete' %}

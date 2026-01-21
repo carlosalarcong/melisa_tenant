@@ -9,7 +9,9 @@
     
     {# Contenido Principal #}
     <main id="mainContent">
-        {% block content %}{% endblock %}
+        <turbo-frame id="maintainer-content">
+            {% block content %}{% endblock %}
+        </turbo-frame>
     </main>
     
     {# JavaScript del Sidebar #}
