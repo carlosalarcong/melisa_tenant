@@ -88,77 +88,77 @@ class NavbarBuilder
                             new MenuItem(
                                 name: 'maintenance_religion',
                                 label: 'Religión',
-                                route: null, // TODO: Implementar ruta
+                                route: 'app_maintainers_religion_index',
                                 icon: 'bx bx-circle',
                                 module: 'maintenance_religion'
                             ),
                             new MenuItem(
                                 name: 'maintenance_marital_status',
                                 label: 'Estado Conyugal',
-                                route: null, // TODO: Implementar ruta
+                                route: 'app_maintainers_marital_status_index',
                                 icon: 'bx bx-circle',
                                 module: 'maintenance_marital_status'
                             ),
                             new MenuItem(
                                 name: 'maintenance_ethnic_group',
                                 label: 'Pueblo Originario',
-                                route: null, // TODO: Implementar ruta
+                                route: 'app_maintainers_ethnic_group_index',
                                 icon: 'bx bx-circle',
                                 module: 'maintenance_ethnic_group'
                             ),
                             new MenuItem(
                                 name: 'maintenance_occupation',
                                 label: 'Ocupación',
-                                route: null, // TODO: Implementar ruta
+                                route: 'app_maintainers_occupation_index',
                                 icon: 'bx bx-circle',
                                 module: 'maintenance_occupation'
                             ),
                             new MenuItem(
                                 name: 'maintenance_education_level',
                                 label: 'Nivel Instrucción',
-                                route: null, // TODO: Implementar ruta
+                                route: 'app_maintainers_education_level_index',
                                 icon: 'bx bx-circle',
                                 module: 'maintenance_education_level'
                             ),
                             new MenuItem(
                                 name: 'maintenance_education_detail',
                                 label: 'Detalle Nivel Instrucción',
-                                route: null, // TODO: Implementar ruta
+                                route: 'app_maintainers_education_level_detail_index',
                                 icon: 'bx bx-circle',
                                 module: 'maintenance_education_detail'
                             ),
                             new MenuItem(
                                 name: 'maintenance_insurance_admin',
                                 label: 'Administrador Seguro',
-                                route: null, // TODO: Implementar ruta
+                                route: 'app_maintainers_insurance_administrator_index',
                                 icon: 'bx bx-circle',
                                 module: 'maintenance_insurance_admin'
                             ),
                             new MenuItem(
                                 name: 'maintenance_position',
                                 label: 'Cargo',
-                                route: null, // TODO: Implementar ruta
+                                route: 'app_maintainers_job_position_index',
                                 icon: 'bx bx-circle',
                                 module: 'maintenance_position'
                             ),
                             new MenuItem(
                                 name: 'maintenance_doctor_type',
                                 label: 'Tipo Médico',
-                                route: null, // TODO: Implementar ruta
+                                route: 'app_maintainers_doctor_type_index',
                                 icon: 'bx bx-circle',
                                 module: 'maintenance_doctor_type'
                             ),
                             new MenuItem(
                                 name: 'maintenance_box',
                                 label: 'Box',
-                                route: null, // TODO: Implementar ruta
+                                route: 'app_maintainers_medical_box_index',
                                 icon: 'bx bx-circle',
                                 module: 'maintenance_box'
                             ),
                             new MenuItem(
                                 name: 'maintenance_location',
                                 label: 'Ubicación',
-                                route: null, // TODO: Implementar ruta
+                                route: 'app_maintainers_location_index',
                                 icon: 'bx bx-circle',
                                 module: 'maintenance_location'
                             ),
@@ -172,14 +172,14 @@ class NavbarBuilder
                             new MenuItem(
                                 name: 'maintenance_origin_type',
                                 label: 'Tipo Origen',
-                                route: null, // TODO: Implementar ruta
+                                route: 'app_maintainers_origin_type_index',
                                 icon: 'bx bx-circle',
                                 module: 'maintenance_origin_type'
                             ),
                             new MenuItem(
                                 name: 'maintenance_origin',
                                 label: 'Origen',
-                                route: null, // TODO: Implementar ruta
+                                route: 'app_maintainers_origin_index',
                                 icon: 'bx bx-circle',
                                 module: 'maintenance_origin'
                             ),

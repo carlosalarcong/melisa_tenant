@@ -281,11 +281,11 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
 
     /**
      * Ruta de la plantilla del formulario
-     * Por defecto deriva del template path cambiando index por form
+     * Por defecto usa el template base reutilizable
      */
     protected function getFormTemplatePath(): string
     {
-        return str_replace('index.html.twig', 'form.html.twig', $this->getTemplatePath());
+        return 'maintainers/_base_form.html.twig';
     }
 
     /**

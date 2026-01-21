@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ page_title }} - Melisa{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">
+            <i class="bx bx-edit me-2"></i>{{ page_title }}
+        </h1>
+        <a href="{{ path(cancel_route) }}" class="btn btn-outline-secondary">
+            <i class="bx bx-arrow-back me-1"></i>Volver
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                    
+                    <div class="mb-3">
+                        {{ form_row(form.name) }}
+                    </div>
+
+                    {% if form.code is defined %}
+                        <div class="mb-3">
+                            {{ form_row(form.code) }}
+                        </div>
+                    {% endif %}
+
+                    {% if form.description is defined %}
+                        <div class="mb-3">
+                            {{ form_row(form.description) }}
+                        </div>
+                    {% endif %}
+
+                    {% if form.number is defined %}
+                        <div class="mb-3">
+                            {{ form_row(form.number) }}
+                        </div>
+                    {% endif %}
+
+                    {% if form.educationLevel is defined %}
+                        <div class="mb-3">
+                            {{ form_row(form.educationLevel) }}
+                        </div>
+                    {% endif %}
+
+                    {% if form.originType is defined %}
+                        <div class="mb-3">
+                            {{ form_row(form.originType) }}
+                        </div>
+                    {% endif %}
+
+                    <div class="mb-4">
+                        <div class="form-check form-switch">
+                            {{ form_widget(form.active) }}
+                            {{ form_label(form.active, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                        </div>
+                        {% if form.active.vars.errors|length > 0 %}
+                            <div class="invalid-feedback d-block">
+                                {{ form_errors(form.active) }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ path(cancel_route) }}" class="btn btn-outline-secondary">
+                            <i class="bx bx-x me-1"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bx bx-save me-1"></i>Guardar
+                        </button>
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
