@@ -1,0 +1,46 @@
+<nav class="navbar-top">
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <div style="flex: 1;">
+        <span style="font-weight: 600; color: #32325d;">{% block page_title %}Dashboard{% endblock %}</span>
+    </div>
+    
+    <div style="display: flex; align-items: center; gap: 1rem;">
+        <!-- Selector de idiomas -->
+        <div class="dropdown">
+            <button style="padding: 0.4rem 0.8rem; border: 1px solid #e3e6f0; background: white; border-radius: 6px; cursor: pointer;">
+                🇪🇸 ES <i class="fas fa-chevron-down" style="font-size: 0.75rem; margin-left: 0.25rem;"></i>
+            </button>
+        </div>
+        
+        <!-- Perfil del usuario - Dropdown -->
+        <div class="dropdown">
+            <button class="btn-user-profile" type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="user-avatar">{{ app.session.get('user_name')|first|upper|default('U') }}</div>
+                <div class="user-info d-none d-md-block">
+                    <div class="user-name">{{ app.session.get('user_name')|default('Usuario') }}</div>
+                    <small class="user-role">{{ app.session.get('username')|default('User') }}</small>
+                </div>
+                <i class="fas fa-chevron-down ms-2" style="font-size: 0.75rem; color: #8898aa;"></i>
+            </button>
+            
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuDropdown">
+                <li>
+                    <a class="dropdown-item" href="#">
+                        <i class="fas fa-user me-2"></i>
+                        Ver Perfil
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a class="dropdown-item text-danger" href="{{ path('app_logout') }}">
+                        <i class="fas fa-sign-out-alt me-2"></i>
+                        Cerrar Sesión
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,39 @@
+{# La Colina Custom Welcome Banner #}
+<div class="welcome-banner lacolina-theme">
+    <div class="welcome-text">
+        <h2>Bienvenido a Clínica La Colina, {{ app.session.get('user_name')|default('Usuario') }}! 🏥</h2>
+        <p>Excelencia médica desde 1985. Agenda: <strong>31 consultas programadas</strong> para hoy.</p>
+    </div>
+    <div class="welcome-illustration">
+        <i class="fas fa-hospital"></i>
+    </div>
+</div>
+
+<style>
+    /* La Colina Custom Theme */
+    .welcome-banner.lacolina-theme {
+        background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+        border-left: 5px solid #4caf50;
+        box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+    }
+    
+    .welcome-banner.lacolina-theme .welcome-text h2 {
+        font-size: 1.65rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+    
+    .welcome-banner.lacolina-theme .welcome-text p {
+        font-style: italic;
+    }
+    
+    .welcome-banner.lacolina-theme .welcome-text p strong {
+        font-weight: 700;
+        color: #a5d6a7;
+    }
+    
+    .welcome-banner.lacolina-theme .welcome-illustration {
+        font-size: 5.5rem;
+        opacity: 0.2;
+    }
+</style>
