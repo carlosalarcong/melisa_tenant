@@ -47,7 +47,10 @@
         <li class="nav-item">
             <a class="nav-link nav-level-{{ level }} {% if item.route and app.request.get('_route') == item.route %}active{% endif %}" 
                href="{{ item.route ? path(item.route) : '#' }}"
-               {% if item.module and 'maintenance_' in item.module %}data-turbo-frame="maintainer-content"{% endif %}
+               {% if item.module and 'maintenance_' in item.module %}
+                   data-turbo-frame="maintainer-content"
+                   data-turbo-action="advance"
+               {% endif %}
                title="{{ item.label }}">
                 <i class="{{ icon_by_level[level] }}"></i>
                 <span class="nav-link-text">{{ item.label }}</span>

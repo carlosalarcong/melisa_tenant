@@ -44,6 +44,14 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
     }
 
     /**
+     * Detecta si la petición viene de un Turbo Frame
+     */
+    protected function isTurboFrameRequest(Request $request): bool
+    {
+        return $request->headers->has('Turbo-Frame');
+    }
+
+    /**
      * Template method: Define el flujo principal del listado
      * Las subclases llaman a este método desde sus rutas
      */
@@ -63,6 +71,7 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
             'tenant' => $this->getTenant(),
             'page_title' => $this->getPageTitle(),
             'create_route' => $this->getCreateRoute(),
+            'is_turbo_frame' => $this->isTurboFrameRequest($request),
         ]);
     }
 
@@ -94,6 +103,7 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
             'entity' => $entity,
             'page_title' => $this->getPageTitle('create'),
             'cancel_route' => $this->getIndexRoute(),
+            'is_turbo_frame' => $this->isTurboFrameRequest($request),
         ]);
     }
 
@@ -130,6 +140,7 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
             'entity' => $entity,
             'page_title' => $this->getPageTitle('edit'),
             'cancel_route' => $this->getIndexRoute(),
+            'is_turbo_frame' => $this->isTurboFrameRequest($request),
         ]);
     }
 
