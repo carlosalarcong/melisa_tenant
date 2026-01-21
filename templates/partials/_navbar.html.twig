@@ -15,13 +15,32 @@
             </button>
         </div>
         
-        <!-- Perfil del usuario -->
-        <div style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
-            <div class="user-avatar">{{ app.session.get('user_name')|first|upper|default('U') }}</div>
-            <div style="display: none;" class="d-none d-md-block">
-                <div style="font-weight: 600; color: #32325d; font-size: 0.9rem;">{{ app.session.get('user_name')|default('Usuario') }}</div>
-                <small style="color: #8898aa; font-size: 0.75rem;">{{ app.session.get('username')|default('User') }}</small>
-            </div>
+        <!-- Perfil del usuario - Dropdown -->
+        <div class="dropdown">
+            <button class="btn-user-profile" type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="user-avatar">{{ app.session.get('user_name')|first|upper|default('U') }}</div>
+                <div class="user-info d-none d-md-block">
+                    <div class="user-name">{{ app.session.get('user_name')|default('Usuario') }}</div>
+                    <small class="user-role">{{ app.session.get('username')|default('User') }}</small>
+                </div>
+                <i class="fas fa-chevron-down ms-2" style="font-size: 0.75rem; color: #8898aa;"></i>
+            </button>
+            
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuDropdown">
+                <li>
+                    <a class="dropdown-item" href="#">
+                        <i class="fas fa-user me-2"></i>
+                        Ver Perfil
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a class="dropdown-item text-danger" href="{{ path('app_logout') }}">
+                        <i class="fas fa-sign-out-alt me-2"></i>
+                        Cerrar Sesión
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
 </nav>

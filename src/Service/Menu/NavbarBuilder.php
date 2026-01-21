@@ -56,14 +56,14 @@ class NavbarBuilder
             new MenuItem(
                 name: 'patients',
                 label: 'Pacientes',
-                route: 'app_patients',
+                route: null, // TODO: Implementar ruta app_patients
                 icon: 'bx bx-user',
                 module: 'patients'
             ),
             new MenuItem(
                 name: 'appointments',
                 label: 'Citas',
-                route: 'app_appointments',
+                route: null, // TODO: Implementar ruta app_appointments
                 icon: 'bx bx-calendar',
                 module: 'appointments'
             ),
@@ -72,70 +72,207 @@ class NavbarBuilder
                 label: 'Mantenedores',
                 icon: 'bx bx-cog',
                 children: [
-                    // Básicos
+                    // Básico - Con 3 niveles de profundidad
                     new MenuItem(
-                        name: 'maintenance_genders',
-                        label: 'Géneros',
-                        route: 'app_maintenance_gender_index',
-                        icon: 'bx bx-circle',
-                        module: 'maintenance_genders'
+                        name: 'maintenance_basic',
+                        label: 'Básico',
+                        icon: 'bx bx-folder',
+                        children: [
+                            new MenuItem(
+                                name: 'maintenance_gender',
+                                label: 'Sexo',
+                                route: null, // TODO: Implementar ruta
+                                icon: 'bx bx-circle',
+                                module: 'maintenance_gender'
+                            ),
+                            new MenuItem(
+                                name: 'maintenance_religion',
+                                label: 'Religión',
+                                route: null, // TODO: Implementar ruta
+                                icon: 'bx bx-circle',
+                                module: 'maintenance_religion'
+                            ),
+                            new MenuItem(
+                                name: 'maintenance_marital_status',
+                                label: 'Estado Conyugal',
+                                route: null, // TODO: Implementar ruta
+                                icon: 'bx bx-circle',
+                                module: 'maintenance_marital_status'
+                            ),
+                            new MenuItem(
+                                name: 'maintenance_ethnic_group',
+                                label: 'Pueblo Originario',
+                                route: null, // TODO: Implementar ruta
+                                icon: 'bx bx-circle',
+                                module: 'maintenance_ethnic_group'
+                            ),
+                            new MenuItem(
+                                name: 'maintenance_occupation',
+                                label: 'Ocupación',
+                                route: null, // TODO: Implementar ruta
+                                icon: 'bx bx-circle',
+                                module: 'maintenance_occupation'
+                            ),
+                            new MenuItem(
+                                name: 'maintenance_education_level',
+                                label: 'Nivel Instrucción',
+                                route: null, // TODO: Implementar ruta
+                                icon: 'bx bx-circle',
+                                module: 'maintenance_education_level'
+                            ),
+                            new MenuItem(
+                                name: 'maintenance_education_detail',
+                                label: 'Detalle Nivel Instrucción',
+                                route: null, // TODO: Implementar ruta
+                                icon: 'bx bx-circle',
+                                module: 'maintenance_education_detail'
+                            ),
+                            new MenuItem(
+                                name: 'maintenance_insurance_admin',
+                                label: 'Administrador Seguro',
+                                route: null, // TODO: Implementar ruta
+                                icon: 'bx bx-circle',
+                                module: 'maintenance_insurance_admin'
+                            ),
+                            new MenuItem(
+                                name: 'maintenance_position',
+                                label: 'Cargo',
+                                route: null, // TODO: Implementar ruta
+                                icon: 'bx bx-circle',
+                                module: 'maintenance_position'
+                            ),
+                            new MenuItem(
+                                name: 'maintenance_doctor_type',
+                                label: 'Tipo Médico',
+                                route: null, // TODO: Implementar ruta
+                                icon: 'bx bx-circle',
+                                module: 'maintenance_doctor_type'
+                            ),
+                            new MenuItem(
+                                name: 'maintenance_box',
+                                label: 'Box',
+                                route: null, // TODO: Implementar ruta
+                                icon: 'bx bx-circle',
+                                module: 'maintenance_box'
+                            ),
+                            new MenuItem(
+                                name: 'maintenance_location',
+                                label: 'Ubicación',
+                                route: null, // TODO: Implementar ruta
+                                icon: 'bx bx-circle',
+                                module: 'maintenance_location'
+                            ),
+                            new MenuItem(
+                                name: 'maintenance_multimedia_category',
+                                label: 'Categoría Multimedia',
+                                route: null, // TODO: Implementar ruta
+                                icon: 'bx bx-circle',
+                                module: 'maintenance_multimedia_category'
+                            ),
+                            new MenuItem(
+                                name: 'maintenance_origin_type',
+                                label: 'Tipo Origen',
+                                route: null, // TODO: Implementar ruta
+                                icon: 'bx bx-circle',
+                                module: 'maintenance_origin_type'
+                            ),
+                            new MenuItem(
+                                name: 'maintenance_origin',
+                                label: 'Origen',
+                                route: null, // TODO: Implementar ruta
+                                icon: 'bx bx-circle',
+                                module: 'maintenance_origin'
+                            ),
+                        ]
                     ),
+                    // Clínico - Estructura preparada para 3 niveles
                     new MenuItem(
-                        name: 'maintenance_marital_status',
-                        label: 'Estado Civil',
-                        route: 'app_maintenance_marital_status_index',
-                        icon: 'bx bx-circle',
-                        module: 'maintenance_marital_status'
-                    ),
-                    new MenuItem(
-                        name: 'maintenance_ethnic_groups',
-                        label: 'Grupos Étnicos',
-                        route: 'app_maintenance_ethnic_group_index',
-                        icon: 'bx bx-circle',
-                        module: 'maintenance_ethnic_groups'
+                        name: 'maintenance_clinical',
+                        label: 'Clínico',
+                        icon: 'bx bx-folder',
+                        children: [
+                            new MenuItem(
+                                name: 'maintenance_care_item',
+                                label: 'Ítem atención',
+                                route: null,
+                                icon: 'bx bx-chevron-right',
+                                module: 'maintenance_care_item'
+                            ),
+                            new MenuItem(
+                                name: 'maintenance_background',
+                                label: 'Antecedentes',
+                                route: null,
+                                icon: 'bx bx-chevron-right',
+                                module: 'maintenance_background',
+                                children: [
+                                    new MenuItem(
+                                        name: 'maintenance_background_type',
+                                        label: 'Tipo Antecedente',
+                                        route: null,
+                                        icon: 'bx bx-circle',
+                                        module: 'maintenance_background_type'
+                                    ),
+                                    new MenuItem(
+                                        name: 'maintenance_background_item',
+                                        label: 'Antecedente',
+                                        route: null,
+                                        icon: 'bx bx-circle',
+                                        module: 'maintenance_background_item'
+                                    ),
+                                ]
+                            ),
+                            // Más items clínicos...
+                        ]
                     ),
                     // Geográficos
                     new MenuItem(
-                        name: 'maintenance_countries',
-                        label: 'Países',
-                        route: 'app_maintenance_country_index',
-                        icon: 'bx bx-circle',
-                        module: 'maintenance_countries'
-                    ),
-                    new MenuItem(
-                        name: 'maintenance_regions',
-                        label: 'Regiones',
-                        route: 'app_maintenance_region_index',
-                        icon: 'bx bx-circle',
-                        module: 'maintenance_regions'
-                    ),
-                    new MenuItem(
-                        name: 'maintenance_provinces',
-                        label: 'Provincias',
-                        route: 'app_maintenance_province_index',
-                        icon: 'bx bx-circle',
-                        module: 'maintenance_provinces'
-                    ),
-                    new MenuItem(
-                        name: 'maintenance_municipalities',
-                        label: 'Municipios',
-                        route: 'app_maintenance_municipality_index',
-                        icon: 'bx bx-circle',
-                        module: 'maintenance_municipalities'
+                        name: 'maintenance_geographic',
+                        label: 'Geográficos',
+                        icon: 'bx bx-folder',
+                        children: [
+                            new MenuItem(
+                                name: 'maintenance_country',
+                                label: 'Países',
+                                route: null, // TODO: Implementar ruta
+                                icon: 'bx bx-circle',
+                                module: 'maintenance_country'
+                            ),
+                            new MenuItem(
+                                name: 'maintenance_region',
+                                label: 'Regiones',
+                                route: null, // TODO: Implementar ruta
+                                icon: 'bx bx-circle',
+                                module: 'maintenance_region'
+                            ),
+                            new MenuItem(
+                                name: 'maintenance_province',
+                                label: 'Provincias',
+                                route: null, // TODO: Implementar ruta
+                                icon: 'bx bx-circle',
+                                module: 'maintenance_province'
+                            ),
+                            new MenuItem(
+                                name: 'maintenance_municipality',
+                                label: 'Municipios',
+                                route: null, // TODO: Implementar ruta
+                                icon: 'bx bx-circle',
+                                module: 'maintenance_municipality'
+                            ),
+                        ]
                     ),
                 ]
             ),
             new MenuItem(
                 name: 'reports',
                 label: 'Reportes',
-                route: 'app_reports',
+                route: null, // TODO: Implementar ruta
                 icon: 'bx bx-bar-chart-alt-2',
                 module: 'reports'
             ),
             new MenuItem(
                 name: 'settings',
                 label: 'Configuración',
-                route: 'app_settings',
+                route: null, // TODO: Implementar ruta
                 icon: 'bx bx-wrench',
                 module: 'settings'
             ),

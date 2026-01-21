@@ -62,7 +62,7 @@ class DefaultController extends AbstractTenantAwareController
         $menuItems = $this->navbarBuilder->buildMenu($userRoles);
         
         // Render del template moderno
-        return $this->render('dashboard/index.html.twig', [
+        return $this->render('dashboard/default.html.twig', [
             'tenant' => $tenant, // Array para el template
             'tenant_name' => $this->getTenantName(),
             'subdomain' => $this->getTenantSubdomain(),

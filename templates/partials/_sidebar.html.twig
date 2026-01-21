@@ -16,44 +16,7 @@
     <ul class="nav flex-column">
         {% if menu_items is defined %}
             {% for item in menu_items %}
-                {% if item.children is empty %}
-                    {# Item simple sin hijos #}
-                    <li class="nav-item">
-                        <a class="nav-link {% if item.route and app.request.get('_route') == item.route %}active{% endif %}" 
-                           href="{{ item.route ? path(item.route) : '#' }}">
-                            <i class="{{ item.icon|default('fas fa-circle') }}"></i>
-                            <span class="nav-link-text">{{ item.label }}</span>
-                        </a>
-                    </li>
-                {% else %}
-                    {# Item con submenú colapsable #}
-                    <li class="nav-item">
-                        <a class="nav-link menu-link {% if item.name in ['mantenedores'] and '/maintenance' in app.request.pathinfo %}active{% else %}collapsed{% endif %}" 
-                           href="#sidebar{{ item.name|capitalize }}" 
-                           data-bs-toggle="collapse" 
-                           role="button" 
-                           aria-expanded="{{ '/maintenance' in app.request.pathinfo ? 'true' : 'false' }}" 
-                           aria-controls="sidebar{{ item.name|capitalize }}">
-                            <i class="{{ item.icon|default('fas fa-folder') }}"></i>
-                            <span class="nav-link-text">{{ item.label }}</span>
-                        </a>
-                        
-                        {# Submenú colapsable #}
-                        <div class="collapse menu-dropdown {{ '/maintenance' in app.request.pathinfo ? 'show' : '' }}" id="sidebar{{ item.name|capitalize }}">
-                            <ul class="nav nav-sm flex-column">
-                                {% for child in item.children %}
-                                    <li class="nav-item">
-                                        <a href="{{ child.route ? path(child.route) : '#' }}" 
-                                           class="nav-link {% if child.route and app.request.get('_route') == child.route %}active{% endif %}">
-                                            <i class="{{ child.icon|default('bx bx-circle') }}"></i>
-                                            {{ child.label }}
-                                        </a>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </li>
-                {% endif %}
+                {{ _self.render_menu_item(item, 1) }}
             {% endfor %}
         {% else %}
             {# Fallback: menú estático si no hay menu_items #}
@@ -68,3 +31,41 @@
     
     </div> <!-- Cierre del contenedor con scroll -->
 </aside>
+
+{# Macro recursiva para renderizar items de menú en cualquier nivel #}
+{% macro render_menu_item(item, level) %}
+    {% if item.children is empty %}
+        {# Item final sin hijos #}
+        <li class="nav-item">
+            <a class="nav-link nav-level-{{ level }} {% if item.route and app.request.get('_route') == item.route %}active{% endif %}" 
+               href="{{ item.route ? path(item.route) : '#' }}"
+               style="padding-left: {{ 1 + (level * 0.5) }}rem;">
+                <i class="{{ item.icon|default('bx bx-circle') }}"></i>
+                <span class="nav-link-text">{{ item.label }}</span>
+            </a>
+        </li>
+    {% else %}
+        {# Item con hijos (colapsable) #}
+        <li class="nav-item">
+            <a class="nav-link menu-link nav-level-{{ level }} {% if item.name in ['mantenedores', 'maintenance_basic', 'maintenance_clinical', 'maintenance_geographic'] and '/maintenance' in app.request.pathinfo %}active{% else %}collapsed{% endif %}" 
+               href="#sidebar{{ item.name|capitalize }}" 
+               data-bs-toggle="collapse" 
+               role="button" 
+               aria-expanded="false" 
+               aria-controls="sidebar{{ item.name|capitalize }}"
+               style="padding-left: {{ 1 + (level * 0.5) }}rem;">
+                <i class="{{ item.icon|default('bx bx-folder') }}"></i>
+                <span class="nav-link-text">{{ item.label }}</span>
+            </a>
+            
+            {# Submenú colapsable recursivo #}
+            <div class="collapse menu-dropdown menu-level-{{ level + 1 }}" id="sidebar{{ item.name|capitalize }}">
+                <ul class="nav nav-sm flex-column">
+                    {% for child in item.children %}
+                        {{ _self.render_menu_item(child, level + 1) }}
+                    {% endfor %}
+                </ul>
+            </div>
+        </li>
+    {% endif %}
+{% endmacro %}

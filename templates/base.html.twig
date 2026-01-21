@@ -231,6 +231,33 @@
                 margin: 0;
             }
             
+            /* Estilos para niveles anidados (nivel 2, 3, etc.) */
+            .menu-level-2 {
+                background: rgba(94, 114, 228, 0.03);
+            }
+            
+            .menu-level-3 .nav-link {
+                font-size: 0.85rem;
+                padding-left: 3.5rem !important;
+            }
+            
+            .menu-level-3 {
+                background: rgba(94, 114, 228, 0.02);
+                border-left: 2px solid rgba(94, 114, 228, 0.2);
+                margin-left: 1rem;
+            }
+            
+            .menu-level-4 .nav-link {
+                font-size: 0.8rem;
+                padding-left: 4.5rem !important;
+            }
+            
+            .menu-level-4 {
+                background: rgba(94, 114, 228, 0.01);
+                border-left: 1px solid rgba(94, 114, 228, 0.15);
+                margin-left: 1.5rem;
+            }
+            
             .menu-title {
                 padding: 0.5rem 1.5rem;
                 font-size: 0.65rem;
@@ -271,6 +298,68 @@
                 color: white;
                 font-weight: bold;
                 font-size: 14px;
+            }
+            
+            /* User profile dropdown button */
+            .btn-user-profile {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                background: transparent;
+                border: none;
+                padding: 0.5rem 0.75rem;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: background-color 0.2s;
+            }
+            
+            .btn-user-profile:hover {
+                background-color: #f7fafc;
+            }
+            
+            .btn-user-profile .user-info {
+                text-align: left;
+            }
+            
+            .btn-user-profile .user-name {
+                font-weight: 600;
+                color: #32325d;
+                font-size: 0.9rem;
+                line-height: 1.2;
+            }
+            
+            .btn-user-profile .user-role {
+                color: #8898aa;
+                font-size: 0.75rem;
+            }
+            
+            /* Dropdown menu styling */
+            .dropdown-menu {
+                border: 1px solid #e3e6f0;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                border-radius: 8px;
+                margin-top: 0.5rem;
+                min-width: 200px;
+            }
+            
+            .dropdown-item {
+                padding: 0.75rem 1.25rem;
+                font-size: 0.9rem;
+                transition: all 0.2s;
+            }
+            
+            .dropdown-item:hover {
+                background-color: #f7fafc;
+                color: var(--primary-color);
+            }
+            
+            .dropdown-item.text-danger:hover {
+                background-color: #fff5f5;
+                color: #dc3545 !important;
+            }
+            
+            .dropdown-divider {
+                margin: 0.5rem 0;
             }
             
             /* Cards */
