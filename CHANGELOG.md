@@ -7,7 +7,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ## [2.0.0] - 2026-01-21
 
-### Added
+### Agregado
 
 #### Sistema de Permisos Híbrido Multi-Tenant
 
@@ -62,7 +62,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
   - Ejemplos de uso y configuración
   - Guía de estrategias y casos de uso
 
-### Changed
+### Modificado
 
 - **Dashboard Componentizado:**
   - Reducción de código de 470 líneas a 27 líneas en `dashboard/default.html.twig`
@@ -83,7 +83,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
     * PermissionVoter: Autorización a nivel de controlador (existente)
   - Separación de responsabilidades entre UI y lógica de negocio
 
-### Fixed
+### Corregido
 
 - Rutas inexistentes configuradas como `null` con comentarios TODO:
   - `app_patients`
@@ -93,7 +93,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 - Problema de visibilidad en niveles 3 y 4 del sidebar (5 iteraciones de refinamiento)
 - Truncamiento de texto en elementos de menú profundos (ellipsis + tooltips)
 
-### Technical Details
+### Detalles Técnicos
 
 - **43 archivos modificados**: +6,283 líneas, -874 líneas
 - **Commits**: 14 commits en feature/dashboard
@@ -105,7 +105,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ## [1.1.0] - 2026-01-14
 
-### Added
+### Agregado
 
 - Sistema de permisos a nivel de campo (FieldAccess)
 - Voter personalizado (PermissionVoter) con lógica de cascada de permisos
@@ -116,13 +116,13 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 - Implementación de SecuredResourceInterface en entidades
 - Controlador y vistas de testing para sistema de permisos
 
-### Changed
+### Modificado
 
 - Total de tests aumentado a 41 con 118 assertions
 
 ## [1.0.0] - 2026-01-14
 
-### Added
+### Agregado
 
 - Script de deploy automatizado (`scripts/deploy.sh`) con 10 pasos
 - Ejecución de tests unitarios en proceso de deploy
@@ -135,7 +135,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 - Backups automáticos en cada deploy
 - Configuración de CSRF y Property Info
 
-### Changed
+### Modificado
 
 - **BREAKING**: Migración de Symfony 6.4.29 a Symfony 7.4.3 LTS
 - **BREAKING**: Requerimiento mínimo de PHP 8.2+
@@ -145,7 +145,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 - Mejora en README.md con instrucciones actualizadas
 - Optimización de composer.json eliminando scripts inexistentes
 
-### Fixed
+### Corregido
 
 - Eliminación de animación particles.js que causaba error en página de login
 - Corrección de comandos symfony-cmd inexistentes en composer auto-scripts
