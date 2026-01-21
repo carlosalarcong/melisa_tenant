@@ -4,6 +4,7 @@ namespace App\Controller\Dashboard\Default;
 
 use App\Controller\AbstractTenantAwareController;
 use App\Service\Dashboard\DashboardMetricsService;
+use App\Service\Menu\NavbarBuilder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,7 +15,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class DefaultController extends AbstractTenantAwareController
 {
     public function __construct(
-        private DashboardMetricsService $metricsService
+        private DashboardMetricsService $metricsService,
+        private NavbarBuilder $navbarBuilder
     ) {}
 
     #[Route('/dashboard', name: 'app_dashboard_default')]
@@ -56,6 +58,9 @@ class DefaultController extends AbstractTenantAwareController
         $metrics = $this->metricsService->getDashboardMetrics($tenant, $userRoles);
         $modules = $this->metricsService->getAvailableModules($userRoles);
         
+        // Construir menú filtrado por permisos del tenant
+        $menuItems = $this->navbarBuilder->buildMenu($userRoles);
+        
         // Render del template moderno
         return $this->render('dashboard/index.html.twig', [
             'tenant' => $tenant, // Array para el template
@@ -63,6 +68,7 @@ class DefaultController extends AbstractTenantAwareController
             'subdomain' => $this->getTenantSubdomain(),
             'logged_user' => $loggedUser,
             'user_roles' => $userRoles, // Enviar roles al template
+            'menu_items' => $menuItems, // Menú filtrado por permisos
             'metrics' => $metrics,
             'modules' => $modules,
             'page_title' => 'Dashboard - ' . $this->getTenantName(),
