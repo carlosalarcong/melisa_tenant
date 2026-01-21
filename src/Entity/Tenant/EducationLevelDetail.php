@@ -32,6 +32,17 @@ class EducationLevelDetail
     #[ORM\Column(name: 'is_active', type: 'boolean', options: ["default" => true])]
     private bool $isActive = true;
 
+    #[ORM\Column(type: 'datetime')]
+    private \DateTimeInterface $createdAt;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $updatedAt = null;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
