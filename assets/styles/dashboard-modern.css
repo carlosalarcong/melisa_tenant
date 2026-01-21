@@ -1,0 +1,578 @@
+/* ============================================
+   🎨 DASHBOARD MODERNO - Melisa
+   Estilos para el nuevo dashboard con métricas
+   ============================================ */
+
+/* Variables CSS */
+:root {
+    /* Gradientes */
+    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    --gradient-info: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --gradient-warning: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    --gradient-danger: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --gradient-dark: linear-gradient(135deg, #434343 0%, #000000 100%);
+    
+    /* Colores adicionales */
+    --shadow-light: 0 5px 20px rgba(0, 0, 0, 0.05);
+    --shadow-medium: 0 10px 30px rgba(0, 0, 0, 0.08);
+    --shadow-heavy: 0 20px 50px rgba(0, 0, 0, 0.15);
+    
+    /* Espaciado */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    
+    /* Border radius */
+    --radius-sm: 10px;
+    --radius-md: 15px;
+    --radius-lg: 20px;
+    
+    /* Transiciones */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.6s ease;
+}
+
+/* ============================================
+   🌍 Layout General
+   ============================================ */
+
+.dashboard-modern {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    padding: var(--spacing-lg) 0;
+}
+
+/* ============================================
+   📊 Header del Dashboard
+   ============================================ */
+
+.dashboard-header {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-medium);
+    margin-bottom: var(--spacing-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+}
+
+.welcome-text {
+    font-size: 1.8rem;
+    font-weight: 700;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+}
+
+/* ============================================
+   📈 Tarjetas de Métricas
+   ============================================ */
+
+.metric-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    height: 100%;
+    transition: all var(--transition-normal);
+    border: none;
+    box-shadow: var(--shadow-light);
+    position: relative;
+    overflow: hidden;
+}
+
+.metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background: var(--card-gradient, var(--gradient-primary));
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-heavy);
+}
+
+/* Variantes de color */
+.metric-card.primary::before { background: var(--gradient-primary); }
+.metric-card.success::before { background: var(--gradient-success); }
+.metric-card.info::before { background: var(--gradient-info); }
+.metric-card.warning::before { background: var(--gradient-warning); }
+.metric-card.danger::before { background: var(--gradient-danger); }
+
+.metric-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0.5rem 0;
+    line-height: 1;
+}
+
+.metric-label {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.metric-trend {
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.metric-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    background: var(--gradient-primary);
+}
+
+/* Animación al actualizar métricas */
+.metric-value.updating {
+    animation: pulse 0.3s ease-in-out;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* ============================================
+   ⚡ Acciones Rápidas
+   ============================================ */
+
+.quick-actions {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    box-shadow: var(--shadow-light);
+}
+
+.action-btn {
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    border: 2px solid #e9ecef;
+    background: white;
+    transition: all var(--transition-normal);
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+    width: 100%;
+}
+
+.action-btn:hover {
+    border-color: #667eea;
+    background: #f8f9ff;
+    transform: translateX(5px);
+}
+
+.action-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: var(--radius-sm);
+    background: var(--gradient-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+/* ============================================
+   🎯 Módulos Grid
+   ============================================ */
+
+.modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.module-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    transition: all var(--transition-normal);
+    border: none;
+    box-shadow: var(--shadow-light);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.module-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: var(--module-gradient, var(--gradient-primary));
+}
+
+.module-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-heavy);
+    text-decoration: none;
+}
+
+.module-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 18px;
+    background: var(--module-gradient, var(--gradient-primary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+    margin-bottom: var(--spacing-md);
+    transition: all var(--transition-normal);
+}
+
+.module-card:hover .module-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.module-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-xs);
+    color: #212529;
+}
+
+.module-description {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Badge de destacado */
+.module-card .badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.35rem 0.65rem;
+}
+
+/* ============================================
+   📜 Activity Feed
+   ============================================ */
+
+.activity-item {
+    padding: var(--spacing-sm);
+    border-left: 3px solid #e9ecef;
+    margin-left: var(--spacing-sm);
+    position: relative;
+    transition: all var(--transition-fast);
+    margin-bottom: var(--spacing-sm);
+}
+
+.activity-item:hover {
+    background: #f8f9fa;
+    border-left-color: #667eea;
+}
+
+.activity-item:last-child {
+    margin-bottom: 0;
+}
+
+.activity-icon {
+    position: absolute;
+    left: -1.8rem;
+    top: var(--spacing-sm);
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: 3px solid #e9ecef;
+    font-size: 0.875rem;
+    transition: all var(--transition-fast);
+}
+
+.activity-item:hover .activity-icon {
+    border-color: #667eea;
+    transform: scale(1.1);
+}
+
+.activity-icon.bg-success { background: var(--gradient-success) !important; border-color: #11998e; }
+.activity-icon.bg-primary { background: var(--gradient-primary) !important; border-color: #667eea; }
+.activity-icon.bg-info { background: var(--gradient-info) !important; border-color: #4facfe; }
+.activity-icon.bg-warning { background: var(--gradient-warning) !important; border-color: #fa709a; }
+
+.activity-message {
+    font-size: 0.9rem;
+    color: #212529;
+    margin-bottom: 0.25rem;
+}
+
+.activity-time {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+/* ============================================
+   🚨 Alertas Modernas
+   ============================================ */
+
+.alert-modern {
+    border-radius: var(--radius-md);
+    border: none;
+    padding: 1.25rem;
+    box-shadow: var(--shadow-light);
+    animation: slideDown 0.5s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert-modern .alert-heading {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+/* ============================================
+   🎭 Animaciones
+   ============================================ */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-in {
+    animation: fadeInUp 0.6s ease-out;
+    animation-fill-mode: both;
+}
+
+.animate-delay-1 { animation-delay: 0.1s; }
+.animate-delay-2 { animation-delay: 0.2s; }
+.animate-delay-3 { animation-delay: 0.3s; }
+.animate-delay-4 { animation-delay: 0.4s; }
+
+/* Efecto de carga skeleton */
+@keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+}
+
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite linear;
+}
+
+/* ============================================
+   🔍 Modal de Búsqueda
+   ============================================ */
+
+#searchModal .modal-content {
+    border-radius: var(--radius-lg);
+    border: none;
+    box-shadow: var(--shadow-heavy);
+}
+
+#searchModal .form-control-lg {
+    border-radius: var(--radius-sm);
+    border: 2px solid #e9ecef;
+    padding: 0.75rem 1rem;
+    font-size: 1.1rem;
+}
+
+#searchModal .form-control-lg:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* ============================================
+   📱 Responsive Design
+   ============================================ */
+
+@media (max-width: 992px) {
+    .modules-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+    
+    .welcome-text {
+        font-size: 1.5rem;
+    }
+    
+    .metric-value {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-modern {
+        padding: var(--spacing-sm) 0;
+    }
+    
+    .dashboard-header {
+        padding: var(--spacing-sm);
+    }
+    
+    .modules-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .metric-card {
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .metric-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
+    }
+    
+    .welcome-text {
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .action-btn {
+        font-size: 0.9rem;
+    }
+    
+    .action-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .module-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+}
+
+/* ============================================
+   🌙 Modo Oscuro (Opcional)
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+    .dashboard-modern {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    }
+    
+    .dashboard-header,
+    .metric-card,
+    .quick-actions,
+    .module-card {
+        background: #2d2d44;
+        color: #e0e0e0;
+    }
+    
+    .module-name,
+    .activity-message {
+        color: #e0e0e0;
+    }
+    
+    .metric-label,
+    .module-description,
+    .activity-time {
+        color: #a0a0a0;
+    }
+    
+    .action-btn {
+        background: #2d2d44;
+        border-color: #3d3d54;
+    }
+    
+    .action-btn:hover {
+        background: #3d3d54;
+        border-color: #667eea;
+    }
+}
+
+/* ============================================
+   🎨 Utilidades Adicionales
+   ============================================ */
+
+/* Efecto glassmorphism */
+.glass-effect {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Texto con gradiente */
+.gradient-text {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Badge con gradiente */
+.badge-gradient {
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+}
+
+/* Botón con gradiente */
+.btn-gradient {
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    transition: all var(--transition-normal);
+}
+
+.btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    color: white;
+}

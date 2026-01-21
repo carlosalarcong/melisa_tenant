@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {# Navbar Superior #}
+    {{ include('partials/_navbar.html.twig') }}
+    
+    {# Sidebar #}
+    {{ include('partials/_sidebar.html.twig') }}
+    
+    {# Contenido Principal #}
+    <main id="mainContent">
+        {% block content %}{% endblock %}
+    </main>
+    
+    {# JavaScript del Sidebar #}
+    <script>
+        // Toggle Sidebar
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        
+        sidebarToggle.addEventListener('click', function() {
+            if (window.innerWidth > 768) {
+                // Desktop: collapse sidebar
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('sidebar-collapsed');
+            } else {
+                // Mobile: toggle sidebar visibility
+                sidebar.classList.toggle('mobile-open');
+            }
+        });
+        
+        // Close sidebar on mobile when clicking outside
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768) {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnToggle = sidebarToggle.contains(event.target);
+                
+                if (!isClickInsideSidebar && !isClickOnToggle && sidebar.classList.contains('mobile-open')) {
+                    sidebar.classList.remove('mobile-open');
+                }
+            }
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('mobile-open');
+            }
+        });
+        
+        console.log('✨ Melisa Dashboard cargado');
+    </script>
+{% endblock %}

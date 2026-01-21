@@ -23,18 +23,8 @@ class DefaultController extends AbstractController
     #[Route('/', name: 'app_root', methods: ['GET'])]
     public function index(Request $request): Response
     {
-        // Obtener información del tenant actual
-        $tenantData = $this->tenantContext->getCurrentTenant();
-        
-        if (!$tenantData) {
-            // Si no hay tenant, redirigir al login
-            return $this->redirectToRoute('app_login');
-        }
-
-        return $this->render('dashboard/default.html.twig', [
-            'tenant_info' => $tenantData,
-            'current_user' => $request->getSession()->get('user'),
-        ]);
+        // Redirigir al dashboard principal con sistema de permisos
+        return $this->redirectToRoute('app_dashboard_default');
     }
 
     /**

@@ -1,0 +1,281 @@
+{# Dashboard Styles - Extracted from default.html.twig #}
+<style>
+    /* Welcome banner */
+    .welcome-banner {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 12px;
+        padding: 2rem;
+        color: white;
+        margin-bottom: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .welcome-text h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .welcome-text p {
+        opacity: 0.9;
+        font-size: 1rem;
+        margin: 0;
+    }
+    
+    .welcome-illustration {
+        font-size: 5rem;
+        opacity: 0.3;
+    }
+    
+    /* Stats cards */
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+    
+    .stat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+    
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        color: white;
+    }
+    
+    .stat-icon.primary { background: linear-gradient(135deg, #5e72e4, #825ee4); }
+    .stat-icon.success { background: linear-gradient(135deg, #2dce89, #2dcecc); }
+    .stat-icon.info { background: linear-gradient(135deg, #11cdef, #1171ef); }
+    .stat-icon.warning { background: linear-gradient(135deg, #fb6340, #fbb140); }
+    
+    .stat-label {
+        font-size: 0.875rem;
+        color: #8898aa;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #32325d;
+        margin: 0.5rem 0;
+    }
+    
+    .stat-change {
+        font-size: 0.875rem;
+        color: #2dce89;
+    }
+    
+    /* Content grid */
+    .content-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1.5rem;
+    }
+    
+    .card-body.p-0 {
+        padding: 0 !important;
+    }
+    
+    /* Table */
+    .table-modern {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .table-modern thead th {
+        text-align: left;
+        padding: 1rem 1.5rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #8898aa;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        background: #f7fafc;
+    }
+    
+    .table-modern tbody td {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid #f0f0f0;
+    }
+    
+    .table-modern tbody tr:hover {
+        background: #f7fafc;
+    }
+    
+    .patient-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .patient-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 0.875rem;
+    }
+    
+    .patient-name {
+        font-weight: 600;
+        color: #32325d;
+    }
+    
+    .patient-id {
+        font-size: 0.8rem;
+        color: #8898aa;
+    }
+    
+    .time-badge {
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+    
+    .status-badge {
+        padding: 0.35rem 0.75rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+    
+    .status-badge.success {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .status-badge.info {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+    
+    .status-badge.warning {
+        background: #fff3cd;
+        color: #856404;
+    }
+    
+    /* Quick actions */
+    .quick-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .action-btn {
+        padding: 1rem;
+        border: none;
+        border-radius: 10px;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    }
+    
+    .action-btn.primary { background: linear-gradient(135deg, #5e72e4, #825ee4); }
+    .action-btn.success { background: linear-gradient(135deg, #2dce89, #2dcecc); }
+    .action-btn.info { background: linear-gradient(135deg, #11cdef, #1171ef); }
+    .action-btn.warning { background: linear-gradient(135deg, #fb6340, #fbb140); }
+    
+    /* Mini stats */
+    .mini-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+    
+    .mini-stat {
+        padding: 1.25rem;
+        border-radius: 10px;
+        text-align: center;
+    }
+    
+    .mini-stat.primary { background: linear-gradient(135deg, #5e72e415, #825ee415); }
+    .mini-stat.success { background: linear-gradient(135deg, #2dce8915, #2dcecc15); }
+    
+    .mini-stat-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #32325d;
+        margin-bottom: 0.25rem;
+    }
+    
+    .mini-stat-label {
+        font-size: 0.8rem;
+        color: #8898aa;
+    }
+    
+    .btn-outline-secondary {
+        background: transparent;
+        border: 2px solid #e9ecef;
+        color: #525f7f;
+    }
+    
+    .btn-outline-primary {
+        background: transparent;
+        border: 1px solid var(--primary-color);
+        color: var(--primary-color);
+    }
+    
+    .btn-group {
+        display: inline-flex;
+        gap: 0.25rem;
+    }
+    
+    /* Responsive */
+    @media (max-width: 1200px) {
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .stats-row {
+            grid-template-columns: 1fr;
+        }
+        
+        .welcome-banner {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+</style>

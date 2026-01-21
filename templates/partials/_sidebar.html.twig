@@ -1,0 +1,79 @@
+<aside class="sidebar" id="sidebar" style="display: flex; flex-direction: column; height: 100vh; overflow: hidden;">
+    <div class="sidebar-header">
+        <div class="clinic-logo">
+            <i class="fas fa-clinic-medical fa-2x" style="color: white;"></i>
+        </div>
+        <h5 class="clinic-name">Melisa Health</h5>
+        <small class="clinic-subdomain">{{ tenant_info.subdomain|default('sistema') }}</small>
+    </div>
+    
+    <!-- Contenedor con scroll para el contenido del sidebar -->
+    <div style="flex: 1; overflow-y: auto; overflow-x: hidden; padding-bottom: 60px;" class="sidebar-scrollable">
+    
+    <div class="sidebar-heading">
+        <span>Principal</span>
+    </div>
+    <ul class="nav flex-column">
+        {% if menu_items is defined %}
+            {% for item in menu_items %}
+                {{ _self.render_menu_item(item, 1) }}
+            {% endfor %}
+        {% else %}
+            {# Fallback: menú estático si no hay menu_items #}
+            <li class="nav-item">
+                <a class="nav-link {% if app.request.pathinfo == '/' %}active{% endif %}" href="/">
+                    <i class="fas fa-home"></i>
+                    <span class="nav-link-text">Dashboard</span>
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+    
+    </div> <!-- Cierre del contenedor con scroll -->
+</aside>
+
+{# Macro recursiva para renderizar items de menú en cualquier nivel #}
+{% macro render_menu_item(item, level) %}
+    {% set icon_by_level = {
+        1: item.icon|default('bx bx-home-circle'),
+        2: item.icon|default('bx bx-folder'),
+        3: item.icon|default('bx bx-chevron-right'),
+        4: item.icon|default('bx bx-circle'),
+        5: item.icon|default('bx bx-dot-circle-o')
+    } %}
+    
+    {% if item.children is empty %}
+        {# Item final sin hijos #}
+        <li class="nav-item">
+            <a class="nav-link nav-level-{{ level }} {% if item.route and app.request.get('_route') == item.route %}active{% endif %}" 
+               href="{{ item.route ? path(item.route) : '#' }}"
+               title="{{ item.label }}">
+                <i class="{{ icon_by_level[level] }}"></i>
+                <span class="nav-link-text">{{ item.label }}</span>
+            </a>
+        </li>
+    {% else %}
+        {# Item con hijos (colapsable) #}
+        <li class="nav-item">
+            <a class="nav-link menu-link nav-level-{{ level }} {% if item.name in ['mantenedores', 'maintenance_basic', 'maintenance_clinical', 'maintenance_geographic'] and '/maintenance' in app.request.pathinfo %}active{% else %}collapsed{% endif %}" 
+               href="#sidebar{{ item.name|capitalize }}" 
+               data-bs-toggle="collapse" 
+               role="button" 
+               aria-expanded="false" 
+               aria-controls="sidebar{{ item.name|capitalize }}"
+               title="{{ item.label }}">
+                <i class="{{ icon_by_level[level] }}"></i>
+                <span class="nav-link-text">{{ item.label }}</span>
+            </a>
+            
+            {# Submenú colapsable recursivo #}
+            <div class="collapse menu-dropdown menu-level-{{ level + 1 }}" id="sidebar{{ item.name|capitalize }}">
+                <ul class="nav nav-sm flex-column">
+                    {% for child in item.children %}
+                        {{ _self.render_menu_item(child, level + 1) }}
+                    {% endfor %}
+                </ul>
+            </div>
+        </li>
+    {% endif %}
+{% endmacro %}

@@ -5,10 +5,10 @@ const RtlCssPlugin = require('rtlcss-webpack-plugin');
 Encore
   .setOutputPath('public/assets/')
   .setPublicPath('/assets')
-  .addEntry('app', './assets/scss/config/material/app.scss')
-  .addEntry('bootstrap', './assets/scss/config/material/bootstrap.scss')
+  .addEntry('app', './assets/scss/config/saas/app.scss')
+  .addEntry('bootstrap', './assets/scss/config/saas/bootstrap.scss')
   .addEntry('icons', './assets/scss/icons.scss')
-  .addEntry('custom', './assets/scss/config/material/custom.scss')
+  .addEntry('custom', './assets/scss/config/saas/custom.scss')
   .enableSingleRuntimeChunk()
   .enableSassLoader()
   .enablePostCssLoader() // This enables PostCSS loader
