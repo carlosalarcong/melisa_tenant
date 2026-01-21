@@ -34,13 +34,20 @@
 
 {# Macro recursiva para renderizar items de menú en cualquier nivel #}
 {% macro render_menu_item(item, level) %}
+    {% set icon_by_level = {
+        1: item.icon|default('bx bx-home-circle'),
+        2: item.icon|default('bx bx-folder'),
+        3: item.icon|default('bx bx-chevron-right'),
+        4: item.icon|default('bx bx-circle'),
+        5: item.icon|default('bx bx-dot-circle-o')
+    } %}
+    
     {% if item.children is empty %}
         {# Item final sin hijos #}
         <li class="nav-item">
             <a class="nav-link nav-level-{{ level }} {% if item.route and app.request.get('_route') == item.route %}active{% endif %}" 
-               href="{{ item.route ? path(item.route) : '#' }}"
-               style="padding-left: {{ 1 + (level * 0.5) }}rem;">
-                <i class="{{ item.icon|default('bx bx-circle') }}"></i>
+               href="{{ item.route ? path(item.route) : '#' }}">
+                <i class="{{ icon_by_level[level] }}"></i>
                 <span class="nav-link-text">{{ item.label }}</span>
             </a>
         </li>
@@ -52,9 +59,8 @@
                data-bs-toggle="collapse" 
                role="button" 
                aria-expanded="false" 
-               aria-controls="sidebar{{ item.name|capitalize }}"
-               style="padding-left: {{ 1 + (level * 0.5) }}rem;">
-                <i class="{{ item.icon|default('bx bx-folder') }}"></i>
+               aria-controls="sidebar{{ item.name|capitalize }}">
+                <i class="{{ icon_by_level[level] }}"></i>
                 <span class="nav-link-text">{{ item.label }}</span>
             </a>
             
