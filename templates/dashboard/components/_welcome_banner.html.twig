@@ -1,0 +1,10 @@
+{# Default Welcome Banner #}
+<div class="welcome-banner">
+    <div class="welcome-text">
+        <h2>Bienvenido, {{ app.session.get('user_name')|default('Usuario') }}! 👋</h2>
+        <p>Tienes 23 citas programadas para hoy. ¡Que tengas un excelente día!</p>
+    </div>
+    <div class="welcome-illustration">
+        <i class="fas fa-user-md"></i>
+    </div>
+</div>
