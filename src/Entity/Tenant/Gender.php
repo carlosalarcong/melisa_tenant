@@ -95,6 +95,7 @@ class Gender
         $this->idEstado = $idEstado;
         return $this;
     }
+
     public function getCreatedAt(): \DateTimeInterface
     {
         return $this->createdAt;
@@ -110,6 +111,7 @@ class Gender
         $this->updatedAt = $updatedAt;
         return $this;
     }
+
     public function __toString(): string
     {
         return $this->name;

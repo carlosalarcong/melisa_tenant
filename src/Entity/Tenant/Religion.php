@@ -86,6 +86,7 @@ class Religion
 
         return $this;
     }
+
     public function getCreatedAt(): \DateTimeInterface
     {
         return $this->createdAt;
@@ -101,6 +102,7 @@ class Religion
         $this->updatedAt = $updatedAt;
         return $this;
     }
+
     public function isActive(): ?bool
     {
         return $this->isActive;
