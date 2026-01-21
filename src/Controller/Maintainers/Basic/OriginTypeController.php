@@ -57,7 +57,7 @@ class OriginTypeController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['name', 'code', 'active'];
+        return ['name', 'code', 'isActive'];
     }
 
     protected function getTemplatePath(): string

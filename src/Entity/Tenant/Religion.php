@@ -25,8 +25,14 @@ class Religion
     #[ORM\Column(length: 10, nullable: true)]
     private ?string $religionCodeHl7 = null;
 
-    #[ORM\Column(type: 'boolean', options: ["default" => true])]
+    #[ORM\Column(name: 'is_active', type: 'boolean', options: ["default" => true])]
     private ?bool $isActive = true;
+
+    #[ORM\Column(type: 'datetime')]
+    private \DateTimeInterface $createdAt;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $updatedAt = null;
 
     /**
      * @var Collection<int, Person>
@@ -37,6 +43,7 @@ class Religion
     public function __construct()
     {
         $this->people = new ArrayCollection();
+        $this->createdAt = new \DateTime();
     }
 
     public function getId(): ?int
@@ -79,7 +86,21 @@ class Religion
 
         return $this;
     }
+    public function getCreatedAt(): \DateTimeInterface
+    {
+        return $this->createdAt;
+    }
 
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+        return $this;
+    }
     public function isActive(): ?bool
     {
         return $this->isActive;

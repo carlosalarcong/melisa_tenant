@@ -28,8 +28,8 @@ class JobPosition
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: 'boolean')]
-    private bool $active = true;
+    #[ORM\Column(name: 'is_active', type: 'boolean', nullable: true)]
+    private ?bool $isActive = null;
 
     #[ORM\Column(type: 'datetime')]
     private \DateTimeInterface $createdAt;
@@ -80,14 +80,14 @@ class JobPosition
         return $this;
     }
 
-    public function isActive(): bool
+    public function getIsActive(): ?bool
     {
-        return $this->active;
+        return $this->isActive;
     }
 
-    public function setActive(bool $active): self
+    public function setIsActive(?bool $isActive): self
     {
-        $this->active = $active;
+        $this->isActive = $isActive;
         return $this;
     }
 

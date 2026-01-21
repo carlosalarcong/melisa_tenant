@@ -57,7 +57,7 @@ class EducationLevelDetailController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['name', 'educationLevel', 'active'];
+        return ['name', 'educationLevel', 'isActive'];
     }
 
     protected function getTemplatePath(): string

@@ -57,7 +57,7 @@ class JobPositionController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['name', 'description', 'active'];
+        return ['name', 'description', 'isActive'];
     }
 
     protected function getTemplatePath(): string

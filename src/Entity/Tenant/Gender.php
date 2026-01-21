@@ -30,19 +30,11 @@ class Gender
     #[Assert\Length(max: 10)]
     private ?string $code = null;
 
-    #[ORM\Column(type: 'boolean')]
-    private bool $active = true;
+    #[ORM\Column(name: 'is_active', type: 'boolean')]
+    private bool $isActive = true;
 
-    #[ORM\Column(type: 'datetime')]
-    private \DateTimeInterface $createdAt;
-
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeInterface $updatedAt = null;
-
-    public function __construct()
-    {
-        $this->createdAt = new \DateTime();
-    }
+    #[ORM\Column(name: 'id_estado', type: 'integer')]
+    private int $idEstado = 1;
 
     public function getId(): ?int
     {
@@ -73,24 +65,28 @@ class Gender
 
     public function isActive(): bool
     {
-        return $this->active;
+        return $this->isActive;
     }
 
-    public function setActive(bool $active): self
+    public function setIsActive(bool $isActive): self
     {
-        $this->active = $active;
+        $this->isActive = $isActive;
         return $this;
     }
 
+    public function getIdEstado(): int
+    {
+        return $this->idEstado;
+    }
+
+    public function setIdEstado(int $idEstado): self
+    {
+        $this->idEstado = $idEstado;
+        return $this;
+    }
     public function getCreatedAt(): \DateTimeInterface
     {
         return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-        return $this;
     }
 
     public function getUpdatedAt(): ?\DateTimeInterface
@@ -103,7 +99,6 @@ class Gender
         $this->updatedAt = $updatedAt;
         return $this;
     }
-
     public function __toString(): string
     {
         return $this->name;

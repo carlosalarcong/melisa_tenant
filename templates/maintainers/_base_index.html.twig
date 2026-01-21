@@ -51,11 +51,13 @@
                                     <th scope="col">
                                         {% if column == 'name' %}Nombre
                                         {% elseif column == 'code' %}Código
-                                        {% elseif column == 'active' %}Estado
+                                        {% elseif column == 'isActive' %}Estado
                                         {% elseif column == 'description' %}Descripción
                                         {% elseif column == 'number' %}Número
                                         {% elseif column == 'educationLevel' %}Nivel Instrucción
                                         {% elseif column == 'originType' %}Tipo Origen
+                                        {% elseif column == 'religionCodeHl7' %}Código HL7
+                                        {% elseif column == 'maritalStatusCodeHl7' %}Código HL7
                                         {% else %}{{ column|title }}
                                         {% endif %}
                                     </th>
@@ -69,7 +71,7 @@
                                     {% for column in columns %}
                                         <td>
                                             {% set value = attribute(item, column) %}
-                                            {% if column == 'active' %}
+                                            {% if column == 'isActive' %}
                                                 {% if value %}
                                                     <span class="badge bg-success">
                                                         <i class="bx bx-check me-1"></i>Activo

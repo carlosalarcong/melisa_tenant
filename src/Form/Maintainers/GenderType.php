@@ -30,8 +30,8 @@ class GenderType extends AbstractType
                     'maxlength' => 10
                 ]
             ])
-            ->add('active', CheckboxType::class, [
-                'label' => 'Active',
+            ->add('isActive', CheckboxType::class, [
+                'label' => 'Activo',
                 'required' => false,
                 'attr' => [
                     'class' => 'form-check-input'
