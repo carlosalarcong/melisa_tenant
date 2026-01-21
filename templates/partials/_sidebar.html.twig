@@ -46,7 +46,8 @@
         {# Item final sin hijos #}
         <li class="nav-item">
             <a class="nav-link nav-level-{{ level }} {% if item.route and app.request.get('_route') == item.route %}active{% endif %}" 
-               href="{{ item.route ? path(item.route) : '#' }}">
+               href="{{ item.route ? path(item.route) : '#' }}"
+               title="{{ item.label }}">
                 <i class="{{ icon_by_level[level] }}"></i>
                 <span class="nav-link-text">{{ item.label }}</span>
             </a>
@@ -59,7 +60,8 @@
                data-bs-toggle="collapse" 
                role="button" 
                aria-expanded="false" 
-               aria-controls="sidebar{{ item.name|capitalize }}">
+               aria-controls="sidebar{{ item.name|capitalize }}"
+               title="{{ item.label }}">
                 <i class="{{ icon_by_level[level] }}"></i>
                 <span class="nav-link-text">{{ item.label }}</span>
             </a>
