@@ -81,7 +81,7 @@ class NavbarBuilder
                             new MenuItem(
                                 name: 'maintenance_gender',
                                 label: 'Sexo',
-                                route: null, // TODO: Implementar ruta
+                                route: 'app_maintainers_gender_index',
                                 icon: 'bx bx-circle',
                                 module: 'maintenance_gender'
                             ),
