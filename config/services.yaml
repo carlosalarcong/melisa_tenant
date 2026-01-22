@@ -56,6 +56,17 @@ services:
     App\Twig\LocalizationExtension:
         tags: ['twig.extension']
 
+    # MenuBuilder Service - Construye el menú de navegación
+    App\Service\MenuBuilder:
+        arguments:
+            $requestStack: '@request_stack'
+
+    # MenuExtension - Hace menu_items disponible globalmente en Twig
+    App\Twig\MenuExtension:
+        arguments:
+            $menuBuilder: '@App\Service\MenuBuilder'
+        tags: ['twig.extension']
+
     # Event Listeners
     App\EventListener\LocaleListener:
         tags:

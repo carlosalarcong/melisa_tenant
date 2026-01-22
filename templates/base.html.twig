@@ -12,6 +12,9 @@
         <!-- Font Awesome -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         
+        <!-- Boxicons -->
+        <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+        
         <style>
             :root {
                 --primary-color: #5e72e4;
@@ -594,77 +597,5 @@
             window.Turbo = Turbo;
         </script>
     {% endblock %}
-    
-    {# SIDEBAR AUTO-EXPAND SCRIPT #}
-    <script>
-    // Función para expandir automáticamente el menú según la URL actual
-    function expandActiveMenus() {
-        const currentPath = window.location.pathname;
-        console.log('📂 Expandiendo menús para:', currentPath);
-        
-        // Si estamos en una ruta de mantenedores
-        if (currentPath.includes('/maintainers/') || currentPath.includes('/maintenance')) {
-            // Expandir el menú principal "Mantenedores"
-            const maintenanceMenu = document.querySelector('#sidebarMantenedores');
-            if (maintenanceMenu) {
-                maintenanceMenu.classList.add('show');
-                const maintenanceToggle = document.querySelector('[href="#sidebarMantenedores"]');
-                if (maintenanceToggle) {
-                    maintenanceToggle.classList.remove('collapsed');
-                    maintenanceToggle.setAttribute('aria-expanded', 'true');
-                }
-            }
-            
-            // Detectar y expandir el submenú específico
-            if (currentPath.includes('/basic/')) {
-                const basicMenu = document.querySelector('#sidebarMaintenance_basic');
-                if (basicMenu) {
-                    basicMenu.classList.add('show');
-                    const basicToggle = document.querySelector('[href="#sidebarMaintenance_basic"]');
-                    if (basicToggle) {
-                        basicToggle.classList.remove('collapsed');
-                        basicToggle.setAttribute('aria-expanded', 'true');
-                    }
-                }
-            } else if (currentPath.includes('/clinical/')) {
-                const clinicalMenu = document.querySelector('#sidebarMaintenance_clinical');
-                if (clinicalMenu) {
-                    clinicalMenu.classList.add('show');
-                    const clinicalToggle = document.querySelector('[href="#sidebarMaintenance_clinical"]');
-                    if (clinicalToggle) {
-                        clinicalToggle.classList.remove('collapsed');
-                        clinicalToggle.setAttribute('aria-expanded', 'true');
-                    }
-                }
-            } else if (currentPath.includes('/geographic/')) {
-                const geoMenu = document.querySelector('#sidebarMaintenance_geographic');
-                if (geoMenu) {
-                    geoMenu.classList.add('show');
-                    const geoToggle = document.querySelector('[href="#sidebarMaintenance_geographic"]');
-                    if (geoToggle) {
-                        geoToggle.classList.remove('collapsed');
-                        geoToggle.setAttribute('aria-expanded', 'true');
-                    }
-                }
-            }
-            
-            // Marcar como activo el link actual
-            document.querySelectorAll('.sidebar .nav-link').forEach(link => {
-                if (link.href && link.href === window.location.href) {
-                    link.classList.add('active');
-                }
-            });
-        }
-    }
-    
-    // Expandir al cargar la página
-    document.addEventListener('DOMContentLoaded', expandActiveMenus);
-    
-    // Expandir después de navegación Turbo Frame
-    document.addEventListener('turbo:frame-load', expandActiveMenus);
-    
-    // Expandir después de navegación Turbo completa
-    document.addEventListener('turbo:load', expandActiveMenus);
-    </script>
 </body>
 </html>
