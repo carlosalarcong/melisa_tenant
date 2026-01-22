@@ -15,6 +15,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class NavbarBuilder
 {
+    use MenuIconsTrait;
+    
     public function __construct(
         private PermissionStrategyFactory $strategyFactory,
         private RequestStack $requestStack
@@ -76,48 +78,48 @@ class NavbarBuilder
                     new MenuItem(
                         name: 'maintenance_basic',
                         label: 'Básico',
-                        icon: 'bx bx-folder',
+                        icon: $this->getIconForItem('maintenance_basic'),
                         children: [
                             new MenuItem(
                                 name: 'maintenance_gender',
                                 label: 'Sexo',
                                 route: 'app_maintainers_gender_index',
-                                icon: 'bx bx-circle',
+                                icon: $this->getIconForItem('maintenance_gender'),
                                 module: 'maintenance_gender'
                             ),
                             new MenuItem(
                                 name: 'maintenance_religion',
                                 label: 'Religión',
                                 route: 'app_maintainers_religion_index',
-                                icon: 'bx bx-circle',
+                                icon: $this->getIconForItem('maintenance_religion'),
                                 module: 'maintenance_religion'
                             ),
                             new MenuItem(
                                 name: 'maintenance_marital_status',
                                 label: 'Estado Conyugal',
                                 route: 'app_maintainers_marital_status_index',
-                                icon: 'bx bx-circle',
+                                icon: $this->getIconForItem('maintenance_marital_status'),
                                 module: 'maintenance_marital_status'
                             ),
                             new MenuItem(
                                 name: 'maintenance_ethnic_group',
                                 label: 'Pueblo Originario',
                                 route: 'app_maintainers_ethnic_group_index',
-                                icon: 'bx bx-circle',
+                                icon: $this->getIconForItem('maintenance_ethnic_group'),
                                 module: 'maintenance_ethnic_group'
                             ),
                             new MenuItem(
                                 name: 'maintenance_occupation',
                                 label: 'Ocupación',
                                 route: 'app_maintainers_occupation_index',
-                                icon: 'bx bx-circle',
+                                icon: $this->getIconForItem('maintenance_occupation'),
                                 module: 'maintenance_occupation'
                             ),
                             new MenuItem(
                                 name: 'maintenance_education_level',
                                 label: 'Nivel Instrucción',
                                 route: 'app_maintainers_education_level_index',
-                                icon: 'bx bx-circle',
+                                icon: $this->getIconForItem('maintenance_education_level'),
                                 module: 'maintenance_education_level'
                             ),
                             new MenuItem(
@@ -145,21 +147,21 @@ class NavbarBuilder
                                 name: 'maintenance_doctor_type',
                                 label: 'Tipo Médico',
                                 route: 'app_maintainers_doctor_type_index',
-                                icon: 'bx bx-circle',
+                                icon: $this->getIconForItem('maintenance_doctor_type'),
                                 module: 'maintenance_doctor_type'
                             ),
                             new MenuItem(
                                 name: 'maintenance_box',
                                 label: 'Box',
                                 route: 'app_maintainers_medical_box_index',
-                                icon: 'bx bx-circle',
+                                icon: $this->getIconForItem('maintenance_box'),
                                 module: 'maintenance_box'
                             ),
                             new MenuItem(
                                 name: 'maintenance_location',
                                 label: 'Ubicación',
                                 route: 'app_maintainers_location_index',
-                                icon: 'bx bx-circle',
+                                icon: $this->getIconForItem('maintenance_location'),
                                 module: 'maintenance_location'
                             ),
                             new MenuItem(
@@ -173,14 +175,14 @@ class NavbarBuilder
                                 name: 'maintenance_origin_type',
                                 label: 'Tipo Origen',
                                 route: 'app_maintainers_origin_type_index',
-                                icon: 'bx bx-circle',
+                                icon: $this->getIconForItem('maintenance_origin_type'),
                                 module: 'maintenance_origin_type'
                             ),
                             new MenuItem(
                                 name: 'maintenance_origin',
                                 label: 'Origen',
                                 route: 'app_maintainers_origin_index',
-                                icon: 'bx bx-circle',
+                                icon: $this->getIconForItem('maintenance_origin'),
                                 module: 'maintenance_origin'
                             ),
                         ]

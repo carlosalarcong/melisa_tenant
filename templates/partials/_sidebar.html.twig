@@ -24,6 +24,7 @@
 
 {# Macro recursiva para renderizar items de menú en cualquier nivel #}
 {% macro render_menu_item(item, level) %}
+    {# Iconos por defecto si no viene especificado en el item #}
     {% set icon_by_level = {
         1: 'bx bx-home-circle',
         2: 'bx bx-folder',
@@ -31,6 +32,9 @@
         4: 'bx bx-circle',
         5: 'bx bx-dot-circle-o'
     } %}
+    
+    {# CORRECCIÓN: Determinar el icono explícitamente #}
+    {% set item_icon = item.icon is defined and item.icon ? item.icon : icon_by_level[level] %}
     
     {% if item.children is empty %}
         {# Item final sin hijos #}
@@ -42,7 +46,7 @@
                    data-turbo-action="advance"
                {% endif %}
                title="{{ item.label }}">
-                <i class="{{ item.icon|default(icon_by_level[level]) }}"></i>
+                <i class="{{ item_icon }}"></i>
                 <span class="nav-link-text">{{ item.label }}</span>
             </a>
         </li>
@@ -58,7 +62,7 @@
                aria-expanded="{{ shouldExpand ? 'true' : 'false' }}" 
                aria-controls="sidebar{{ item.name|capitalize }}"
                title="{{ item.label }}">
-                <i class="{{ item.icon|default(icon_by_level[level]) }}"></i>
+                <i class="{{ item_icon }}"></i>
                 <span class="nav-link-text">{{ item.label }}</span>
             </a>
             

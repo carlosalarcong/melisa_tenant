@@ -64,7 +64,7 @@ services:
     # MenuExtension - Hace menu_items disponible globalmente en Twig
     App\Twig\MenuExtension:
         arguments:
-            $menuBuilder: '@App\Service\MenuBuilder'
+            $menuBuilder: '@App\Service\MenuBuilder'  # Forzar uso del MenuBuilder correcto, NO NavbarBuilder
         tags: ['twig.extension']
 
     # Event Listeners

@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Service\Menu\MenuIconsTrait;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -12,6 +13,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class MenuBuilder
 {
+    use MenuIconsTrait;
+    
     public function __construct(
         private RequestStack $requestStack
     ) {}
@@ -25,7 +28,7 @@ class MenuBuilder
             [
                 'name' => 'dashboard',
                 'label' => 'Dashboard',
-                'icon' => 'bx bx-home-circle',
+                'icon' => $this->getIconForItem('dashboard'),
                 'route' => 'app_dashboard_default',
                 'module' => null,
                 'children' => []
@@ -33,7 +36,7 @@ class MenuBuilder
             [
                 'name' => 'pacientes',
                 'label' => 'Pacientes',
-                'icon' => 'bx bx-group',
+                'icon' => $this->getIconForItem('pacientes'),
                 'route' => null,
                 'module' => null,
                 'children' => []
@@ -41,7 +44,7 @@ class MenuBuilder
             [
                 'name' => 'citas',
                 'label' => 'Citas',
-                'icon' => 'bx bx-calendar-check',
+                'icon' => $this->getIconForItem('citas'),
                 'route' => null,
                 'module' => null,
                 'children' => []
@@ -49,19 +52,19 @@ class MenuBuilder
             [
                 'name' => 'mantenedores',
                 'label' => 'Mantenedores',
-                'icon' => 'bx bx-data',
+                'icon' => $this->getIconForItem('mantenedores'),
                 'module' => null,
                 'children' => [
                     [
                         'name' => 'maintenance_basic',
                         'label' => 'Mantenimiento Básico',
-                        'icon' => 'bx bx-folder',
+                        'icon' => $this->getIconForItem('maintenance_basic'),
                         'module' => null,
                         'children' => [
                             [
                                 'name' => 'gender',
                                 'label' => 'Sexo',
-                                'icon' => 'bx bx-male-female',
+                                'icon' => $this->getIconForItem('gender'),
                                 'route' => 'app_maintainers_gender_index',
                                 'module' => 'maintenance_basic',
                                 'children' => []
@@ -69,7 +72,7 @@ class MenuBuilder
                             [
                                 'name' => 'marital_status',
                                 'label' => 'Estado Civil',
-                                'icon' => 'bx bx-heart',
+                                'icon' => $this->getIconForItem('marital_status'),
                                 'route' => 'app_maintainers_marital_status_index',
                                 'module' => 'maintenance_basic',
                                 'children' => []
@@ -77,7 +80,7 @@ class MenuBuilder
                             [
                                 'name' => 'occupation',
                                 'label' => 'Ocupación',
-                                'icon' => 'bx bx-briefcase',
+                                'icon' => $this->getIconForItem('occupation'),
                                 'route' => 'app_maintainers_occupation_index',
                                 'module' => 'maintenance_basic',
                                 'children' => []
@@ -85,7 +88,7 @@ class MenuBuilder
                             [
                                 'name' => 'religion',
                                 'label' => 'Religión',
-                                'icon' => 'bx bx-church',
+                                'icon' => $this->getIconForItem('religion'),
                                 'route' => 'app_maintainers_religion_index',
                                 'module' => 'maintenance_basic',
                                 'children' => []
@@ -93,7 +96,7 @@ class MenuBuilder
                             [
                                 'name' => 'location',
                                 'label' => 'Localización',
-                                'icon' => 'bx bx-map',
+                                'icon' => $this->getIconForItem('location'),
                                 'route' => 'app_maintainers_location_index',
                                 'module' => 'maintenance_basic',
                                 'children' => []
@@ -101,7 +104,7 @@ class MenuBuilder
                             [
                                 'name' => 'doctor_type',
                                 'label' => 'Tipo de Doctor',
-                                'icon' => 'bx bx-user-plus',
+                                'icon' => $this->getIconForItem('doctor_type'),
                                 'route' => 'app_maintainers_doctor_type_index',
                                 'module' => 'maintenance_basic',
                                 'children' => []
@@ -109,7 +112,7 @@ class MenuBuilder
                             [
                                 'name' => 'education_level',
                                 'label' => 'Nivel de Educación',
-                                'icon' => 'bx bx-book',
+                                'icon' => $this->getIconForItem('education_level'),
                                 'route' => 'app_maintainers_education_level_index',
                                 'module' => 'maintenance_basic',
                                 'children' => []
@@ -117,7 +120,7 @@ class MenuBuilder
                             [
                                 'name' => 'ethnic_group',
                                 'label' => 'Grupo Étnico',
-                                'icon' => 'bx bx-group',
+                                'icon' => $this->getIconForItem('ethnic_group'),
                                 'route' => 'app_maintainers_ethnic_group_index',
                                 'module' => 'maintenance_basic',
                                 'children' => []
@@ -125,7 +128,7 @@ class MenuBuilder
                             [
                                 'name' => 'job_position',
                                 'label' => 'Cargo',
-                                'icon' => 'bx bx-id-card',
+                                'icon' => $this->getIconForItem('job_position'),
                                 'route' => 'app_maintainers_job_position_index',
                                 'module' => 'maintenance_basic',
                                 'children' => []
@@ -133,7 +136,7 @@ class MenuBuilder
                             [
                                 'name' => 'medical_box',
                                 'label' => 'Caja Médica',
-                                'icon' => 'bx bx-clinic',
+                                'icon' => $this->getIconForItem('medical_box'),
                                 'route' => 'app_maintainers_medical_box_index',
                                 'module' => 'maintenance_basic',
                                 'children' => []
@@ -141,7 +144,7 @@ class MenuBuilder
                             [
                                 'name' => 'origin',
                                 'label' => 'Origen',
-                                'icon' => 'bx bx-map-pin',
+                                'icon' => $this->getIconForItem('origin'),
                                 'route' => 'app_maintainers_origin_index',
                                 'module' => 'maintenance_basic',
                                 'children' => []
@@ -149,7 +152,7 @@ class MenuBuilder
                             [
                                 'name' => 'origin_type',
                                 'label' => 'Tipo de Origen',
-                                'icon' => 'bx bx-compass',
+                                'icon' => $this->getIconForItem('origin_type'),
                                 'route' => 'app_maintainers_origin_type_index',
                                 'module' => 'maintenance_basic',
                                 'children' => []
@@ -161,7 +164,7 @@ class MenuBuilder
             [
                 'name' => 'reportes',
                 'label' => 'Reportes',
-                'icon' => 'bx bx-bar-chart-alt-2',
+                'icon' => $this->getIconForItem('reportes'),
                 'route' => null,
                 'module' => null,
                 'children' => []
@@ -169,7 +172,7 @@ class MenuBuilder
             [
                 'name' => 'configuracion',
                 'label' => 'Configuración',
-                'icon' => 'bx bx-cog',
+                'icon' => $this->getIconForItem('configuracion'),
                 'route' => null,
                 'module' => null,
                 'children' => []
