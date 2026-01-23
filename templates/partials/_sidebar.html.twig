@@ -14,19 +14,9 @@
         <span>Principal</span>
     </div>
     <ul class="nav flex-column">
-        {% if menu_items is defined %}
-            {% for item in menu_items %}
-                {{ _self.render_menu_item(item, 1) }}
-            {% endfor %}
-        {% else %}
-            {# Fallback: menú estático si no hay menu_items #}
-            <li class="nav-item">
-                <a class="nav-link {% if app.request.pathinfo == '/' %}active{% endif %}" href="/">
-                    <i class="fas fa-home"></i>
-                    <span class="nav-link-text">Dashboard</span>
-                </a>
-            </li>
-        {% endif %}
+        {% for item in menu_items %}
+            {{ _self.render_menu_item(item, 1) }}
+        {% endfor %}
     </ul>
     
     </div> <!-- Cierre del contenedor con scroll -->
@@ -34,40 +24,51 @@
 
 {# Macro recursiva para renderizar items de menú en cualquier nivel #}
 {% macro render_menu_item(item, level) %}
+    {# Iconos por defecto si no viene especificado en el item #}
     {% set icon_by_level = {
-        1: item.icon|default('bx bx-home-circle'),
-        2: item.icon|default('bx bx-folder'),
-        3: item.icon|default('bx bx-chevron-right'),
-        4: item.icon|default('bx bx-circle'),
-        5: item.icon|default('bx bx-dot-circle-o')
+        1: 'bx bx-home-circle',
+        2: 'bx bx-folder',
+        3: 'bx bx-chevron-right',
+        4: 'bx bx-circle',
+        5: 'bx bx-dot-circle-o'
     } %}
+    
+    {# CORRECCIÓN: Determinar el icono explícitamente #}
+    {% set item_icon = item.icon is defined and item.icon ? item.icon : icon_by_level[level] %}
     
     {% if item.children is empty %}
         {# Item final sin hijos #}
         <li class="nav-item">
-            <a class="nav-link nav-level-{{ level }} {% if item.route and app.request.get('_route') == item.route %}active{% endif %}" 
-               href="{{ item.route ? path(item.route) : '#' }}"
+            <a class="nav-link nav-level-{{ level }} {% if item.is_active|default(false) %}active{% endif %}" 
+               href="{{ (item.route is defined and item.route) ? path(item.route) : '#' }}"
+               {% if item.module|default(false) and 'maintenance_' in item.module %}
+                   data-turbo-frame="maintainer-content"
+                   data-turbo-action="advance"
+               {% endif %}
                title="{{ item.label }}">
-                <i class="{{ icon_by_level[level] }}"></i>
+                <i class="{{ item_icon }}"></i>
                 <span class="nav-link-text">{{ item.label }}</span>
             </a>
         </li>
     {% else %}
         {# Item con hijos (colapsable) #}
+        {% set shouldExpand = item.should_expand|default(false) %}
+        
         <li class="nav-item">
-            <a class="nav-link menu-link nav-level-{{ level }} {% if item.name in ['mantenedores', 'maintenance_basic', 'maintenance_clinical', 'maintenance_geographic'] and '/maintenance' in app.request.pathinfo %}active{% else %}collapsed{% endif %}" 
+            <a class="nav-link menu-link nav-level-{{ level }} {% if not shouldExpand %}collapsed{% endif %}" 
                href="#sidebar{{ item.name|capitalize }}" 
                data-bs-toggle="collapse" 
                role="button" 
-               aria-expanded="false" 
+               aria-expanded="{{ shouldExpand ? 'true' : 'false' }}" 
                aria-controls="sidebar{{ item.name|capitalize }}"
                title="{{ item.label }}">
-                <i class="{{ icon_by_level[level] }}"></i>
+                <i class="{{ item_icon }}"></i>
                 <span class="nav-link-text">{{ item.label }}</span>
             </a>
             
             {# Submenú colapsable recursivo #}
-            <div class="collapse menu-dropdown menu-level-{{ level + 1 }}" id="sidebar{{ item.name|capitalize }}">
+            <div class="collapse menu-dropdown menu-level-{{ level + 1 }} {% if shouldExpand %}show{% endif %}" 
+                 id="sidebar{{ item.name|capitalize }}">
                 <ul class="nav nav-sm flex-column">
                     {% for child in item.children %}
                         {{ _self.render_menu_item(child, level + 1) }}

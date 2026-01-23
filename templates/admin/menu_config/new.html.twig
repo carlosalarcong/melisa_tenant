@@ -1,0 +1,173 @@
+{% extends 'app_layout.html.twig' %}
+
+{% block title %}{{ menu_item.id ? 'Editar' : 'Nuevo' }} Item del Menú - {{ tenant_name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="bx bx-{{ menu_item.id ? 'edit' : 'plus' }}"></i>
+                        {{ menu_item.id ? 'Editar' : 'Nuevo' }} Item del Menú
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nombre (ID único) *</label>
+                                <input type="text" 
+                                       name="name" 
+                                       class="form-control" 
+                                       value="{{ menu_item.name ?? '' }}"
+                                       required
+                                       placeholder="ej: maintenance_gender">
+                                <small class="text-muted">Identificador único sin espacios</small>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Label (Texto visible) *</label>
+                                <input type="text" 
+                                       name="label" 
+                                       class="form-control" 
+                                       value="{{ menu_item.label ?? '' }}"
+                                       required
+                                       placeholder="ej: Sexo">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Ruta (opcional)</label>
+                                <input type="text" 
+                                       name="route" 
+                                       class="form-control" 
+                                       value="{{ menu_item.route ?? '' }}"
+                                       placeholder="ej: app_maintainers_gender_index">
+                                <small class="text-muted">Nombre de la ruta Symfony</small>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Icono (Boxicons)</label>
+                                <input type="text" 
+                                       name="icon" 
+                                       class="form-control" 
+                                       value="{{ menu_item.icon ?? '' }}"
+                                       placeholder="ej: bx bx-male-female">
+                                <small class="text-muted">
+                                    Ver <a href="https://boxicons.com/" target="_blank">Boxicons</a>
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Módulo</label>
+                                <input type="text" 
+                                       name="module" 
+                                       class="form-control" 
+                                       value="{{ menu_item.module ?? '' }}"
+                                       placeholder="ej: maintenance_basic">
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Posición</label>
+                                <input type="number" 
+                                       name="position" 
+                                       class="form-control" 
+                                       value="{{ menu_item.position ?? 0 }}"
+                                       min="0">
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Item Padre</label>
+                                <select name="parent_id" class="form-select">
+                                    <option value="">Ninguno (Raíz)</option>
+                                    {% for item in all_items %}
+                                        {% if item.id != menu_item.id %}
+                                            <option value="{{ item.id }}" 
+                                                    {{ menu_item.parent and menu_item.parent.id == item.id ? 'selected' : '' }}>
+                                                {{ item.label }}
+                                            </option>
+                                            {% for child in item.children %}
+                                                {% if child.id != menu_item.id %}
+                                                    <option value="{{ child.id }}"
+                                                            {{ menu_item.parent and menu_item.parent.id == child.id ? 'selected' : '' }}>
+                                                        └─ {{ child.label }}
+                                                    </option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Roles Requeridos (separados por coma)</label>
+                            <input type="text" 
+                                   name="required_roles" 
+                                   class="form-control" 
+                                   value="{{ menu_item.requiredRoles ? menu_item.requiredRoles|join(', ') : '' }}"
+                                   placeholder="ej: ROLE_ADMIN, ROLE_DOCTOR">
+                            <small class="text-muted">Dejar vacío para acceso público</small>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="form-check form-switch">
+                                    <input type="checkbox" 
+                                           name="enabled" 
+                                           class="form-check-input" 
+                                           id="enabled"
+                                           {{ menu_item.enabled ?? true ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="enabled">
+                                        Habilitado
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <div class="form-check form-switch">
+                                    <input type="checkbox" 
+                                           name="visible_in_sidebar" 
+                                           class="form-check-input" 
+                                           id="visible_in_sidebar"
+                                           {{ menu_item.visibleInSidebar ?? true ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="visible_in_sidebar">
+                                        Visible en Sidebar
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <div class="form-check form-switch">
+                                    <input type="checkbox" 
+                                           name="requires_auth" 
+                                           class="form-check-input" 
+                                           id="requires_auth"
+                                           {{ menu_item.requiresAuth ?? true ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="requires_auth">
+                                        Requiere Autenticación
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ path('admin_menu_config_index') }}" class="btn btn-secondary">
+                                <i class="bx bx-arrow-back"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bx bx-save"></i> Guardar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
