@@ -25,8 +25,14 @@ class MaritalStatus
     #[ORM\Column(length: 2, nullable: true)]
     private ?string $maritalStatusCodeHl7 = null;
 
-    #[ORM\Column(options: ["default" => true])]
+    #[ORM\Column(name: 'is_active', type: 'boolean', options: ["default" => true])]
     private ?bool $isActive = true;
+
+    #[ORM\Column(type: 'datetime')]
+    private \DateTimeInterface $createdAt;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $updatedAt = null;
 
     /**
      * @var Collection<int, Person>
@@ -37,6 +43,7 @@ class MaritalStatus
     public function __construct()
     {
         $this->people = new ArrayCollection();
+        $this->createdAt = new \DateTime();
     }
 
     public function getId(): ?int
@@ -77,6 +84,22 @@ class MaritalStatus
     {
         $this->maritalStatusCodeHl7 = $maritalStatusCodeHl7;
 
+        return $this;
+    }
+
+    public function getCreatedAt(): \DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
         return $this;
     }
 

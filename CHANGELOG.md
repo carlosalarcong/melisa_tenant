@@ -5,6 +5,81 @@ Todos los cambios notables de este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-01-23
+
+### Agregado
+
+#### Sistema de Menú Dinámico Configurable (BD + Caché)
+
+- **Nueva Entidad Tenant:**
+  - `MenuItem`: Entidad jerárquica auto-referencial con soporte para estructura multi-nivel ilimitada
+  - Campos: name, label, route, icon, module, parent, children, position, enabled, visibleInSidebar, requiresAuth, requiredRoles (JSON)
+  - Relaciones: ManyToOne/OneToMany consigo misma para jerarquía, CASCADE delete en parent
+
+- **MenuItemRepository:**
+  - `getMenuStructure()`: Obtiene solo items raíz habilitados y visibles
+  - `getMenuWithChildren()`: Eager loading de 3 niveles (m, c, cc) para optimizar queries
+  - `getAllForAdmin()`: Obtiene todos los items incluyendo deshabilitados para interfaz administrativa
+  - `getNextPosition()`: Calcula siguiente posición para ordenamiento
+  - `reorderAfterDelete()`: Actualiza posiciones después de eliminar items
+
+- **MenuDefinition Service (Refactorizado):**
+  - Estrategia de 3 niveles: Cache → BD → Fallback hardcoded
+  - `getMenuStructure($tenantId)`: Método principal con caché multi-tenant (TTL: 1 hora)
+  - `invalidateCache($tenantId)`: Elimina caché después de modificaciones
+  - `convertEntitiesToArray()`: Convierte entidades MenuItem a arrays compatibles
+  - Cache keys por tenant: `menu_structure_tenant_{$tenantId}`
+  - Logging opcional con nullsafe operator (`?->`)
+
+- **MenuConfigController (Nuevo):**
+  - CRUD completo para configuración de menús en `/admin/menu-config`
+  - Acciones: index, new, edit, delete, toggle (enable/disable), clearCache
+  - Invalidación automática de caché después de cada modificación
+  - Procesamiento de formularios con mapeo de roles JSON
+
+- **Plantillas Administrativas:**
+  - `admin/menu_config/index.html.twig`: Vista de tabla con macro recursivo para jerarquía ilimitada
+  - `admin/menu_config/new.html.twig`: Formulario completo con selector de parent, roles, y checkboxes
+  - `admin/menu_config/edit.html.twig`: Reutiliza formulario de new.html.twig
+  - Integración con Boxicons para selección de iconos
+
+- **Migración Hakam:**
+  - `Version20260123122407`: CREATE TABLE menu_items con FK auto-referencial
+  - 22 items iniciales: 6 raíz, 3 subcategorías, 12 en mantenedores básico, 1 configuración
+  - Estructura: Dashboard, Pacientes, Mantenedores (con subcategoría Básico), Configuración
+
+- **Mejoras en Builders:**
+  - `MenuBuilder`: Ahora obtiene tenantId de sesión y delega estructura a MenuDefinition
+  - `PermissionAwareMenuBuilder` (renombrado): Agrega soporte multi-tenant
+  - Ambos extraen tenant_id de RequestStack para cache por tenant
+
+### Corregido
+
+- **Error de Template en Sidebar:**
+  - Línea 43 de `_sidebar.html.twig`: Agregado check `(item.route is defined and item.route)`
+  - Previene RuntimeError al acceder a clave 'route' inexistente en items padre
+
+- **Conflicto Turbo Drive en JavaScript:**
+  - `app_layout.html.twig`: Encapsulado código sidebar en IIFE `(function() { ... })()`
+  - Agregado `data-turbo-eval="false"` en etiqueta script
+  - Agregado null checks: `if (!sidebar || !mainContent || !sidebarToggle) return;`
+  - Previene error "Identifier 'sidebar' has already been declared" en navegación SPA
+
+### Refactorizado
+
+- **Renombrado NavbarBuilder → PermissionAwareMenuBuilder:**
+  - Nombre más descriptivo que refleja su propósito real (filtrado por permisos)
+  - Actualizado en `services.yaml` y `DefaultController`
+
+- **Reorganización de Archivos:**
+  - Movido `MenuBuilder.php` de `src/Service/` a `src/Service/Menu/`
+  - Mayor cohesión: todos los servicios de menú en mismo directorio
+
+- **MenuDefinition como Única Fuente de Verdad:**
+  - Eliminada duplicación de estructura de 283 líneas entre builders
+  - Ambos builders ahora consumen MenuDefinition
+  - Estructura hardcoded se mantiene como fallback de seguridad
+
 ## [2.0.0] - 2026-01-21
 
 ### Agregado
