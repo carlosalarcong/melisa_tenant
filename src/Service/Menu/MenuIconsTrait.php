@@ -6,7 +6,7 @@ namespace App\Service\Menu;
  * Trait MenuIconsTrait
  * 
  * Define los iconos de Boxicons para todos los items del menú.
- * Usado tanto por MenuBuilder como NavbarBuilder para mantener consistencia.
+ * Usado por MenuDefinition para mantener consistencia de iconos en todo el sistema.
  */
 trait MenuIconsTrait
 {

@@ -4,7 +4,7 @@ namespace App\Controller\Dashboard\Default;
 
 use App\Controller\AbstractTenantAwareController;
 use App\Service\Dashboard\DashboardMetricsService;
-use App\Service\Menu\NavbarBuilder;
+use App\Service\Menu\PermissionAwareMenuBuilder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -16,7 +16,7 @@ class DefaultController extends AbstractTenantAwareController
 {
     public function __construct(
         private DashboardMetricsService $metricsService,
-        private NavbarBuilder $navbarBuilder
+        private PermissionAwareMenuBuilder $navbarBuilder
     ) {}
 
     #[Route('/dashboard', name: 'app_dashboard_default')]
@@ -58,7 +58,7 @@ class DefaultController extends AbstractTenantAwareController
         $metrics = $this->metricsService->getDashboardMetrics($tenant, $userRoles);
         $modules = $this->metricsService->getAvailableModules($userRoles);
         
-        // Construir menú filtrado por permisos del tenant
+        // Construir menú filtrado por permisos usando PermissionAwareMenuBuilder
         $menuItems = $this->navbarBuilder->buildMenu($userRoles);
         
         // Render del template moderno

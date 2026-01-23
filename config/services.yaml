@@ -57,14 +57,15 @@ services:
         tags: ['twig.extension']
 
     # MenuBuilder Service - Construye el menú de navegación
-    App\Service\MenuBuilder:
+    App\Service\Menu\MenuBuilder:
         arguments:
             $requestStack: '@request_stack'
+            $menuDefinition: '@App\Service\Menu\MenuDefinition'
 
     # MenuExtension - Hace menu_items disponible globalmente en Twig
     App\Twig\MenuExtension:
         arguments:
-            $menuBuilder: '@App\Service\MenuBuilder'  # Forzar uso del MenuBuilder correcto, NO NavbarBuilder
+            $menuBuilder: '@App\Service\Menu\MenuBuilder'
         tags: ['twig.extension']
 
     # Event Listeners
