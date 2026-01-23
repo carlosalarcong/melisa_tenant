@@ -70,7 +70,7 @@
                             Exportar
                         </button>
                         {% if create_route is defined %}
-                            <a href="{{ path(create_route) }}" class="btn btn-primary d-flex align-items-center gap-2" style="box-shadow: 0 4px 12px rgba(94, 114, 228, 0.3);">
+                            <a href="{{ path(create_route) }}" class="btn btn-primary d-flex align-items-center gap-2" style="box-shadow: 0 4px 12px rgba(94, 114, 228, 0.3);" data-turbo-frame="maintainer-content">
                                 <i class="bx bx-plus"></i>
                                 Nuevo Registro
                             </a>
