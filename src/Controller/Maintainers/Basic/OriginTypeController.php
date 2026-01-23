@@ -6,6 +6,7 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\OriginType;
 use App\Form\Maintainers\OriginTypeType;
 use App\Repository\Tenant\OriginTypeRepository;
+use Doctrine\ORM\QueryBuilder;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -50,9 +51,10 @@ class OriginTypeController extends AbstractMantenedorController
         return $this->handleDelete($request, $id);
     }
 
-    protected function getData(Request $request): array
+    protected function getData(Request $request): array|QueryBuilder
     {
-        return $this->repository->findAll();
+        return $this->repository->createQueryBuilder('ot')
+            ->orderBy('ot.id', 'DESC');
     }
 
     protected function getColumns(): array

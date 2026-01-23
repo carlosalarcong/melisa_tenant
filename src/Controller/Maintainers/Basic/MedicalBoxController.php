@@ -6,6 +6,7 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\MedicalBox;
 use App\Form\Maintainers\MedicalBoxType;
 use App\Repository\Tenant\MedicalBoxRepository;
+use Doctrine\ORM\QueryBuilder;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -50,9 +51,10 @@ class MedicalBoxController extends AbstractMantenedorController
         return $this->handleDelete($request, $id);
     }
 
-    protected function getData(Request $request): array
+    protected function getData(Request $request): array|QueryBuilder
     {
-        return $this->repository->findAll();
+        return $this->repository->createQueryBuilder('mb')
+            ->orderBy('mb.id', 'DESC');
     }
 
     protected function getColumns(): array

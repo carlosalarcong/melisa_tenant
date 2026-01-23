@@ -6,6 +6,7 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\InsuranceAdministrator;
 use App\Form\Maintainers\InsuranceAdministratorType;
 use App\Repository\Tenant\InsuranceAdministratorRepository;
+use Doctrine\ORM\QueryBuilder;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -50,9 +51,10 @@ class InsuranceAdministratorController extends AbstractMantenedorController
         return $this->handleDelete($request, $id);
     }
 
-    protected function getData(Request $request): array
+    protected function getData(Request $request): array|QueryBuilder
     {
-        return $this->repository->findAll();
+        return $this->repository->createQueryBuilder('ia')
+            ->orderBy('ia.id', 'DESC');
     }
 
     protected function getColumns(): array

@@ -6,6 +6,7 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\MaritalStatus;
 use App\Form\Maintainers\MaritalStatusType;
 use App\Repository\Tenant\MaritalStatusRepository;
+use Doctrine\ORM\QueryBuilder;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -50,9 +51,10 @@ class MaritalStatusController extends AbstractMantenedorController
         return $this->handleDelete($request, $id);
     }
 
-    protected function getData(Request $request): array
+    protected function getData(Request $request): array|QueryBuilder
     {
-        return $this->repository->findAll();
+        return $this->repository->createQueryBuilder('ms')
+            ->orderBy('ms.id', 'DESC');
     }
 
     protected function getColumns(): array

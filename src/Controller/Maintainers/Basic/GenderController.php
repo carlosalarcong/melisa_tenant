@@ -6,6 +6,7 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\Gender;
 use App\Form\Maintainers\GenderType;
 use App\Repository\Tenant\GenderRepository;
+use Doctrine\ORM\QueryBuilder;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -55,10 +56,10 @@ class GenderController extends AbstractMantenedorController
     // Implementación de métodos abstractos
     // ========================================================================
 
-    protected function getData(Request $request): array
+    protected function getData(Request $request): array|QueryBuilder
     {
-        // Todos los géneros - sin filtrar por tenant (dato maestro compartido)
-        return $this->genderRepository->findAll();
+        return $this->genderRepository->createQueryBuilder('g')
+            ->orderBy('g.id', 'DESC');
     }
 
     protected function getColumns(): array

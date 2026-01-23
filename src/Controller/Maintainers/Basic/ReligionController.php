@@ -6,6 +6,7 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\Religion;
 use App\Form\Maintainers\ReligionType;
 use App\Repository\Tenant\ReligionRepository;
+use Doctrine\ORM\QueryBuilder;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -55,10 +56,10 @@ class ReligionController extends AbstractMantenedorController
     // Implementación de métodos abstractos
     // ========================================================================
 
-    protected function getData(Request $request): array
+    protected function getData(Request $request): array|QueryBuilder
     {
-        // Todas las religiones - sin filtrar por tenant (dato maestro compartido)
-        return $this->religionRepository->findAll();
+        return $this->religionRepository->createQueryBuilder('r')
+            ->orderBy('r.id', 'DESC');
     }
 
     protected function getColumns(): array
