@@ -22,7 +22,23 @@ class MenuBuilder
      */
     public function buildMenu(): array
     {
-        return $this->menuDefinition->getMenuStructure();
+        // Obtener tenant ID desde la sesión o request
+        $tenantId = $this->getTenantId();
+        return $this->menuDefinition->getMenuStructure($tenantId);
+    }
+
+    /**
+     * Obtiene el tenant ID desde la sesión actual.
+     */
+    private function getTenantId(): string
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
+            return 'default';
+        }
+
+        $session = $request->getSession();
+        return (string) ($session->get('tenant_id') ?? 'default');
     }
 
     /**

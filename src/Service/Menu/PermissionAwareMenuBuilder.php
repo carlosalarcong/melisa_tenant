@@ -48,8 +48,24 @@ class PermissionAwareMenuBuilder
      */
     private function getFullMenuStructure(): array
     {
-        $menuStructure = $this->menuDefinition->getMenuStructure();
+        // Obtener tenant ID desde la sesión
+        $tenantId = $this->getTenantId();
+        $menuStructure = $this->menuDefinition->getMenuStructure($tenantId);
         return $this->convertArraysToMenuItems($menuStructure);
+    }
+
+    /**
+     * Obtiene el tenant ID desde la sesión actual.
+     */
+    private function getTenantId(): string
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
+            return 'default';
+        }
+
+        $session = $request->getSession();
+        return (string) ($session->get('tenant_id') ?? 'default');
     }
 
     /**

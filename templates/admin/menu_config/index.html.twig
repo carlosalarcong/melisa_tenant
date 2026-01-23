@@ -1,0 +1,133 @@
+{% extends 'app_layout.html.twig' %}
+
+{% block title %}Configuración de Menú - {{ tenant_name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="bx bx-menu"></i> Configuración del Menú
+                    </h4>
+                    <div>
+                        <form method="POST" action="{{ path('admin_menu_config_clear_cache') }}" class="d-inline">
+                            <button type="submit" class="btn btn-warning btn-sm">
+                                <i class="bx bx-refresh"></i> Limpiar Caché
+                            </button>
+                        </form>
+                        <a href="{{ path('admin_menu_config_new') }}" class="btn btn-primary btn-sm">
+                            <i class="bx bx-plus"></i> Nuevo Item
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% for message in app.flashes('success') %}
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+
+                    <div class="alert alert-info">
+                        <i class="bx bx-info-circle"></i>
+                        <strong>Información:</strong> El menú se carga desde la base de datos con caché de 1 hora. 
+                        Si está vacío, se usa la estructura por defecto. Usa "Limpiar Caché" después de modificar items.
+                    </div>
+
+                    {% if menu_items is empty %}
+                        <div class="alert alert-warning">
+                            <i class="bx bx-error-circle"></i>
+                            No hay items de menú configurados. Se está usando la estructura por defecto.
+                            <a href="{{ path('admin_menu_config_new') }}" class="alert-link">Crear primer item</a>
+                        </div>
+                    {% else %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th width="50">Pos</th>
+                                        <th>Nombre / Label</th>
+                                        <th>Ruta</th>
+                                        <th>Icono</th>
+                                        <th>Padre</th>
+                                        <th width="100" class="text-center">Estado</th>
+                                        <th width="150" class="text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in menu_items %}
+                                        {{ _self.render_menu_row(item) }}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% macro render_menu_row(item, level = 0) %}
+    <tr>
+        <td>{{ item.position }}</td>
+        <td>
+            {% for i in 0..level %}
+                {% if i > 0 %}└─{% endif %}
+            {% endfor %}
+            <strong>{{ item.name }}</strong>
+            <br>
+            <small class="text-muted">{{ item.label }}</small>
+        </td>
+        <td>
+            {% if item.route %}
+                <code>{{ item.route }}</code>
+            {% else %}
+                <span class="text-muted">-</span>
+            {% endif %}
+        </td>
+        <td>
+            {% if item.icon %}
+                <i class="{{ item.icon }}"></i> <code class="small">{{ item.icon }}</code>
+            {% else %}
+                <span class="text-muted">-</span>
+            {% endif %}
+        </td>
+        <td>
+            {% if item.parent %}
+                {{ item.parent.label }}
+            {% else %}
+                <span class="text-muted">Raíz</span>
+            {% endif %}
+        </td>
+        <td class="text-center">
+            <form method="POST" action="{{ path('admin_menu_config_toggle', {id: item.id}) }}" class="d-inline">
+                <button type="submit" class="btn btn-sm {{ item.enabled ? 'btn-success' : 'btn-secondary' }}">
+                    <i class="bx bx-{{ item.enabled ? 'check' : 'x' }}"></i>
+                    {{ item.enabled ? 'Activo' : 'Inactivo' }}
+                </button>
+            </form>
+        </td>
+        <td class="text-center">
+            <a href="{{ path('admin_menu_config_edit', {id: item.id}) }}" 
+               class="btn btn-sm btn-info" title="Editar">
+                <i class="bx bx-edit"></i>
+            </a>
+            <form method="POST" 
+                  action="{{ path('admin_menu_config_delete', {id: item.id}) }}" 
+                  class="d-inline"
+                  onsubmit="return confirm('¿Eliminar este item del menú?');">
+                <button type="submit" class="btn btn-sm btn-danger" title="Eliminar">
+                    <i class="bx bx-trash"></i>
+                </button>
+            </form>
+        </td>
+    </tr>
+    
+    {% for child in item.children %}
+        {{ _self.render_menu_row(child, level + 1) }}
+    {% endfor %}
+{% endmacro %}
