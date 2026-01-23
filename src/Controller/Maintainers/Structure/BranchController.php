@@ -1,0 +1,128 @@
+<?php
+
+namespace App\Controller\Maintainers\Structure;
+
+use App\Controller\AbstractMantenedorController;
+use App\Entity\Tenant\Branch;
+use App\Form\Maintainers\BranchType;
+use App\Repository\Tenant\BranchRepository;
+use Doctrine\ORM\QueryBuilder;
+use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+
+/**
+ * Branch Controller
+ * 
+ * Manages branches (sucursales) of the organization
+ */
+#[Route('/maintainers/structure/branch')]
+class BranchController extends AbstractMantenedorController
+{
+    public function __construct(
+        private BranchRepository $branchRepository,
+        TenantEntityManager $tenantEntityManager
+    ) {
+        parent::__construct($tenantEntityManager);
+    }
+
+    #[Route('', name: 'app_maintainers_branch_index', methods: ['GET'])]
+    public function index(Request $request): Response
+    {
+        return $this->handleIndex($request);
+    }
+
+    #[Route('/create', name: 'app_maintainers_branch_create', methods: ['GET', 'POST'])]
+    public function create(Request $request): Response
+    {
+        return $this->handleCreate($request);
+    }
+
+    #[Route('/{id}/edit', name: 'app_maintainers_branch_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, int $id): Response
+    {
+        return $this->handleEdit($request, $id);
+    }
+
+    #[Route('/{id}/delete', name: 'app_maintainers_branch_delete', methods: ['POST'])]
+    public function delete(Request $request, int $id): Response
+    {
+        return $this->handleDelete($request, $id);
+    }
+
+    // ========================================================================
+    // Implementation of abstract methods
+    // ========================================================================
+
+    protected function getData(Request $request): array|QueryBuilder
+    {
+        return $this->branchRepository->createQueryBuilder('b')
+            ->orderBy('b.name', 'ASC');
+    }
+
+    protected function getColumns(): array
+    {
+        return [
+            'name',
+            'code',
+            'city',
+            'region',
+            'phone',
+            'email',
+            'isActive'
+        ];
+    }
+
+    protected function getTemplatePath(): string
+    {
+        return 'maintainers/structure/branch/index.html.twig';
+    }
+
+    protected function getFormType(): string
+    {
+        return BranchType::class;
+    }
+
+    protected function createNewEntity(): object
+    {
+        return new Branch();
+    }
+
+    protected function getEntityName(): string
+    {
+        return 'Sucursal';
+    }
+
+    protected function getItemsPerPage(): int
+    {
+        return 15;
+    }
+
+    protected function getIndexRoute(): string
+    {
+        return 'app_maintainers_branch_index';
+    }
+
+    protected function getPageTitle(string $action = 'index'): string
+    {
+        return match($action) {
+            'index' => 'Sucursales',
+            'create' => 'Crear Sucursal',
+            'edit' => 'Editar Sucursal',
+            default => 'Sucursales'
+        };
+    }
+
+    // ========================================================================
+    // Optional hooks
+    // ========================================================================
+
+    protected function beforeSave(object $entity, Request $request): void
+    {
+        // Set default active state for new entities
+        if ($entity->getId() === null) {
+            $entity->setActive(true);
+        }
+    }
+}
