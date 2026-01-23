@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use Doctrine\ORM\EntityManagerInterface;
+use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -36,19 +36,33 @@ use Symfony\Component\Routing\Attribute\Route;
  */
 abstract class AbstractMantenedorController extends AbstractTenantAwareController
 {
-    protected EntityManagerInterface $entityManager;
+    protected TenantEntityManager $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(TenantEntityManager $entityManager)
     {
         $this->entityManager = $entityManager;
     }
 
     /**
      * Detecta si la petición viene de un Turbo Frame
+     * 
+     * Turbo Frame puede enviar peticiones de dos formas:
+     * 1. Con header Turbo-Frame cuando se hace submit de formulario
+     * 2. Con Sec-Fetch-Dest: turboframe cuando se carga via src attribute
      */
     protected function isTurboFrameRequest(Request $request): bool
     {
-        return $request->headers->has('Turbo-Frame');
+        // Verificar header Turbo-Frame (para submits)
+        if ($request->headers->has('Turbo-Frame')) {
+            return true;
+        }
+        
+        // Verificar Sec-Fetch-Dest (para lazy loading via src)
+        if ($request->headers->get('Sec-Fetch-Dest') === 'turboframe') {
+            return true;
+        }
+        
+        return false;
     }
 
     /**
@@ -95,15 +109,22 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
             
             $this->addFlash('success', $this->getSuccessMessage('create'));
             
+            // Siempre redirigir - el data-turbo-frame="_top" hace que salga del frame
             return $this->redirectToRoute($this->getIndexRoute());
         }
         
-        return $this->render($this->getFormTemplatePath(), [
+        // Si es una petición Turbo Frame, usar template modal
+        $template = $this->isTurboFrameRequest($request) 
+            ? $this->getModalFormTemplatePath() 
+            : $this->getFormTemplatePath();
+        
+        return $this->render($template, [
             'form' => $form->createView(),
             'entity' => $entity,
             'page_title' => $this->getPageTitle('create'),
             'cancel_route' => $this->getIndexRoute(),
             'is_turbo_frame' => $this->isTurboFrameRequest($request),
+            'action_url' => $this->generateUrl($this->getCreateRoute()),
         ]);
     }
 
@@ -132,15 +153,22 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
             
             $this->addFlash('success', $this->getSuccessMessage('edit'));
             
+            // Siempre redirigir - el data-turbo-frame="_top" hace que salga del frame
             return $this->redirectToRoute($this->getIndexRoute());
         }
         
-        return $this->render($this->getFormTemplatePath(), [
+        // Si es una petición Turbo Frame, usar template modal
+        $template = $this->isTurboFrameRequest($request) 
+            ? $this->getModalFormTemplatePath() 
+            : $this->getFormTemplatePath();
+        
+        return $this->render($template, [
             'form' => $form->createView(),
             'entity' => $entity,
             'page_title' => $this->getPageTitle('edit'),
             'cancel_route' => $this->getIndexRoute(),
             'is_turbo_frame' => $this->isTurboFrameRequest($request),
+            'action_url' => $this->generateUrl(str_replace('_index', '_edit', $this->getIndexRoute()), ['id' => $id]),
         ]);
     }
 
@@ -297,6 +325,15 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
     protected function getFormTemplatePath(): string
     {
         return 'maintainers/_base_form.html.twig';
+    }
+
+    /**
+     * Ruta de la plantilla del formulario para modal
+     * Se usa cuando la petición es un Turbo Frame
+     */
+    protected function getModalFormTemplatePath(): string
+    {
+        return 'maintainers/_modal_form.html.twig';
     }
 
     /**
