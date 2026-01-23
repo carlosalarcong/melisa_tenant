@@ -6,7 +6,7 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\Religion;
 use App\Form\Maintainers\ReligionType;
 use App\Repository\Tenant\ReligionRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -22,9 +22,9 @@ class ReligionController extends AbstractMantenedorController
 {
     public function __construct(
         private ReligionRepository $religionRepository,
-        EntityManagerInterface $entityManager
+        TenantEntityManager $tenantEntityManager
     ) {
-        parent::__construct($entityManager);
+        parent::__construct($tenantEntityManager);
     }
 
     #[Route('', name: 'app_maintainers_religion_index', methods: ['GET'])]

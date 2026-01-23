@@ -6,7 +6,7 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\OriginType;
 use App\Form\Maintainers\OriginTypeType;
 use App\Repository\Tenant\OriginTypeRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -21,9 +21,9 @@ class OriginTypeController extends AbstractMantenedorController
 {
     public function __construct(
         private OriginTypeRepository $repository,
-        EntityManagerInterface $entityManager
+        TenantEntityManager $tenantEntityManager
     ) {
-        parent::__construct($entityManager);
+        parent::__construct($tenantEntityManager);
     }
 
     #[Route('', name: 'app_maintainers_origin_type_index', methods: ['GET'])]

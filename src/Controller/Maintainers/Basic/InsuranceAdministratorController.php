@@ -6,7 +6,7 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\InsuranceAdministrator;
 use App\Form\Maintainers\InsuranceAdministratorType;
 use App\Repository\Tenant\InsuranceAdministratorRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -21,9 +21,9 @@ class InsuranceAdministratorController extends AbstractMantenedorController
 {
     public function __construct(
         private InsuranceAdministratorRepository $repository,
-        EntityManagerInterface $entityManager
+        TenantEntityManager $tenantEntityManager
     ) {
-        parent::__construct($entityManager);
+        parent::__construct($tenantEntityManager);
     }
 
     #[Route('', name: 'app_maintainers_insurance_administrator_index', methods: ['GET'])]

@@ -6,7 +6,7 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\EducationLevelDetail;
 use App\Form\Maintainers\EducationLevelDetailType;
 use App\Repository\Tenant\EducationLevelDetailRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -21,9 +21,9 @@ class EducationLevelDetailController extends AbstractMantenedorController
 {
     public function __construct(
         private EducationLevelDetailRepository $repository,
-        EntityManagerInterface $entityManager
+        TenantEntityManager $tenantEntityManager
     ) {
-        parent::__construct($entityManager);
+        parent::__construct($tenantEntityManager);
     }
 
     #[Route('', name: 'app_maintainers_education_level_detail_index', methods: ['GET'])]
