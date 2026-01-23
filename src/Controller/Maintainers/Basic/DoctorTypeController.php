@@ -6,6 +6,7 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\DoctorType;
 use App\Form\Maintainers\DoctorTypeType;
 use App\Repository\Tenant\DoctorTypeRepository;
+use Doctrine\ORM\QueryBuilder;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -50,9 +51,11 @@ class DoctorTypeController extends AbstractMantenedorController
         return $this->handleDelete($request, $id);
     }
 
-    protected function getData(Request $request): array
+    protected function getData(Request $request): array|QueryBuilder
     {
-        return $this->repository->findAll();
+        // Retornar QueryBuilder → Paginación automática ✅
+        return $this->repository->createQueryBuilder('dt')
+            ->orderBy('dt.id', 'DESC');
     }
 
     protected function getColumns(): array

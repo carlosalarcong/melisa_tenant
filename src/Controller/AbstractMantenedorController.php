@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -73,7 +75,25 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
     {
         $this->beforeIndex($request);
         
-        $data = $this->getData($request);
+        $dataOrQuery = $this->getData($request);
+        
+        // Auto-detección: QueryBuilder → Paginar | Array → Sin paginación
+        if ($dataOrQuery instanceof QueryBuilder) {
+            $pagination = $this->paginate($dataOrQuery, $request);
+            $data = $pagination['items'];
+            $paginationData = [
+                'current_page' => $pagination['current_page'],
+                'total_pages' => $pagination['total_pages'],
+                'total_items' => $pagination['total_items'],
+                'items_per_page' => $pagination['items_per_page'],
+                'has_previous' => $pagination['has_previous'],
+                'has_next' => $pagination['has_next'],
+            ];
+        } else {
+            $data = $dataOrQuery;
+            $paginationData = null;
+        }
+        
         $processedData = $this->processData($data, $request);
         
         $this->afterIndex($request);
@@ -86,6 +106,7 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
             'page_title' => $this->getPageTitle(),
             'create_route' => $this->getCreateRoute(),
             'is_turbo_frame' => $this->isTurboFrameRequest($request),
+            'pagination' => $paginationData,
         ]);
     }
 
@@ -250,9 +271,15 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
     /**
      * Obtiene los datos a mostrar en el listado
      * 
-     * @return array Array de entidades
+     * Retornar QueryBuilder para paginación automática:
+     *   return $this->repository->createQueryBuilder('e');
+     * 
+     * Retornar array para sin paginación:
+     *   return $this->repository->findAll();
+     * 
+     * @return array|QueryBuilder Array de entidades o QueryBuilder para paginación
      */
-    abstract protected function getData(Request $request): array;
+    abstract protected function getData(Request $request): array|QueryBuilder;
 
     /**
      * Define las columnas a mostrar en la tabla
@@ -300,6 +327,53 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
     // ========================================================================
     // MÉTODOS CON IMPLEMENTACIÓN POR DEFECTO: Pueden sobreescribirse
     // ========================================================================
+
+    /**
+     * Aplica paginación a un QueryBuilder
+     * 
+     * @param QueryBuilder $queryBuilder Query a paginar
+     * @param Request $request Request con parámetro 'page'
+     * @return array ['items' => array, 'current_page' => int, 'total_pages' => int, ...]
+     */
+    protected function paginate(QueryBuilder $queryBuilder, Request $request): array
+    {
+        $page = max(1, (int) $request->query->get('page', 1));
+        $itemsPerPage = $this->getItemsPerPage();
+        
+        $queryBuilder
+            ->setFirstResult(($page - 1) * $itemsPerPage)
+            ->setMaxResults($itemsPerPage);
+        
+        $paginator = new Paginator($queryBuilder, fetchJoinCollection: true);
+        $totalItems = count($paginator);
+        $totalPages = max(1, (int) ceil($totalItems / $itemsPerPage));
+        
+        // Si la página solicitada excede el total, ajustar
+        if ($page > $totalPages) {
+            $page = $totalPages;
+            $queryBuilder->setFirstResult(($page - 1) * $itemsPerPage);
+            $paginator = new Paginator($queryBuilder, fetchJoinCollection: true);
+        }
+        
+        return [
+            'items' => iterator_to_array($paginator),
+            'current_page' => $page,
+            'total_pages' => $totalPages,
+            'total_items' => $totalItems,
+            'items_per_page' => $itemsPerPage,
+            'has_previous' => $page > 1,
+            'has_next' => $page < $totalPages,
+        ];
+    }
+
+    /**
+     * Cantidad de items por página
+     * Subclases pueden sobreescribir
+     */
+    protected function getItemsPerPage(): int
+    {
+        return 10;
+    }
 
     /**
      * Procesa los datos antes de enviarlos a la vista
