@@ -596,6 +596,90 @@
             import * as Turbo from 'https://cdn.jsdelivr.net/npm/@hotwired/turbo@7.3.0/+esm';
             window.Turbo = Turbo;
         </script>
+        
+        {# Cargar Stimulus desde CDN #}
+        <script type="module">
+            import { Application, Controller } from 'https://cdn.jsdelivr.net/npm/@hotwired/stimulus@3.2.2/+esm';
+            
+            // Inicializar Stimulus
+            const application = Application.start();
+            window.Stimulus = application;
+            
+            // Modal Controller
+            class ModalController extends Controller {
+                static targets = ['title', 'frame', 'loader'];
+                static values = {
+                    autoClose: { type: Boolean, default: true }
+                };
+
+                connect() {
+                    this.element.addEventListener('show.bs.modal', this.onShow.bind(this));
+                    this.element.addEventListener('hidden.bs.modal', this.onHidden.bind(this));
+                    
+                    if (this.autoCloseValue) {
+                        this.submitEndHandler = this.onSubmitEnd.bind(this);
+                        document.addEventListener('turbo:submit-end', this.submitEndHandler);
+                    }
+                }
+
+                disconnect() {
+                    if (this.submitEndHandler) {
+                        document.removeEventListener('turbo:submit-end', this.submitEndHandler);
+                    }
+                }
+
+                onShow(event) {
+                    const button = event.relatedTarget;
+                    if (!button) return;
+                    
+                    const url = button.dataset.modalUrl || button.getAttribute('data-modal-url');
+                    const title = button.dataset.modalTitle || button.getAttribute('data-modal-title');
+                    
+                    if (title && this.hasTitleTarget) {
+                        this.updateTitle(title);
+                    }
+                    
+                    if (url && this.hasFrameTarget) {
+                        this.loadContent(url);
+                    }
+                }
+
+                loadContent(url) {
+                    this.frameTarget.setAttribute('src', url);
+                    this.frameTarget.reload();
+                }
+
+                updateTitle(title) {
+                    this.titleTarget.innerHTML = title;
+                }
+
+                onHidden() {
+                    if (!this.hasFrameTarget) return;
+                    
+                    this.frameTarget.removeAttribute('src');
+                    
+                    if (this.hasLoaderTarget) {
+                        this.frameTarget.innerHTML = this.loaderTarget.outerHTML;
+                    }
+                }
+
+                onSubmitEnd(event) {
+                    const fetchResponse = event.detail.fetchResponse;
+                    
+                    if (fetchResponse && fetchResponse.succeeded && this.element.classList.contains('show')) {
+                        const modal = bootstrap.Modal.getInstance(this.element);
+                        if (modal) {
+                            modal.hide();
+                        }
+                    }
+                }
+            }
+            
+            // Registrar el controller
+            application.register('modal', ModalController);
+            
+            console.log('✅ Stimulus cargado con Modal Controller');
+        </script>
     {% endblock %}
 </body>
 </html>

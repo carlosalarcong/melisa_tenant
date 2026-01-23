@@ -1,3 +1,12 @@
+{#
+    Formulario Modal Universal para Mantenedores
+    
+    Este template renderiza automáticamente TODOS los campos del formulario,
+    funcionando para cualquier mantenedor sin importar sus campos específicos.
+    
+    El formulario se adapta automáticamente según los campos definidos en el FormType.
+#}
+
 <turbo-frame id="maintainer-form">
     {{ form_start(form, {
         'action': action_url|default(''),
@@ -7,80 +16,33 @@
         }
     }) }}
     
-    <div class="mb-3">
-        {{ form_row(form.name, {'attr': {'class': 'form-control'}}) }}
-    </div>
-
-    {% if form.code is defined %}
-        <div class="mb-3">
-            {{ form_row(form.code, {'attr': {'class': 'form-control'}}) }}
-        </div>
-    {% endif %}
-
-    {% if form.description is defined %}
-        <div class="mb-3">
-            {{ form_row(form.description, {'attr': {'class': 'form-control'}}) }}
-        </div>
-    {% endif %}
-
-    {% if form.number is defined %}
-        <div class="mb-3">
-            {{ form_row(form.number, {'attr': {'class': 'form-control'}}) }}
-        </div>
-    {% endif %}
-
-    {% if form.religionCodeHl7 is defined %}
-        <div class="mb-3">
-            {{ form_row(form.religionCodeHl7, {'attr': {'class': 'form-control'}}) }}
-        </div>
-    {% endif %}
-
-    {% if form.maritalStatusCodeHl7 is defined %}
-        <div class="mb-3">
-            {{ form_row(form.maritalStatusCodeHl7, {'attr': {'class': 'form-control'}}) }}
-        </div>
-    {% endif %}
-
-    {% if form.educationLevel is defined %}
-        <div class="mb-3">
-            {{ form_row(form.educationLevel, {'attr': {'class': 'form-control'}}) }}
-        </div>
-    {% endif %}
-
-    {% if form.originType is defined %}
-        <div class="mb-3">
-            {{ form_row(form.originType, {'attr': {'class': 'form-control'}}) }}
-        </div>
-    {% endif %}
-
-    {% if form.isActive is defined %}
-        <div class="mb-4">
-            <div class="form-check form-switch">
-                {{ form_widget(form.isActive, {'attr': {'class': 'form-check-input'}}) }}
-                {{ form_label(form.isActive, null, {'label_attr': {'class': 'form-check-label'}}) }}
-                {% if form.isActive.vars.errors|length > 0 %}
-                    <div class="invalid-feedback d-block">
-                        {{ form_errors(form.isActive) }}
+    {# Iterar sobre todos los campos del formulario excepto _token y submit #}
+    {% for field in form %}
+        {% if field.vars.name not in ['_token'] %}
+            <div class="mb-3">
+                {# Para campos checkbox/switch (active, isActive) #}
+                {% if field.vars.block_prefixes[1] == 'checkbox' %}
+                    <div class="form-check form-switch">
+                        {{ form_widget(field, {'attr': {'class': 'form-check-input'}}) }}
+                        {{ form_label(field, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                        {% if field.vars.errors|length > 0 %}
+                            <div class="invalid-feedback d-block">
+                                {{ form_errors(field) }}
+                            </div>
+                        {% endif %}
                     </div>
+                {# Para campos de texto, select, textarea, etc. #}
+                {% else %}
+                    {{ form_row(field, {
+                        'attr': {'class': 'form-control'},
+                        'label_attr': {'class': 'form-label'}
+                    }) }}
                 {% endif %}
             </div>
-        </div>
-    {% endif %}
+        {% endif %}
+    {% endfor %}
 
-    {% if form.active is defined %}
-        <div class="mb-4">
-            <div class="form-check form-switch">
-                {{ form_widget(form.active, {'attr': {'class': 'form-check-input'}}) }}
-                {{ form_label(form.active, null, {'label_attr': {'class': 'form-check-label'}}) }}
-                {% if form.active.vars.errors|length > 0 %}
-                    <div class="invalid-feedback d-block">
-                        {{ form_errors(form.active) }}
-                    </div>
-                {% endif %}
-            </div>
-        </div>
-    {% endif %}
-
+    {# Botones de acción #}
     <div class="d-flex justify-content-end gap-2 mt-4">
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
             <i class="bx bx-x me-1"></i>Cancelar
@@ -92,3 +54,4 @@
 
     {{ form_end(form) }}
 </turbo-frame>
+

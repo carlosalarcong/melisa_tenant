@@ -70,7 +70,13 @@
                             Exportar
                         </button>
                         {% if create_route is defined %}
-                            <button type="button" class="btn btn-primary d-flex align-items-center gap-2" style="box-shadow: 0 4px 12px rgba(94, 114, 228, 0.3);" data-bs-toggle="modal" data-bs-target="#maintainerModal">
+                            <button type="button" 
+                                    class="btn btn-primary d-flex align-items-center gap-2" 
+                                    style="box-shadow: 0 4px 12px rgba(94, 114, 228, 0.3);" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#maintainerModal"
+                                    data-modal-url="{{ path(create_route) }}"
+                                    data-modal-title="<i class='bx bx-plus me-2'></i>Nuevo {{ page_title }}">
                                 <i class="bx bx-plus"></i>
                                 Nuevo Registro
                             </button>
@@ -261,7 +267,8 @@
                                                style="color: #5e72e4;"
                                                data-bs-toggle="modal" 
                                                data-bs-target="#maintainerModal"
-                                               data-edit-url="{{ path(edit_route, {'id': item.id}) }}"
+                                               data-modal-url="{{ path(edit_route, {'id': item.id}) }}"
+                                               data-modal-title="<i class='bx bx-edit me-2'></i>Editar {{ page_title }}"
                                                title="Editar">
                                                 <i class="bx bx-edit-alt"></i>
                                             </button>
@@ -304,83 +311,12 @@
         </div>
     </div>
 
-    {# Modal para Crear/Editar #}
-    <div class="modal fade" id="maintainerModal" tabindex="-1" aria-labelledby="maintainerModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content border-0" style="border-radius: 12px;">
-                <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px 12px 0 0;">
-                    <h5 class="modal-title text-white" id="maintainerModalLabel">
-                        <i class="bx bx-edit me-2"></i>{{ page_title }}
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
-                    {# NO incluir src aquí - se establece dinámicamente #}
-                    <turbo-frame id="maintainer-form" loading="lazy">
-                        <div class="text-center py-5">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Cargando...</span>
-                            </div>
-                        </div>
-                    </turbo-frame>
-                </div>
-            </div>
-        </div>
-    </div>
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const modal = document.getElementById('maintainerModal');
-            const turboFrame = document.getElementById('maintainer-form');
-            const modalTitle = document.getElementById('maintainerModalLabel');
-            
-            // Cuando se abre el modal
-            modal.addEventListener('show.bs.modal', function(event) {
-                const button = event.relatedTarget;
-                const editUrl = button?.getAttribute('data-edit-url');
-                
-                // Determinar URL y título
-                let targetUrl, title;
-                if (editUrl) {
-                    targetUrl = editUrl;
-                    title = '<i class="bx bx-edit me-2"></i>Editar {{ page_title }}';
-                } else {
-                    targetUrl = "{{ create_route is defined ? path(create_route) : '#' }}";
-                    title = '<i class="bx bx-plus me-2"></i>Nuevo {{ page_title }}';
-                }
-                
-                // Actualizar título
-                modalTitle.innerHTML = title;
-                
-                // Cargar formulario en el turbo-frame
-                turboFrame.setAttribute('src', targetUrl);
-                turboFrame.reload();
-            });
-            
-            // Limpiar frame cuando se cierra el modal
-            modal.addEventListener('hidden.bs.modal', function() {
-                turboFrame.removeAttribute('src');
-                turboFrame.innerHTML = `
-                    <div class="text-center py-5">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Cargando...</span>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            // Cerrar modal al guardar exitosamente
-            document.addEventListener('turbo:submit-end', function(event) {
-                if (event.detail.success && event.target.closest('#maintainer-form')) {
-                    const bsModal = bootstrap.Modal.getInstance(modal);
-                    if (bsModal) {
-                        bsModal.hide();
-                    }
-                }
-            });
-        });
-    </script>
+    {# Modal Universal para Crear/Editar #}
+    {% include 'components/_modal_base.html.twig' with {
+        'modal_id': 'maintainerModal',
+        'modal_title': page_title,
+        'frame_id': 'maintainer-form',
+        'modal_size': 'lg',
+        'loading_text': 'Cargando formulario...'
+    } %}
 {% endblock %}

@@ -114,7 +114,8 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
         }
         
         // Si es una petición Turbo Frame, usar template modal
-        $template = $this->isTurboFrameRequest($request) 
+        $isTurbo = $this->isTurboFrameRequest($request);
+        $template = $isTurbo 
             ? $this->getModalFormTemplatePath() 
             : $this->getFormTemplatePath();
         
@@ -123,7 +124,7 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
             'entity' => $entity,
             'page_title' => $this->getPageTitle('create'),
             'cancel_route' => $this->getIndexRoute(),
-            'is_turbo_frame' => $this->isTurboFrameRequest($request),
+            'is_turbo_frame' => $isTurbo,
             'action_url' => $this->generateUrl($this->getCreateRoute()),
         ]);
     }
