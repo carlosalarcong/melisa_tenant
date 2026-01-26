@@ -74,7 +74,7 @@ class MenuBuilder
         }
 
         // Expandir subcategorías de maintenance
-        if (isset($item['name']) && in_array($item['name'], ['maintenance_basic', 'maintenance_clinical', 'maintenance_geographic'])) {
+        if (isset($item['name']) && in_array($item['name'], ['maintenance_basic', 'maintenance_clinical', 'maintenance_geographic', 'maintenance_structure'])) {
             if (str_contains($currentPath, '/maintainers')) {
                 // Verificar si algún hijo tiene la ruta activa
                 foreach ($item['children'] ?? [] as $child) {

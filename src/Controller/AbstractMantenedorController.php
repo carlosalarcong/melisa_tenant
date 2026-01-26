@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
@@ -39,10 +40,20 @@ use Symfony\Component\Routing\Attribute\Route;
 abstract class AbstractMantenedorController extends AbstractTenantAwareController
 {
     protected TenantEntityManager $entityManager;
+    protected ?ExportService $exportService = null;
 
     public function __construct(TenantEntityManager $entityManager)
     {
         $this->entityManager = $entityManager;
+    }
+    
+    /**
+     * Inyecta el servicio de exportación (opcional)
+     * Se usa setter injection para mantener retrocompatibilidad
+     */
+    public function setExportService(ExportService $exportService): void
+    {
+        $this->exportService = $exportService;
     }
 
     /**
@@ -218,6 +229,89 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
         }
         
         return $this->redirectToRoute($this->getIndexRoute());
+    }
+    
+    /**
+     * Template method: Maneja la exportación de datos a CSV
+     * 
+     * Características:
+     * - Alta performance con streaming (procesa chunks de 1000 registros)
+     * - Bajo consumo de memoria (no carga todo en RAM)
+     * - Reutilizable en todos los mantenedores
+     * - Respeta filtros y ordenamiento actuales
+     * 
+     * Uso en controlador hijo:
+     * ```php
+     * #[Route('/export', name: 'app_maintainers_cost_center_export', methods: ['GET'])]
+     * public function export(Request $request): Response
+     * {
+     *     return $this->handleExport($request);
+     * }
+     * ```
+     * 
+     * O personalizar columnas/headers:
+     * ```php
+     * return $this->handleExport(
+     *     request: $request,
+     *     columns: ['id', 'name', 'code'],
+     *     headers: ['ID', 'Nombre', 'Código'],
+     *     filename: 'centros_costo.csv'
+     * );
+     * ```
+     */
+    protected function handleExport(
+        Request $request,
+        ?array $columns = null,
+        ?array $headers = null,
+        ?string $filename = null
+    ): Response {
+        if (!$this->exportService) {
+            throw new \RuntimeException('ExportService not injected. Add #[Autowire] or setter injection.');
+        }
+        
+        // Obtener datos de la misma forma que el index (respeta filtros)
+        $dataOrQuery = $this->getData($request);
+        
+        // Columnas por defecto desde getColumns()
+        $columns = $columns ?? $this->getColumns();
+        
+        // Headers por defecto: capitalizar nombres de columnas
+        $headers = $headers ?? array_map(fn($col) => ucfirst(str_replace('_', ' ', $col)), $columns);
+        
+        // Filename por defecto desde page title
+        $filename = $filename ?? $this->sanitizeFilename($this->getPageTitle()) . '_' . date('Y-m-d') . '.csv';
+        
+        // Si es QueryBuilder, exportar con streaming
+        if ($dataOrQuery instanceof QueryBuilder) {
+            return $this->exportService->exportToCsv(
+                queryBuilder: $dataOrQuery,
+                columns: $columns,
+                headers: $headers,
+                filename: $filename
+            );
+        }
+        
+        // Si es array, exportar directamente
+        return $this->exportService->exportArrayToCsv(
+            data: $dataOrQuery,
+            columns: $columns,
+            headers: $headers,
+            filename: $filename
+        );
+    }
+    
+    /**
+     * Sanitiza nombre de archivo para export
+     */
+    private function sanitizeFilename(string $name): string
+    {
+        // Remover acentos
+        $name = iconv('UTF-8', 'ASCII//TRANSLIT', $name);
+        // Reemplazar espacios y caracteres especiales
+        $name = preg_replace('/[^a-zA-Z0-9_-]/', '_', $name);
+        // Remover guiones bajos múltiples
+        $name = preg_replace('/_+/', '_', $name);
+        return strtolower(trim($name, '_'));
     }
 
     // ========================================================================

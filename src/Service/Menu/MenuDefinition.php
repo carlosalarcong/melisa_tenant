@@ -237,6 +237,38 @@ class MenuDefinition
                         ]
                     ],
                     [
+                        'name' => 'maintenance_structure',
+                        'label' => 'Estructura',
+                        'icon' => $this->getIconForItem('maintenance_structure'),
+                        'module' => null,
+                        'children' => [
+                            [
+                                'name' => 'cost_center',
+                                'label' => 'Centros de Costo',
+                                'icon' => $this->getIconForItem('cost_center'),
+                                'route' => 'app_maintainers_cost_center_index',
+                                'module' => 'maintenance_structure',
+                                'children' => []
+                            ],
+                            [
+                                'name' => 'service_type',
+                                'label' => 'Tipos de Servicio',
+                                'icon' => $this->getIconForItem('service_type'),
+                                'route' => 'app_maintainers_service_type_index',
+                                'module' => 'maintenance_structure',
+                                'children' => []
+                            ],
+                            [
+                                'name' => 'medical_service',
+                                'label' => 'Servicios Médicos',
+                                'icon' => $this->getIconForItem('medical_service'),
+                                'route' => 'app_maintainers_medical_service_index',
+                                'module' => 'maintenance_structure',
+                                'children' => []
+                            ]
+                        ]
+                    ],
+                    [
                         'name' => 'maintenance_clinical',
                         'label' => 'Clínico',
                         'icon' => $this->getIconForItem('maintenance_clinical'),

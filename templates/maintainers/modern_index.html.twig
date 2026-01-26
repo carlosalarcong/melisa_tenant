@@ -65,10 +65,15 @@
                     </div>
                     
                     <div class="d-flex gap-2">
-                        <button class="btn btn-outline-secondary d-flex align-items-center gap-2">
-                            <i class="bx bx-download"></i>
-                            Exportar
-                        </button>
+                        {% if export_route is defined %}
+                            <a href="{{ path(export_route) }}" 
+                               class="btn btn-outline-secondary d-flex align-items-center gap-2"
+                               title="Exportar a CSV"
+                               data-turbo="false">
+                                <i class="bx bx-download"></i>
+                                Exportar
+                            </a>
+                        {% endif %}
                         {% if create_route is defined %}
                             <button type="button" 
                                     class="btn btn-primary d-flex align-items-center gap-2" 
