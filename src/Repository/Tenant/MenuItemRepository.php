@@ -37,6 +37,7 @@ class MenuItemRepository extends ServiceEntityRepository
 
     /**
      * Obtiene items del menú con sus hijos de forma eficiente (eager loading).
+     * Carga hasta 4 niveles de profundidad para soportar menús complejos.
      * 
      * @return MenuItem[]
      */
@@ -47,12 +48,15 @@ class MenuItemRepository extends ServiceEntityRepository
             ->addSelect('c')
             ->leftJoin('c.children', 'cc')
             ->addSelect('cc')
+            ->leftJoin('cc.children', 'ccc')
+            ->addSelect('ccc')
             ->where('m.parent IS NULL')
             ->andWhere('m.enabled = :enabled')
             ->setParameter('enabled', true)
             ->orderBy('m.position', 'ASC')
             ->addOrderBy('c.position', 'ASC')
-            ->addOrderBy('cc.position', 'ASC');
+            ->addOrderBy('cc.position', 'ASC')
+            ->addOrderBy('ccc.position', 'ASC');
 
         return $qb->getQuery()->getResult();
     }
