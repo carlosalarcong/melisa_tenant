@@ -2,29 +2,28 @@
 
 namespace App\Entity\Tenant;
 
-use App\Repository\Tenant\ServiceTypeRepository;
+use App\Repository\Tenant\SpecialtyRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * ServiceType
+ * Specialty
  * 
- * Legacy table: tipo_prestacion
- * Spanish name: Tipo Prestación
+ * Legacy table: especialidad
+ * Spanish name: Especialidad
  * 
- * Represents the types of medical services/procedures offered:
- * - Consultation
- * - Hospitalization
- * - Surgery
- * - Emergency
- * - Laboratory
- * - Imaging
- * - Therapy
+ * Represents medical specialties:
+ * - Cardiology
+ * - Pediatrics
+ * - Orthopedics
+ * - Neurology
+ * - General Surgery
+ * - Internal Medicine
  * - etc.
  */
-#[ORM\Entity(repositoryClass: ServiceTypeRepository::class)]
-#[ORM\Table(name: 'service_type')]
-class ServiceType
+#[ORM\Entity(repositoryClass: SpecialtyRepository::class)]
+#[ORM\Table(name: 'specialty')]
+class Specialty
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -40,14 +39,14 @@ class ServiceType
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
-    private bool $requiresAuthorization = false;
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $category = null;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
-    private bool $requiresBedAssignment = false;
+    private bool $requiresCertification = false;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    private ?int $defaultDuration = null;
+    private ?int $defaultConsultationDuration = null;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
     private bool $isActive = true;
@@ -101,36 +100,36 @@ class ServiceType
         return $this;
     }
 
-    public function isRequiresAuthorization(): bool
+    public function getCategory(): ?string
     {
-        return $this->requiresAuthorization;
+        return $this->category;
     }
 
-    public function setRequiresAuthorization(bool $requiresAuthorization): static
+    public function setCategory(?string $category): static
     {
-        $this->requiresAuthorization = $requiresAuthorization;
+        $this->category = $category;
         return $this;
     }
 
-    public function isRequiresBedAssignment(): bool
+    public function isRequiresCertification(): bool
     {
-        return $this->requiresBedAssignment;
+        return $this->requiresCertification;
     }
 
-    public function setRequiresBedAssignment(bool $requiresBedAssignment): static
+    public function setRequiresCertification(bool $requiresCertification): static
     {
-        $this->requiresBedAssignment = $requiresBedAssignment;
+        $this->requiresCertification = $requiresCertification;
         return $this;
     }
 
-    public function getDefaultDuration(): ?int
+    public function getDefaultConsultationDuration(): ?int
     {
-        return $this->defaultDuration;
+        return $this->defaultConsultationDuration;
     }
 
-    public function setDefaultDuration(?int $defaultDuration): static
+    public function setDefaultConsultationDuration(?int $defaultConsultationDuration): static
     {
-        $this->defaultDuration = $defaultDuration;
+        $this->defaultConsultationDuration = $defaultConsultationDuration;
         return $this;
     }
 

@@ -2,29 +2,28 @@
 
 namespace App\Entity\Tenant;
 
-use App\Repository\Tenant\ServiceTypeRepository;
+use App\Repository\Tenant\BudgetItemRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * ServiceType
+ * BudgetItem
  * 
- * Legacy table: tipo_prestacion
- * Spanish name: Tipo Prestación
+ * Legacy table: item_presupuesto
+ * Spanish name: Item Presupuesto
  * 
- * Represents the types of medical services/procedures offered:
- * - Consultation
- * - Hospitalization
- * - Surgery
- * - Emergency
- * - Laboratory
- * - Imaging
- * - Therapy
+ * Represents budget items or cost centers for billing:
+ * - Medical services
+ * - Procedures
+ * - Supplies
+ * - Medications
+ * - Room charges
+ * - Laboratory tests
  * - etc.
  */
-#[ORM\Entity(repositoryClass: ServiceTypeRepository::class)]
-#[ORM\Table(name: 'service_type')]
-class ServiceType
+#[ORM\Entity(repositoryClass: BudgetItemRepository::class)]
+#[ORM\Table(name: 'budget_item')]
+class BudgetItem
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -34,20 +33,26 @@ class ServiceType
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $code = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 150)]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+    private ?string $unitPrice = null;
+
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $unitOfMeasure = null;
+
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $category = null;
+
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    private bool $isTaxable = false;
+
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
     private bool $requiresAuthorization = false;
-
-    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
-    private bool $requiresBedAssignment = false;
-
-    #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    private ?int $defaultDuration = null;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
     private bool $isActive = true;
@@ -101,6 +106,50 @@ class ServiceType
         return $this;
     }
 
+    public function getUnitPrice(): ?string
+    {
+        return $this->unitPrice;
+    }
+
+    public function setUnitPrice(?string $unitPrice): static
+    {
+        $this->unitPrice = $unitPrice;
+        return $this;
+    }
+
+    public function getUnitOfMeasure(): ?string
+    {
+        return $this->unitOfMeasure;
+    }
+
+    public function setUnitOfMeasure(?string $unitOfMeasure): static
+    {
+        $this->unitOfMeasure = $unitOfMeasure;
+        return $this;
+    }
+
+    public function getCategory(): ?string
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?string $category): static
+    {
+        $this->category = $category;
+        return $this;
+    }
+
+    public function isTaxable(): bool
+    {
+        return $this->isTaxable;
+    }
+
+    public function setIsTaxable(bool $isTaxable): static
+    {
+        $this->isTaxable = $isTaxable;
+        return $this;
+    }
+
     public function isRequiresAuthorization(): bool
     {
         return $this->requiresAuthorization;
@@ -109,28 +158,6 @@ class ServiceType
     public function setRequiresAuthorization(bool $requiresAuthorization): static
     {
         $this->requiresAuthorization = $requiresAuthorization;
-        return $this;
-    }
-
-    public function isRequiresBedAssignment(): bool
-    {
-        return $this->requiresBedAssignment;
-    }
-
-    public function setRequiresBedAssignment(bool $requiresBedAssignment): static
-    {
-        $this->requiresBedAssignment = $requiresBedAssignment;
-        return $this;
-    }
-
-    public function getDefaultDuration(): ?int
-    {
-        return $this->defaultDuration;
-    }
-
-    public function setDefaultDuration(?int $defaultDuration): static
-    {
-        $this->defaultDuration = $defaultDuration;
         return $this;
     }
 

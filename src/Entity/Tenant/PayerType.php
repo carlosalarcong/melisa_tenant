@@ -2,29 +2,28 @@
 
 namespace App\Entity\Tenant;
 
-use App\Repository\Tenant\ServiceTypeRepository;
+use App\Repository\Tenant\PayerTypeRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * ServiceType
+ * PayerType (HL7 standard)
  * 
- * Legacy table: tipo_prestacion
- * Spanish name: Tipo Prestación
+ * Legacy table: tipo_prevision
+ * Spanish name: Tipo Prestador / Tipo Previsión / Tipo Financiador
  * 
- * Represents the types of medical services/procedures offered:
- * - Consultation
- * - Hospitalization
- * - Surgery
- * - Emergency
- * - Laboratory
- * - Imaging
- * - Therapy
- * - etc.
+ * Represents the types of healthcare payers in the system:
+ * - FONASA
+ * - ISAPRE
+ * - Private
+ * - Insurance companies
+ * - Other agreements
  */
-#[ORM\Entity(repositoryClass: ServiceTypeRepository::class)]
-#[ORM\Table(name: 'service_type')]
-class ServiceType
+#[ORM\Entity(repositoryClass: PayerTypeRepository::class)]
+#[ORM\Table(name: 'payer_type')]
+class PayerType
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -41,13 +40,10 @@ class ServiceType
     private ?string $description = null;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
-    private bool $requiresAuthorization = false;
+    private bool $isAgreement = false;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
-    private bool $requiresBedAssignment = false;
-
-    #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    private ?int $defaultDuration = null;
+    private bool $isDefault = false;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
     private bool $isActive = true;
@@ -58,9 +54,16 @@ class ServiceType
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $updatedAt = null;
 
+    /**
+     * @var Collection<int, Payer>
+     */
+    #[ORM\OneToMany(targetEntity: Payer::class, mappedBy: 'payerType')]
+    private Collection $payers;
+
     public function __construct()
     {
         $this->createdAt = new \DateTime();
+        $this->payers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -101,36 +104,25 @@ class ServiceType
         return $this;
     }
 
-    public function isRequiresAuthorization(): bool
+    public function isAgreement(): bool
     {
-        return $this->requiresAuthorization;
+        return $this->isAgreement;
     }
 
-    public function setRequiresAuthorization(bool $requiresAuthorization): static
+    public function setIsAgreement(bool $isAgreement): static
     {
-        $this->requiresAuthorization = $requiresAuthorization;
+        $this->isAgreement = $isAgreement;
         return $this;
     }
 
-    public function isRequiresBedAssignment(): bool
+    public function isDefault(): bool
     {
-        return $this->requiresBedAssignment;
+        return $this->isDefault;
     }
 
-    public function setRequiresBedAssignment(bool $requiresBedAssignment): static
+    public function setIsDefault(bool $isDefault): static
     {
-        $this->requiresBedAssignment = $requiresBedAssignment;
-        return $this;
-    }
-
-    public function getDefaultDuration(): ?int
-    {
-        return $this->defaultDuration;
-    }
-
-    public function setDefaultDuration(?int $defaultDuration): static
-    {
-        $this->defaultDuration = $defaultDuration;
+        $this->isDefault = $isDefault;
         return $this;
     }
 
@@ -164,6 +156,33 @@ class ServiceType
     public function setUpdatedAt(?\DateTimeInterface $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Payer>
+     */
+    public function getPayers(): Collection
+    {
+        return $this->payers;
+    }
+
+    public function addPayer(Payer $payer): static
+    {
+        if (!$this->payers->contains($payer)) {
+            $this->payers->add($payer);
+            $payer->setPayerType($this);
+        }
+        return $this;
+    }
+
+    public function removePayer(Payer $payer): static
+    {
+        if ($this->payers->removeElement($payer)) {
+            if ($payer->getPayerType() === $this) {
+                $payer->setPayerType(null);
+            }
+        }
         return $this;
     }
 

@@ -2,29 +2,28 @@
 
 namespace App\Entity\Tenant;
 
-use App\Repository\Tenant\ServiceTypeRepository;
+use App\Repository\Tenant\CancellationTypeRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * ServiceType
+ * CancellationType
  * 
- * Legacy table: tipo_prestacion
- * Spanish name: Tipo Prestación
+ * Legacy table: tipo_anulacion
+ * Spanish name: Tipo Anulación
  * 
- * Represents the types of medical services/procedures offered:
- * - Consultation
- * - Hospitalization
- * - Surgery
- * - Emergency
- * - Laboratory
- * - Imaging
- * - Therapy
+ * Represents the types of cancellation reasons:
+ * - Patient request
+ * - Medical reasons
+ * - Administrative error
+ * - No show
+ * - Insurance issues
+ * - Rescheduling
  * - etc.
  */
-#[ORM\Entity(repositoryClass: ServiceTypeRepository::class)]
-#[ORM\Table(name: 'service_type')]
-class ServiceType
+#[ORM\Entity(repositoryClass: CancellationTypeRepository::class)]
+#[ORM\Table(name: 'cancellation_type')]
+class CancellationType
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -41,13 +40,13 @@ class ServiceType
     private ?string $description = null;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
-    private bool $requiresAuthorization = false;
+    private bool $requiresJustification = false;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
-    private bool $requiresBedAssignment = false;
+    private bool $allowsRefund = false;
 
-    #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    private ?int $defaultDuration = null;
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    private bool $affectsStatistics = true;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
     private bool $isActive = true;
@@ -101,36 +100,36 @@ class ServiceType
         return $this;
     }
 
-    public function isRequiresAuthorization(): bool
+    public function isRequiresJustification(): bool
     {
-        return $this->requiresAuthorization;
+        return $this->requiresJustification;
     }
 
-    public function setRequiresAuthorization(bool $requiresAuthorization): static
+    public function setRequiresJustification(bool $requiresJustification): static
     {
-        $this->requiresAuthorization = $requiresAuthorization;
+        $this->requiresJustification = $requiresJustification;
         return $this;
     }
 
-    public function isRequiresBedAssignment(): bool
+    public function isAllowsRefund(): bool
     {
-        return $this->requiresBedAssignment;
+        return $this->allowsRefund;
     }
 
-    public function setRequiresBedAssignment(bool $requiresBedAssignment): static
+    public function setAllowsRefund(bool $allowsRefund): static
     {
-        $this->requiresBedAssignment = $requiresBedAssignment;
+        $this->allowsRefund = $allowsRefund;
         return $this;
     }
 
-    public function getDefaultDuration(): ?int
+    public function isAffectsStatistics(): bool
     {
-        return $this->defaultDuration;
+        return $this->affectsStatistics;
     }
 
-    public function setDefaultDuration(?int $defaultDuration): static
+    public function setAffectsStatistics(bool $affectsStatistics): static
     {
-        $this->defaultDuration = $defaultDuration;
+        $this->affectsStatistics = $affectsStatistics;
         return $this;
     }
 

@@ -16,7 +16,7 @@ class ServiceTypeRepository extends ServiceEntityRepository
         parent::__construct($registry, ServiceType::class);
     }
 
-    public function findAllActive(): array
+    public function findActive(): array
     {
         return $this->createQueryBuilder('st')
             ->where('st.isActive = :active')
@@ -26,12 +26,15 @@ class ServiceTypeRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findByCode(string $code): ?ServiceType
+    public function findRequiringAuthorization(): array
     {
         return $this->createQueryBuilder('st')
-            ->where('st.code = :code')
-            ->setParameter('code', $code)
+            ->where('st.requiresAuthorization = :requires')
+            ->andWhere('st.isActive = :active')
+            ->setParameter('requires', true)
+            ->setParameter('active', true)
+            ->orderBy('st.name', 'ASC')
             ->getQuery()
-            ->getOneOrNullResult();
+            ->getResult();
     }
 }

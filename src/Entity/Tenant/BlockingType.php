@@ -2,29 +2,28 @@
 
 namespace App\Entity\Tenant;
 
-use App\Repository\Tenant\ServiceTypeRepository;
+use App\Repository\Tenant\BlockingTypeRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * ServiceType
+ * BlockingType
  * 
- * Legacy table: tipo_prestacion
- * Spanish name: Tipo Prestación
+ * Legacy table: tipo_bloqueo
+ * Spanish name: Tipo Bloqueo
  * 
- * Represents the types of medical services/procedures offered:
- * - Consultation
- * - Hospitalization
- * - Surgery
+ * Represents the types of schedule blocking reasons:
+ * - Vacation
+ * - Medical leave
+ * - Training/Conference
+ * - Maintenance
+ * - Administrative tasks
  * - Emergency
- * - Laboratory
- * - Imaging
- * - Therapy
  * - etc.
  */
-#[ORM\Entity(repositoryClass: ServiceTypeRepository::class)]
-#[ORM\Table(name: 'service_type')]
-class ServiceType
+#[ORM\Entity(repositoryClass: BlockingTypeRepository::class)]
+#[ORM\Table(name: 'blocking_type')]
+class BlockingType
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -40,14 +39,14 @@ class ServiceType
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
-    private bool $requiresAuthorization = false;
+    #[ORM\Column(length: 30, nullable: true)]
+    private ?string $color = null;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
-    private bool $requiresBedAssignment = false;
+    private bool $requiresApproval = false;
 
-    #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    private ?int $defaultDuration = null;
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    private bool $allowsOverride = false;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
     private bool $isActive = true;
@@ -101,36 +100,36 @@ class ServiceType
         return $this;
     }
 
-    public function isRequiresAuthorization(): bool
+    public function getColor(): ?string
     {
-        return $this->requiresAuthorization;
+        return $this->color;
     }
 
-    public function setRequiresAuthorization(bool $requiresAuthorization): static
+    public function setColor(?string $color): static
     {
-        $this->requiresAuthorization = $requiresAuthorization;
+        $this->color = $color;
         return $this;
     }
 
-    public function isRequiresBedAssignment(): bool
+    public function isRequiresApproval(): bool
     {
-        return $this->requiresBedAssignment;
+        return $this->requiresApproval;
     }
 
-    public function setRequiresBedAssignment(bool $requiresBedAssignment): static
+    public function setRequiresApproval(bool $requiresApproval): static
     {
-        $this->requiresBedAssignment = $requiresBedAssignment;
+        $this->requiresApproval = $requiresApproval;
         return $this;
     }
 
-    public function getDefaultDuration(): ?int
+    public function isAllowsOverride(): bool
     {
-        return $this->defaultDuration;
+        return $this->allowsOverride;
     }
 
-    public function setDefaultDuration(?int $defaultDuration): static
+    public function setAllowsOverride(bool $allowsOverride): static
     {
-        $this->defaultDuration = $defaultDuration;
+        $this->allowsOverride = $allowsOverride;
         return $this;
     }
 

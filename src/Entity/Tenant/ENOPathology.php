@@ -2,29 +2,24 @@
 
 namespace App\Entity\Tenant;
 
-use App\Repository\Tenant\ServiceTypeRepository;
+use App\Repository\Tenant\ENOPathologyRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * ServiceType
+ * ENOPathology
  * 
- * Legacy table: tipo_prestacion
- * Spanish name: Tipo Prestación
+ * Legacy table: patologia_eno
+ * Spanish name: Patología ENO
  * 
- * Represents the types of medical services/procedures offered:
- * - Consultation
- * - Hospitalization
- * - Surgery
- * - Emergency
- * - Laboratory
- * - Imaging
- * - Therapy
- * - etc.
+ * Represents ENO (Enfermedad No Oncológica) pathologies:
+ * - Non-oncological diseases
+ * - Chronic conditions requiring specialized care
+ * - Distinct from GES pathologies
  */
-#[ORM\Entity(repositoryClass: ServiceTypeRepository::class)]
-#[ORM\Table(name: 'service_type')]
-class ServiceType
+#[ORM\Entity(repositoryClass: ENOPathologyRepository::class)]
+#[ORM\Table(name: 'eno_pathology')]
+class ENOPathology
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -34,20 +29,20 @@ class ServiceType
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $code = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 200)]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
-    private bool $requiresAuthorization = false;
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $icd10Code = null;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
-    private bool $requiresBedAssignment = false;
+    private bool $requiresSpecialist = false;
 
-    #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    private ?int $defaultDuration = null;
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    private bool $isChronic = false;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
     private bool $isActive = true;
@@ -101,36 +96,36 @@ class ServiceType
         return $this;
     }
 
-    public function isRequiresAuthorization(): bool
+    public function getIcd10Code(): ?string
     {
-        return $this->requiresAuthorization;
+        return $this->icd10Code;
     }
 
-    public function setRequiresAuthorization(bool $requiresAuthorization): static
+    public function setIcd10Code(?string $icd10Code): static
     {
-        $this->requiresAuthorization = $requiresAuthorization;
+        $this->icd10Code = $icd10Code;
         return $this;
     }
 
-    public function isRequiresBedAssignment(): bool
+    public function isRequiresSpecialist(): bool
     {
-        return $this->requiresBedAssignment;
+        return $this->requiresSpecialist;
     }
 
-    public function setRequiresBedAssignment(bool $requiresBedAssignment): static
+    public function setRequiresSpecialist(bool $requiresSpecialist): static
     {
-        $this->requiresBedAssignment = $requiresBedAssignment;
+        $this->requiresSpecialist = $requiresSpecialist;
         return $this;
     }
 
-    public function getDefaultDuration(): ?int
+    public function isChronic(): bool
     {
-        return $this->defaultDuration;
+        return $this->isChronic;
     }
 
-    public function setDefaultDuration(?int $defaultDuration): static
+    public function setIsChronic(bool $isChronic): static
     {
-        $this->defaultDuration = $defaultDuration;
+        $this->isChronic = $isChronic;
         return $this;
     }
 

@@ -2,29 +2,25 @@
 
 namespace App\Entity\Tenant;
 
-use App\Repository\Tenant\ServiceTypeRepository;
+use App\Repository\Tenant\ArticlePackageRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * ServiceType
+ * ArticlePackage
  * 
- * Legacy table: tipo_prestacion
- * Spanish name: Tipo Prestación
+ * Legacy table: paquete_articulo
+ * Spanish name: Paquete Artículo
  * 
- * Represents the types of medical services/procedures offered:
- * - Consultation
- * - Hospitalization
- * - Surgery
- * - Emergency
- * - Laboratory
- * - Imaging
- * - Therapy
- * - etc.
+ * Represents bundles or packages of medical articles:
+ * - Surgical kits
+ * - Treatment packages
+ * - Supply bundles
+ * - Pre-configured sets
  */
-#[ORM\Entity(repositoryClass: ServiceTypeRepository::class)]
-#[ORM\Table(name: 'service_type')]
-class ServiceType
+#[ORM\Entity(repositoryClass: ArticlePackageRepository::class)]
+#[ORM\Table(name: 'article_package')]
+class ArticlePackage
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -34,20 +30,20 @@ class ServiceType
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $code = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 150)]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
-    private bool $requiresAuthorization = false;
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $packageType = null;
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+    private ?string $packagePrice = null;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
-    private bool $requiresBedAssignment = false;
-
-    #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    private ?int $defaultDuration = null;
+    private bool $isPreAssembled = false;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
     private bool $isActive = true;
@@ -101,36 +97,36 @@ class ServiceType
         return $this;
     }
 
-    public function isRequiresAuthorization(): bool
+    public function getPackageType(): ?string
     {
-        return $this->requiresAuthorization;
+        return $this->packageType;
     }
 
-    public function setRequiresAuthorization(bool $requiresAuthorization): static
+    public function setPackageType(?string $packageType): static
     {
-        $this->requiresAuthorization = $requiresAuthorization;
+        $this->packageType = $packageType;
         return $this;
     }
 
-    public function isRequiresBedAssignment(): bool
+    public function getPackagePrice(): ?string
     {
-        return $this->requiresBedAssignment;
+        return $this->packagePrice;
     }
 
-    public function setRequiresBedAssignment(bool $requiresBedAssignment): static
+    public function setPackagePrice(?string $packagePrice): static
     {
-        $this->requiresBedAssignment = $requiresBedAssignment;
+        $this->packagePrice = $packagePrice;
         return $this;
     }
 
-    public function getDefaultDuration(): ?int
+    public function isPreAssembled(): bool
     {
-        return $this->defaultDuration;
+        return $this->isPreAssembled;
     }
 
-    public function setDefaultDuration(?int $defaultDuration): static
+    public function setIsPreAssembled(bool $isPreAssembled): static
     {
-        $this->defaultDuration = $defaultDuration;
+        $this->isPreAssembled = $isPreAssembled;
         return $this;
     }
 

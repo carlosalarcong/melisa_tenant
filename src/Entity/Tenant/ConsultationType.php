@@ -2,29 +2,29 @@
 
 namespace App\Entity\Tenant;
 
-use App\Repository\Tenant\ServiceTypeRepository;
+use App\Repository\Tenant\ConsultationTypeRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * ServiceType
+ * ConsultationType
  * 
- * Legacy table: tipo_prestacion
- * Spanish name: Tipo Prestación
+ * Legacy table: tipo_consulta
+ * Spanish name: Tipo Consulta
  * 
- * Represents the types of medical services/procedures offered:
- * - Consultation
- * - Hospitalization
- * - Surgery
+ * Represents the types of medical consultations:
+ * - First consultation
+ * - Follow-up
  * - Emergency
- * - Laboratory
- * - Imaging
- * - Therapy
+ * - Preventive
+ * - Specialty consultation
+ * - Home visit
+ * - Telemedicine
  * - etc.
  */
-#[ORM\Entity(repositoryClass: ServiceTypeRepository::class)]
-#[ORM\Table(name: 'service_type')]
-class ServiceType
+#[ORM\Entity(repositoryClass: ConsultationTypeRepository::class)]
+#[ORM\Table(name: 'consultation_type')]
+class ConsultationType
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -40,14 +40,14 @@ class ServiceType
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
-    private bool $requiresAuthorization = false;
-
-    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
-    private bool $requiresBedAssignment = false;
-
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    private ?int $defaultDuration = null;
+    private ?int $defaultDurationMinutes = null;
+
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    private bool $requiresPriorAppointment = false;
+
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    private bool $isEmergency = false;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
     private bool $isActive = true;
@@ -101,36 +101,36 @@ class ServiceType
         return $this;
     }
 
-    public function isRequiresAuthorization(): bool
+    public function getDefaultDurationMinutes(): ?int
     {
-        return $this->requiresAuthorization;
+        return $this->defaultDurationMinutes;
     }
 
-    public function setRequiresAuthorization(bool $requiresAuthorization): static
+    public function setDefaultDurationMinutes(?int $defaultDurationMinutes): static
     {
-        $this->requiresAuthorization = $requiresAuthorization;
+        $this->defaultDurationMinutes = $defaultDurationMinutes;
         return $this;
     }
 
-    public function isRequiresBedAssignment(): bool
+    public function isRequiresPriorAppointment(): bool
     {
-        return $this->requiresBedAssignment;
+        return $this->requiresPriorAppointment;
     }
 
-    public function setRequiresBedAssignment(bool $requiresBedAssignment): static
+    public function setRequiresPriorAppointment(bool $requiresPriorAppointment): static
     {
-        $this->requiresBedAssignment = $requiresBedAssignment;
+        $this->requiresPriorAppointment = $requiresPriorAppointment;
         return $this;
     }
 
-    public function getDefaultDuration(): ?int
+    public function isEmergency(): bool
     {
-        return $this->defaultDuration;
+        return $this->isEmergency;
     }
 
-    public function setDefaultDuration(?int $defaultDuration): static
+    public function setIsEmergency(bool $isEmergency): static
     {
-        $this->defaultDuration = $defaultDuration;
+        $this->isEmergency = $isEmergency;
         return $this;
     }
 

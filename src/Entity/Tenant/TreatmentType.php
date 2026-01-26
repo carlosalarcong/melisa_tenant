@@ -2,29 +2,28 @@
 
 namespace App\Entity\Tenant;
 
-use App\Repository\Tenant\ServiceTypeRepository;
+use App\Repository\Tenant\TreatmentTypeRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * ServiceType
+ * TreatmentType
  * 
- * Legacy table: tipo_prestacion
- * Spanish name: Tipo Prestación
+ * Legacy table: tipo_tratamiento
+ * Spanish name: Tipo Tratamiento
  * 
- * Represents the types of medical services/procedures offered:
- * - Consultation
- * - Hospitalization
- * - Surgery
- * - Emergency
- * - Laboratory
- * - Imaging
- * - Therapy
+ * Represents the types of medical treatments:
+ * - Medication
+ * - Physical therapy
+ * - Chemotherapy
+ * - Radiotherapy
+ * - Dialysis
+ * - Oxygen therapy
  * - etc.
  */
-#[ORM\Entity(repositoryClass: ServiceTypeRepository::class)]
-#[ORM\Table(name: 'service_type')]
-class ServiceType
+#[ORM\Entity(repositoryClass: TreatmentTypeRepository::class)]
+#[ORM\Table(name: 'treatment_type')]
+class TreatmentType
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -41,13 +40,13 @@ class ServiceType
     private ?string $description = null;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
-    private bool $requiresAuthorization = false;
+    private bool $requiresSpecialist = false;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
-    private bool $requiresBedAssignment = false;
+    private bool $requiresAuthorization = false;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    private ?int $defaultDuration = null;
+    private ?int $averageDurationDays = null;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
     private bool $isActive = true;
@@ -101,6 +100,17 @@ class ServiceType
         return $this;
     }
 
+    public function isRequiresSpecialist(): bool
+    {
+        return $this->requiresSpecialist;
+    }
+
+    public function setRequiresSpecialist(bool $requiresSpecialist): static
+    {
+        $this->requiresSpecialist = $requiresSpecialist;
+        return $this;
+    }
+
     public function isRequiresAuthorization(): bool
     {
         return $this->requiresAuthorization;
@@ -112,25 +122,14 @@ class ServiceType
         return $this;
     }
 
-    public function isRequiresBedAssignment(): bool
+    public function getAverageDurationDays(): ?int
     {
-        return $this->requiresBedAssignment;
+        return $this->averageDurationDays;
     }
 
-    public function setRequiresBedAssignment(bool $requiresBedAssignment): static
+    public function setAverageDurationDays(?int $averageDurationDays): static
     {
-        $this->requiresBedAssignment = $requiresBedAssignment;
-        return $this;
-    }
-
-    public function getDefaultDuration(): ?int
-    {
-        return $this->defaultDuration;
-    }
-
-    public function setDefaultDuration(?int $defaultDuration): static
-    {
-        $this->defaultDuration = $defaultDuration;
+        $this->averageDurationDays = $averageDurationDays;
         return $this;
     }
 

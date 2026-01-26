@@ -2,29 +2,25 @@
 
 namespace App\Entity\Tenant;
 
-use App\Repository\Tenant\ServiceTypeRepository;
+use App\Repository\Tenant\SurgeryItemRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * ServiceType
+ * SurgeryItem
  * 
- * Legacy table: tipo_prestacion
- * Spanish name: Tipo Prestación
+ * Legacy table: item_cirugia
+ * Spanish name: Item Cirugía
  * 
- * Represents the types of medical services/procedures offered:
- * - Consultation
- * - Hospitalization
- * - Surgery
- * - Emergency
- * - Laboratory
- * - Imaging
- * - Therapy
- * - etc.
+ * Represents surgical procedure items:
+ * - Surgical supplies
+ * - Surgical instruments
+ * - Disposable items for surgery
+ * - Operating room materials
  */
-#[ORM\Entity(repositoryClass: ServiceTypeRepository::class)]
-#[ORM\Table(name: 'service_type')]
-class ServiceType
+#[ORM\Entity(repositoryClass: SurgeryItemRepository::class)]
+#[ORM\Table(name: 'surgery_item')]
+class SurgeryItem
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -34,20 +30,26 @@ class ServiceType
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $code = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 200)]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
-    private bool $requiresAuthorization = false;
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $category = null;
+
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $unitOfMeasure = null;
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+    private ?string $unitCost = null;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
-    private bool $requiresBedAssignment = false;
+    private bool $isSterile = false;
 
-    #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    private ?int $defaultDuration = null;
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    private bool $isDisposable = false;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
     private bool $isActive = true;
@@ -101,36 +103,58 @@ class ServiceType
         return $this;
     }
 
-    public function isRequiresAuthorization(): bool
+    public function getCategory(): ?string
     {
-        return $this->requiresAuthorization;
+        return $this->category;
     }
 
-    public function setRequiresAuthorization(bool $requiresAuthorization): static
+    public function setCategory(?string $category): static
     {
-        $this->requiresAuthorization = $requiresAuthorization;
+        $this->category = $category;
         return $this;
     }
 
-    public function isRequiresBedAssignment(): bool
+    public function getUnitOfMeasure(): ?string
     {
-        return $this->requiresBedAssignment;
+        return $this->unitOfMeasure;
     }
 
-    public function setRequiresBedAssignment(bool $requiresBedAssignment): static
+    public function setUnitOfMeasure(?string $unitOfMeasure): static
     {
-        $this->requiresBedAssignment = $requiresBedAssignment;
+        $this->unitOfMeasure = $unitOfMeasure;
         return $this;
     }
 
-    public function getDefaultDuration(): ?int
+    public function getUnitCost(): ?string
     {
-        return $this->defaultDuration;
+        return $this->unitCost;
     }
 
-    public function setDefaultDuration(?int $defaultDuration): static
+    public function setUnitCost(?string $unitCost): static
     {
-        $this->defaultDuration = $defaultDuration;
+        $this->unitCost = $unitCost;
+        return $this;
+    }
+
+    public function isSterile(): bool
+    {
+        return $this->isSterile;
+    }
+
+    public function setIsSterile(bool $isSterile): static
+    {
+        $this->isSterile = $isSterile;
+        return $this;
+    }
+
+    public function isDisposable(): bool
+    {
+        return $this->isDisposable;
+    }
+
+    public function setIsDisposable(bool $isDisposable): static
+    {
+        $this->isDisposable = $isDisposable;
         return $this;
     }
 

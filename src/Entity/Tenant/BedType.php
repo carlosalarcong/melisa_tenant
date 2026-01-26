@@ -2,29 +2,29 @@
 
 namespace App\Entity\Tenant;
 
-use App\Repository\Tenant\ServiceTypeRepository;
+use App\Repository\Tenant\BedTypeRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * ServiceType
+ * BedType
  * 
- * Legacy table: tipo_prestacion
- * Spanish name: Tipo Prestación
+ * Legacy table: tipo_cama
+ * Spanish name: Tipo Cama
  * 
- * Represents the types of medical services/procedures offered:
- * - Consultation
- * - Hospitalization
- * - Surgery
- * - Emergency
- * - Laboratory
- * - Imaging
- * - Therapy
+ * Represents the types of hospital beds:
+ * - Basic/Common
+ * - Intermediate care
+ * - Intensive care (ICU)
+ * - Private room
+ * - Semi-private
+ * - Pediatric
+ * - Maternity
  * - etc.
  */
-#[ORM\Entity(repositoryClass: ServiceTypeRepository::class)]
-#[ORM\Table(name: 'service_type')]
-class ServiceType
+#[ORM\Entity(repositoryClass: BedTypeRepository::class)]
+#[ORM\Table(name: 'bed_type')]
+class BedType
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -40,14 +40,14 @@ class ServiceType
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
-    private bool $requiresAuthorization = false;
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+    private ?string $dailyRate = null;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
-    private bool $requiresBedAssignment = false;
+    private bool $requiresSpecialCare = false;
 
-    #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    private ?int $defaultDuration = null;
+    #[ORM\Column(type: Types::INTEGER, options: ['default' => 1])]
+    private int $capacity = 1;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
     private bool $isActive = true;
@@ -101,36 +101,36 @@ class ServiceType
         return $this;
     }
 
-    public function isRequiresAuthorization(): bool
+    public function getDailyRate(): ?string
     {
-        return $this->requiresAuthorization;
+        return $this->dailyRate;
     }
 
-    public function setRequiresAuthorization(bool $requiresAuthorization): static
+    public function setDailyRate(?string $dailyRate): static
     {
-        $this->requiresAuthorization = $requiresAuthorization;
+        $this->dailyRate = $dailyRate;
         return $this;
     }
 
-    public function isRequiresBedAssignment(): bool
+    public function isRequiresSpecialCare(): bool
     {
-        return $this->requiresBedAssignment;
+        return $this->requiresSpecialCare;
     }
 
-    public function setRequiresBedAssignment(bool $requiresBedAssignment): static
+    public function setRequiresSpecialCare(bool $requiresSpecialCare): static
     {
-        $this->requiresBedAssignment = $requiresBedAssignment;
+        $this->requiresSpecialCare = $requiresSpecialCare;
         return $this;
     }
 
-    public function getDefaultDuration(): ?int
+    public function getCapacity(): int
     {
-        return $this->defaultDuration;
+        return $this->capacity;
     }
 
-    public function setDefaultDuration(?int $defaultDuration): static
+    public function setCapacity(int $capacity): static
     {
-        $this->defaultDuration = $defaultDuration;
+        $this->capacity = $capacity;
         return $this;
     }
 

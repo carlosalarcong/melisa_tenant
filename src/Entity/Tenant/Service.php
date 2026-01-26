@@ -2,29 +2,25 @@
 
 namespace App\Entity\Tenant;
 
-use App\Repository\Tenant\ServiceTypeRepository;
+use App\Repository\Tenant\ServiceRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * ServiceType
+ * Service
  * 
- * Legacy table: tipo_prestacion
- * Spanish name: Tipo Prestación
+ * Legacy table: servicio
+ * Spanish name: Servicio
  * 
- * Represents the types of medical services/procedures offered:
- * - Consultation
- * - Hospitalization
- * - Surgery
- * - Emergency
- * - Laboratory
- * - Imaging
- * - Therapy
- * - etc.
+ * Represents medical services offered:
+ * - Specific procedures
+ * - Treatments
+ * - Tests and examinations
+ * - With pricing and codes
  */
-#[ORM\Entity(repositoryClass: ServiceTypeRepository::class)]
-#[ORM\Table(name: 'service_type')]
-class ServiceType
+#[ORM\Entity(repositoryClass: ServiceRepository::class)]
+#[ORM\Table(name: 'service')]
+class Service
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -34,20 +30,37 @@ class ServiceType
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $code = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 200)]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[ORM\ManyToOne(targetEntity: ServiceType::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?ServiceType $serviceType = null;
+
+    #[ORM\ManyToOne(targetEntity: Specialty::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Specialty $specialty = null;
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+    private ?string $basePrice = null;
+
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    private ?int $estimatedDurationMinutes = null;
+
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
     private bool $requiresAuthorization = false;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
-    private bool $requiresBedAssignment = false;
+    private bool $requiresSpecialist = false;
 
-    #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    private ?int $defaultDuration = null;
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    private bool $isAmbulatory = true;
+
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $fonasaCode = null;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
     private bool $isActive = true;
@@ -101,6 +114,50 @@ class ServiceType
         return $this;
     }
 
+    public function getServiceType(): ?ServiceType
+    {
+        return $this->serviceType;
+    }
+
+    public function setServiceType(?ServiceType $serviceType): static
+    {
+        $this->serviceType = $serviceType;
+        return $this;
+    }
+
+    public function getSpecialty(): ?Specialty
+    {
+        return $this->specialty;
+    }
+
+    public function setSpecialty(?Specialty $specialty): static
+    {
+        $this->specialty = $specialty;
+        return $this;
+    }
+
+    public function getBasePrice(): ?string
+    {
+        return $this->basePrice;
+    }
+
+    public function setBasePrice(?string $basePrice): static
+    {
+        $this->basePrice = $basePrice;
+        return $this;
+    }
+
+    public function getEstimatedDurationMinutes(): ?int
+    {
+        return $this->estimatedDurationMinutes;
+    }
+
+    public function setEstimatedDurationMinutes(?int $estimatedDurationMinutes): static
+    {
+        $this->estimatedDurationMinutes = $estimatedDurationMinutes;
+        return $this;
+    }
+
     public function isRequiresAuthorization(): bool
     {
         return $this->requiresAuthorization;
@@ -112,25 +169,36 @@ class ServiceType
         return $this;
     }
 
-    public function isRequiresBedAssignment(): bool
+    public function isRequiresSpecialist(): bool
     {
-        return $this->requiresBedAssignment;
+        return $this->requiresSpecialist;
     }
 
-    public function setRequiresBedAssignment(bool $requiresBedAssignment): static
+    public function setRequiresSpecialist(bool $requiresSpecialist): static
     {
-        $this->requiresBedAssignment = $requiresBedAssignment;
+        $this->requiresSpecialist = $requiresSpecialist;
         return $this;
     }
 
-    public function getDefaultDuration(): ?int
+    public function isAmbulatory(): bool
     {
-        return $this->defaultDuration;
+        return $this->isAmbulatory;
     }
 
-    public function setDefaultDuration(?int $defaultDuration): static
+    public function setIsAmbulatory(bool $isAmbulatory): static
     {
-        $this->defaultDuration = $defaultDuration;
+        $this->isAmbulatory = $isAmbulatory;
+        return $this;
+    }
+
+    public function getFonasaCode(): ?string
+    {
+        return $this->fonasaCode;
+    }
+
+    public function setFonasaCode(?string $fonasaCode): static
+    {
+        $this->fonasaCode = $fonasaCode;
         return $this;
     }
 
