@@ -6,6 +6,7 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\EthnicGroup;
 use App\Form\Maintainers\EthnicGroupType;
 use App\Repository\Tenant\EthnicGroupRepository;
+use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,9 +23,11 @@ class EthnicGroupController extends AbstractMantenedorController
 {
     public function __construct(
         private EthnicGroupRepository $repository,
-        TenantEntityManager $tenantEntityManager
+        TenantEntityManager $tenantEntityManager,
+        ExportService $exportService
     ) {
         parent::__construct($tenantEntityManager);
+        $this->setExportService($exportService);
     }
 
     #[Route('', name: 'app_maintainers_ethnic_group_index', methods: ['GET'])]
@@ -49,6 +52,17 @@ class EthnicGroupController extends AbstractMantenedorController
     public function delete(Request $request, int $id): Response
     {
         return $this->handleDelete($request, $id);
+    }
+    
+    #[Route('/export', name: 'app_maintainers_ethnic_group_export', methods: ['GET'])]
+    public function export(Request $request): Response
+    {
+        return $this->handleExport(
+            request: $request,
+            columns: ['name', 'code', 'isActive'],
+            headers: ['Nombre', 'Código', 'Activo'],
+            filename: 'pueblos_originarios_' . date('Y-m-d') . '.csv'
+        );
     }
 
     protected function getData(Request $request): array|QueryBuilder

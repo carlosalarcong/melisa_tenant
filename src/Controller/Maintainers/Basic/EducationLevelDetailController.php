@@ -6,6 +6,7 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\EducationLevelDetail;
 use App\Form\Maintainers\EducationLevelDetailType;
 use App\Repository\Tenant\EducationLevelDetailRepository;
+use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,9 +23,11 @@ class EducationLevelDetailController extends AbstractMantenedorController
 {
     public function __construct(
         private EducationLevelDetailRepository $repository,
-        TenantEntityManager $tenantEntityManager
+        TenantEntityManager $tenantEntityManager,
+        ExportService $exportService
     ) {
         parent::__construct($tenantEntityManager);
+        $this->setExportService($exportService);
     }
 
     #[Route('', name: 'app_maintainers_education_level_detail_index', methods: ['GET'])]
@@ -49,6 +52,17 @@ class EducationLevelDetailController extends AbstractMantenedorController
     public function delete(Request $request, int $id): Response
     {
         return $this->handleDelete($request, $id);
+    }
+
+    #[Route('/export', name: 'app_maintainers_education_level_detail_export', methods: ['GET'])]
+    public function export(Request $request): Response
+    {
+        return $this->handleExport(
+            request: $request,
+            columns: ['name', 'educationLevel', 'isActive'],
+            headers: ['Nombre', 'Nivel de Instrucción', 'Activo'],
+            filename: 'detalles_nivel_instruccion_' . date('Y-m-d') . '.csv'
+        );
     }
 
     protected function getData(Request $request): array|QueryBuilder

@@ -6,6 +6,7 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\Religion;
 use App\Form\Maintainers\ReligionType;
 use App\Repository\Tenant\ReligionRepository;
+use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,9 +24,11 @@ class ReligionController extends AbstractMantenedorController
 {
     public function __construct(
         private ReligionRepository $religionRepository,
-        TenantEntityManager $tenantEntityManager
+        TenantEntityManager $tenantEntityManager,
+        ExportService $exportService
     ) {
         parent::__construct($tenantEntityManager);
+        $this->setExportService($exportService);
     }
 
     #[Route('', name: 'app_maintainers_religion_index', methods: ['GET'])]
@@ -50,6 +53,17 @@ class ReligionController extends AbstractMantenedorController
     public function delete(Request $request, int $id): Response
     {
         return $this->handleDelete($request, $id);
+    }
+    
+    #[Route('/export', name: 'app_maintainers_religion_export', methods: ['GET'])]
+    public function export(Request $request): Response
+    {
+        return $this->handleExport(
+            request: $request,
+            columns: ['name', 'religionCodeHl7', 'isActive'],
+            headers: ['Nombre', 'Código HL7', 'Activo'],
+            filename: 'religiones_' . date('Y-m-d') . '.csv'
+        );
     }
 
     // ========================================================================

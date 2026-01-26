@@ -6,6 +6,7 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\Origin;
 use App\Form\Maintainers\OriginType;
 use App\Repository\Tenant\OriginRepository;
+use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,9 +23,11 @@ class OriginController extends AbstractMantenedorController
 {
     public function __construct(
         private OriginRepository $repository,
-        TenantEntityManager $tenantEntityManager
+        TenantEntityManager $tenantEntityManager,
+        ExportService $exportService
     ) {
         parent::__construct($tenantEntityManager);
+        $this->setExportService($exportService);
     }
 
     #[Route('', name: 'app_maintainers_origin_index', methods: ['GET'])]
@@ -49,6 +52,17 @@ class OriginController extends AbstractMantenedorController
     public function delete(Request $request, int $id): Response
     {
         return $this->handleDelete($request, $id);
+    }
+
+    #[Route('/export', name: 'app_maintainers_origin_export', methods: ['GET'])]
+    public function export(Request $request): Response
+    {
+        return $this->handleExport(
+            request: $request,
+            columns: ['name', 'originType', 'isActive'],
+            headers: ['Nombre', 'Tipo de Origen', 'Activo'],
+            filename: 'origenes_' . date('Y-m-d') . '.csv'
+        );
     }
 
     protected function getData(Request $request): array|QueryBuilder

@@ -6,6 +6,7 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\Gender;
 use App\Form\Maintainers\GenderType;
 use App\Repository\Tenant\GenderRepository;
+use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,9 +24,11 @@ class GenderController extends AbstractMantenedorController
 {
     public function __construct(
         private GenderRepository $genderRepository,
-        TenantEntityManager $tenantEntityManager
+        TenantEntityManager $tenantEntityManager,
+        ExportService $exportService
     ) {
         parent::__construct($tenantEntityManager);
+        $this->setExportService($exportService);
     }
 
     #[Route('', name: 'app_maintainers_gender_index', methods: ['GET'])]
@@ -50,6 +53,17 @@ class GenderController extends AbstractMantenedorController
     public function delete(Request $request, int $id): Response
     {
         return $this->handleDelete($request, $id);
+    }
+    
+    #[Route('/export', name: 'app_maintainers_gender_export', methods: ['GET'])]
+    public function export(Request $request): Response
+    {
+        return $this->handleExport(
+            request: $request,
+            columns: ['name', 'code', 'isActive'],
+            headers: ['Nombre', 'Código', 'Activo'],
+            filename: 'generos_' . date('Y-m-d') . '.csv'
+        );
     }
 
     // ========================================================================

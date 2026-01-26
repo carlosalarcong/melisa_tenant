@@ -6,6 +6,7 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\ServiceType;
 use App\Form\Maintainers\ServiceTypeType;
 use App\Repository\Tenant\ServiceTypeRepository;
+use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,9 +18,11 @@ class ServiceTypeController extends AbstractMantenedorController
 {
     public function __construct(
         private ServiceTypeRepository $serviceTypeRepository,
-        TenantEntityManager $tenantEntityManager
+        TenantEntityManager $tenantEntityManager,
+        ExportService $exportService
     ) {
         parent::__construct($tenantEntityManager);
+        $this->setExportService($exportService);
     }
 
     #[Route('', name: 'app_maintainers_service_type_index', methods: ['GET'])]
@@ -44,6 +47,17 @@ class ServiceTypeController extends AbstractMantenedorController
     public function delete(Request $request, int $id): Response
     {
         return $this->handleDelete($request, $id);
+    }
+    
+    #[Route('/export', name: 'app_maintainers_service_type_export', methods: ['GET'])]
+    public function export(Request $request): Response
+    {
+        return $this->handleExport(
+            request: $request,
+            columns: ['name', 'code', 'description', 'isActive'],
+            headers: ['Nombre', 'Código', 'Descripción', 'Activo'],
+            filename: 'tipos_servicio_' . date('Y-m-d') . '.csv'
+        );
     }
 
     protected function getData(Request $request): array|QueryBuilder

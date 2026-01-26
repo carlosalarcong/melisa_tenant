@@ -6,6 +6,7 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\DoctorType;
 use App\Form\Maintainers\DoctorTypeType;
 use App\Repository\Tenant\DoctorTypeRepository;
+use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,9 +23,11 @@ class DoctorTypeController extends AbstractMantenedorController
 {
     public function __construct(
         private DoctorTypeRepository $repository,
-        TenantEntityManager $tenantEntityManager
+        TenantEntityManager $tenantEntityManager,
+        ExportService $exportService
     ) {
         parent::__construct($tenantEntityManager);
+        $this->setExportService($exportService);
     }
 
     #[Route('', name: 'app_maintainers_doctor_type_index', methods: ['GET'])]
@@ -49,6 +52,17 @@ class DoctorTypeController extends AbstractMantenedorController
     public function delete(Request $request, int $id): Response
     {
         return $this->handleDelete($request, $id);
+    }
+
+    #[Route('/export', name: 'app_maintainers_doctor_type_export', methods: ['GET'])]
+    public function export(Request $request): Response
+    {
+        return $this->handleExport(
+            request: $request,
+            columns: ['name', 'code', 'isActive'],
+            headers: ['Nombre', 'Código', 'Activo'],
+            filename: 'tipos_doctor_' . date('Y-m-d') . '.csv'
+        );
     }
 
     protected function getData(Request $request): array|QueryBuilder

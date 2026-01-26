@@ -6,6 +6,7 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\Branch;
 use App\Form\Maintainers\BranchType;
 use App\Repository\Tenant\BranchRepository;
+use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,9 +23,11 @@ class BranchController extends AbstractMantenedorController
 {
     public function __construct(
         private BranchRepository $branchRepository,
-        TenantEntityManager $tenantEntityManager
+        TenantEntityManager $tenantEntityManager,
+        ExportService $exportService
     ) {
         parent::__construct($tenantEntityManager);
+        $this->setExportService($exportService);
     }
 
     #[Route('', name: 'app_maintainers_branch_index', methods: ['GET'])]
@@ -49,6 +52,17 @@ class BranchController extends AbstractMantenedorController
     public function delete(Request $request, int $id): Response
     {
         return $this->handleDelete($request, $id);
+    }
+    
+    #[Route('/export', name: 'app_maintainers_branch_export', methods: ['GET'])]
+    public function export(Request $request): Response
+    {
+        return $this->handleExport(
+            request: $request,
+            columns: ['name', 'code', 'city', 'region', 'phone', 'email', 'isActive'],
+            headers: ['Nombre', 'Código', 'Ciudad', 'Región', 'Teléfono', 'Email', 'Activo'],
+            filename: 'sucursales_' . date('Y-m-d') . '.csv'
+        );
     }
 
     // ========================================================================

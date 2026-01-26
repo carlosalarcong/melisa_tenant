@@ -6,6 +6,7 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\Department;
 use App\Form\Maintainers\DepartmentType;
 use App\Repository\Tenant\DepartmentRepository;
+use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,9 +18,11 @@ class DepartmentController extends AbstractMantenedorController
 {
     public function __construct(
         private DepartmentRepository $departmentRepository,
-        TenantEntityManager $tenantEntityManager
+        TenantEntityManager $tenantEntityManager,
+        ExportService $exportService
     ) {
         parent::__construct($tenantEntityManager);
+        $this->setExportService($exportService);
     }
 
     #[Route('', name: 'app_maintainers_department_index', methods: ['GET'])]
@@ -44,6 +47,17 @@ class DepartmentController extends AbstractMantenedorController
     public function delete(Request $request, int $id): Response
     {
         return $this->handleDelete($request, $id);
+    }
+    
+    #[Route('/export', name: 'app_maintainers_department_export', methods: ['GET'])]
+    public function export(Request $request): Response
+    {
+        return $this->handleExport(
+            request: $request,
+            columns: ['name', 'code', 'branch.name', 'description', 'isActive'],
+            headers: ['Nombre', 'Código', 'Sucursal', 'Descripción', 'Activo'],
+            filename: 'departamentos_' . date('Y-m-d') . '.csv'
+        );
     }
 
     protected function getData(Request $request): array|QueryBuilder

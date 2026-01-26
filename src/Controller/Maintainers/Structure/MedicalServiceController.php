@@ -6,6 +6,7 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\MedicalService;
 use App\Form\Maintainers\MedicalServiceType;
 use App\Repository\Tenant\MedicalServiceRepository;
+use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,9 +18,11 @@ class MedicalServiceController extends AbstractMantenedorController
 {
     public function __construct(
         private MedicalServiceRepository $medicalServiceRepository,
-        TenantEntityManager $tenantEntityManager
+        TenantEntityManager $tenantEntityManager,
+        ExportService $exportService
     ) {
         parent::__construct($tenantEntityManager);
+        $this->setExportService($exportService);
     }
 
     #[Route('', name: 'app_maintainers_medical_service_index', methods: ['GET'])]
@@ -44,6 +47,17 @@ class MedicalServiceController extends AbstractMantenedorController
     public function delete(Request $request, int $id): Response
     {
         return $this->handleDelete($request, $id);
+    }
+    
+    #[Route('/export', name: 'app_maintainers_medical_service_export', methods: ['GET'])]
+    public function export(Request $request): Response
+    {
+        return $this->handleExport(
+            request: $request,
+            columns: ['name', 'code', 'department.name', 'hl7ServiceType', 'isActive'],
+            headers: ['Nombre', 'Código', 'Departamento', 'Tipo HL7', 'Activo'],
+            filename: 'servicios_medicos_' . date('Y-m-d') . '.csv'
+        );
     }
 
     protected function getData(Request $request): array|QueryBuilder

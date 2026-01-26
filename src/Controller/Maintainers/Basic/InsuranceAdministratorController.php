@@ -6,6 +6,7 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\InsuranceAdministrator;
 use App\Form\Maintainers\InsuranceAdministratorType;
 use App\Repository\Tenant\InsuranceAdministratorRepository;
+use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,9 +23,11 @@ class InsuranceAdministratorController extends AbstractMantenedorController
 {
     public function __construct(
         private InsuranceAdministratorRepository $repository,
-        TenantEntityManager $tenantEntityManager
+        TenantEntityManager $tenantEntityManager,
+        ExportService $exportService
     ) {
         parent::__construct($tenantEntityManager);
+        $this->setExportService($exportService);
     }
 
     #[Route('', name: 'app_maintainers_insurance_administrator_index', methods: ['GET'])]
@@ -49,6 +52,17 @@ class InsuranceAdministratorController extends AbstractMantenedorController
     public function delete(Request $request, int $id): Response
     {
         return $this->handleDelete($request, $id);
+    }
+
+    #[Route('/export', name: 'app_maintainers_insurance_administrator_export', methods: ['GET'])]
+    public function export(Request $request): Response
+    {
+        return $this->handleExport(
+            request: $request,
+            columns: ['name', 'code', 'isActive'],
+            headers: ['Nombre', 'Código', 'Activo'],
+            filename: 'administradoras_seguro_' . date('Y-m-d') . '.csv'
+        );
     }
 
     protected function getData(Request $request): array|QueryBuilder
