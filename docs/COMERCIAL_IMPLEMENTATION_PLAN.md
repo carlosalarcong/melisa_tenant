@@ -18,6 +18,78 @@
 
 ---
 
+## 🎯 Tier List de Complejidad - Análisis Legacy
+
+Basado en análisis del código legacy en `/MantenedorComercial`, organizados por complejidad de implementación:
+
+### ⚡ Tier S - Muy Simple (305-320 líneas)
+**Características**: CRUD básico, sin relaciones complejas, validaciones simples
+- **TipoBloqueo** (305 líneas) - Tipos de bloqueo
+- **TipoPrestacion** (305 líneas) - Tipos de prestación
+- **TipoAnulacion** (308 líneas) - Tipos de anulación  
+- **TipoCama** (309 líneas) - Tipos de cama
+- **TipoConsulta** (315 líneas) - Tipos de consulta
+- **TipoTratamiento** (317 líneas) - Tipos de tratamiento
+
+**Estimado**: 2-3 horas c/u | **Total**: 12-18 horas
+
+---
+
+### 🟢 Tier A - Simple (343-398 líneas)
+**Características**: CRUD + algunas relaciones básicas, validaciones intermedias
+- **EmpresaSolicitante** (343 líneas) - Empresas solicitantes
+- **EspecialidadPorSucursal** (347 líneas) - Relación especialidad-sucursal
+- **PrestadorPorSucursal** (352 líneas) - Relación prestador-sucursal
+- **ItemCirugia** (360 líneas) - Items de cirugía
+- **DerivadorExterno** (364 líneas) - Derivadores externos
+- **Especialidad** (382 líneas) - Especialidades médicas
+- **Sala** (398 líneas) - Salas hospitalarias
+
+**Estimado**: 4-5 horas c/u | **Total**: 28-35 horas
+
+---
+
+### 🟡 Tier B - Medio (448-523 líneas)
+**Características**: Múltiples relaciones, lógica de negocio, validaciones complejas
+- **ArticuloPorPatologia** (448 líneas) - Artículos por patología
+- **Eno** (472 líneas) - Patologías ENO
+- **Patologia** (476 líneas) - Patologías GES
+- **PrestacionPorItem** (521 líneas) - Relación prestación-item presupuestario
+- **PrestacionPorServicio** (523 líneas) - Relación prestación-servicio
+- **PaquetePrestacion** (537 líneas) - Paquetes de prestaciones
+
+**Estimado**: 6-8 horas c/u | **Total**: 36-48 horas
+
+---
+
+### 🔴 Tier C - Complejo (617-765 líneas)
+**Características**: Lógica compleja, muchas relaciones, funcionalidades especiales
+- **PrestacionPorTipoCama** (617 líneas) - Relación prestación-tipo cama con cantidades
+- **Prestador** (665 líneas) - Prestadores/Financiadores (Payers) con múltiples campos
+- **Prestacion** (765 líneas) - Prestaciones médicas (MedicalServices)
+  * 7 controladores separados
+  * Asociación códigos IMED
+  * Exportación Excel
+  * Validaciones múltiples
+
+**Estimado**: 10-15 horas c/u | **Total**: 30-45 horas
+
+---
+
+### 📊 Resumen de Estimaciones por Tier
+
+| Tier | Cantidad | Líneas Promedio | Tiempo/Unidad | Tiempo Total |
+|------|----------|----------------|---------------|--------------|
+| **S** | 6 | 309 | 2-3h | 12-18h |
+| **A** | 7 | 369 | 4-5h | 28-35h |
+| **B** | 6 | 494 | 6-8h | 36-48h |
+| **C** | 3 | 683 | 10-15h | 30-45h |
+| **TOTAL** | **22** | **464** | - | **106-146h** |
+
+**Estimado General**: 13-18 días laborales (8h/día)
+
+---
+
 ## 🗂️ Inventario de Mantenedores
 
 ### Categoría: Tipos y Configuraciones Base (9)
