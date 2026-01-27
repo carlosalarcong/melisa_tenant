@@ -36,12 +36,7 @@ class MedicalServiceBudgetItemController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return [
-            'id' => 'ID',
-            'medicalService.name' => 'Acción Clínica',
-            'surgeryItem.name' => 'Artículo de Pabellón',
-            'isActive' => 'Activo'
-        ];
+        return ['id', 'medicalService.name', 'surgeryItem.name', 'isActive'];
     }
 
     protected function getTemplatePath(): string

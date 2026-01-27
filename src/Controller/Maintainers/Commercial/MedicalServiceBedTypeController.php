@@ -36,13 +36,7 @@ class MedicalServiceBedTypeController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return [
-            'id' => 'ID',
-            'medicalService.name' => 'Acción Clínica',
-            'bedType.name' => 'Tipo de Cama',
-            'quantity' => 'Cantidad',
-            'isActive' => 'Activo'
-        ];
+        return ['id', 'medicalService.name', 'bedType.name', 'quantity', 'isActive'];
     }
 
     protected function getTemplatePath(): string

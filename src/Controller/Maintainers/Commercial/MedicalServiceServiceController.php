@@ -36,12 +36,7 @@ class MedicalServiceServiceController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return [
-            'id' => 'ID',
-            'medicalService.name' => 'Acción Clínica',
-            'service.name' => 'Servicio',
-            'isActive' => 'Activo'
-        ];
+        return ['id', 'medicalService.name', 'service.name', 'isActive'];
     }
 
     protected function getTemplatePath(): string

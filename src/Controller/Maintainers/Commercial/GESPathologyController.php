@@ -33,16 +33,7 @@ class GESPathologyController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return [
-            'id' => 'ID',
-            'pathologyNumber' => 'Número',
-            'name' => 'Nombre',
-            'minAge' => 'Edad Mín',
-            'maxAge' => 'Edad Máx',
-            'genderRestriction' => 'Género',
-            'guaranteedDays' => 'Días Garantía',
-            'isActive' => 'Activo'
-        ];
+        return ['id', 'pathologyNumber', 'name', 'minAge', 'maxAge', 'genderRestriction', 'guaranteedDays', 'isActive'];
     }
 
     protected function getTemplatePath(): string

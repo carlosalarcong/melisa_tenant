@@ -33,15 +33,7 @@ class RequestingCompanyController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return [
-            'id' => 'ID',
-            'code' => 'Código',
-            'businessName' => 'Razón Social',
-            'rut' => 'RUT',
-            'phone' => 'Teléfono',
-            'hasAgreement' => 'Convenio',
-            'isActive' => 'Activo'
-        ];
+        return ['id', 'code', 'businessName', 'rut', 'phone', 'hasAgreement', 'isActive'];
     }
 
     protected function getTemplatePath(): string

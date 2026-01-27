@@ -33,15 +33,7 @@ class SpecialtyController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return [
-            'id' => 'ID',
-            'code' => 'Código',
-            'name' => 'Nombre',
-            'category' => 'Categoría',
-            'defaultConsultationDuration' => 'Duración Consulta (min)',
-            'requiresCertification' => 'Requiere Certificación',
-            'isActive' => 'Activo'
-        ];
+        return ['id', 'code', 'name', 'category', 'defaultConsultationDuration', 'requiresCertification', 'isActive'];
     }
 
     protected function getTemplatePath(): string

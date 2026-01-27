@@ -33,15 +33,7 @@ class ENOPathologyController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return [
-            'id' => 'ID',
-            'code' => 'Código',
-            'name' => 'Nombre',
-            'icd10Code' => 'Código CIE-10',
-            'requiresSpecialist' => 'Requiere Especialista',
-            'isChronic' => 'Crónica',
-            'isActive' => 'Activo'
-        ];
+        return ['id', 'code', 'name', 'icd10Code', 'requiresSpecialist', 'isChronic', 'isActive'];
     }
 
     protected function getTemplatePath(): string
