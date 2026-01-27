@@ -78,7 +78,46 @@ document.addEventListener('turbo:load', async () => {
             console.error('🎮 Error reconfigurando Dynamic Controller Loader después de Turbo:', error);
         }
     }
+    
+    // Reinicializar componentes de Bootstrap
+    initializeBootstrapComponents();
 });
+
+// Reinicializar Bootstrap después de cargar Turbo Frames
+document.addEventListener('turbo:frame-load', () => {
+    initializeBootstrapComponents();
+});
+
+// Función para inicializar componentes de Bootstrap
+function initializeBootstrapComponents() {
+    // Reinicializar todos los dropdowns
+    const dropdownElementList = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+    dropdownElementList.forEach((dropdownToggleEl) => {
+        // Verificar si ya existe una instancia
+        const existingInstance = bootstrap.Dropdown.getInstance(dropdownToggleEl);
+        if (!existingInstance) {
+            new bootstrap.Dropdown(dropdownToggleEl);
+        }
+    });
+    
+    // Reinicializar tooltips
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltipTriggerList.forEach((tooltipTriggerEl) => {
+        const existingInstance = bootstrap.Tooltip.getInstance(tooltipTriggerEl);
+        if (!existingInstance) {
+            new bootstrap.Tooltip(tooltipTriggerEl);
+        }
+    });
+    
+    // Reinicializar popovers
+    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+    popoverTriggerList.forEach((popoverTriggerEl) => {
+        const existingInstance = bootstrap.Popover.getInstance(popoverTriggerEl);
+        if (!existingInstance) {
+            new bootstrap.Popover(popoverTriggerEl);
+        }
+    });
+}
 
 // Configuración adicional para reducir warnings de import map
 if (typeof document !== 'undefined') {
