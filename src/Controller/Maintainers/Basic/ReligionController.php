@@ -4,7 +4,7 @@ namespace App\Controller\Maintainers\Basic;
 
 use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\Religion;
-use App\Form\Maintainers\ReligionType;
+use App\Form\Maintainers\Personal\ReligionType;
 use App\Repository\Tenant\ReligionRepository;
 use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;

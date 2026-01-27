@@ -4,7 +4,7 @@ namespace App\Controller\Maintainers\Structure;
 
 use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\Department;
-use App\Form\Maintainers\DepartmentType;
+use App\Form\Maintainers\Organizational\DepartmentType;
 use App\Repository\Tenant\DepartmentRepository;
 use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;

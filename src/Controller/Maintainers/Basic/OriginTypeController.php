@@ -4,7 +4,7 @@ namespace App\Controller\Maintainers\Basic;
 
 use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\OriginType;
-use App\Form\Maintainers\OriginTypeType;
+use App\Form\Maintainers\Personal\OriginTypeType;
 use App\Repository\Tenant\OriginTypeRepository;
 use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;

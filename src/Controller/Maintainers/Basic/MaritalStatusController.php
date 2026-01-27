@@ -4,7 +4,7 @@ namespace App\Controller\Maintainers\Basic;
 
 use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\MaritalStatus;
-use App\Form\Maintainers\MaritalStatusType;
+use App\Form\Maintainers\Personal\MaritalStatusType;
 use App\Repository\Tenant\MaritalStatusRepository;
 use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;

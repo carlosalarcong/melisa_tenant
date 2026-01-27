@@ -4,7 +4,7 @@ namespace App\Controller\Maintainers\Basic;
 
 use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\InsuranceAdministrator;
-use App\Form\Maintainers\InsuranceAdministratorType;
+use App\Form\Maintainers\Insurance\InsuranceAdministratorType;
 use App\Repository\Tenant\InsuranceAdministratorRepository;
 use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;

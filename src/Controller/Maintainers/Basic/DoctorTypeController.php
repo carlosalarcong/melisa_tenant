@@ -4,7 +4,7 @@ namespace App\Controller\Maintainers\Basic;
 
 use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\DoctorType;
-use App\Form\Maintainers\DoctorTypeType;
+use App\Form\Maintainers\Clinical\DoctorTypeType;
 use App\Repository\Tenant\DoctorTypeRepository;
 use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;

@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Form\Maintainers;
+namespace App\Form\Maintainers\Clinical;
 
-use App\Entity\Tenant\InsuranceAdministrator;
+use App\Entity\Tenant\DoctorType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class InsuranceAdministratorType extends AbstractType
+class DoctorTypeType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -17,7 +17,7 @@ class InsuranceAdministratorType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'Nombre',
                 'attr' => [
-                    'placeholder' => 'Ingrese el nombre del administrador de seguro',
+                    'placeholder' => 'Ingrese el tipo de médico',
                     'class' => 'form-control'
                 ]
             ])
@@ -42,7 +42,7 @@ class InsuranceAdministratorType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => InsuranceAdministrator::class,
+            'data_class' => DoctorType::class,
         ]);
     }
 }

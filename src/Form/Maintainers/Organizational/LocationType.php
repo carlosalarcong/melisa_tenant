@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Form\Maintainers;
+namespace App\Form\Maintainers\Organizational;
 
-use App\Entity\Tenant\EthnicGroup;
+use App\Entity\Tenant\Location;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class EthnicGroupType extends AbstractType
+class LocationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -17,17 +18,17 @@ class EthnicGroupType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'Nombre',
                 'attr' => [
-                    'placeholder' => 'Ingrese el nombre del pueblo originario',
+                    'placeholder' => 'Ingrese el nombre de la ubicación',
                     'class' => 'form-control'
                 ]
             ])
-            ->add('code', TextType::class, [
-                'label' => 'Código',
+            ->add('description', TextareaType::class, [
+                'label' => 'Descripción',
                 'required' => false,
                 'attr' => [
-                    'placeholder' => 'Código (opcional)',
+                    'placeholder' => 'Descripción de la ubicación (opcional)',
                     'class' => 'form-control',
-                    'maxlength' => 10
+                    'rows' => 3
                 ]
             ])
             ->add('active', CheckboxType::class, [
@@ -42,7 +43,7 @@ class EthnicGroupType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => EthnicGroup::class,
+            'data_class' => Location::class,
         ]);
     }
 }

@@ -1,36 +1,36 @@
 <?php
 
-namespace App\Form\Maintainers;
+namespace App\Form\Maintainers\Personal;
 
-use App\Entity\Tenant\DoctorType;
+use App\Entity\Tenant\Gender;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class DoctorTypeType extends AbstractType
+class GenderType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'Nombre',
+                'label' => 'Name',
                 'attr' => [
-                    'placeholder' => 'Ingrese el tipo de médico',
+                    'placeholder' => 'Enter gender name',
                     'class' => 'form-control'
                 ]
             ])
             ->add('code', TextType::class, [
-                'label' => 'Código',
+                'label' => 'Code',
                 'required' => false,
                 'attr' => [
-                    'placeholder' => 'Código (opcional)',
+                    'placeholder' => 'Enter code (optional)',
                     'class' => 'form-control',
                     'maxlength' => 10
                 ]
             ])
-            ->add('active', CheckboxType::class, [
+            ->add('isActive', CheckboxType::class, [
                 'label' => 'Activo',
                 'required' => false,
                 'attr' => [
@@ -42,7 +42,7 @@ class DoctorTypeType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => DoctorType::class,
+            'data_class' => Gender::class,
         ]);
     }
 }

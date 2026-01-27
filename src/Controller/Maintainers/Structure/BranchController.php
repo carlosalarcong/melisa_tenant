@@ -4,7 +4,7 @@ namespace App\Controller\Maintainers\Structure;
 
 use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\Branch;
-use App\Form\Maintainers\BranchType;
+use App\Form\Maintainers\Organizational\BranchType;
 use App\Repository\Tenant\BranchRepository;
 use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;

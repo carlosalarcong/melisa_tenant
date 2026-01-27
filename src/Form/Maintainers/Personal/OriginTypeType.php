@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form\Maintainers;
+namespace App\Form\Maintainers\Personal;
 
 use App\Entity\Tenant\OriginType as OriginTypeEntity;
 use Symfony\Component\Form\AbstractType;

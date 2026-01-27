@@ -4,7 +4,7 @@ namespace App\Controller\Maintainers\Basic;
 
 use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\EthnicGroup;
-use App\Form\Maintainers\EthnicGroupType;
+use App\Form\Maintainers\Personal\EthnicGroupType;
 use App\Repository\Tenant\EthnicGroupRepository;
 use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;

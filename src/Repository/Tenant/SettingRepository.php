@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\Tenant;
 
 use App\Entity\Tenant\Setting;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;

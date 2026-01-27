@@ -4,7 +4,7 @@ namespace App\Controller\Maintainers\Structure;
 
 use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\CostCenter;
-use App\Form\Maintainers\CostCenterType;
+use App\Form\Maintainers\Organizational\CostCenterType;
 use App\Repository\Tenant\CostCenterRepository;
 use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;

@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Form\Maintainers;
+namespace App\Form\Maintainers\Personal;
 
-use App\Entity\Tenant\Location;
+use App\Entity\Tenant\Origin;
+use App\Entity\Tenant\OriginType as OriginTypeEntity;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class LocationType extends AbstractType
+class OriginType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -18,17 +19,18 @@ class LocationType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'Nombre',
                 'attr' => [
-                    'placeholder' => 'Ingrese el nombre de la ubicación',
+                    'placeholder' => 'Ingrese el nombre del origen',
                     'class' => 'form-control'
                 ]
             ])
-            ->add('description', TextareaType::class, [
-                'label' => 'Descripción',
+            ->add('originType', EntityType::class, [
+                'class' => OriginTypeEntity::class,
+                'choice_label' => 'name',
+                'label' => 'Tipo de Origen',
+                'placeholder' => 'Seleccione un tipo',
                 'required' => false,
                 'attr' => [
-                    'placeholder' => 'Descripción de la ubicación (opcional)',
-                    'class' => 'form-control',
-                    'rows' => 3
+                    'class' => 'form-select'
                 ]
             ])
             ->add('active', CheckboxType::class, [
@@ -43,7 +45,7 @@ class LocationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Location::class,
+            'data_class' => Origin::class,
         ]);
     }
 }

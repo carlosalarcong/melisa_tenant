@@ -4,7 +4,7 @@ namespace App\Controller\Maintainers\Basic;
 
 use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\JobPosition;
-use App\Form\Maintainers\JobPositionType;
+use App\Form\Maintainers\Labor\JobPositionType;
 use App\Repository\Tenant\JobPositionRepository;
 use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;

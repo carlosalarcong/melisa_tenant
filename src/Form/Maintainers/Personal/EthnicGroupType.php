@@ -1,17 +1,15 @@
 <?php
 
-namespace App\Form\Maintainers;
+namespace App\Form\Maintainers\Personal;
 
-use App\Entity\Tenant\Origin;
-use App\Entity\Tenant\OriginType as OriginTypeEntity;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Entity\Tenant\EthnicGroup;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class OriginType extends AbstractType
+class EthnicGroupType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -19,18 +17,17 @@ class OriginType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'Nombre',
                 'attr' => [
-                    'placeholder' => 'Ingrese el nombre del origen',
+                    'placeholder' => 'Ingrese el nombre del pueblo originario',
                     'class' => 'form-control'
                 ]
             ])
-            ->add('originType', EntityType::class, [
-                'class' => OriginTypeEntity::class,
-                'choice_label' => 'name',
-                'label' => 'Tipo de Origen',
-                'placeholder' => 'Seleccione un tipo',
+            ->add('code', TextType::class, [
+                'label' => 'Código',
                 'required' => false,
                 'attr' => [
-                    'class' => 'form-select'
+                    'placeholder' => 'Código (opcional)',
+                    'class' => 'form-control',
+                    'maxlength' => 10
                 ]
             ])
             ->add('active', CheckboxType::class, [
@@ -45,7 +42,7 @@ class OriginType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Origin::class,
+            'data_class' => EthnicGroup::class,
         ]);
     }
 }

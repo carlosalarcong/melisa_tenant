@@ -4,7 +4,7 @@ namespace App\Controller\Maintainers\Structure;
 
 use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\SubCompany;
-use App\Form\Maintainers\SubCompanyType;
+use App\Form\Maintainers\Organizational\SubCompanyType;
 use App\Repository\Tenant\SubCompanyRepository;
 use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form\Maintainers;
+namespace App\Form\Maintainers\Clinical;
 
 use App\Entity\Tenant\MedicalBox;
 use Symfony\Component\Form\AbstractType;

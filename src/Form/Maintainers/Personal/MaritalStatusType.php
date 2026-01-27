@@ -1,37 +1,37 @@
 <?php
 
-namespace App\Form\Maintainers;
+namespace App\Form\Maintainers\Personal;
 
-use App\Entity\Tenant\Religion;
+use App\Entity\Tenant\MaritalStatus;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ReligionType extends AbstractType
+class MaritalStatusType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'Name',
+                'label' => 'Nombre',
                 'attr' => [
-                    'placeholder' => 'Enter religion name',
+                    'placeholder' => 'Ingrese el nombre del estado conyugal',
                     'class' => 'form-control'
                 ]
             ])
-            ->add('religionCodeHl7', TextType::class, [
-                'label' => 'HL7 Code',
+            ->add('code', TextType::class, [
+                'label' => 'Código',
                 'required' => false,
                 'attr' => [
-                    'placeholder' => 'Enter HL7 code (optional)',
+                    'placeholder' => 'Código (opcional)',
                     'class' => 'form-control',
                     'maxlength' => 10
                 ]
             ])
-            ->add('isActive', CheckboxType::class, [
-                'label' => 'Active',
+            ->add('active', CheckboxType::class, [
+                'label' => 'Activo',
                 'required' => false,
                 'attr' => [
                     'class' => 'form-check-input'
@@ -42,7 +42,7 @@ class ReligionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Religion::class,
+            'data_class' => MaritalStatus::class,
         ]);
     }
 }

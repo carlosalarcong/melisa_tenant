@@ -4,7 +4,7 @@ namespace App\Controller\Maintainers\Basic;
 
 use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\Gender;
-use App\Form\Maintainers\GenderType;
+use App\Form\Maintainers\Personal\GenderType;
 use App\Repository\Tenant\GenderRepository;
 use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;

@@ -4,7 +4,7 @@ namespace App\Controller\Maintainers\Basic;
 
 use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\Location;
-use App\Form\Maintainers\LocationType;
+use App\Form\Maintainers\Organizational\LocationType;
 use App\Repository\Tenant\LocationRepository;
 use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;

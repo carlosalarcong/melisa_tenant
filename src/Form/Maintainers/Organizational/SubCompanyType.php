@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form\Maintainers;
+namespace App\Form\Maintainers\Organizational;
 
 use App\Entity\Tenant\SubCompany;
 use Symfony\Component\Form\AbstractType;

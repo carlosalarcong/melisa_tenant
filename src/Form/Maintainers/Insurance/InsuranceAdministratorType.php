@@ -1,17 +1,15 @@
 <?php
 
-namespace App\Form\Maintainers;
+namespace App\Form\Maintainers\Insurance;
 
-use App\Entity\Tenant\EducationLevel;
-use App\Entity\Tenant\EducationLevelDetail;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Entity\Tenant\InsuranceAdministrator;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class EducationLevelDetailType extends AbstractType
+class InsuranceAdministratorType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -19,17 +17,17 @@ class EducationLevelDetailType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'Nombre',
                 'attr' => [
-                    'placeholder' => 'Ingrese el detalle del nivel',
+                    'placeholder' => 'Ingrese el nombre del administrador de seguro',
                     'class' => 'form-control'
                 ]
             ])
-            ->add('educationLevel', EntityType::class, [
-                'class' => EducationLevel::class,
-                'choice_label' => 'name',
-                'label' => 'Nivel de Instrucción',
-                'placeholder' => 'Seleccione un nivel',
+            ->add('code', TextType::class, [
+                'label' => 'Código',
+                'required' => false,
                 'attr' => [
-                    'class' => 'form-select'
+                    'placeholder' => 'Código (opcional)',
+                    'class' => 'form-control',
+                    'maxlength' => 10
                 ]
             ])
             ->add('active', CheckboxType::class, [
@@ -44,7 +42,7 @@ class EducationLevelDetailType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => EducationLevelDetail::class,
+            'data_class' => InsuranceAdministrator::class,
         ]);
     }
 }

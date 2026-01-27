@@ -4,7 +4,7 @@ namespace App\Controller\Maintainers\Basic;
 
 use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\EducationLevel;
-use App\Form\Maintainers\EducationLevelType;
+use App\Form\Maintainers\Education\EducationLevelType;
 use App\Repository\Tenant\EducationLevelRepository;
 use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;
