@@ -12,9 +12,9 @@ hakam_multi_tenancy:
     
     tenant_connection:
         url: '%env(DATABASE_URL)%'
-        driver: 'pdo_mysql'
-        charset: 'utf8mb4'
-        server_version: '8.0'
+        driver: 'pdo_pgsql'
+        charset: 'utf8'
+        server_version: '16'
     
     tenant_migration:
         # Directorio donde están las migraciones de tenant (ya existentes)

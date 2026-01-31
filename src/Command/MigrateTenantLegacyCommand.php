@@ -480,7 +480,7 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
             ]);
 
             // Verificar si las tablas principales existen en el tenant usando SHOW TABLES
-            $result = $tenantConnection->executeQuery("SHOW TABLES");
+            $result = $tenantConnection->executeQuery("SELECT tablename FROM pg_tables WHERE schemaname = 'public'");
             $tables = array_column($result->fetchAllAssociative(), 'Tables_in_' . $testTenant['database_name']);
             
             // Tablas que esperamos encontrar en el tenant
@@ -648,9 +648,9 @@ Este comando automatiza completamente el proceso de migraciones multi-tenant:
         $migrationTableSql = "
             CREATE TABLE IF NOT EXISTS doctrine_migration_versions (
                 version VARCHAR(191) NOT NULL PRIMARY KEY,
-                executed_at DATETIME DEFAULT NULL,
+                executed_at TIMESTAMP DEFAULT NULL,
                 execution_time INT DEFAULT NULL
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+            )
         ";
         
         $connection->executeStatement($migrationTableSql);

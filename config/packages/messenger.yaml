@@ -4,15 +4,22 @@ framework:
 
         transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
+            # CRÍTICO: Usar doctrine://main (entity manager main, NO tenant)
+            # auto_setup: false evita que el listener de Messenger intente crear tablas
+            # durante operaciones de schema en otros entity managers
             async:
-                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                dsn: 'doctrine://main'
                 options:
                     use_notify: true
                     check_delayed_interval: 60000
+                    auto_setup: false  # CRITICAL: No auto-crear tablas durante schema generation
                 retry_strategy:
                     max_retries: 3
                     multiplier: 2
-            failed: 'doctrine://main?queue_name=failed'
+            failed: 
+                dsn: 'doctrine://main?queue_name=failed'
+                options:
+                    auto_setup: false  # CRITICAL: No auto-crear tablas durante schema generation
             # sync: 'sync://'
 
         default_bus: messenger.bus.default

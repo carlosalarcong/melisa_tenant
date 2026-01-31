@@ -45,7 +45,7 @@ class Person implements SecuredResourceInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $deathDateAt = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true, columnDefinition: 'LONGTEXT')]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $nonMedicalNote = null;
 
     #[ORM\Column(length: 255, nullable: true)]

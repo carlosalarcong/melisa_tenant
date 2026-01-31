@@ -48,15 +48,16 @@ class CustomTenantConfigProvider implements TenantConfigProviderInterface
         }
 
         // Convertir array de tenant a DTO del bundle usando fromArgs
+        // Usar PostgreSQL y credenciales desde DATABASE_URL
         return TenantConnectionConfigDTO::fromArgs(
             identifier: $tenant['id'] ?? $identifier,
-            driver: DriverTypeEnum::MYSQL,
-            dbStatus: DatabaseStatusEnum::DATABASE_MIGRATED,  // Las DBs ya existen y están migradas
-            host: $tenant['host'] ?? 'localhost',
-            port: (int)($tenant['host_port'] ?? 3306),
+            driver: DriverTypeEnum::POSTGRES,
+            dbStatus: DatabaseStatusEnum::tryFrom($tenant['database_status'] ?? 'DATABASE_CREATED') ?? DatabaseStatusEnum::DATABASE_CREATED,
+            host: 'localhost',
+            port: 5432,
             dbname: $tenant['database_name'],
-            user: $tenant['db_user'] ?? 'melisa',
-            password: $tenant['db_password'] ?? 'melisamelisa'
+            user: 'melisa',
+            password: 'melisamelisa'
         );
     }
 

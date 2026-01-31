@@ -32,7 +32,7 @@ class TestMultiTenancyCommand extends Command
         // Test 1: Verificar base de datos central
         $io->section('Test 1: Verificar conexión a base de datos central');
         try {
-            $dbName = $this->connection->executeQuery('SELECT DATABASE()')->fetchOne();
+            $dbName = $this->connection->executeQuery('SELECT current_database()')->fetchOne();
             $io->success("✅ Conectado a base de datos: $dbName");
         } catch (\Exception $e) {
             $io->error("❌ Error conectando a base de datos: " . $e->getMessage());
@@ -85,14 +85,14 @@ class TestMultiTenancyCommand extends Command
             // Test 4: Verificar que la base de datos del tenant existe
             $io->section("Test 4: Verificar base de datos tenant '{$tenantData['database_name']}'");
             try {
-                $databases = $this->connection->executeQuery('SHOW DATABASES')->fetchFirstColumn();
+                $databases = $this->connection->executeQuery('SELECT datname FROM pg_database WHERE datistemplate = false')->fetchFirstColumn();
                 
                 if (in_array($tenantData['database_name'], $databases)) {
                     $io->success("✅ Base de datos '{$tenantData['database_name']}' existe");
                     
                     // Verificar tablas en la base de datos del tenant
                     $tables = $this->connection->executeQuery(
-                        "SHOW TABLES FROM `{$tenantData['database_name']}`"
+                        "SELECT tablename FROM pg_tables WHERE schemaname = 'public'"
                     )->fetchFirstColumn();
                     
                     $io->writeln("📊 Tablas encontradas: " . count($tables));
