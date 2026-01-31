@@ -47,12 +47,12 @@ class TenantResolver
 
         return [
             'host' => $parsed['host'] ?? 'localhost',
-            'port' => $parsed['port'] ?? 3306,
+            'port' => $parsed['port'] ?? 5432, // PostgreSQL default port
             'dbname' => ltrim($parsed['path'] ?? '', '/'),
             'user' => $parsed['user'] ?? '',
             'password' => $parsed['pass'] ?? '',
-            'driver' => 'pdo_mysql',
-            'charset' => $queryParams['charset'] ?? 'utf8mb4',
+            'driver' => 'pdo_pgsql', // PostgreSQL driver
+            'charset' => $queryParams['charset'] ?? 'utf8',
         ];
     }
 
@@ -84,11 +84,11 @@ class TenantResolver
         try {
             $connection = DriverManager::getConnection($this->centralDbConfig, $this->dbalConfig);
 
-            //
+            // Query compatible con PostgreSQL (is_active = true)
             $query = '
-                  SELECT id, name, slug, database_name, database_status, is_active
+                SELECT id, name, slug, subdomain, database_name, database_status, is_active
                 FROM tenant_db
-                WHERE slug = ? AND is_active = 1
+                WHERE slug = ? AND is_active = true
             ';
             
             $result = $connection->executeQuery($query, [$slug]);
@@ -107,10 +107,11 @@ class TenantResolver
         try {
             $connection = DriverManager::getConnection($this->centralDbConfig, $this->dbalConfig);
             
+            // Query compatible con PostgreSQL (is_active = true)
             $query = '
-                SELECT id, name, slug, database_name, database_status, is_active
+                SELECT id, name, slug, subdomain, database_name, database_status, is_active
                 FROM tenant_db
-                WHERE id = ? AND is_active = 1
+                WHERE id = ? AND is_active = true
             ';
             
             $result = $connection->executeQuery($query, [$id]);
@@ -132,7 +133,7 @@ class TenantResolver
             'dbname' => $tenant['database_name'],
             'user' => $tenant['db_user'],
             'password' => $tenant['db_password'],
-            'driver' => 'pdo_mysql',
+            'driver' => 'pdo_pgsql', // PostgreSQL driver
         ];
 
         return DriverManager::getConnection($tenantDbConfig, $this->dbalConfig);
@@ -146,7 +147,8 @@ class TenantResolver
         try {
             $connection = DriverManager::getConnection($this->centralDbConfig, $this->dbalConfig);
             
-            $query = 'SELECT subdomain, name FROM tenant_db WHERE is_active = 1 ORDER BY name';
+            // Query compatible con PostgreSQL (is_active = true)
+            $query = 'SELECT subdomain, name FROM tenant_db WHERE is_active = true ORDER BY name';
             $result = $connection->executeQuery($query);
             
             return $result->fetchAllAssociative();

@@ -93,9 +93,15 @@ class MemberProvider implements UserProviderInterface, PasswordUpgraderInterface
 
     /**
      * Actualiza la contraseña hasheada del usuario
+     * DESHABILITADO: Causa problemas de refresh de token después del login
      */
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
+        // Temporalmente deshabilitado para evitar que el token no pueda refrescarse
+        // después del login debido a cambios en el objeto Member
+        return;
+        
+        /* CODIGO ORIGINAL - COMENTADO
         if (!$user instanceof Member) {
             return;
         }
@@ -108,5 +114,6 @@ class MemberProvider implements UserProviderInterface, PasswordUpgraderInterface
         $this->logger->info('🔐 Contraseña actualizada', [
             'user_id' => $user->getId()
         ]);
+        */
     }
 }
