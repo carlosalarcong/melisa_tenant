@@ -87,7 +87,7 @@ final class Version20260201135350 extends AbstractMigration
         $this->addSql('CREATE SEQUENCE service_package_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE service_package_detail_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE service_type_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE sexo_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE gender_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE specialty_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE specialty_branch_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE sub_company_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
@@ -263,7 +263,7 @@ final class Version20260201135350 extends AbstractMigration
         $this->addSql('CREATE UNIQUE INDEX UNIQ_9F74B898989D9B62 ON "setting" (slug)');
         $this->addSql('COMMENT ON COLUMN "setting".created_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('COMMENT ON COLUMN "setting".updated_at IS \'(DC2Type:datetime_immutable)\'');
-        $this->addSql('CREATE TABLE sexo (id INT NOT NULL, name VARCHAR(50) NOT NULL, code VARCHAR(10) DEFAULT NULL, is_active BOOLEAN NOT NULL, id_estado INT NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE gender (id INT NOT NULL, name VARCHAR(50) NOT NULL, code VARCHAR(10) DEFAULT NULL, is_active BOOLEAN NOT NULL, id_estado INT NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE specialty (id INT NOT NULL, code VARCHAR(20) DEFAULT NULL, name VARCHAR(100) NOT NULL, description TEXT DEFAULT NULL, category VARCHAR(100) DEFAULT NULL, requires_certification BOOLEAN DEFAULT false NOT NULL, default_consultation_duration INT DEFAULT NULL, is_active BOOLEAN DEFAULT true NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE specialty_branch (id INT NOT NULL, specialty_id INT NOT NULL, branch_id INT NOT NULL, is_active BOOLEAN NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_89FD01D99A353316 ON specialty_branch (specialty_id)');
@@ -336,7 +336,7 @@ final class Version20260201135350 extends AbstractMigration
         $this->addSql('ALTER TABLE "person" ADD CONSTRAINT FK_34DCD17622C8FC20 FOREIGN KEY (occupation_id) REFERENCES "occupation" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE "person" ADD CONSTRAINT FK_34DCD176E7EEEDB3 FOREIGN KEY (ethnic_group_id) REFERENCES "ethnic_group" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE "person" ADD CONSTRAINT FK_34DCD176B7850CBD FOREIGN KEY (religion_id) REFERENCES "religion" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE "person" ADD CONSTRAINT FK_34DCD176708A0E0 FOREIGN KEY (gender_id) REFERENCES sexo (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE "person" ADD CONSTRAINT FK_34DCD176708A0E0 FOREIGN KEY (gender_id) REFERENCES gender (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE "person" ADD CONSTRAINT FK_34DCD1767949DE26 FOREIGN KEY (nacionality_id) REFERENCES country (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE person_address ADD CONSTRAINT FK_2FD0DC08A14E0760 FOREIGN KEY (id_person_id) REFERENCES "person" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE person_address ADD CONSTRAINT FK_2FD0DC08AE6F181C FOREIGN KEY (municipality_id) REFERENCES "municipality" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
@@ -435,7 +435,7 @@ final class Version20260201135350 extends AbstractMigration
         $this->addSql('DROP SEQUENCE service_package_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE service_package_detail_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE service_type_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE sexo_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE gender_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE specialty_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE specialty_branch_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE sub_company_id_seq CASCADE');
@@ -592,7 +592,7 @@ final class Version20260201135350 extends AbstractMigration
         $this->addSql('DROP TABLE service_package_detail');
         $this->addSql('DROP TABLE service_type');
         $this->addSql('DROP TABLE "setting"');
-        $this->addSql('DROP TABLE sexo');
+        $this->addSql('DROP TABLE gender');
         $this->addSql('DROP TABLE specialty');
         $this->addSql('DROP TABLE specialty_branch');
         $this->addSql('DROP TABLE sub_company');
