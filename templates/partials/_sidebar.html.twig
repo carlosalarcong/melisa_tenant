@@ -14,6 +14,8 @@
         <span>Principal</span>
     </div>
     <ul class="nav flex-column">
+        {# Lazy loading: Cargar menú DESPUÉS de que tenant esté establecido #}
+        {% set menu_items = get_menu() %}
         {% for item in menu_items %}
             {{ _self.render_menu_item(item, 1) }}
         {% endfor %}
