@@ -6,46 +6,58 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\PaymentMethodType;
 use App\Form\Maintainers\Treasury\PaymentMethodTypeType;
 use App\Repository\Tenant\PaymentMethodTypeRepository;
+use App\Service\Export\ExportService;
+use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/maintainers/treasury/payment-method-type')]
+#[Route('/app/maintainers/treasury/payment-method-type')]
 class PaymentMethodTypeController extends AbstractMantenedorController
 {
     public function __construct(
-        private readonly PaymentMethodTypeRepository $repository
+        private readonly PaymentMethodTypeRepository $repository,
+        TenantEntityManager $tenantEntityManager,
+        ExportService $exportService
     ) {
+        parent::__construct($tenantEntityManager);
+        $this->setExportService($exportService);
     }
 
     #[Route('/', name: 'app_maintainers_treasury_payment_method_type_index', methods: ['GET'])]
     public function index(Request $request): Response
     {
-        return $this->indexAction($request);
+        return $this->handleIndex($request);
     }
 
     #[Route('/create', name: 'app_maintainers_treasury_payment_method_type_create', methods: ['GET', 'POST'])]
     public function create(Request $request): Response
     {
-        return $this->createAction($request);
+        return $this->handleCreate($request);
     }
 
     #[Route('/{id}/edit', name: 'app_maintainers_treasury_payment_method_type_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, int $id): Response
     {
-        return $this->editAction($request, $id);
+        return $this->handleEdit($request, $id);
     }
 
     #[Route('/{id}/delete', name: 'app_maintainers_treasury_payment_method_type_delete', methods: ['POST'])]
     public function delete(Request $request, int $id): Response
     {
-        return $this->deleteAction($request, $id);
+        return $this->handleDelete($request, $id);
     }
 
     #[Route('/export', name: 'app_maintainers_treasury_payment_method_type_export', methods: ['GET'])]
-    public function export(): Response
+    public function export(Request $request): Response
     {
-        return $this->exportAction();
+        $exportColumns = $this->getExportColumns();
+        return $this->handleExport(
+            request: $request,
+            columns: array_keys($exportColumns),
+            headers: array_values($exportColumns),
+            filename: $this->getExportFileName()
+        );
     }
 
     protected function getEntityClass(): string
@@ -73,11 +85,28 @@ class PaymentMethodTypeController extends AbstractMantenedorController
         return 'app_maintainers_treasury_payment_method_type';
     }
 
-    protected function getPageTitle(): string
+    protected function getPageTitle(string $action = 'index'): string
     {
-        return 'Tipos de Método de Pago';
+        return match($action) {
+            'create' => 'Crear Tipo de Forma de Pago',
+            'edit' => 'Editar Tipo de Forma de Pago',
+            default => 'Tipos de Forma de Pago'
+        };
+    }
+    protected function getColumns(): array
+    {
+        return ['id', 'name', 'isActive'];
     }
 
+    protected function createNewEntity(): object
+    {
+        return new PaymentMethodType();
+    }
+
+    protected function getIndexRoute(): string
+    {
+        return 'app_maintainers_treasury_payment_method_type_index';
+    }
     protected function getData(Request $request): array
     {
         $qb = $this->repository->createQueryBuilder('pmt');

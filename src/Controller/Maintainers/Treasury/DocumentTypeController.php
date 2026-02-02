@@ -6,46 +6,58 @@ use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\DocumentType;
 use App\Form\Maintainers\Treasury\DocumentTypeType;
 use App\Repository\Tenant\DocumentTypeRepository;
+use App\Service\Export\ExportService;
+use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/maintainers/treasury/document-type')]
+#[Route('/app/maintainers/treasury/document-type')]
 class DocumentTypeController extends AbstractMantenedorController
 {
     public function __construct(
-        private readonly DocumentTypeRepository $repository
+        private readonly DocumentTypeRepository $repository,
+        TenantEntityManager $tenantEntityManager,
+        ExportService $exportService
     ) {
+        parent::__construct($tenantEntityManager);
+        $this->setExportService($exportService);
     }
 
     #[Route('/', name: 'app_maintainers_treasury_document_type_index', methods: ['GET'])]
     public function index(Request $request): Response
     {
-        return $this->indexAction($request);
+        return $this->handleIndex($request);
     }
 
     #[Route('/create', name: 'app_maintainers_treasury_document_type_create', methods: ['GET', 'POST'])]
     public function create(Request $request): Response
     {
-        return $this->createAction($request);
+        return $this->handleCreate($request);
     }
 
     #[Route('/{id}/edit', name: 'app_maintainers_treasury_document_type_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, int $id): Response
     {
-        return $this->editAction($request, $id);
+        return $this->handleEdit($request, $id);
     }
 
     #[Route('/{id}/delete', name: 'app_maintainers_treasury_document_type_delete', methods: ['POST'])]
     public function delete(Request $request, int $id): Response
     {
-        return $this->deleteAction($request, $id);
+        return $this->handleDelete($request, $id);
     }
 
     #[Route('/export', name: 'app_maintainers_treasury_document_type_export', methods: ['GET'])]
-    public function export(): Response
+    public function export(Request $request): Response
     {
-        return $this->exportAction();
+        $exportColumns = $this->getExportColumns();
+        return $this->handleExport(
+            request: $request,
+            columns: array_keys($exportColumns),
+            headers: array_values($exportColumns),
+            filename: $this->getExportFileName()
+        );
     }
 
     protected function getEntityClass(): string
@@ -73,9 +85,28 @@ class DocumentTypeController extends AbstractMantenedorController
         return 'app_maintainers_treasury_document_type';
     }
 
-    protected function getPageTitle(): string
+    protected function getPageTitle(string $action = 'index'): string
     {
-        return 'Tipos de Documento';
+        return match($action) {
+            'create' => 'Crear Tipo de Documento',
+            'edit' => 'Editar Tipo de Documento',
+            default => 'Tipos de Documento'
+        };
+    }
+
+    protected function getColumns(): array
+    {
+        return ['id', 'siiCode', 'name', 'isDte', 'isLogistics', 'isActive'];
+    }
+
+    protected function createNewEntity(): object
+    {
+        return new DocumentType();
+    }
+
+    protected function getIndexRoute(): string
+    {
+        return 'app_maintainers_treasury_document_type_index';
     }
 
     protected function getData(Request $request): array

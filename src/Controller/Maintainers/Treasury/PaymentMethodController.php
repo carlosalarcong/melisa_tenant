@@ -4,48 +4,60 @@ namespace App\Controller\Maintainers\Treasury;
 
 use App\Controller\AbstractMantenedorController;
 use App\Entity\Tenant\PaymentMethod;
-use App\Form\Maintainers\Treasury\PaymentMethodType;
+use App\Form\Maintainers\Treasury\PaymentMethodFormType;
 use App\Repository\Tenant\PaymentMethodRepository;
+use App\Service\Export\ExportService;
+use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/maintainers/treasury/payment-method')]
+#[Route('/app/maintainers/treasury/payment-method')]
 class PaymentMethodController extends AbstractMantenedorController
 {
     public function __construct(
-        private readonly PaymentMethodRepository $repository
+        private readonly PaymentMethodRepository $repository,
+        TenantEntityManager $tenantEntityManager,
+        ExportService $exportService
     ) {
+        parent::__construct($tenantEntityManager);
+        $this->setExportService($exportService);
     }
 
     #[Route('/', name: 'app_maintainers_treasury_payment_method_index', methods: ['GET'])]
     public function index(Request $request): Response
     {
-        return $this->indexAction($request);
+        return $this->handleIndex($request);
     }
 
     #[Route('/create', name: 'app_maintainers_treasury_payment_method_create', methods: ['GET', 'POST'])]
     public function create(Request $request): Response
     {
-        return $this->createAction($request);
+        return $this->handleCreate($request);
     }
 
     #[Route('/{id}/edit', name: 'app_maintainers_treasury_payment_method_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, int $id): Response
     {
-        return $this->editAction($request, $id);
+        return $this->handleEdit($request, $id);
     }
 
     #[Route('/{id}/delete', name: 'app_maintainers_treasury_payment_method_delete', methods: ['POST'])]
     public function delete(Request $request, int $id): Response
     {
-        return $this->deleteAction($request, $id);
+        return $this->handleDelete($request, $id);
     }
 
     #[Route('/export', name: 'app_maintainers_treasury_payment_method_export', methods: ['GET'])]
-    public function export(): Response
+    public function export(Request $request): Response
     {
-        return $this->exportAction();
+        $exportColumns = $this->getExportColumns();
+        return $this->handleExport(
+            request: $request,
+            columns: array_keys($exportColumns),
+            headers: array_values($exportColumns),
+            filename: $this->getExportFileName()
+        );
     }
 
     protected function getEntityClass(): string
@@ -55,7 +67,7 @@ class PaymentMethodController extends AbstractMantenedorController
 
     protected function getFormType(): string
     {
-        return PaymentMethodType::class;
+        return PaymentMethodFormType::class;
     }
 
     protected function getRepository()
@@ -73,11 +85,28 @@ class PaymentMethodController extends AbstractMantenedorController
         return 'app_maintainers_treasury_payment_method';
     }
 
-    protected function getPageTitle(): string
+    protected function getPageTitle(string $action = 'index'): string
     {
-        return 'Métodos de Pago';
+        return match($action) {
+            'create' => 'Crear Forma de Pago',
+            'edit' => 'Editar Forma de Pago',
+            default => 'Formas de Pago'
+        };
+    }
+    protected function getColumns(): array
+    {
+        return ['id', 'code', 'name', 'parent.name', 'paymentMethodType.name', 'isActive'];
     }
 
+    protected function createNewEntity(): object
+    {
+        return new PaymentMethod();
+    }
+
+    protected function getIndexRoute(): string
+    {
+        return 'app_maintainers_treasury_payment_method_index';
+    }
     protected function getData(Request $request): array
     {
         $qb = $this->repository->createQueryBuilder('pm')

@@ -3,7 +3,7 @@
 namespace App\Form\Maintainers\Treasury;
 
 use App\Entity\Tenant\PaymentMethod;
-use App\Entity\Tenant\PaymentMethodType;
+use App\Entity\Tenant\PaymentMethodType as PaymentMethodTypeEntity;
 use App\Repository\Tenant\PaymentMethodRepository;
 use App\Repository\Tenant\PaymentMethodTypeRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -13,7 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PaymentMethodType extends AbstractType
+class PaymentMethodFormType extends AbstractType
 {
     public function __construct(
         private readonly PaymentMethodRepository $paymentMethodRepository,
@@ -54,7 +54,7 @@ class PaymentMethodType extends AbstractType
                 }
             ])
             ->add('paymentMethodType', EntityType::class, [
-                'class' => PaymentMethodType::class,
+                'class' => PaymentMethodTypeEntity::class,
                 'choice_label' => 'name',
                 'label' => 'Tipo de Método de Pago',
                 'placeholder' => 'Seleccione un tipo',
