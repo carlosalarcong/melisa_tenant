@@ -103,15 +103,6 @@ class MaritalStatusController extends AbstractMantenedorController
         return 'app_maintainers_marital_status_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Estado Conyugal',
-            'edit' => 'Editar Estado Conyugal',
-            default => 'Estados Conyugales'
-        };
-    }
-
     protected function findEntity(int $id): ?object
     {
         return $this->repository->find($id);

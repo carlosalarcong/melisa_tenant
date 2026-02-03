@@ -100,15 +100,6 @@ class PrescriptionDispensationController extends AbstractMantenedorController
         return 'app_maintainers_hospital_prescription_dispensation_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Dispensacion',
-            'edit' => 'Editar Dispensacion',
-            default => 'Dispensaciones de Receta'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

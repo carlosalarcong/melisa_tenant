@@ -68,15 +68,6 @@ class MedicalServiceBedTypeController extends AbstractMantenedorController
         return 'app_maintainers_commercial_medical_service_bed_type_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Asignar Tipo de Cama a Acción Clínica',
-            'edit' => 'Editar Tipo de Cama en Acción Clínica',
-            default => 'Tipos de Cama por Acción Clínica'
-        };
-    }
-
     #[Route('', name: 'app_maintainers_commercial_medical_service_bed_type_index', methods: ['GET'])]
     public function index(Request $request): Response
     {

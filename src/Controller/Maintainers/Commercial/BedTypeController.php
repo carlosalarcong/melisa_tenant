@@ -65,15 +65,6 @@ class BedTypeController extends AbstractMantenedorController
         return 'app_maintainers_commercial_bed_type_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Tipo de Cama',
-            'edit' => 'Editar Tipo de Cama',
-            default => 'Tipos de Cama'
-        };
-    }
-
     #[Route('', name: 'app_maintainers_commercial_bed_type_index', methods: ['GET'])]
     public function index(Request $request): Response
     {

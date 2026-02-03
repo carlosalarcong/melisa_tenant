@@ -102,15 +102,6 @@ class SurgicalStageItemController extends AbstractMantenedorController
         return new SurgicalStageItem();
     }
 
-    protected function getPageTitle(?string $action = null): string
-    {
-        return match($action) {
-            'create' => 'Crear Item de Etapa Quirúrgica',
-            'edit' => 'Editar Item de Etapa Quirúrgica',
-            default => 'Items de Etapas Quirúrgicas'
-        };
-    }
-
     protected function getExportColumns(): array
     {
         return [

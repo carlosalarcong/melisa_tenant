@@ -102,15 +102,6 @@ class GratuityTypeController extends AbstractMantenedorController
         return 'app_maintainers_treasury_gratuity_type_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Tipo Gratuidad',
-            'edit' => 'Editar Tipo Gratuidad',
-            default => 'Tipos de Gratuidad'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

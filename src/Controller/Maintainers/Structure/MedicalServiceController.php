@@ -108,13 +108,4 @@ class MedicalServiceController extends AbstractMantenedorController
         return 'app_maintainers_medical_service_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'index' => 'Servicios Médicos',
-            'create' => 'Crear Servicio',
-            'edit' => 'Editar Servicio',
-            default => 'Servicios Médicos'
-        };
-    }
 }

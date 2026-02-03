@@ -65,15 +65,6 @@ class PayerTypeController extends AbstractMantenedorController
         return 'app_maintainers_commercial_payer_type_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Tipo de Financiador',
-            'edit' => 'Editar Tipo de Financiador',
-            default => 'Tipos de Financiador'
-        };
-    }
-
     #[Route('', name: 'app_maintainers_commercial_payer_type_index', methods: ['GET'])]
     public function index(Request $request): Response
     {

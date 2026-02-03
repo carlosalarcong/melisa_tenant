@@ -97,15 +97,6 @@ class NutritionistTeIndexController extends AbstractMantenedorController
         return 'app_maintainers_hospital_nutritionist_te_index_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Indice TE',
-            'edit' => 'Editar Indice TE',
-            default => 'Indices Talla/Edad'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

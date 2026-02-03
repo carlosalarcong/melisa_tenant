@@ -96,15 +96,6 @@ class AnesthesiaTypeController extends AbstractMantenedorController
         return new AnesthesiaType();
     }
 
-    protected function getPageTitle(?string $action = null): string
-    {
-        return match($action) {
-            'create' => 'Crear Tipo de Anestesia',
-            'edit' => 'Editar Tipo de Anestesia',
-            default => 'Tipos de Anestesia'
-        };
-    }
-
     protected function getExportColumns(): array
     {
         return ['name', 'description', 'isActive'];

@@ -150,12 +150,4 @@ class WarehouseSpecialtyController extends AbstractMantenedorController
         return 'app_maintainers_logistics_warehouse_specialty_create';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Asignar Especialidad a Bodega',
-            'edit' => 'Editar Asignación',
-            default => 'Especialidades por Bodega'
-        };
-    }
 }

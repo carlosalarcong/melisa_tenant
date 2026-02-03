@@ -65,15 +65,6 @@ class ConsultationTypeController extends AbstractMantenedorController
         return 'app_maintainers_commercial_consultation_type_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Tipo de Consulta',
-            'edit' => 'Editar Tipo de Consulta',
-            default => 'Tipos de Consulta'
-        };
-    }
-
     #[Route('', name: 'app_maintainers_commercial_consultation_type_index', methods: ['GET'])]
     public function index(Request $request): Response
     {

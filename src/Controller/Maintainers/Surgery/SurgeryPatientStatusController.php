@@ -96,15 +96,6 @@ class SurgeryPatientStatusController extends AbstractMantenedorController
         return new SurgeryPatientStatus();
     }
 
-    protected function getPageTitle(?string $action = null): string
-    {
-        return match($action) {
-            'create' => 'Crear Estado de Paciente',
-            'edit' => 'Editar Estado de Paciente',
-            default => 'Estados de Paciente'
-        };
-    }
-
     protected function getExportColumns(): array
     {
         return ['name', 'color', 'isActive'];

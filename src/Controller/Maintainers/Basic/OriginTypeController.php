@@ -103,15 +103,6 @@ class OriginTypeController extends AbstractMantenedorController
         return 'app_maintainers_origin_type_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Tipo de Origen',
-            'edit' => 'Editar Tipo de Origen',
-            default => 'Tipos de Origen'
-        };
-    }
-
     protected function findEntity(int $id): ?object
     {
         return $this->repository->find($id);

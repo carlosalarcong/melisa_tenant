@@ -67,15 +67,6 @@ class SpecialtyBranchController extends AbstractMantenedorController
         return 'app_maintainers_commercial_specialty_branch_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Asignar Especialidad a Sucursal',
-            'edit' => 'Editar Especialidad en Sucursal',
-            default => 'Especialidades por Sucursal'
-        };
-    }
-
     #[Route('', name: 'app_maintainers_commercial_specialty_branch_index', methods: ['GET'])]
     public function index(Request $request): Response
     {

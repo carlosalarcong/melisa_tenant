@@ -98,15 +98,6 @@ class SurgicalBlockController extends AbstractMantenedorController
         return new SurgicalBlock();
     }
 
-    protected function getPageTitle(?string $action = null): string
-    {
-        return match($action) {
-            'create' => 'Crear Pabellón',
-            'edit' => 'Editar Pabellón',
-            default => 'Pabellones'
-        };
-    }
-
     protected function getExportColumns(): array
     {
         return [

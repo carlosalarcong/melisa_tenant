@@ -108,15 +108,6 @@ class ReligionController extends AbstractMantenedorController
         return 'app_maintainers_religion_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Create Religion',
-            'edit' => 'Edit Religion',
-            default => 'Religion Management'
-        };
-    }
-
     // ========================================================================
     // Hooks personalizados (opcional)
     // ========================================================================

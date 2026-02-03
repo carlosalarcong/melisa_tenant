@@ -98,15 +98,6 @@ class PrescriptionRouteController extends AbstractMantenedorController
         return 'app_maintainers_hospital_prescription_route_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Via',
-            'edit' => 'Editar Via',
-            default => 'Vias de Administracion'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

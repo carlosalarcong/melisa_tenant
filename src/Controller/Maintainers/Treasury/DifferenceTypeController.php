@@ -106,15 +106,6 @@ class DifferenceTypeController extends AbstractMantenedorController
         return 'app_maintainers_treasury_difference_type_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Tipo Diferencia',
-            'edit' => 'Editar Tipo Diferencia',
-            default => 'Tipos de Diferencia'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

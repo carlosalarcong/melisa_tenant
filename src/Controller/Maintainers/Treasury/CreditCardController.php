@@ -101,15 +101,6 @@ class CreditCardController extends AbstractMantenedorController
         return 'app_maintainers_treasury_credit_card_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Tarjeta Crédito',
-            'edit' => 'Editar Tarjeta Crédito',
-            default => 'Tarjetas de Credito'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

@@ -67,15 +67,6 @@ class RequestingCompanyController extends AbstractMantenedorController
         return 'app_maintainers_commercial_requesting_company_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Empresa Solicitante',
-            'edit' => 'Editar Empresa Solicitante',
-            default => 'Empresas Solicitantes'
-        };
-    }
-
     #[Route('', name: 'app_maintainers_commercial_requesting_company_index', methods: ['GET'])]
     public function index(Request $request): Response
     {

@@ -103,15 +103,6 @@ class MedicalBoxController extends AbstractMantenedorController
         return 'app_maintainers_medical_box_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Box',
-            'edit' => 'Editar Box',
-            default => 'Boxes Médicos'
-        };
-    }
-
     protected function findEntity(int $id): ?object
     {
         return $this->repository->find($id);

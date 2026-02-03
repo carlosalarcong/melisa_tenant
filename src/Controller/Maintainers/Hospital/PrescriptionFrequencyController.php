@@ -98,15 +98,6 @@ class PrescriptionFrequencyController extends AbstractMantenedorController
         return 'app_maintainers_hospital_prescription_frequency_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Frecuencia',
-            'edit' => 'Editar Frecuencia',
-            default => 'Frecuencias de Receta'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

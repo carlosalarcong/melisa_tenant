@@ -104,15 +104,6 @@ class BankController extends AbstractMantenedorController
         return 'app_maintainers_treasury_bank_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Banco',
-            'edit' => 'Editar Banco',
-            default => 'Bancos'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

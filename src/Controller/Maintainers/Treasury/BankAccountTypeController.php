@@ -106,15 +106,6 @@ class BankAccountTypeController extends AbstractMantenedorController
         return 'app_maintainers_treasury_bank_account_type_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Tipo Cuenta Banco',
-            'edit' => 'Editar Tipo Cuenta Banco',
-            default => 'Tipos de Cuenta Bancaria'
-        };
-    }
-
     // ========================================================================
     // Hooks personalizados
     // ========================================================================

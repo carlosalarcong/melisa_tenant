@@ -101,15 +101,6 @@ class ClinicalActionQuestionController extends AbstractMantenedorController
         return new ClinicalActionQuestion();
     }
 
-    protected function getPageTitle(?string $action = null): string
-    {
-        return match($action) {
-            'create' => 'Crear Pregunta',
-            'edit' => 'Editar Pregunta',
-            default => 'Preguntas de Accion Clinica'
-        };
-    }
-
     protected function getExportColumns(): array
     {
         return ['name', 'sortOrder', 'clinicalActionCategory.name', 'fieldType', 'isRequired', 'isActive'];

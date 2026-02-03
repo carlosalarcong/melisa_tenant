@@ -70,15 +70,6 @@ class RoomController extends AbstractMantenedorController
         return 'app_maintainers_commercial_room_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Sala',
-            'edit' => 'Editar Sala',
-            default => 'Salas'
-        };
-    }
-
     #[Route('', name: 'app_maintainers_commercial_room_index', methods: ['GET'])]
     public function index(Request $request): Response
     {

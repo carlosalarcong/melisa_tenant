@@ -146,12 +146,4 @@ class ProductConditionTypeController extends AbstractMantenedorController
         return 'app_maintainers_logistics_product_condition_type_create';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Tipo Condición Producto',
-            'edit' => 'Editar Tipo Condición Producto',
-            default => 'Tipos de Condición de Productos'
-        };
-    }
 }

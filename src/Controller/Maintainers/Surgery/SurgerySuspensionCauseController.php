@@ -96,15 +96,6 @@ class SurgerySuspensionCauseController extends AbstractMantenedorController
         return new SurgerySuspensionCause();
     }
 
-    protected function getPageTitle(?string $action = null): string
-    {
-        return match($action) {
-            'create' => 'Crear Causa de Suspensión',
-            'edit' => 'Editar Causa de Suspensión',
-            default => 'Causas de Suspensión'
-        };
-    }
-
     protected function getExportColumns(): array
     {
         return ['name', 'description', 'isActive'];

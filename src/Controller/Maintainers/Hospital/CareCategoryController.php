@@ -97,15 +97,6 @@ class CareCategoryController extends AbstractMantenedorController
         return 'app_maintainers_hospital_care_category_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Categoria Cuidado',
-            'edit' => 'Editar Categoria Cuidado',
-            default => 'Categorias de Cuidados'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

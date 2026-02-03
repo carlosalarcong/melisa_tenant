@@ -102,15 +102,6 @@ class EducationLevelController extends AbstractMantenedorController
         return 'app_maintainers_education_level_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Nivel de Instrucción',
-            'edit' => 'Editar Nivel de Instrucción',
-            default => 'Niveles de Instrucción'
-        };
-    }
-
     protected function findEntity(int $id): ?object
     {
         return $this->repository->find($id);

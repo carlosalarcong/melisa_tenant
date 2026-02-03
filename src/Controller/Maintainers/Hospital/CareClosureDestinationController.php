@@ -97,15 +97,6 @@ class CareClosureDestinationController extends AbstractMantenedorController
         return 'app_maintainers_hospital_care_closure_destination_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Destino Cierre',
-            'edit' => 'Editar Destino Cierre',
-            default => 'Destinos Cierre Atencion'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

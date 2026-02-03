@@ -104,15 +104,6 @@ class BillingPaymentMethodController extends AbstractMantenedorController
         return 'app_maintainers_treasury_billing_payment_method_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Forma Pago Facturación',
-            'edit' => 'Editar Forma Pago Facturación',
-            default => 'Formas de Pago Facturacion'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         if ($entity instanceof BillingPaymentMethod) {

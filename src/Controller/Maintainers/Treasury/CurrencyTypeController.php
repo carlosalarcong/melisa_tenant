@@ -103,15 +103,6 @@ class CurrencyTypeController extends AbstractMantenedorController
         return 'app_maintainers_treasury_currency_type_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Tipo Moneda',
-            'edit' => 'Editar Tipo Moneda',
-            default => 'Tipos de Moneda'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

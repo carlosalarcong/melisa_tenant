@@ -105,15 +105,6 @@ class PaymentConditionController extends AbstractMantenedorController
         return 'app_maintainers_treasury_payment_condition_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Condición Pago',
-            'edit' => 'Editar Condición Pago',
-            default => 'Condiciones de Pago'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

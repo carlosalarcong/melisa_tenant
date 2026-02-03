@@ -105,15 +105,6 @@ class DifferenceReasonController extends AbstractMantenedorController
         return 'app_maintainers_treasury_difference_reason_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Motivo Diferencia',
-            'edit' => 'Editar Motivo Diferencia',
-            default => 'Motivos de Diferencia'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

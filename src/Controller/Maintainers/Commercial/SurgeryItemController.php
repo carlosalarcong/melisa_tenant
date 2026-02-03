@@ -68,15 +68,6 @@ class SurgeryItemController extends AbstractMantenedorController
         return 'app_maintainers_commercial_surgery_item_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Artículo de Pabellón',
-            'edit' => 'Editar Artículo de Pabellón',
-            default => 'Artículos de Pabellón'
-        };
-    }
-
     #[Route('', name: 'app_maintainers_commercial_surgery_item_index', methods: ['GET'])]
     public function index(Request $request): Response
     {

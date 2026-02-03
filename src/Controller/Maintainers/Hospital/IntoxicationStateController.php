@@ -97,15 +97,6 @@ class IntoxicationStateController extends AbstractMantenedorController
         return 'app_maintainers_hospital_intoxication_state_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Estado de Ebriedad',
-            'edit' => 'Editar Estado de Ebriedad',
-            default => 'Estados de Ebriedad'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

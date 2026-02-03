@@ -96,15 +96,6 @@ class BloodTypeController extends AbstractMantenedorController
         return new BloodType();
     }
 
-    protected function getPageTitle(?string $action = null): string
-    {
-        return match($action) {
-            'create' => 'Crear Grupo Sanguíneo',
-            'edit' => 'Editar Grupo Sanguíneo',
-            default => 'Grupos Sanguíneos'
-        };
-    }
-
     protected function getExportColumns(): array
     {
         return ['name', 'description', 'isActive'];

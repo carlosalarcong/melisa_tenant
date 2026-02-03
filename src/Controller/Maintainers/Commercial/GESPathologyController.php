@@ -68,15 +68,6 @@ class GESPathologyController extends AbstractMantenedorController
         return 'app_maintainers_commercial_ges_pathology_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Patología GES',
-            'edit' => 'Editar Patología GES',
-            default => 'Patologías GES'
-        };
-    }
-
     #[Route('', name: 'app_maintainers_commercial_ges_pathology_index', methods: ['GET'])]
     public function index(Request $request): Response
     {

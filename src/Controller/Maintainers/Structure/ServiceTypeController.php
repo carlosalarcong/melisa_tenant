@@ -109,13 +109,4 @@ class ServiceTypeController extends AbstractMantenedorController
         return 'app_maintainers_service_type_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'index' => 'Tipos de Servicio',
-            'create' => 'Crear Tipo de Servicio',
-            'edit' => 'Editar Tipo de Servicio',
-            default => 'Tipos de Servicio'
-        };
-    }
 }

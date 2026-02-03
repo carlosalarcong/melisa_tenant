@@ -98,15 +98,6 @@ class PhysicalExamGroupingController extends AbstractMantenedorController
         return 'app_maintainers_hospital_physical_exam_grouping_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Agrupacion',
-            'edit' => 'Editar Agrupacion',
-            default => 'Agrupaciones Examen Fisico'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

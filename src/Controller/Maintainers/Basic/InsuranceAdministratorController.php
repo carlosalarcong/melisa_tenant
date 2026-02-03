@@ -103,15 +103,6 @@ class InsuranceAdministratorController extends AbstractMantenedorController
         return 'app_maintainers_insurance_administrator_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Administrador de Seguro',
-            'edit' => 'Editar Administrador de Seguro',
-            default => 'Administradores de Seguro'
-        };
-    }
-
     protected function findEntity(int $id): ?object
     {
         return $this->repository->find($id);

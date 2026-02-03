@@ -97,15 +97,6 @@ class MedicalDeviceController extends AbstractMantenedorController
         return 'app_maintainers_hospital_medical_device_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Dispositivo Medico',
-            'edit' => 'Editar Dispositivo Medico',
-            default => 'Dispositivos Medicos'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

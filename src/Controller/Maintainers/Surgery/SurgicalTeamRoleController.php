@@ -99,15 +99,6 @@ class SurgicalTeamRoleController extends AbstractMantenedorController
         return new SurgicalTeamRole();
     }
 
-    protected function getPageTitle(?string $action = null): string
-    {
-        return match($action) {
-            'create' => 'Crear Rol Equipo Quirúrgico',
-            'edit' => 'Editar Rol Equipo Quirúrgico',
-            default => 'Roles Equipo Quirúrgico'
-        };
-    }
-
     protected function getExportColumns(): array
     {
         return [

@@ -150,12 +150,4 @@ class ArticleSupplierController extends AbstractMantenedorController
         return 'app_maintainers_logistics_article_supplier_create';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Asignar Proveedor a Artículo',
-            'edit' => 'Editar Proveedor de Artículo',
-            default => 'Proveedores por Artículo'
-        };
-    }
 }

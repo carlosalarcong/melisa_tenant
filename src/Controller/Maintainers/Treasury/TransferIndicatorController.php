@@ -103,15 +103,6 @@ class TransferIndicatorController extends AbstractMantenedorController
         return 'app_maintainers_treasury_transfer_indicator_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Indicador Traslado',
-            'edit' => 'Editar Indicador Traslado',
-            default => 'Indicadores de Traslado'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

@@ -98,15 +98,6 @@ class PrescriptionRuleDetailController extends AbstractMantenedorController
         return 'app_maintainers_hospital_prescription_rule_detail_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Regla',
-            'edit' => 'Editar Regla',
-            default => 'Reglas de Prescripcion'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

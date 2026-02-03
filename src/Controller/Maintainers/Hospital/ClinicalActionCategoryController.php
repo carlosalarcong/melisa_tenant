@@ -97,15 +97,6 @@ class ClinicalActionCategoryController extends AbstractMantenedorController
         return 'app_maintainers_hospital_clinical_action_category_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Categoria AC',
-            'edit' => 'Editar Categoria AC',
-            default => 'Categorias Accion Clinica'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

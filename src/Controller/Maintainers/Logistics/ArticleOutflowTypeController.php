@@ -146,12 +146,4 @@ class ArticleOutflowTypeController extends AbstractMantenedorController
         return 'app_maintainers_logistics_article_outflow_type_create';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Tipo Egreso Artículo',
-            'edit' => 'Editar Tipo Egreso Artículo',
-            default => 'Tipos de Egreso de Artículos'
-        };
-    }
 }

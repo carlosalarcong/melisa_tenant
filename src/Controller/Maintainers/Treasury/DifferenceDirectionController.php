@@ -102,15 +102,6 @@ class DifferenceDirectionController extends AbstractMantenedorController
         return 'app_maintainers_treasury_difference_direction_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Sentido Diferencia',
-            'edit' => 'Editar Sentido Diferencia',
-            default => 'Sentidos de Diferencia'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

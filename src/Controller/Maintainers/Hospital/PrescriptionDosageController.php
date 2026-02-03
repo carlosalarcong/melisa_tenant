@@ -98,15 +98,6 @@ class PrescriptionDosageController extends AbstractMantenedorController
         return 'app_maintainers_hospital_prescription_dosage_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Dosis',
-            'edit' => 'Editar Dosis',
-            default => 'Dosis de Receta'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

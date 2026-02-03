@@ -147,12 +147,4 @@ class DispatchTypeController extends AbstractMantenedorController
         return 'app_maintainers_logistics_dispatch_type_create';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Tipo Despacho',
-            'edit' => 'Editar Tipo Despacho',
-            default => 'Tipos de Despacho'
-        };
-    }
 }

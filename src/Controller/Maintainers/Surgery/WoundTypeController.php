@@ -96,15 +96,6 @@ class WoundTypeController extends AbstractMantenedorController
         return new WoundType();
     }
 
-    protected function getPageTitle(?string $action = null): string
-    {
-        return match($action) {
-            'create' => 'Crear Tipo de Herida',
-            'edit' => 'Editar Tipo de Herida',
-            default => 'Tipos de Herida'
-        };
-    }
-
     protected function getExportColumns(): array
     {
         return ['name', 'description', 'isActive'];

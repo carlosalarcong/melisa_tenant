@@ -154,12 +154,4 @@ class ArticleWarehouseController extends AbstractMantenedorController
         return 'app_maintainers_logistics_article_warehouse_create';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Asignar Artículo a Bodega',
-            'edit' => 'Editar Artículo en Bodega',
-            default => 'Artículos por Bodega'
-        };
-    }
 }

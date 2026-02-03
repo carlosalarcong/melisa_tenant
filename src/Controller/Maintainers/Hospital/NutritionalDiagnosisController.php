@@ -97,15 +97,6 @@ class NutritionalDiagnosisController extends AbstractMantenedorController
         return 'app_maintainers_hospital_nutritional_diagnosis_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Diagnostico Nutricional',
-            'edit' => 'Editar Diagnostico Nutricional',
-            default => 'Diagnosticos Nutricionales'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

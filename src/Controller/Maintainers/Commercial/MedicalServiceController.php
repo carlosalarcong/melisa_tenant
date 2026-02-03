@@ -71,15 +71,6 @@ class MedicalServiceController extends AbstractMantenedorController
         return 'app_maintainers_commercial_medical_service_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Acción Clínica',
-            'edit' => 'Editar Acción Clínica',
-            default => 'Acciones Clínicas'
-        };
-    }
-
     #[Route('', name: 'app_maintainers_commercial_medical_service_index', methods: ['GET'])]
     public function index(Request $request): Response
     {

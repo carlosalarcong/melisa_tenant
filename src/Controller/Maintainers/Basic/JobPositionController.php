@@ -103,15 +103,6 @@ class JobPositionController extends AbstractMantenedorController
         return 'app_maintainers_job_position_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Cargo',
-            'edit' => 'Editar Cargo',
-            default => 'Cargos'
-        };
-    }
-
     protected function findEntity(int $id): ?object
     {
         return $this->repository->find($id);

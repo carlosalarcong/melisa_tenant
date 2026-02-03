@@ -97,15 +97,6 @@ class EatingDisorderHistoryController extends AbstractMantenedorController
         return 'app_maintainers_hospital_eating_disorder_history_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Antecedente TCA',
-            'edit' => 'Editar Antecedente TCA',
-            default => 'Antecedentes TCA'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

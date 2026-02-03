@@ -98,15 +98,6 @@ class PrescriptionFormatController extends AbstractMantenedorController
         return 'app_maintainers_hospital_prescription_format_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Formato',
-            'edit' => 'Editar Formato',
-            default => 'Formatos de Receta'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

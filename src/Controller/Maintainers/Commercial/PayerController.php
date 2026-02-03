@@ -70,15 +70,6 @@ class PayerController extends AbstractMantenedorController
         return 'app_maintainers_commercial_payer_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Financiador',
-            'edit' => 'Editar Financiador',
-            default => 'Financiadores'
-        };
-    }
-
     #[Route('', name: 'app_maintainers_commercial_payer_index', methods: ['GET'])]
     public function index(Request $request): Response
     {

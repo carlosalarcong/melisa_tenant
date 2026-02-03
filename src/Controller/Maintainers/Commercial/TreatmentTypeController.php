@@ -65,15 +65,6 @@ class TreatmentTypeController extends AbstractMantenedorController
         return 'app_maintainers_commercial_treatment_type_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Tipo de Tratamiento',
-            'edit' => 'Editar Tipo de Tratamiento',
-            default => 'Tipos de Tratamiento'
-        };
-    }
-
     #[Route('', name: 'app_maintainers_commercial_treatment_type_index', methods: ['GET'])]
     public function index(Request $request): Response
     {

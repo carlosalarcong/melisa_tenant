@@ -441,12 +441,61 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
     abstract protected function getIndexRoute(): string;
 
     /**
-     * Título de la página
-     * 
-     * @param string $action Acción: 'index', 'create', 'edit'
-     * @return string Ejemplo: 'Gender Management'
+     * Título de la página usando traducciones automáticas por entidad.
+     *
+     * Genera claves de traducción basadas en el namespace y nombre de clase:
+     * - maintainers.entities.{module}.{entity_key}.title
+     * - maintainers.entities.{module}.{entity_key}.create_title
+     * - maintainers.entities.{module}.{entity_key}.edit_title
+     *
+     * Ejemplo: CreditCardController en Treasury → maintainers.entities.treasury.credit_card.title
      */
-    abstract protected function getPageTitle(string $action = 'index'): string;
+    protected function getPageTitle(string $action = 'index'): string
+    {
+        $entityKey = $this->getEntityTranslationKey();
+
+        return match($action) {
+            'create' => $this->translator->trans(
+                "maintainers.entities.{$entityKey}.create_title",
+                [],
+                'maintainers'
+            ),
+            'edit' => $this->translator->trans(
+                "maintainers.entities.{$entityKey}.edit_title",
+                [],
+                'maintainers'
+            ),
+            default => $this->translator->trans(
+                "maintainers.entities.{$entityKey}.title",
+                [],
+                'maintainers'
+            )
+        };
+    }
+
+    /**
+     * Genera la clave de traducción de la entidad incluyendo el módulo.
+     *
+     * Ejemplo: App\Controller\Maintainers\Treasury\CreditCardController → treasury.credit_card
+     */
+    protected function getEntityTranslationKey(): string
+    {
+        $reflection = new \ReflectionClass($this);
+        $namespace = $reflection->getNamespaceName();
+        $className = $reflection->getShortName();
+
+        // Extraer módulo del namespace: App\Controller\Maintainers\Treasury → treasury
+        $module = '';
+        if (preg_match('/Controller\\\\Maintainers\\\\(\w+)/', $namespace, $matches)) {
+            $module = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $matches[1]));
+        }
+
+        // Extraer nombre de entidad: CreditCardController → credit_card
+        $entityName = str_replace('Controller', '', $className);
+        $entityKey = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $entityName));
+
+        return $module ? "{$module}.{$entityKey}" : $entityKey;
+    }
 
     // ========================================================================
     // MÉTODOS CON IMPLEMENTACIÓN POR DEFECTO: Pueden sobreescribirse

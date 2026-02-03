@@ -150,12 +150,4 @@ class ArticleTypeController extends AbstractMantenedorController
         return 'app_maintainers_logistics_article_type_create';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Tipo Artículo',
-            'edit' => 'Editar Tipo Artículo',
-            default => 'Tipos de Artículo'
-        };
-    }
 }

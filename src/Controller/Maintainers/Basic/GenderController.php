@@ -108,15 +108,6 @@ class GenderController extends AbstractMantenedorController
         return 'app_maintainers_gender_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Create Gender',
-            'edit' => 'Edit Gender',
-            default => 'Gender Management'
-        };
-    }
-
     // ========================================================================
     // Hooks personalizados (opcional)
     // ========================================================================

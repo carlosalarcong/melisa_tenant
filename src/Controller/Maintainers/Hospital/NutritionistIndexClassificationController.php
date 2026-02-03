@@ -97,15 +97,6 @@ class NutritionistIndexClassificationController extends AbstractMantenedorContro
         return 'app_maintainers_hospital_nutritionist_index_classification_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Clasificacion',
-            'edit' => 'Editar Clasificacion',
-            default => 'Clasificaciones Indices'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

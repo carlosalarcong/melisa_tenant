@@ -109,13 +109,4 @@ class CostCenterController extends AbstractMantenedorController
         return 'app_maintainers_cost_center_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'index' => 'Centros de Costo',
-            'create' => 'Crear Centro de Costo',
-            'edit' => 'Editar Centro de Costo',
-            default => 'Centros de Costo'
-        };
-    }
 }

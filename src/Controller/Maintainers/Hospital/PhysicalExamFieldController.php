@@ -106,15 +106,6 @@ class PhysicalExamFieldController extends AbstractMantenedorController
         return 'app_maintainers_hospital_physical_exam_field_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Campo',
-            'edit' => 'Editar Campo',
-            default => 'Campos de Examen Fisico'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

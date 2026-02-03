@@ -102,15 +102,6 @@ class CreditCardTypeController extends AbstractMantenedorController
         return 'app_maintainers_treasury_credit_card_type_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Tipo Tarjeta Crédito',
-            'edit' => 'Editar Tipo Tarjeta Crédito',
-            default => 'Tipos de Tarjeta de Credito'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

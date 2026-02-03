@@ -104,15 +104,6 @@ class DoctorTypeController extends AbstractMantenedorController
         return 'app_maintainers_doctor_type_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Tipo de Médico',
-            'edit' => 'Editar Tipo de Médico',
-            default => 'Tipos de Médico'
-        };
-    }
-
     protected function findEntity(int $id): ?object
     {
         return $this->repository->find($id);

@@ -66,15 +66,6 @@ class ServicePackageController extends AbstractMantenedorController
         return 'app_maintainers_commercial_service_package_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Paquete de Prestaciones',
-            'edit' => 'Editar Paquete de Prestaciones',
-            default => 'Paquetes de Prestaciones'
-        };
-    }
-
     #[Route('', name: 'app_maintainers_commercial_service_package_index', methods: ['GET'])]
     public function index(Request $request): Response
     {

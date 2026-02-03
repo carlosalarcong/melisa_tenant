@@ -97,15 +97,6 @@ class PrescriptionTypeController extends AbstractMantenedorController
         return 'app_maintainers_hospital_prescription_type_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Tipo Receta',
-            'edit' => 'Editar Tipo Receta',
-            default => 'Tipos de Receta'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

@@ -67,15 +67,6 @@ class ExternalReferrerController extends AbstractMantenedorController
         return 'app_maintainers_commercial_external_referrer_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Derivador Externo',
-            'edit' => 'Editar Derivador Externo',
-            default => 'Derivadores Externos'
-        };
-    }
-
     #[Route('', name: 'app_maintainers_commercial_external_referrer_index', methods: ['GET'])]
     public function index(Request $request): Response
     {

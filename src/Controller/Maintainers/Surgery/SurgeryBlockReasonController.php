@@ -96,15 +96,6 @@ class SurgeryBlockReasonController extends AbstractMantenedorController
         return new SurgeryBlockReason();
     }
 
-    protected function getPageTitle(?string $action = null): string
-    {
-        return match($action) {
-            'create' => 'Crear Motivo de Bloqueo',
-            'edit' => 'Editar Motivo de Bloqueo',
-            default => 'Motivos de Bloqueo'
-        };
-    }
-
     protected function getExportColumns(): array
     {
         return ['name', 'description', 'isActive'];

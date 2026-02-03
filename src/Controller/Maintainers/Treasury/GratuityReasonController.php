@@ -103,15 +103,6 @@ class GratuityReasonController extends AbstractMantenedorController
         return 'app_maintainers_treasury_gratuity_reason_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Motivo Gratuidad',
-            'edit' => 'Editar Motivo Gratuidad',
-            default => 'Motivos de Gratuidad'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

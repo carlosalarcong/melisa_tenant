@@ -121,16 +121,6 @@ class BranchController extends AbstractMantenedorController
         return 'app_maintainers_branch_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'index' => 'Sucursales',
-            'create' => 'Crear Sucursal',
-            'edit' => 'Editar Sucursal',
-            default => 'Sucursales'
-        };
-    }
-
     // ========================================================================
     // Optional hooks
     // ========================================================================

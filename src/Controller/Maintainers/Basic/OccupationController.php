@@ -102,15 +102,6 @@ class OccupationController extends AbstractMantenedorController
         return 'app_maintainers_occupation_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Ocupación',
-            'edit' => 'Editar Ocupación',
-            default => 'Ocupaciones'
-        };
-    }
-
     protected function findEntity(int $id): ?object
     {
         return $this->repository->find($id);

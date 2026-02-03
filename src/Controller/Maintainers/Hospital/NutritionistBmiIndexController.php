@@ -97,15 +97,6 @@ class NutritionistBmiIndexController extends AbstractMantenedorController
         return 'app_maintainers_hospital_nutritionist_bmi_index_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Indice IMC',
-            'edit' => 'Editar Indice IMC',
-            default => 'Indices IMC'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

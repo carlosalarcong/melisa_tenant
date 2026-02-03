@@ -67,15 +67,6 @@ class MedicalServiceBudgetItemController extends AbstractMantenedorController
         return 'app_maintainers_commercial_medical_service_budget_item_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Asignar Artículo a Acción Clínica',
-            'edit' => 'Editar Artículo de Acción Clínica',
-            default => 'Artículos por Acción Clínica'
-        };
-    }
-
     #[Route('', name: 'app_maintainers_commercial_medical_service_budget_item_index', methods: ['GET'])]
     public function index(Request $request): Response
     {

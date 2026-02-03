@@ -67,15 +67,6 @@ class BranchPayerController extends AbstractMantenedorController
         return 'app_maintainers_commercial_branch_payer_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Asignar Financiador a Sucursal',
-            'edit' => 'Editar Financiador en Sucursal',
-            default => 'Financiadores por Sucursal'
-        };
-    }
-
     #[Route('', name: 'app_maintainers_commercial_branch_payer_index', methods: ['GET'])]
     public function index(Request $request): Response
     {

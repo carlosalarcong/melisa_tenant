@@ -88,15 +88,6 @@ class DocumentTypeController extends AbstractMantenedorController
         return 'app_maintainers_treasury_document_type';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Tipo de Documento',
-            'edit' => 'Editar Tipo de Documento',
-            default => 'Tipos de Documento'
-        };
-    }
-
     protected function getColumns(): array
     {
         return [

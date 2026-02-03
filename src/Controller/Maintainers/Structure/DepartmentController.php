@@ -112,13 +112,4 @@ class DepartmentController extends AbstractMantenedorController
         return 'app_maintainers_department_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'index' => 'Unidades',
-            'create' => 'Crear Unidad',
-            'edit' => 'Editar Unidad',
-            default => 'Unidades'
-        };
-    }
 }

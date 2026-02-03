@@ -102,15 +102,6 @@ class EthnicGroupController extends AbstractMantenedorController
         return 'app_maintainers_ethnic_group_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Pueblo Originario',
-            'edit' => 'Editar Pueblo Originario',
-            default => 'Pueblos Originarios'
-        };
-    }
-
     protected function findEntity(int $id): ?object
     {
         return $this->repository->find($id);

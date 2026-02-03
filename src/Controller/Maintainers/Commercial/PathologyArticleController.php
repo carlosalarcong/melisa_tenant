@@ -70,15 +70,6 @@ class PathologyArticleController extends AbstractMantenedorController
         return 'app_maintainers_commercial_pathology_article_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Artículo por Patología',
-            'edit' => 'Editar Artículo por Patología',
-            default => 'Artículos por Patología GES'
-        };
-    }
-
     #[Route('', name: 'app_maintainers_commercial_pathology_article_index', methods: ['GET'])]
     public function index(Request $request): Response
     {

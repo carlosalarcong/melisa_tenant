@@ -65,15 +65,6 @@ class BlockingTypeController extends AbstractMantenedorController
         return 'app_maintainers_commercial_blocking_type_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Tipo de Bloqueo',
-            'edit' => 'Editar Tipo de Bloqueo',
-            default => 'Tipos de Bloqueo'
-        };
-    }
-
     #[Route('', name: 'app_maintainers_commercial_blocking_type_index', methods: ['GET'])]
     public function index(Request $request): Response
     {

@@ -88,14 +88,6 @@ class PaymentMethodTypeController extends AbstractMantenedorController
         return 'app_maintainers_treasury_payment_method_type';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Tipo de Forma de Pago',
-            'edit' => 'Editar Tipo de Forma de Pago',
-            default => 'Tipos de Forma de Pago'
-        };
-    }
     protected function getColumns(): array
     {
         return [

@@ -65,15 +65,6 @@ class CancellationTypeController extends AbstractMantenedorController
         return 'app_maintainers_commercial_cancellation_type_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Tipo de Anulación',
-            'edit' => 'Editar Tipo de Anulación',
-            default => 'Tipos de Anulación'
-        };
-    }
-
     #[Route('', name: 'app_maintainers_commercial_cancellation_type_index', methods: ['GET'])]
     public function index(Request $request): Response
     {

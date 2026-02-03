@@ -97,15 +97,6 @@ class DosageTypeController extends AbstractMantenedorController
         return 'app_maintainers_hospital_dosage_type_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Tipo Posologia',
-            'edit' => 'Editar Tipo Posologia',
-            default => 'Tipos de Posologia'
-        };
-    }
-
     protected function beforeSave(object $entity, Request $request): void
     {
         $entity->setUpdatedAt(new \DateTime());

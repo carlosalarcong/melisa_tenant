@@ -150,12 +150,4 @@ class SignatureFooterController extends AbstractMantenedorController
         return 'app_maintainers_logistics_signature_footer_create';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Pie de Firma',
-            'edit' => 'Editar Pie de Firma',
-            default => 'Pies de Firma'
-        };
-    }
 }

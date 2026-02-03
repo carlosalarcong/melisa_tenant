@@ -96,15 +96,6 @@ class SurgeryCancellationReasonController extends AbstractMantenedorController
         return new SurgeryCancellationReason();
     }
 
-    protected function getPageTitle(?string $action = null): string
-    {
-        return match($action) {
-            'create' => 'Crear Motivo de Anulación',
-            'edit' => 'Editar Motivo de Anulación',
-            default => 'Motivos de Anulación'
-        };
-    }
-
     protected function getExportColumns(): array
     {
         return ['name', 'description', 'isActive'];

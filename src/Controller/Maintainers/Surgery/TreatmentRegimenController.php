@@ -98,15 +98,6 @@ class TreatmentRegimenController extends AbstractMantenedorController
         return new TreatmentRegimen();
     }
 
-    protected function getPageTitle(?string $action = null): string
-    {
-        return match($action) {
-            'create' => 'Crear Régimen de Tratamiento',
-            'edit' => 'Editar Régimen de Tratamiento',
-            default => 'Regímenes de Tratamiento'
-        };
-    }
-
     protected function getExportColumns(): array
     {
         return [

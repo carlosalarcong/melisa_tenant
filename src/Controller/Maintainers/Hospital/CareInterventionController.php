@@ -98,15 +98,6 @@ class CareInterventionController extends AbstractMantenedorController
         return new CareIntervention();
     }
 
-    protected function getPageTitle(?string $action = null): string
-    {
-        return match($action) {
-            'create' => 'Crear Cuidado',
-            'edit' => 'Editar Cuidado',
-            default => 'Cuidados Clinicos'
-        };
-    }
-
     protected function getExportColumns(): array
     {
         return ['description', 'careCategory.name', 'isActive'];

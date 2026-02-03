@@ -103,15 +103,6 @@ class LocationController extends AbstractMantenedorController
         return 'app_maintainers_location_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Ubicación',
-            'edit' => 'Editar Ubicación',
-            default => 'Ubicaciones'
-        };
-    }
-
     protected function findEntity(int $id): ?object
     {
         return $this->repository->find($id);

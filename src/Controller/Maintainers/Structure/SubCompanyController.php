@@ -110,13 +110,4 @@ class SubCompanyController extends AbstractMantenedorController
         return 'app_maintainers_sub_company_index';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'index' => 'Sub-Empresas',
-            'create' => 'Crear Sub-Empresa',
-            'edit' => 'Editar Sub-Empresa',
-            default => 'Sub-Empresas'
-        };
-    }
 }

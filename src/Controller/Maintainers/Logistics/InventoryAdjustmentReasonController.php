@@ -146,12 +146,4 @@ class InventoryAdjustmentReasonController extends AbstractMantenedorController
         return 'app_maintainers_logistics_inventory_adjustment_reason_create';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Motivo Ajuste Inventario',
-            'edit' => 'Editar Motivo Ajuste Inventario',
-            default => 'Motivos de Ajuste de Inventario'
-        };
-    }
 }

@@ -88,15 +88,6 @@ class CashRegisterLocationController extends AbstractMantenedorController
         return 'app_maintainers_treasury_cash_register_location';
     }
 
-    protected function getPageTitle(string $action = 'index'): string
-    {
-        return match($action) {
-            'create' => 'Crear Ubicación de Caja',
-            'edit' => 'Editar Ubicación de Caja',
-            default => 'Ubicaciones de Caja'
-        };
-    }
-
     protected function getColumns(): array
     {
         return [
