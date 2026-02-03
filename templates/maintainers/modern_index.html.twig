@@ -231,6 +231,23 @@
                                         {% elseif column == 'originType' %}Tipo Origen
                                         {% elseif column == 'religionCodeHl7' %}Código HL7
                                         {% elseif column == 'maritalStatusCodeHl7' %}Código HL7
+                                        {% elseif column == 'parent.name' %}Padre
+                                        {% elseif column == 'branch.name' %}Sucursal
+                                        {% elseif column == 'differenceDirection.name' %}Sentido
+                                        {% elseif column == 'gratuityType.name' %}Tipo Gratuidad
+                                        {% elseif column == 'creditCardType.name' %}Tipo Tarjeta
+                                        {% elseif column == 'paymentMethodType.name' %}Tipo
+                                        {% elseif column == 'siiCode' %}Código SII
+                                        {% elseif column == 'isDte' %}DTE
+                                        {% elseif column == 'isLogistics' %}Logística
+                                        {% elseif column == 'isCash' %}Efectivo
+                                        {% elseif column == 'isClp' %}CLP
+                                        {% elseif column == 'interfaceCode' %}Cód. Interfaz
+                                        {% elseif column == 'maxTerm' %}Plazo Máx.
+                                        {% elseif column == 'isUpToDate' %}Al Día
+                                        {% elseif column == 'abbreviation' %}Abreviatura
+                                        {% elseif column == 'rut' %}RUT
+                                        {% elseif column == 'currentAccount' %}Cuenta Corriente
                                         {% else %}{{ column|title }}
                                         {% endif %}
                                     </th>
@@ -248,7 +265,13 @@
                                     </td>
                                     {% for column in columns %}
                                         <td class="px-3" style="font-size: 0.875rem; color: #0f172a;">
-                                            {% set value = attribute(item, column) %}
+                                            {% if '.' in column %}
+                                                {% set parts = column|split('.') %}
+                                                {% set rel = attribute(item, parts[0]) %}
+                                                {% set value = rel is not null ? attribute(rel, parts[1]) : null %}
+                                            {% else %}
+                                                {% set value = attribute(item, column) %}
+                                            {% endif %}
                                             {% if column == 'isActive' %}
                                                 {% if value %}
                                                     <span class="badge rounded-pill" style="background-color: #d1fae5; color: #065f46; padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 600;">
@@ -256,6 +279,12 @@
                                                     </span>
                                                 {% else %}
                                                     <span class="badge rounded-pill bg-secondary">Inactivo</span>
+                                                {% endif %}
+                                            {% elseif column in ['isDte', 'isLogistics', 'isCash', 'isClp', 'isUpToDate'] %}
+                                                {% if value %}
+                                                    <span class="badge rounded-pill" style="background-color: #dbeafe; color: #1e40af; padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 600;">Sí</span>
+                                                {% else %}
+                                                    <span class="badge rounded-pill bg-light text-muted" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">No</span>
                                                 {% endif %}
                                             {% elseif column == 'educationLevel' and value %}
                                                 {{ value.name }}
