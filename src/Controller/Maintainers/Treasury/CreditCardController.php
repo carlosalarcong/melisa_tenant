@@ -64,6 +64,7 @@ class CreditCardController extends AbstractMantenedorController
     {
         return $this->creditCardRepository->createQueryBuilder('cc')
             ->leftJoin('cc.creditCardType', 'cct')
+            ->addSelect('cct')
             ->orderBy('cc.id', 'DESC');
     }
 

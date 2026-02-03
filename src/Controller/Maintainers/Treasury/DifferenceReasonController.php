@@ -69,6 +69,7 @@ class DifferenceReasonController extends AbstractMantenedorController
     {
         return $this->differenceReasonRepository->createQueryBuilder('dr')
             ->leftJoin('dr.differenceDirection', 'dd')
+            ->addSelect('dd')
             ->orderBy('dr.id', 'DESC');
     }
 

@@ -69,6 +69,7 @@ class DifferenceTypeController extends AbstractMantenedorController
     {
         return $this->differenceTypeRepository->createQueryBuilder('dt')
             ->leftJoin('dt.differenceDirection', 'dd')
+            ->addSelect('dd')
             ->orderBy('dt.id', 'DESC');
     }
 

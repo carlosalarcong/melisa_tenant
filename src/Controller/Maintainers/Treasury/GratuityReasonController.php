@@ -64,7 +64,9 @@ class GratuityReasonController extends AbstractMantenedorController
     {
         return $this->gratuityReasonRepository->createQueryBuilder('gr')
             ->leftJoin('gr.gratuityType', 'gt')
+            ->addSelect('gt')
             ->leftJoin('gr.branch', 'b')
+            ->addSelect('b')
             ->orderBy('gr.id', 'DESC');
     }
 
