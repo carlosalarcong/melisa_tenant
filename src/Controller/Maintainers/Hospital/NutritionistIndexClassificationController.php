@@ -116,22 +116,4 @@ class NutritionistIndexClassificationController extends AbstractMantenedorContro
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Clasificación de índice creada exitosamente',
-            'edit' => 'Clasificación de índice actualizada exitosamente',
-            'delete' => 'Clasificación de índice eliminada exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Clasificación de índice no encontrada',
-            'cannot_delete' => 'No se puede eliminar esta clasificación de índice porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

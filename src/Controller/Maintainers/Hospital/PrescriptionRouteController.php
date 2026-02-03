@@ -117,22 +117,4 @@ class PrescriptionRouteController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Via de administración creada exitosamente',
-            'edit' => 'Via de administración actualizada exitosamente',
-            'delete' => 'Via de administración eliminada exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Via de administración no encontrada',
-            'cannot_delete' => 'No se puede eliminar esta via de administración porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

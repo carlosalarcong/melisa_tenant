@@ -117,22 +117,4 @@ class PrescriptionRuleDetailController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Regla de prescripción creada exitosamente',
-            'edit' => 'Regla de prescripción actualizada exitosamente',
-            'delete' => 'Regla de prescripción eliminada exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Regla de prescripción no encontrada',
-            'cannot_delete' => 'No se puede eliminar esta regla porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

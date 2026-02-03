@@ -116,22 +116,4 @@ class CareCategoryController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Categoría de cuidado creada exitosamente',
-            'edit' => 'Categoría de cuidado actualizada exitosamente',
-            'delete' => 'Categoría de cuidado eliminada exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Categoría de cuidado no encontrada',
-            'cannot_delete' => 'No se puede eliminar esta categoría de cuidado porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

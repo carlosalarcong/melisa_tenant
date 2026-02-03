@@ -117,22 +117,4 @@ class PrescriptionFormatController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Formato de receta creado exitosamente',
-            'edit' => 'Formato de receta actualizado exitosamente',
-            'delete' => 'Formato de receta eliminado exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Formato de receta no encontrado',
-            'cannot_delete' => 'No se puede eliminar este formato de receta porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

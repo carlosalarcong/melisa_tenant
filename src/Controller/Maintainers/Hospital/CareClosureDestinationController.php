@@ -116,22 +116,4 @@ class CareClosureDestinationController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Destino de cierre creado exitosamente',
-            'edit' => 'Destino de cierre actualizado exitosamente',
-            'delete' => 'Destino de cierre eliminado exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Destino de cierre no encontrado',
-            'cannot_delete' => 'No se puede eliminar este destino de cierre porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

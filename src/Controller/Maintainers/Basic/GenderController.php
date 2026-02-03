@@ -148,22 +148,5 @@ class GenderController extends AbstractMantenedorController
     /**
      * Mensajes personalizados en español
      */
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Género creado exitosamente',
-            'edit' => 'Género actualizado exitosamente',
-            'delete' => 'Género eliminado exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
 
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Género no encontrado',
-            'cannot_delete' => 'No se puede eliminar este género porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

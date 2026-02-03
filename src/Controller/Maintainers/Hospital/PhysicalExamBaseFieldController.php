@@ -119,22 +119,4 @@ class PhysicalExamBaseFieldController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Campo base de examen físico creado exitosamente',
-            'edit' => 'Campo base de examen físico actualizado exitosamente',
-            'delete' => 'Campo base de examen físico eliminado exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Campo base de examen físico no encontrado',
-            'cannot_delete' => 'No se puede eliminar este campo base porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

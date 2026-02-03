@@ -122,22 +122,4 @@ class TransferIndicatorController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Indicador de traslado creado exitosamente',
-            'edit' => 'Indicador de traslado actualizado exitosamente',
-            'delete' => 'Indicador de traslado eliminado exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Indicador de traslado no encontrado',
-            'cannot_delete' => 'No se puede eliminar este indicador de traslado porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

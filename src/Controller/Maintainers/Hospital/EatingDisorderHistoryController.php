@@ -116,22 +116,4 @@ class EatingDisorderHistoryController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Antecedente TCA creado exitosamente',
-            'edit' => 'Antecedente TCA actualizado exitosamente',
-            'delete' => 'Antecedente TCA eliminado exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Antecedente TCA no encontrado',
-            'cannot_delete' => 'No se puede eliminar este antecedente TCA porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

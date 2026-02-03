@@ -116,22 +116,4 @@ class DosageTypeController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Tipo de posología creado exitosamente',
-            'edit' => 'Tipo de posología actualizado exitosamente',
-            'delete' => 'Tipo de posología eliminado exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Tipo de posología no encontrado',
-            'cannot_delete' => 'No se puede eliminar este tipo de posología porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

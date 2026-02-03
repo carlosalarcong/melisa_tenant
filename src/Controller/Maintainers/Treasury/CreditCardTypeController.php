@@ -121,22 +121,4 @@ class CreditCardTypeController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Tipo de tarjeta de crédito creado exitosamente',
-            'edit' => 'Tipo de tarjeta de crédito actualizado exitosamente',
-            'delete' => 'Tipo de tarjeta de crédito eliminado exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Tipo de tarjeta de crédito no encontrado',
-            'cannot_delete' => 'No se puede eliminar este tipo de tarjeta de crédito porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

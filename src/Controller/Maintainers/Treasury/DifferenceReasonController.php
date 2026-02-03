@@ -124,22 +124,4 @@ class DifferenceReasonController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Motivo de diferencia creado exitosamente',
-            'edit' => 'Motivo de diferencia actualizado exitosamente',
-            'delete' => 'Motivo de diferencia eliminado exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Motivo de diferencia no encontrado',
-            'cannot_delete' => 'No se puede eliminar este motivo de diferencia porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

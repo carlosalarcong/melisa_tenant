@@ -126,22 +126,4 @@ class BillingPaymentMethodController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Forma de pago de facturación creada exitosamente',
-            'edit' => 'Forma de pago de facturación actualizada exitosamente',
-            'delete' => 'Forma de pago de facturación eliminada exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Forma de pago de facturación no encontrada',
-            'cannot_delete' => 'No se puede eliminar esta forma de pago de facturación porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

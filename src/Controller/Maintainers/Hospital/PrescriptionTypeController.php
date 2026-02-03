@@ -116,22 +116,4 @@ class PrescriptionTypeController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Tipo de receta creado exitosamente',
-            'edit' => 'Tipo de receta actualizado exitosamente',
-            'delete' => 'Tipo de receta eliminado exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Tipo de receta no encontrado',
-            'cannot_delete' => 'No se puede eliminar este tipo de receta porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

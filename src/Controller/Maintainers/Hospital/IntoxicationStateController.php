@@ -116,22 +116,4 @@ class IntoxicationStateController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Estado de ebriedad creado exitosamente',
-            'edit' => 'Estado de ebriedad actualizado exitosamente',
-            'delete' => 'Estado de ebriedad eliminado exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Estado de ebriedad no encontrado',
-            'cannot_delete' => 'No se puede eliminar este estado de ebriedad porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

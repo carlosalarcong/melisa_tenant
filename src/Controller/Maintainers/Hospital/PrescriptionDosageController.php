@@ -117,22 +117,4 @@ class PrescriptionDosageController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Dosis de receta creada exitosamente',
-            'edit' => 'Dosis de receta actualizada exitosamente',
-            'delete' => 'Dosis de receta eliminada exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Dosis de receta no encontrada',
-            'cannot_delete' => 'No se puede eliminar esta dosis de receta porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

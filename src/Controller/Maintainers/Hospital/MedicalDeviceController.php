@@ -116,22 +116,4 @@ class MedicalDeviceController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Dispositivo médico creado exitosamente',
-            'edit' => 'Dispositivo médico actualizado exitosamente',
-            'delete' => 'Dispositivo médico eliminado exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Dispositivo médico no encontrado',
-            'cannot_delete' => 'No se puede eliminar este dispositivo médico porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

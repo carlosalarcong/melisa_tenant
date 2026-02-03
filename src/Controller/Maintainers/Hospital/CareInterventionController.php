@@ -133,23 +133,4 @@ class CareInterventionController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Cuidado creado exitosamente.',
-            'edit' => 'Cuidado actualizado exitosamente.',
-            'delete' => 'Cuidado eliminado exitosamente.',
-            default => 'Operación completada exitosamente.'
-        };
-    }
-
-    protected function getErrorMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Error al crear el cuidado.',
-            'edit' => 'Error al actualizar el cuidado.',
-            'delete' => 'Error al eliminar el cuidado.',
-            default => 'Error al realizar la operación.'
-        };
-    }
 }

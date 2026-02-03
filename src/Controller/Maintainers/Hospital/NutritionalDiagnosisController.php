@@ -116,22 +116,4 @@ class NutritionalDiagnosisController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Diagnóstico nutricional creado exitosamente',
-            'edit' => 'Diagnóstico nutricional actualizado exitosamente',
-            'delete' => 'Diagnóstico nutricional eliminado exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Diagnóstico nutricional no encontrado',
-            'cannot_delete' => 'No se puede eliminar este diagnóstico nutricional porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

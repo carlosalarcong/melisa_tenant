@@ -119,22 +119,4 @@ class PrescriptionDispensationController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Dispensación de receta creada exitosamente',
-            'edit' => 'Dispensación de receta actualizada exitosamente',
-            'delete' => 'Dispensación de receta eliminada exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Dispensación de receta no encontrada',
-            'cannot_delete' => 'No se puede eliminar esta dispensación de receta porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

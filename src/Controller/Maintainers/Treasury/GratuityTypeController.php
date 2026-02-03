@@ -121,22 +121,4 @@ class GratuityTypeController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Tipo de gratuidad creado exitosamente',
-            'edit' => 'Tipo de gratuidad actualizado exitosamente',
-            'delete' => 'Tipo de gratuidad eliminado exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Tipo de gratuidad no encontrado',
-            'cannot_delete' => 'No se puede eliminar este tipo de gratuidad porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

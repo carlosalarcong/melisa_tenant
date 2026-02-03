@@ -120,22 +120,4 @@ class CreditCardController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Tarjeta de crédito creada exitosamente',
-            'edit' => 'Tarjeta de crédito actualizada exitosamente',
-            'delete' => 'Tarjeta de crédito eliminada exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Tarjeta de crédito no encontrada',
-            'cannot_delete' => 'No se puede eliminar esta tarjeta de crédito porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

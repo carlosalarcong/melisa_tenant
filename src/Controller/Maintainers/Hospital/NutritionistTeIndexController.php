@@ -116,22 +116,4 @@ class NutritionistTeIndexController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Índice Talla/Edad creado exitosamente',
-            'edit' => 'Índice Talla/Edad actualizado exitosamente',
-            'delete' => 'Índice Talla/Edad eliminado exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Índice Talla/Edad no encontrado',
-            'cannot_delete' => 'No se puede eliminar este índice Talla/Edad porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

@@ -123,22 +123,4 @@ class BankController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Banco creado exitosamente',
-            'edit' => 'Banco actualizado exitosamente',
-            'delete' => 'Banco eliminado exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Banco no encontrado',
-            'cannot_delete' => 'No se puede eliminar este banco porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

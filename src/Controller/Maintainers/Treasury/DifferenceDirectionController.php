@@ -121,22 +121,4 @@ class DifferenceDirectionController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Sentido de diferencia creado exitosamente',
-            'edit' => 'Sentido de diferencia actualizado exitosamente',
-            'delete' => 'Sentido de diferencia eliminado exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Sentido de diferencia no encontrado',
-            'cannot_delete' => 'No se puede eliminar este sentido de diferencia porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

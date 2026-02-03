@@ -117,22 +117,4 @@ class PhysicalExamGroupingController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Agrupación de examen físico creada exitosamente',
-            'edit' => 'Agrupación de examen físico actualizada exitosamente',
-            'delete' => 'Agrupación de examen físico eliminada exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Agrupación de examen físico no encontrada',
-            'cannot_delete' => 'No se puede eliminar esta agrupación de examen físico porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

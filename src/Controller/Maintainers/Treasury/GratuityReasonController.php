@@ -122,22 +122,4 @@ class GratuityReasonController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Motivo de gratuidad creado exitosamente',
-            'edit' => 'Motivo de gratuidad actualizado exitosamente',
-            'delete' => 'Motivo de gratuidad eliminado exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Motivo de gratuidad no encontrado',
-            'cannot_delete' => 'No se puede eliminar este motivo de gratuidad porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

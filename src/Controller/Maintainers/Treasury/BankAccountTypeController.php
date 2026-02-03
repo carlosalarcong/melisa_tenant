@@ -129,22 +129,4 @@ class BankAccountTypeController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Tipo de cuenta bancaria creado exitosamente',
-            'edit' => 'Tipo de cuenta bancaria actualizado exitosamente',
-            'delete' => 'Tipo de cuenta bancaria eliminado exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Tipo de cuenta bancaria no encontrado',
-            'cannot_delete' => 'No se puede eliminar este tipo de cuenta bancaria porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

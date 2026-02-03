@@ -116,22 +116,4 @@ class NutritionistBmiIndexController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Índice IMC creado exitosamente',
-            'edit' => 'Índice IMC actualizado exitosamente',
-            'delete' => 'Índice IMC eliminado exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Índice IMC no encontrado',
-            'cannot_delete' => 'No se puede eliminar este índice IMC porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

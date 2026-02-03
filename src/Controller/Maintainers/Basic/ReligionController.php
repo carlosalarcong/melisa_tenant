@@ -134,22 +134,5 @@ class ReligionController extends AbstractMantenedorController
     /**
      * Mensajes personalizados en español
      */
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Religión creada exitosamente',
-            'edit' => 'Religión actualizada exitosamente',
-            'delete' => 'Religión eliminada exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
 
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Religión no encontrada',
-            'cannot_delete' => 'No se puede eliminar esta religión porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

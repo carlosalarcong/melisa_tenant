@@ -124,22 +124,4 @@ class PaymentConditionController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Condición de pago creada exitosamente',
-            'edit' => 'Condición de pago actualizada exitosamente',
-            'delete' => 'Condición de pago eliminada exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Condición de pago no encontrada',
-            'cannot_delete' => 'No se puede eliminar esta condición de pago porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

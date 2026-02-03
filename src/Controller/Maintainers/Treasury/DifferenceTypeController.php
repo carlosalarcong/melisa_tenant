@@ -125,22 +125,4 @@ class DifferenceTypeController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Tipo de diferencia creado exitosamente',
-            'edit' => 'Tipo de diferencia actualizado exitosamente',
-            'delete' => 'Tipo de diferencia eliminado exitosamente',
-            default => 'Operación completada exitosamente'
-        };
-    }
-
-    protected function getErrorMessage(string $type): string
-    {
-        return match($type) {
-            'not_found' => 'Tipo de diferencia no encontrado',
-            'cannot_delete' => 'No se puede eliminar este tipo de diferencia porque está en uso',
-            default => 'Ha ocurrido un error'
-        };
-    }
 }

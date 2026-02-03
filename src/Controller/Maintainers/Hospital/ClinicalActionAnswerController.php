@@ -136,23 +136,4 @@ class ClinicalActionAnswerController extends AbstractMantenedorController
         return true;
     }
 
-    protected function getSuccessMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Respuesta creada exitosamente.',
-            'edit' => 'Respuesta actualizada exitosamente.',
-            'delete' => 'Respuesta eliminada exitosamente.',
-            default => 'Operación completada exitosamente.'
-        };
-    }
-
-    protected function getErrorMessage(string $action): string
-    {
-        return match($action) {
-            'create' => 'Error al crear la respuesta.',
-            'edit' => 'Error al actualizar la respuesta.',
-            'delete' => 'Error al eliminar la respuesta.',
-            default => 'Error al realizar la operación.'
-        };
-    }
 }
