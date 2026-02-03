@@ -35,7 +35,16 @@ class PayerController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['id', 'code', 'name', 'payerType.name', 'rut', 'phone', 'requiresAuthorization', 'isActive'];
+        return [
+        'id' => 'Id',
+        'code' => 'Código',
+        'name' => 'Nombre',
+        'payerType.name' => 'PayerType.name',
+        'rut' => 'RUT',
+        'phone' => 'Phone',
+        'requiresAuthorization' => 'RequiresAuthorization',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

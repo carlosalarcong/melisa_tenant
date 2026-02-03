@@ -73,7 +73,11 @@ class TransferIndicatorController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['code', 'name', 'isActive'];
+        return [
+        'code' => 'Código',
+        'name' => 'Nombre',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

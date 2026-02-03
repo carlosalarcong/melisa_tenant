@@ -97,7 +97,14 @@ class DocumentTypeController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['id', 'siiCode', 'name', 'isDte', 'isLogistics', 'isActive'];
+        return [
+        'id' => 'Id',
+        'siiCode' => 'Código SII',
+        'name' => 'Nombre',
+        'isDte' => 'DTE',
+        'isLogistics' => 'Logística',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function createNewEntity(): object

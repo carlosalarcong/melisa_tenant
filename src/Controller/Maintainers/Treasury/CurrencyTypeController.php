@@ -73,7 +73,11 @@ class CurrencyTypeController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['name', 'isClp', 'isActive'];
+        return [
+        'name' => 'Nombre',
+        'isClp' => 'CLP',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

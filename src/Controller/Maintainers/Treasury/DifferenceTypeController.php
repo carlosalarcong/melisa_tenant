@@ -75,7 +75,12 @@ class DifferenceTypeController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['name', 'description', 'differenceDirection.name', 'isActive'];
+        return [
+        'name' => 'Nombre',
+        'description' => 'Descripción',
+        'differenceDirection.name' => 'Sentido',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

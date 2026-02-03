@@ -74,7 +74,11 @@ class DoctorTypeController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['name', 'code', 'isActive'];
+        return [
+        'name' => 'Nombre',
+        'code' => 'Código',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

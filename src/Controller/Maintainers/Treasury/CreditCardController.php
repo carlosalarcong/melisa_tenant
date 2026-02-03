@@ -70,7 +70,12 @@ class CreditCardController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['name', 'abbreviation', 'creditCardType.name', 'isActive'];
+        return [
+        'name' => 'Nombre',
+        'abbreviation' => 'Abreviatura',
+        'creditCardType.name' => 'Tipo Tarjeta',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

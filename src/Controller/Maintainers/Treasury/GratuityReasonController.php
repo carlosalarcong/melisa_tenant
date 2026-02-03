@@ -72,7 +72,12 @@ class GratuityReasonController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['name', 'gratuityType.name', 'branch.name', 'isActive'];
+        return [
+        'name' => 'Nombre',
+        'gratuityType.name' => 'Tipo Gratuidad',
+        'branch.name' => 'Sucursal',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

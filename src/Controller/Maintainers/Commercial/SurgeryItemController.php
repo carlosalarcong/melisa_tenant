@@ -33,7 +33,16 @@ class SurgeryItemController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['id', 'code', 'name', 'category', 'unitCost', 'isSterile', 'isDisposable', 'isActive'];
+        return [
+        'id' => 'Id',
+        'code' => 'Código',
+        'name' => 'Nombre',
+        'category' => 'Category',
+        'unitCost' => 'UnitCost',
+        'isSterile' => 'IsSterile',
+        'isDisposable' => 'IsDisposable',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

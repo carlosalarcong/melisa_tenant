@@ -73,7 +73,12 @@ class BankController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['rut', 'name', 'currentAccount', 'isActive'];
+        return [
+        'rut' => 'RUT',
+        'name' => 'Nombre',
+        'currentAccount' => 'Cuenta Corriente',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

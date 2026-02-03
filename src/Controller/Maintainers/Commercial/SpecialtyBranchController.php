@@ -36,7 +36,12 @@ class SpecialtyBranchController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['id', 'specialty.name', 'branch.name', 'isActive'];
+        return [
+        'id' => 'Id',
+        'specialty.name' => 'Specialty.name',
+        'branch.name' => 'Sucursal',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

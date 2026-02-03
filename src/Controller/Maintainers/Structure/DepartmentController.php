@@ -70,7 +70,13 @@ class DepartmentController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['name', 'code', 'branch', 'description', 'isActive'];
+        return [
+        'name' => 'Nombre',
+        'code' => 'Código',
+        'branch' => 'Branch',
+        'description' => 'Descripción',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

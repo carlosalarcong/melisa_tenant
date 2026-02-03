@@ -54,8 +54,8 @@ class MedicalServiceController extends AbstractMantenedorController
     {
         return $this->handleExport(
             request: $request,
-            columns: ['name', 'code', 'department.name', 'hl7ServiceType', 'isActive'],
-            headers: ['Nombre', 'Código', 'Departamento', 'Tipo HL7', 'Activo'],
+            columns: ['name', 'code', 'isActive'],
+            headers: ['Nombre', 'Código', 'Activo'],
             filename: 'servicios_medicos_' . date('Y-m-d') . '.csv'
         );
     }
@@ -63,14 +63,16 @@ class MedicalServiceController extends AbstractMantenedorController
     protected function getData(Request $request): array|QueryBuilder
     {
         return $this->medicalServiceRepository->createQueryBuilder('ms')
-            ->leftJoin('ms.department', 'd')
-            ->addSelect('d')
             ->orderBy('ms.name', 'ASC');
     }
 
     protected function getColumns(): array
     {
-        return ['name', 'code', 'department', 'hl7ServiceType', 'isActive'];
+        return [
+        'name' => 'Nombre',
+        'code' => 'Código',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

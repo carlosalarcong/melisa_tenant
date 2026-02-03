@@ -73,7 +73,13 @@ class PaymentConditionController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['name', 'interfaceCode', 'maxTerm', 'isUpToDate', 'isActive'];
+        return [
+        'name' => 'Nombre',
+        'interfaceCode' => 'Cód. Interfaz',
+        'maxTerm' => 'Plazo Máx.',
+        'isUpToDate' => 'Al Día',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

@@ -73,7 +73,11 @@ class MaritalStatusController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['name', 'maritalStatusCodeHl7', 'isActive'];
+        return [
+        'name' => 'Nombre',
+        'maritalStatusCodeHl7' => 'Código HL7',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

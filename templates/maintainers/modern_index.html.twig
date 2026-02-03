@@ -220,35 +220,15 @@
                                 <th scope="col" class="text-uppercase text-muted fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px; padding: 1rem;">
                                     <input type="checkbox" class="form-check-input">
                                 </th>
-                                {% for column in columns %}
+                                {% for column_key, column_value in columns %}
                                     <th scope="col" class="text-uppercase text-muted fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px; padding: 1rem;">
-                                        {% if column == 'name' %}Nombre
-                                        {% elseif column == 'code' %}Código
-                                        {% elseif column == 'isActive' %}Estado
-                                        {% elseif column == 'description' %}Descripción
-                                        {% elseif column == 'number' %}Número
-                                        {% elseif column == 'educationLevel' %}Nivel Instrucción
-                                        {% elseif column == 'originType' %}Tipo Origen
-                                        {% elseif column == 'religionCodeHl7' %}Código HL7
-                                        {% elseif column == 'maritalStatusCodeHl7' %}Código HL7
-                                        {% elseif column == 'parent.name' %}Padre
-                                        {% elseif column == 'branch.name' %}Sucursal
-                                        {% elseif column == 'differenceDirection.name' %}Sentido
-                                        {% elseif column == 'gratuityType.name' %}Tipo Gratuidad
-                                        {% elseif column == 'creditCardType.name' %}Tipo Tarjeta
-                                        {% elseif column == 'paymentMethodType.name' %}Tipo
-                                        {% elseif column == 'siiCode' %}Código SII
-                                        {% elseif column == 'isDte' %}DTE
-                                        {% elseif column == 'isLogistics' %}Logística
-                                        {% elseif column == 'isCash' %}Efectivo
-                                        {% elseif column == 'isClp' %}CLP
-                                        {% elseif column == 'interfaceCode' %}Cód. Interfaz
-                                        {% elseif column == 'maxTerm' %}Plazo Máx.
-                                        {% elseif column == 'isUpToDate' %}Al Día
-                                        {% elseif column == 'abbreviation' %}Abreviatura
-                                        {% elseif column == 'rut' %}RUT
-                                        {% elseif column == 'currentAccount' %}Cuenta Corriente
-                                        {% else %}{{ column|title }}
+                                        {# Soporte para array asociativo (nuevo) y array indexado (legacy) #}
+                                        {% if column_key == loop.index0 %}
+                                            {# Array indexado legacy: ['name', 'code'] #}
+                                            {{ column_value|title }}
+                                        {% else %}
+                                            {# Array asociativo nuevo: ['name' => 'Nombre'] #}
+                                            {{ column_value }}
                                         {% endif %}
                                     </th>
                                 {% endfor %}
@@ -263,7 +243,9 @@
                                     <td class="px-3">
                                         <input type="checkbox" class="form-check-input">
                                     </td>
-                                    {% for column in columns %}
+                                    {% for column_key, column_value in columns %}
+                                        {# Determinar nombre de columna según formato #}
+                                        {% set column = (column_key == loop.index0) ? column_value : column_key %}
                                         <td class="px-3" style="font-size: 0.875rem; color: #0f172a;">
                                             {% if '.' in column %}
                                                 {% set parts = column|split('.') %}

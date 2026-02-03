@@ -35,7 +35,16 @@ class RoomController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['id', 'roomNumber', 'name', 'roomType', 'floor', 'capacity', 'status', 'isActive'];
+        return [
+        'id' => 'Id',
+        'roomNumber' => 'RoomNumber',
+        'name' => 'Nombre',
+        'roomType' => 'RoomType',
+        'floor' => 'Floor',
+        'capacity' => 'Capacity',
+        'status' => 'Status',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

@@ -33,7 +33,13 @@ class CancellationTypeController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['id', 'name', 'code', 'description', 'isActive'];
+        return [
+        'id' => 'Id',
+        'name' => 'Nombre',
+        'code' => 'Código',
+        'description' => 'Descripción',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

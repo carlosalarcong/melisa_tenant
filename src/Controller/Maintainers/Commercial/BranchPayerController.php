@@ -36,7 +36,12 @@ class BranchPayerController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['id', 'branch.name', 'payer.name', 'isActive'];
+        return [
+        'id' => 'Id',
+        'branch.name' => 'Sucursal',
+        'payer.name' => 'Payer.name',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

@@ -33,7 +33,15 @@ class ExternalReferrerController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['id', 'code', 'name', 'referrerType', 'phone', 'hasAgreement', 'isActive'];
+        return [
+        'id' => 'Id',
+        'code' => 'Código',
+        'name' => 'Nombre',
+        'referrerType' => 'ReferrerType',
+        'phone' => 'Phone',
+        'hasAgreement' => 'HasAgreement',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

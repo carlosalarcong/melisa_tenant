@@ -96,7 +96,14 @@ class PaymentMethodController extends AbstractMantenedorController
     }
     protected function getColumns(): array
     {
-        return ['id', 'code', 'name', 'parent.name', 'paymentMethodType.name', 'isActive'];
+        return [
+        'id' => 'Id',
+        'code' => 'Código',
+        'name' => 'Nombre',
+        'parent.name' => 'Padre',
+        'paymentMethodType.name' => 'Tipo',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function createNewEntity(): object

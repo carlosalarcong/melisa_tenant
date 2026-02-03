@@ -75,7 +75,11 @@ class DifferenceReasonController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['name', 'differenceDirection.name', 'isActive'];
+        return [
+        'name' => 'Nombre',
+        'differenceDirection.name' => 'Sentido',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

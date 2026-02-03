@@ -68,7 +68,13 @@ class SubCompanyController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['name', 'code', 'taxId', 'description', 'isActive'];
+        return [
+        'name' => 'Nombre',
+        'code' => 'Código',
+        'taxId' => 'TaxId',
+        'description' => 'Descripción',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

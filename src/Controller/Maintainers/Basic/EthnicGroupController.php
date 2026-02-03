@@ -59,8 +59,8 @@ class EthnicGroupController extends AbstractMantenedorController
     {
         return $this->handleExport(
             request: $request,
-            columns: ['name', 'code', 'isActive'],
-            headers: ['Nombre', 'Código', 'Activo'],
+            columns: ['name', 'isActive'],
+            headers: ['Nombre', 'Activo'],
             filename: 'pueblos_originarios_' . date('Y-m-d') . '.csv'
         );
     }
@@ -73,7 +73,10 @@ class EthnicGroupController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['name', 'code', 'isActive'];
+        return [
+        'name' => 'Nombre',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

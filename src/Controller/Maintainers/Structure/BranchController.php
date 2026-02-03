@@ -78,14 +78,14 @@ class BranchController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-            'name',
-            'code',
-            'city',
-            'region',
-            'phone',
-            'email',
-            'isActive'
-        ];
+        'name' => 'Nombre',
+        'code' => 'Código',
+        'city' => 'City',
+        'region' => 'Region',
+        'phone' => 'Phone',
+        'email' => 'Email',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

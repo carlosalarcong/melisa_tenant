@@ -68,7 +68,12 @@ class CostCenterController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['name', 'code', 'description', 'isActive'];
+        return [
+        'name' => 'Nombre',
+        'code' => 'Código',
+        'description' => 'Descripción',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

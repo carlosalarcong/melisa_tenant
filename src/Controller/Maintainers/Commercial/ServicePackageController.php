@@ -33,7 +33,14 @@ class ServicePackageController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['id', 'code', 'name', 'isBillable', 'isProgram', 'isActive'];
+        return [
+        'id' => 'Id',
+        'code' => 'Código',
+        'name' => 'Nombre',
+        'isBillable' => 'IsBillable',
+        'isProgram' => 'IsProgram',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

@@ -73,7 +73,11 @@ class MedicalBoxController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['name', 'number', 'isActive'];
+        return [
+        'name' => 'Nombre',
+        'number' => 'Número',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

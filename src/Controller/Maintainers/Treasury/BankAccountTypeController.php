@@ -77,7 +77,10 @@ class BankAccountTypeController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['name', 'isActive'];
+        return [
+        'name' => 'Nombre',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

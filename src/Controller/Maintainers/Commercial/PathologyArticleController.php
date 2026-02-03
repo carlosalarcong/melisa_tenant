@@ -35,7 +35,16 @@ class PathologyArticleController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['id', 'gesPathology.name', 'articleName', 'articleCode', 'quantity', 'unitCost', 'isMandatory', 'isActive'];
+        return [
+        'id' => 'Id',
+        'gesPathology.name' => 'GesPathology.name',
+        'articleName' => 'ArticleName',
+        'articleCode' => 'ArticleCode',
+        'quantity' => 'Quantity',
+        'unitCost' => 'UnitCost',
+        'isMandatory' => 'IsMandatory',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

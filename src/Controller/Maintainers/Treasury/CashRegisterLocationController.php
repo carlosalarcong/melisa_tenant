@@ -97,7 +97,12 @@ class CashRegisterLocationController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['id', 'name', 'branch.name', 'isActive'];
+        return [
+        'id' => 'Id',
+        'name' => 'Nombre',
+        'branch.name' => 'Sucursal',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function createNewEntity(): object

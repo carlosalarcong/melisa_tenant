@@ -78,7 +78,11 @@ class ReligionController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['name', 'religionCodeHl7', 'isActive'];
+        return [
+        'name' => 'Nombre',
+        'religionCodeHl7' => 'Código HL7',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string

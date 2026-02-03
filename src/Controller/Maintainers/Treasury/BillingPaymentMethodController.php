@@ -73,7 +73,12 @@ class BillingPaymentMethodController extends AbstractMantenedorController
 
     protected function getColumns(): array
     {
-        return ['code', 'name', 'isCash', 'isActive'];
+        return [
+        'code' => 'Código',
+        'name' => 'Nombre',
+        'isCash' => 'Efectivo',
+        'isActive' => 'Estado'
+    ];
     }
 
     protected function getTemplatePath(): string
