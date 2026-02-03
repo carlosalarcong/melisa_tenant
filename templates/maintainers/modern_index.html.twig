@@ -46,8 +46,8 @@
                 <li class="breadcrumb-item">
                     <i class="bx bx-home-alt"></i>
                 </li>
-                <li class="breadcrumb-item text-muted">Mantenedores</li>
-                <li class="breadcrumb-item text-muted">{{ breadcrumb_section ?? 'Básico' }}</li>
+                <li class="breadcrumb-item text-muted">{{ 'maintainers.breadcrumb.maintainers'|trans({}, 'maintainers') }}</li>
+                <li class="breadcrumb-item text-muted">{{ breadcrumb_section ?? ('maintainers.breadcrumb.basic'|trans({}, 'maintainers')) }}</li>
                 <li class="breadcrumb-item active" aria-current="page">{{ page_title }}</li>
             </ol>
         </nav>
@@ -60,7 +60,7 @@
                         <span style="font-size: 2rem;">{{ icon ?? '📋' }}</span>
                         <div>
                             <h1 class="h2 fw-bold mb-1" style="color: #0f172a;">{{ page_title }}</h1>
-                            <p class="text-muted mb-0 small">{{ description ?? 'Gestiona y administra ' ~ page_title|lower }}</p>
+                            <p class="text-muted mb-0 small">{{ description ?? ('maintainers.common.manage_and_admin'|trans({'entity': page_title|lower}, 'maintainers')) }}</p>
                         </div>
                     </div>
                     
@@ -68,10 +68,10 @@
                         {% if export_route is defined %}
                             <a href="{{ path(export_route) }}" 
                                class="btn btn-outline-secondary d-flex align-items-center gap-2"
-                               title="Exportar a CSV"
+                               title="{{ 'maintainers.common.export_csv'|trans({}, 'maintainers') }}"
                                data-turbo="false">
                                 <i class="bx bx-download"></i>
-                                Exportar
+                                {{ 'maintainers.common.export'|trans({}, 'maintainers') }}
                             </a>
                         {% endif %}
                         {% if create_route is defined %}
@@ -83,7 +83,7 @@
                                     data-modal-url="{{ path(create_route) }}"
                                     data-modal-title="<i class='bx bx-plus me-2'></i>Nuevo {{ page_title }}">
                                 <i class="bx bx-plus"></i>
-                                Nuevo Registro
+                                {{ 'maintainers.common.new_record'|trans({}, 'maintainers') }}
                             </button>
                         {% endif %}
                     </div>
@@ -96,16 +96,16 @@
                             <span class="input-group-text bg-white border-end-0">
                                 <i class="bx bx-search text-muted"></i>
                             </span>
-                            <input type="text" class="form-control search-input border-start-0" placeholder="Buscar..." style="border-radius: 0 8px 8px 0;">
+                            <input type="text" class="form-control search-input border-start-0" placeholder="{{ 'maintainers.common.search_placeholder'|trans({}, 'maintainers') }}" style="border-radius: 0 8px 8px 0;">
                         </div>
                     </div>
                     <button class="btn btn-outline-secondary d-flex align-items-center gap-2">
                         <i class="bx bx-filter-alt"></i>
-                        Filtros
+                        {{ 'maintainers.common.filters'|trans({}, 'maintainers') }}
                     </button>
                     <button class="btn btn-outline-secondary d-flex align-items-center gap-2">
                         <i class="bx bx-cog"></i>
-                        Columnas
+                        {{ 'maintainers.common.columns'|trans({}, 'maintainers') }}
                     </button>
                 </div>
             </div>
@@ -134,7 +134,7 @@
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <p class="text-muted text-uppercase mb-2" style="font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px;">
-                                    Total Registros
+                                    {{ 'maintainers.stats.total_records'|trans({}, 'maintainers') }}
                                 </p>
                                 <h2 class="fw-bold mb-0" style="color: #0f172a;">
                                     {{ pagination ? pagination.total_items : data|length }}
@@ -152,7 +152,7 @@
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <p class="text-muted text-uppercase mb-2" style="font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px;">
-                                    Activos
+                                    {{ 'maintainers.stats.active_records'|trans({}, 'maintainers') }}
                                 </p>
                                 <h2 class="fw-bold mb-0" style="color: #0f172a;">
                                     {{ data|filter(item => item.isActive ?? item.active ?? true)|length }}
@@ -170,7 +170,7 @@
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <p class="text-muted text-uppercase mb-2" style="font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px;">
-                                    Inactivos
+                                    {{ 'maintainers.stats.inactive_records'|trans({}, 'maintainers') }}
                                 </p>
                                 <h2 class="fw-bold mb-0" style="color: #0f172a;">
                                     {{ data|filter(item => not (item.isActive ?? item.active ?? true))|length }}
@@ -188,7 +188,7 @@
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <p class="text-muted text-uppercase mb-2" style="font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px;">
-                                    Modificados Hoy
+                                    {{ 'maintainers.stats.modified_today'|trans({}, 'maintainers') }}
                                 </p>
                                 <h2 class="fw-bold mb-0" style="color: #0f172a;">0</h2>
                             </div>
@@ -204,11 +204,11 @@
             {% if data is empty %}
                 <div class="card-body text-center py-5">
                     <i class="bx bx-inbox text-muted mb-3" style="font-size: 4rem;"></i>
-                    <h5 class="text-muted">No hay registros disponibles</h5>
-                    <p class="text-muted mb-3">Comienza agregando el primer elemento</p>
+                    <h5 class="text-muted">{{ 'maintainers.common.no_records'|trans({}, 'maintainers') }}</h5>
+                    <p class="text-muted mb-3">{{ 'maintainers.common.no_records_message'|trans({}, 'maintainers') }}</p>
                     {% if create_route is defined %}
                         <a href="{{ path(create_route) }}" class="btn btn-primary">
-                            <i class="bx bx-plus me-1"></i>Crear Primero
+                            <i class="bx bx-plus me-1"></i>{{ 'maintainers.common.create_first'|trans({}, 'maintainers') }}
                         </a>
                     {% endif %}
                 </div>
@@ -233,7 +233,7 @@
                                     </th>
                                 {% endfor %}
                                 <th scope="col" class="text-end text-uppercase text-muted fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px; padding: 1rem;">
-                                    Acciones
+                                    {{ 'maintainers.common.actions'|trans({}, 'maintainers') }}
                                 </th>
                             </tr>
                         </thead>
@@ -257,16 +257,16 @@
                                             {% if column == 'isActive' %}
                                                 {% if value %}
                                                     <span class="badge rounded-pill" style="background-color: #d1fae5; color: #065f46; padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 600;">
-                                                        Activo
+                                                        {{ 'maintainers.columns.active'|trans({}, 'maintainers') }}
                                                     </span>
                                                 {% else %}
-                                                    <span class="badge rounded-pill bg-secondary">Inactivo</span>
+                                                    <span class="badge rounded-pill bg-secondary">{{ 'maintainers.columns.inactive'|trans({}, 'maintainers') }}</span>
                                                 {% endif %}
                                             {% elseif column in ['isDte', 'isLogistics', 'isCash', 'isClp', 'isUpToDate'] %}
                                                 {% if value %}
-                                                    <span class="badge rounded-pill" style="background-color: #dbeafe; color: #1e40af; padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 600;">Sí</span>
+                                                    <span class="badge rounded-pill" style="background-color: #dbeafe; color: #1e40af; padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 600;">{{ 'maintainers.columns.yes'|trans({}, 'maintainers') }}</span>
                                                 {% else %}
-                                                    <span class="badge rounded-pill bg-light text-muted" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">No</span>
+                                                    <span class="badge rounded-pill bg-light text-muted" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">{{ 'maintainers.columns.no'|trans({}, 'maintainers') }}</span>
                                                 {% endif %}
                                             {% elseif column == 'educationLevel' and value %}
                                                 {{ value.name }}
@@ -286,19 +286,19 @@
                                                data-bs-toggle="modal" 
                                                data-bs-target="#maintainerModal"
                                                data-modal-url="{{ path(edit_route, {'id': item.id}) }}"
-                                               data-modal-title="<i class='bx bx-edit me-2'></i>Editar {{ page_title }}"
-                                               title="Editar">
+                                               data-modal-title="<i class='bx bx-edit me-2'></i>{{ 'maintainers.common.edit'|trans({}, 'maintainers') }} {{ page_title }}"
+                                               title="{{ 'maintainers.common.edit'|trans({}, 'maintainers') }}">
                                                 <i class="bx bx-edit-alt"></i>
                                             </button>
                                             {% set delete_route = app.request.attributes.get('_route')|replace({'_index': '_delete'}) %}
                                             <form method="post" action="{{ path(delete_route, {'id': item.id}) }}" 
-                                                  onsubmit="return confirm('¿Está seguro de eliminar este registro?');" 
+                                                  onsubmit="return confirm('{{ 'maintainers.common.confirm_delete'|trans({}, 'maintainers') }}');" 
                                                   class="d-inline">
                                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ item.id) }}">
                                                 <button type="submit" 
                                                         class="btn btn-sm action-btn action-btn-delete border-0" 
                                                         style="color: #f5365c;"
-                                                        title="Eliminar">
+                                                        title="{{ 'maintainers.common.delete'|trans({}, 'maintainers') }}">
                                                     <i class="bx bx-trash-alt"></i>
                                                 </button>
                                             </form>
@@ -321,7 +321,7 @@
                     {% else %}
                         <div class="d-flex justify-content-between align-items-center">
                             <p class="text-muted small mb-0">
-                                Mostrando {{ data|length }} registros
+                                {{ 'maintainers.common.showing_records'|trans({'count': data|length}, 'maintainers') }}
                             </p>
                         </div>
                     {% endif %}
@@ -336,6 +336,6 @@
         'modal_title': page_title,
         'frame_id': 'maintainer-form',
         'modal_size': 'lg',
-        'loading_text': 'Cargando formulario...'
+        'loading_text': ('maintainers.common.loading'|trans({}, 'maintainers'))
     } %}
 {% endblock %}

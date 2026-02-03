@@ -12,6 +12,7 @@ use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/maintainers/hospital/clinical-action-question')]
 class ClinicalActionQuestionController extends AbstractMantenedorController

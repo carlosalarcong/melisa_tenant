@@ -12,6 +12,7 @@ use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/maintainers/structure/sub-company')]
 class SubCompanyController extends AbstractMantenedorController
@@ -19,9 +20,10 @@ class SubCompanyController extends AbstractMantenedorController
     public function __construct(
         private SubCompanyRepository $subCompanyRepository,
         TenantEntityManager $tenantEntityManager,
-        ExportService $exportService
+        ExportService $exportService,
+        TranslatorInterface $translator
     ) {
-        parent::__construct($tenantEntityManager);
+        parent::__construct($tenantEntityManager, $translator);
         $this->setExportService($exportService);
     }
 

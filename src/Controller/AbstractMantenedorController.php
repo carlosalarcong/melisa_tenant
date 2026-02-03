@@ -9,6 +9,7 @@ use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Controlador base para Mantenedores (Master Data)
@@ -42,8 +43,10 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
     protected TenantEntityManager $entityManager;
     protected ?ExportService $exportService = null;
 
-    public function __construct(TenantEntityManager $entityManager)
-    {
+    public function __construct(
+        TenantEntityManager $entityManager,
+        protected TranslatorInterface $translator
+    ) {
         $this->entityManager = $entityManager;
     }
     
@@ -567,10 +570,10 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
     protected function getSuccessMessage(string $action): string
     {
         return match($action) {
-            'create' => 'Registro creado exitosamente',
-            'edit' => 'Registro actualizado exitosamente',
-            'delete' => 'Registro eliminado exitosamente',
-            default => 'Operación completada exitosamente'
+            'create' => $this->translator->trans('maintainers.common.success_create', [], 'maintainers'),
+            'edit' => $this->translator->trans('maintainers.common.success_update', [], 'maintainers'),
+            'delete' => $this->translator->trans('maintainers.common.success_delete', [], 'maintainers'),
+            default => $this->translator->trans('maintainers.common.success_create', [], 'maintainers')
         };
     }
 
@@ -580,9 +583,9 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
     protected function getErrorMessage(string $type): string
     {
         return match($type) {
-            'not_found' => 'Registro no encontrado',
-            'cannot_delete' => 'No se puede eliminar este registro',
-            default => 'Ocurrió un error'
+            'not_found' => $this->translator->trans('maintainers.common.error_update', [], 'maintainers'),
+            'cannot_delete' => $this->translator->trans('maintainers.common.error_delete', [], 'maintainers'),
+            default => $this->translator->trans('maintainers.common.error_create', [], 'maintainers')
         };
     }
 }

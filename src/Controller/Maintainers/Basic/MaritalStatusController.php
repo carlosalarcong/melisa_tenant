@@ -12,6 +12,7 @@ use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Marital Status Controller
@@ -24,9 +25,10 @@ class MaritalStatusController extends AbstractMantenedorController
     public function __construct(
         private MaritalStatusRepository $repository,
         TenantEntityManager $tenantEntityManager,
-        ExportService $exportService
+        ExportService $exportService,
+        TranslatorInterface $translator
     ) {
-        parent::__construct($tenantEntityManager);
+        parent::__construct($tenantEntityManager, $translator);
         $this->setExportService($exportService);
     }
 
