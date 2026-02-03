@@ -62,7 +62,7 @@ class GratuityTypeController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'isActive'],
-            headers: ['Nombre', 'Activo'],
+            headers: $this->translateColumns(['name', 'is_active']),
             filename: 'tipos_gratuidad_' . date('Y-m-d') . '.csv'
         );
     }

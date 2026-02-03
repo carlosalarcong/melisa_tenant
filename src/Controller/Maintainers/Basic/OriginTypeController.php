@@ -62,7 +62,7 @@ class OriginTypeController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'code', 'isActive'],
-            headers: ['Nombre', 'Código', 'Activo'],
+            headers: $this->translateColumns(['name', 'code', 'is_active']),
             filename: 'tipos_origen_' . date('Y-m-d') . '.csv'
         );
     }

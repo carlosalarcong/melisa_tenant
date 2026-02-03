@@ -62,7 +62,7 @@ class DispatchTypeController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['code', 'name', 'isActive'],
-            headers: ['Código', 'Nombre', 'Activo'],
+            headers: $this->translateColumns(['code', 'name', 'is_active']),
             filename: 'tipos_despacho_' . date('Y-m-d') . '.csv'
         );
     }

@@ -57,7 +57,7 @@ class PrescriptionFrequencyController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'quantity', 'isActive'],
-            headers: ['Nombre', 'Cantidad', 'Activo'],
+            headers: $this->translateColumns(['name', 'quantity', 'is_active']),
             filename: 'frecuencias_receta_' . date('Y-m-d') . '.csv'
         );
     }

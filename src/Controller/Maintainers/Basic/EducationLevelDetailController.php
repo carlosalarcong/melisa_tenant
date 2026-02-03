@@ -62,7 +62,7 @@ class EducationLevelDetailController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'educationLevel', 'isActive'],
-            headers: ['Nombre', 'Nivel de Instrucción', 'Activo'],
+            headers: $this->translateColumns(['name', 'education_level', 'is_active']),
             filename: 'detalles_nivel_instruccion_' . date('Y-m-d') . '.csv'
         );
     }

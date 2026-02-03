@@ -62,7 +62,7 @@ class CurrencyTypeController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'isClp', 'isActive'],
-            headers: ['Nombre', 'Es CLP', 'Activo'],
+            headers: $this->translateColumns(['name', 'is_clp', 'is_active']),
             filename: 'tipos_moneda_' . date('Y-m-d') . '.csv'
         );
     }

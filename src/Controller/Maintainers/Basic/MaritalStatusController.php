@@ -62,7 +62,7 @@ class MaritalStatusController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'maritalStatusCodeHl7', 'isActive'],
-            headers: ['Nombre', 'Código HL7', 'Activo'],
+            headers: $this->translateColumns(['name', 'hl7_code', 'is_active']),
             filename: 'estados_conyugales_' . date('Y-m-d') . '.csv'
         );
     }

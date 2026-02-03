@@ -63,7 +63,7 @@ class GenderController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'code', 'isActive'],
-            headers: ['Nombre', 'Código', 'Activo'],
+            headers: $this->translateColumns(['name', 'code', 'is_active']),
             filename: 'generos_' . date('Y-m-d') . '.csv'
         );
     }

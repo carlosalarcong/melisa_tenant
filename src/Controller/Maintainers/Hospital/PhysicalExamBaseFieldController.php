@@ -57,7 +57,7 @@ class PhysicalExamBaseFieldController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'sortOrder', 'fieldType', 'isRequired', 'isActive'],
-            headers: ['Nombre', 'Orden', 'Tipo Campo', 'Obligatorio', 'Activo'],
+            headers: $this->translateColumns(['name', 'order', 'field_type', 'required', 'is_active']),
             filename: 'campos_base_examen_fisico_' . date('Y-m-d') . '.csv'
         );
     }

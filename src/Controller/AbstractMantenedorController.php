@@ -60,6 +60,33 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
     }
 
     /**
+     * Traduce un array de claves de columnas al idioma actual
+     * 
+     * Patrón funcional para traducir múltiples columnas de forma concisa.
+     * Usa el dominio 'maintainers.columns' automáticamente.
+     * 
+     * @param array<string> $columns Claves de columnas (ej: ['name', 'code', 'is_active'])
+     * @return array<string> Array de strings traducidos
+     * 
+     * @example
+     * ```php
+     * headers: $this->translateColumns(['code', 'name', 'is_active'])
+     * // Resultado: ['Código', 'Nombre', 'Activo']
+     * ```
+     */
+    protected function translateColumns(array $columns): array
+    {
+        return array_map(
+            fn(string $column): string => $this->translator->trans(
+                "maintainers.columns.$column",
+                [],
+                'maintainers'
+            ),
+            $columns
+        );
+    }
+
+    /**
      * Detecta si la petición viene de un Turbo Frame
      * 
      * Turbo Frame puede enviar peticiones de dos formas:

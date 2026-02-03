@@ -62,7 +62,7 @@ class WarehouseSpecialtyController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['warehouse.name', 'specialty.name', 'isActive'],
-            headers: ['Bodega', 'Especialidad', 'Activo'],
+            headers: $this->translateColumns(['warehouse', 'specialty', 'is_active']),
             filename: 'especialidades_bodega_' . date('Y-m-d') . '.csv'
         );
     }

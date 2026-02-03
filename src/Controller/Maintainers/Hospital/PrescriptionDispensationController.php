@@ -57,7 +57,7 @@ class PrescriptionDispensationController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'sortOrder', 'quantity', 'timeUnit', 'isActive'],
-            headers: ['Nombre', 'Orden', 'Cantidad', 'Unidad Tiempo', 'Activo'],
+            headers: $this->translateColumns(['name', 'order', 'quantity', 'time_unit', 'is_active']),
             filename: 'dispensaciones_receta_' . date('Y-m-d') . '.csv'
         );
     }

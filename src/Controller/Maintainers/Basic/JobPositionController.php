@@ -62,7 +62,7 @@ class JobPositionController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'description', 'isActive'],
-            headers: ['Nombre', 'Descripción', 'Activo'],
+            headers: $this->translateColumns(['name', 'description', 'is_active']),
             filename: 'cargos_' . date('Y-m-d') . '.csv'
         );
     }

@@ -57,7 +57,7 @@ class ClinicalActionCategoryController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'isActive'],
-            headers: ['Nombre', 'Activo'],
+            headers: $this->translateColumns(['name', 'is_active']),
             filename: 'categorias_accion_clinica_' . date('Y-m-d') . '.csv'
         );
     }

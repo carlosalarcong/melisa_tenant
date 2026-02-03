@@ -62,7 +62,7 @@ class SignatureFooterController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['code', 'name', 'position', 'branch.name', 'isActive'],
-            headers: ['Código', 'Nombre', 'Cargo', 'Sucursal', 'Activo'],
+            headers: $this->translateColumns(['code', 'name', 'position', 'branch', 'is_active']),
             filename: 'pies_firma_' . date('Y-m-d') . '.csv'
         );
     }

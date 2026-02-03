@@ -62,7 +62,7 @@ class ArticleSupplierController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['article.name', 'supplierName', 'price', 'isActive'],
-            headers: ['Artículo', 'Proveedor', 'Precio', 'Activo'],
+            headers: $this->translateColumns(['article', 'supplier', 'price', 'is_active']),
             filename: 'proveedores_articulo_' . date('Y-m-d') . '.csv'
         );
     }

@@ -62,7 +62,7 @@ class InsuranceAdministratorController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'code', 'isActive'],
-            headers: ['Nombre', 'Código', 'Activo'],
+            headers: $this->translateColumns(['name', 'code', 'is_active']),
             filename: 'administradoras_seguro_' . date('Y-m-d') . '.csv'
         );
     }

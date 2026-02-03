@@ -62,7 +62,7 @@ class PaymentConditionController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'interfaceCode', 'maxTerm', 'isUpToDate', 'isActive'],
-            headers: ['Nombre', 'Codigo Interfaz', 'Plazo Maximo', 'Es Al Dia', 'Activo'],
+            headers: $this->translateColumns(['name', 'interface_code', 'max_term', 'is_up_to_date', 'is_active']),
             filename: 'condiciones_pago_' . date('Y-m-d') . '.csv'
         );
     }

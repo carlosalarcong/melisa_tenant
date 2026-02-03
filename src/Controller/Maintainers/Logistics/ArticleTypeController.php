@@ -62,7 +62,7 @@ class ArticleTypeController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['code', 'name', 'isPharmaceutical', 'warehouse.name', 'isActive'],
-            headers: ['Código', 'Nombre', 'Es Fármaco', 'Bodega', 'Activo'],
+            headers: $this->translateColumns(['code', 'name', 'is_drug', 'warehouse', 'is_active']),
             filename: 'tipos_articulo_' . date('Y-m-d') . '.csv'
         );
     }

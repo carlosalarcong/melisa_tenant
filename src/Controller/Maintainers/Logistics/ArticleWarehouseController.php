@@ -62,7 +62,7 @@ class ArticleWarehouseController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['article.name', 'warehouse.name', 'minStock', 'criticalStock', 'optimalStock', 'isCritical', 'isActive'],
-            headers: ['Artículo', 'Bodega', 'Stock Mínimo', 'Stock Crítico', 'Stock Óptimo', 'Es Crítico', 'Activo'],
+            headers: $this->translateColumns(['article', 'warehouse', 'min_stock', 'critical_stock', 'optimal_stock', 'is_critical', 'is_active']),
             filename: 'articulos_bodega_' . date('Y-m-d') . '.csv'
         );
     }

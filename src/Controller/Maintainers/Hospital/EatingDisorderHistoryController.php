@@ -57,7 +57,7 @@ class EatingDisorderHistoryController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'isActive'],
-            headers: ['Nombre', 'Activo'],
+            headers: $this->translateColumns(['name', 'is_active']),
             filename: 'antecedentes_tca_' . date('Y-m-d') . '.csv'
         );
     }

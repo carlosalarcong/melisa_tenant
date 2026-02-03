@@ -62,7 +62,7 @@ class BillingPaymentMethodController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['code', 'name', 'isCash', 'isActive'],
-            headers: ['Codigo', 'Nombre', 'Es Efectivo', 'Activo'],
+            headers: $this->translateColumns(['code', 'name', 'is_cash', 'is_active']),
             filename: 'formas_pago_facturacion_' . date('Y-m-d') . '.csv'
         );
     }

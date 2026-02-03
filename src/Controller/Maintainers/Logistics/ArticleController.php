@@ -65,10 +65,7 @@ class ArticleController extends AbstractMantenedorController
                      'isConsignment', 'isControlled', 'hasExpirationDate', 'isCritical', 'isGeneric', 
                      'isResterilizable', 'isForSale', 'isBillable', 'isFirstAidDeduction', 
                      'minStock', 'criticalStock', 'optimalStock', 'maxStock', 'cenabastCode', 'isActive'],
-            headers: ['Código', 'Nombre', 'Nombre Abreviado', 'Nombre Genérico', 'Tipo', 'Sub Empresa', 
-                     'Consignación', 'Controlado', 'Fecha Venc.', 'Crítico', 'Genérico', 
-                     'Reesterilizable', 'Venta', 'Facturable', 'Rebaja Botiquín', 
-                     'Stock Min', 'Stock Crít', 'Stock Ópt', 'Stock Max', 'Cód Cenabast', 'Activo'],
+            headers: $this->translateColumns(['code', 'name', 'short_name', 'generic_name', 'type', 'sub_company', 'consignment', 'controlled', 'expiration_date', 'critical', 'generic', 'resterilizable', 'sale', 'billable', 'first_aid_deduction', 'min_stock', 'critical_stock', 'optimal_stock', 'max_stock', 'cenabast_code', 'is_active']),
             filename: 'articulos_' . date('Y-m-d') . '.csv'
         );
     }

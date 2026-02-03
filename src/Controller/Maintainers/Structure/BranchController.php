@@ -62,7 +62,7 @@ class BranchController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'code', 'city', 'region', 'phone', 'email', 'isActive'],
-            headers: ['Nombre', 'Código', 'Ciudad', 'Región', 'Teléfono', 'Email', 'Activo'],
+            headers: $this->translateColumns(['name', 'code', 'city', 'region', 'phone', 'email', 'is_active']),
             filename: 'sucursales_' . date('Y-m-d') . '.csv'
         );
     }

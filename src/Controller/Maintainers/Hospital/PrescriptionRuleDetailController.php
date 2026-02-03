@@ -57,7 +57,7 @@ class PrescriptionRuleDetailController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['intervals', 'dailyQuantity', 'isActive'],
-            headers: ['Intervalos', 'Cantidad Diaria', 'Activo'],
+            headers: $this->translateColumns(['intervals', 'daily_quantity', 'is_active']),
             filename: 'reglas_prescripcion_' . date('Y-m-d') . '.csv'
         );
     }

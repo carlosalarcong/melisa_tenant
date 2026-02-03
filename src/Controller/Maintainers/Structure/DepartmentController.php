@@ -57,7 +57,7 @@ class DepartmentController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'code', 'branch.name', 'description', 'isActive'],
-            headers: ['Nombre', 'Código', 'Sucursal', 'Descripción', 'Activo'],
+            headers: $this->translateColumns(['name', 'code', 'branch', 'description', 'is_active']),
             filename: 'departamentos_' . date('Y-m-d') . '.csv'
         );
     }

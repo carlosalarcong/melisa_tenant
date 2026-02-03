@@ -57,7 +57,7 @@ class CreditCardController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'abbreviation', 'creditCardType.name', 'isActive'],
-            headers: ['Nombre', 'Abreviacion', 'Tipo', 'Activo'],
+            headers: $this->translateColumns(['name', 'abbreviation', 'type', 'is_active']),
             filename: 'tarjetas_credito_' . date('Y-m-d') . '.csv'
         );
     }

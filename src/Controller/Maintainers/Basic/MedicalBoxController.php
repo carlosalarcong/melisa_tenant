@@ -62,7 +62,7 @@ class MedicalBoxController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'number', 'isActive'],
-            headers: ['Nombre', 'Número', 'Activo'],
+            headers: $this->translateColumns(['name', 'number', 'is_active']),
             filename: 'boxes_medicos_' . date('Y-m-d') . '.csv'
         );
     }

@@ -57,7 +57,7 @@ class SubCompanyController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'code', 'taxId', 'description', 'isActive'],
-            headers: ['Nombre', 'Código', 'RUT', 'Descripción', 'Activo'],
+            headers: $this->translateColumns(['name', 'code', 'rut', 'description', 'is_active']),
             filename: 'sub_empresas_' . date('Y-m-d') . '.csv'
         );
     }

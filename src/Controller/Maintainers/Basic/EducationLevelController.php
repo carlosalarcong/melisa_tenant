@@ -62,7 +62,7 @@ class EducationLevelController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'isActive'],
-            headers: ['Nombre', 'Activo'],
+            headers: $this->translateColumns(['name', 'is_active']),
             filename: 'niveles_educacion_' . date('Y-m-d') . '.csv'
         );
     }

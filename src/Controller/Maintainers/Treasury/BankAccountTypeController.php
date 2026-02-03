@@ -62,7 +62,7 @@ class BankAccountTypeController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'isActive'],
-            headers: ['Nombre', 'Activo'],
+            headers: $this->translateColumns(['name', 'is_active']),
             filename: 'tipos_cuenta_banco_' . date('Y-m-d') . '.csv'
         );
     }

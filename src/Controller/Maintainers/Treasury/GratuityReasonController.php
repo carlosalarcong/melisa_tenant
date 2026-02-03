@@ -57,7 +57,7 @@ class GratuityReasonController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'gratuityType.name', 'branch.name', 'isActive'],
-            headers: ['Nombre', 'Tipo Gratuidad', 'Sucursal', 'Activo'],
+            headers: $this->translateColumns(['name', 'gratuity_type', 'branch', 'is_active']),
             filename: 'motivos_gratuidad_' . date('Y-m-d') . '.csv'
         );
     }

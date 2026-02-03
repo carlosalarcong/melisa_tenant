@@ -62,7 +62,7 @@ class TransferIndicatorController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['code', 'name', 'isActive'],
-            headers: ['Codigo', 'Nombre', 'Activo'],
+            headers: $this->translateColumns(['code', 'name', 'is_active']),
             filename: 'indicadores_traslado_' . date('Y-m-d') . '.csv'
         );
     }

@@ -57,7 +57,7 @@ class NutritionistIndexClassificationController extends AbstractMantenedorContro
         return $this->handleExport(
             request: $request,
             columns: ['name', 'isActive'],
-            headers: ['Nombre', 'Activo'],
+            headers: $this->translateColumns(['name', 'is_active']),
             filename: 'clasificaciones_indices_' . date('Y-m-d') . '.csv'
         );
     }

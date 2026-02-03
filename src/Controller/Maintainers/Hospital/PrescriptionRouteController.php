@@ -57,7 +57,7 @@ class PrescriptionRouteController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'sortOrder', 'isActive'],
-            headers: ['Nombre', 'Orden', 'Activo'],
+            headers: $this->translateColumns(['name', 'order', 'is_active']),
             filename: 'vias_administracion_' . date('Y-m-d') . '.csv'
         );
     }

@@ -62,7 +62,7 @@ class DifferenceReasonController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'differenceDirection.name', 'isActive'],
-            headers: ['Nombre', 'Sentido', 'Activo'],
+            headers: $this->translateColumns(['name', 'direction', 'is_active']),
             filename: 'motivos_diferencia_' . date('Y-m-d') . '.csv'
         );
     }

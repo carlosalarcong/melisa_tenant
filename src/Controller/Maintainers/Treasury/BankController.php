@@ -62,7 +62,7 @@ class BankController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['rut', 'name', 'currentAccount', 'isActive'],
-            headers: ['RUT', 'Nombre', 'Cuenta Corriente', 'Activo'],
+            headers: $this->translateColumns(['rut', 'name', 'checking_account', 'is_active']),
             filename: 'bancos_' . date('Y-m-d') . '.csv'
         );
     }

@@ -57,7 +57,7 @@ class ServiceTypeController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'code', 'description', 'isActive'],
-            headers: ['Nombre', 'Código', 'Descripción', 'Activo'],
+            headers: $this->translateColumns(['name', 'code', 'description', 'is_active']),
             filename: 'tipos_servicio_' . date('Y-m-d') . '.csv'
         );
     }

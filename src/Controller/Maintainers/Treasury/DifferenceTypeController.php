@@ -62,7 +62,7 @@ class DifferenceTypeController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'description', 'differenceDirection.name', 'isActive'],
-            headers: ['Nombre', 'Descripcion', 'Sentido', 'Activo'],
+            headers: $this->translateColumns(['name', 'description', 'direction', 'is_active']),
             filename: 'tipos_diferencia_' . date('Y-m-d') . '.csv'
         );
     }
