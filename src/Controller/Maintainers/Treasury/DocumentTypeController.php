@@ -7,12 +7,13 @@ use App\Entity\Tenant\DocumentType;
 use App\Form\Maintainers\Treasury\DocumentTypeType;
 use App\Repository\Tenant\DocumentTypeRepository;
 use App\Service\Export\ExportService;
+use Doctrine\ORM\QueryBuilder;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/app/maintainers/treasury/document-type')]
+#[Route('/maintainers/treasury/document-type')]
 class DocumentTypeController extends AbstractMantenedorController
 {
     public function __construct(
@@ -77,7 +78,7 @@ class DocumentTypeController extends AbstractMantenedorController
 
     protected function getTemplatePath(): string
     {
-        return 'maintainers/treasury/document_type';
+        return 'maintainers/treasury/document_type/index.html.twig';
     }
 
     protected function getRoutePrefix(): string
@@ -109,22 +110,10 @@ class DocumentTypeController extends AbstractMantenedorController
         return 'app_maintainers_treasury_document_type_index';
     }
 
-    protected function getData(Request $request): array
+    protected function getData(Request $request): array|QueryBuilder
     {
-        $qb = $this->repository->createQueryBuilder('dt');
-
-        $search = $request->query->get('search', '');
-        if (!empty($search)) {
-            $qb->andWhere('dt.name LIKE :search OR dt.siiCode LIKE :search')
-                ->setParameter('search', '%' . $search . '%');
-        }
-
-        $qb->orderBy('dt.name', 'ASC');
-
-        return [
-            'query' => $qb->getQuery(),
-            'searchTerm' => $search
-        ];
+        return $this->repository->createQueryBuilder('dt')
+            ->orderBy('dt.name', 'ASC');
     }
 
     protected function getExportColumns(): array

@@ -7,6 +7,7 @@ use App\Entity\Tenant\CashRegisterLocation;
 use App\Form\Maintainers\Treasury\CashRegisterLocationType;
 use App\Repository\Tenant\CashRegisterLocationRepository;
 use App\Service\Export\ExportService;
+use Doctrine\ORM\QueryBuilder;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -77,7 +78,7 @@ class CashRegisterLocationController extends AbstractMantenedorController
 
     protected function getTemplatePath(): string
     {
-        return 'maintainers/treasury/cash_register_location';
+        return 'maintainers/treasury/cash_register_location/index.html.twig';
     }
 
     protected function getRoutePrefix(): string
@@ -109,24 +110,12 @@ class CashRegisterLocationController extends AbstractMantenedorController
         return 'app_maintainers_treasury_cash_register_location_index';
     }
 
-    protected function getData(Request $request): array
+    protected function getData(Request $request): array|QueryBuilder
     {
-        $qb = $this->repository->createQueryBuilder('crl')
+        return $this->repository->createQueryBuilder('crl')
             ->leftJoin('crl.branch', 'b')
-            ->addSelect('b');
-
-        $search = $request->query->get('search', '');
-        if (!empty($search)) {
-            $qb->andWhere('crl.name LIKE :search OR crl.description LIKE :search OR b.name LIKE :search')
-                ->setParameter('search', '%' . $search . '%');
-        }
-
-        $qb->orderBy('crl.name', 'ASC');
-
-        return [
-            'query' => $qb->getQuery(),
-            'searchTerm' => $search
-        ];
+            ->addSelect('b')
+            ->orderBy('crl.name', 'ASC');
     }
 
     protected function getExportColumns(): array

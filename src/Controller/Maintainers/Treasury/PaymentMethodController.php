@@ -7,12 +7,13 @@ use App\Entity\Tenant\PaymentMethod;
 use App\Form\Maintainers\Treasury\PaymentMethodFormType;
 use App\Repository\Tenant\PaymentMethodRepository;
 use App\Service\Export\ExportService;
+use Doctrine\ORM\QueryBuilder;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/app/maintainers/treasury/payment-method')]
+#[Route('/maintainers/treasury/payment-method')]
 class PaymentMethodController extends AbstractMantenedorController
 {
     public function __construct(
@@ -77,7 +78,7 @@ class PaymentMethodController extends AbstractMantenedorController
 
     protected function getTemplatePath(): string
     {
-        return 'maintainers/treasury/payment_method';
+        return 'maintainers/treasury/payment_method/index.html.twig';
     }
 
     protected function getRoutePrefix(): string
@@ -107,26 +108,14 @@ class PaymentMethodController extends AbstractMantenedorController
     {
         return 'app_maintainers_treasury_payment_method_index';
     }
-    protected function getData(Request $request): array
+    protected function getData(Request $request): array|QueryBuilder
     {
-        $qb = $this->repository->createQueryBuilder('pm')
+        return $this->repository->createQueryBuilder('pm')
             ->leftJoin('pm.parent', 'parent')
             ->addSelect('parent')
             ->leftJoin('pm.paymentMethodType', 'pmt')
-            ->addSelect('pmt');
-
-        $search = $request->query->get('search', '');
-        if (!empty($search)) {
-            $qb->andWhere('pm.name LIKE :search OR pm.code LIKE :search OR parent.name LIKE :search')
-                ->setParameter('search', '%' . $search . '%');
-        }
-
-        $qb->orderBy('pm.name', 'ASC');
-
-        return [
-            'query' => $qb->getQuery(),
-            'searchTerm' => $search
-        ];
+            ->addSelect('pmt')
+            ->orderBy('pm.name', 'ASC');
     }
 
     protected function getExportColumns(): array

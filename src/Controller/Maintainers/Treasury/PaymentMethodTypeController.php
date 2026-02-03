@@ -7,12 +7,13 @@ use App\Entity\Tenant\PaymentMethodType;
 use App\Form\Maintainers\Treasury\PaymentMethodTypeType;
 use App\Repository\Tenant\PaymentMethodTypeRepository;
 use App\Service\Export\ExportService;
+use Doctrine\ORM\QueryBuilder;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/app/maintainers/treasury/payment-method-type')]
+#[Route('/maintainers/treasury/payment-method-type')]
 class PaymentMethodTypeController extends AbstractMantenedorController
 {
     public function __construct(
@@ -77,7 +78,7 @@ class PaymentMethodTypeController extends AbstractMantenedorController
 
     protected function getTemplatePath(): string
     {
-        return 'maintainers/treasury/payment_method_type';
+        return 'maintainers/treasury/payment_method_type/index.html.twig';
     }
 
     protected function getRoutePrefix(): string
@@ -107,22 +108,10 @@ class PaymentMethodTypeController extends AbstractMantenedorController
     {
         return 'app_maintainers_treasury_payment_method_type_index';
     }
-    protected function getData(Request $request): array
+    protected function getData(Request $request): array|QueryBuilder
     {
-        $qb = $this->repository->createQueryBuilder('pmt');
-
-        $search = $request->query->get('search', '');
-        if (!empty($search)) {
-            $qb->andWhere('pmt.name LIKE :search')
-                ->setParameter('search', '%' . $search . '%');
-        }
-
-        $qb->orderBy('pmt.name', 'ASC');
-
-        return [
-            'query' => $qb->getQuery(),
-            'searchTerm' => $search
-        ];
+        return $this->repository->createQueryBuilder('pmt')
+            ->orderBy('pmt.name', 'ASC');
     }
 
     protected function getExportColumns(): array

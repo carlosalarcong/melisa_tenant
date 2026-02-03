@@ -1483,15 +1483,69 @@ php bin/console tenant:migrations:migrate <tenant_id>
 
 ## Registro en Menu
 
-Despues de crear todos los controllers, registrar en el sistema de menus:
+Despues de crear todos los controllers, registrar en el sistema de menus.
+
+**Tabla:** `menu_items`
+**IMPORTANTE:** La columna `id` NO es auto-increment. Hay que asignarlo manualmente.
+
+### Paso 1: Obtener ID maximo actual y del padre
 
 ```sql
--- Insertar nodo padre "Tesoreria" bajo "Mantenedores"
-INSERT INTO menu_item (name, label, route, icon, module, position, enabled, visible_in_sidebar, requires_auth, parent_id)
-VALUES ('treasury', 'Tesoreria', NULL, 'bx-wallet', 'maintainers', 1, true, true, true, <ID_MANTENEDORES>);
+SELECT MAX(id) FROM menu_items;
+-- Usar el siguiente numero como base (ej: si MAX=53, empezar en 54)
 
--- Insertar items hijos (ajustar parent_id al ID del nodo Tesoreria)
--- Repetir por cada mantenedor creado
+SELECT id FROM menu_items WHERE name = 'mantenedores';
+-- Anotar como {MANTENEDORES_ID} (actualmente = 4)
+```
+
+### Paso 2: Insertar categoria + 17 mantenedores
+
+Reemplazar los IDs segun corresponda. En este ejemplo:
+- `{MANTENEDORES_ID}` = 4 (padre Mantenedores)
+- ID base = 54 (siguiente disponible)
+
+```sql
+-- Categoria Tesoreria (hijo de Mantenedores)
+INSERT INTO menu_items (id, name, label, route, icon, module, parent_id, position, enabled, visible_in_sidebar, requires_auth, required_roles, created_at)
+VALUES (54, 'maintenance_treasury', 'Tesoreria', NULL, 'bx bx-dollar-circle', NULL, 4, 5, true, true, true, '["ROLE_USER"]', NOW());
+
+-- 17 mantenedores (hijos de Tesoreria, parent_id = 54)
+INSERT INTO menu_items (id, name, label, route, icon, module, parent_id, position, enabled, visible_in_sidebar, requires_auth, required_roles, created_at)
+VALUES
+-- Tipos y catalogos simples
+(55, 'bank_account_type', 'Tipos Cuenta Bancaria', 'app_maintainers_treasury_bank_account_type_index', 'bx bx-list-ul', 'maintenance_treasury', 54, 1, true, true, true, '["ROLE_USER"]', NOW()),
+(56, 'credit_card_type', 'Tipos Tarjeta Credito', 'app_maintainers_treasury_credit_card_type_index', 'bx bx-list-ul', 'maintenance_treasury', 54, 2, true, true, true, '["ROLE_USER"]', NOW()),
+(57, 'gratuity_type', 'Tipos de Gratuidad', 'app_maintainers_treasury_gratuity_type_index', 'bx bx-gift', 'maintenance_treasury', 54, 3, true, true, true, '["ROLE_USER"]', NOW()),
+(58, 'currency_type', 'Tipos de Moneda', 'app_maintainers_treasury_currency_type_index', 'bx bx-dollar-circle', 'maintenance_treasury', 54, 4, true, true, true, '["ROLE_USER"]', NOW()),
+(59, 'document_type', 'Tipos de Documento', 'app_maintainers_treasury_document_type_index', 'bx bx-file', 'maintenance_treasury', 54, 5, true, true, true, '["ROLE_USER"]', NOW()),
+(60, 'payment_method_type', 'Tipos Forma de Pago', 'app_maintainers_treasury_payment_method_type_index', 'bx bx-category', 'maintenance_treasury', 54, 6, true, true, true, '["ROLE_USER"]', NOW()),
+(61, 'difference_direction', 'Sentidos de Diferencia', 'app_maintainers_treasury_difference_direction_index', 'bx bx-sort-alt-2', 'maintenance_treasury', 54, 7, true, true, true, '["ROLE_USER"]', NOW()),
+-- Entidades principales
+(62, 'bank', 'Bancos', 'app_maintainers_treasury_bank_index', 'bx bx-building-house', 'maintenance_treasury', 54, 8, true, true, true, '["ROLE_USER"]', NOW()),
+(63, 'credit_card', 'Tarjetas de Credito', 'app_maintainers_treasury_credit_card_index', 'bx bx-credit-card', 'maintenance_treasury', 54, 9, true, true, true, '["ROLE_USER"]', NOW()),
+(64, 'transfer_indicator', 'Indicadores de Traslado', 'app_maintainers_treasury_transfer_indicator_index', 'bx bx-transfer', 'maintenance_treasury', 54, 10, true, true, true, '["ROLE_USER"]', NOW()),
+(65, 'payment_condition', 'Condiciones de Pago', 'app_maintainers_treasury_payment_condition_index', 'bx bx-calendar-check', 'maintenance_treasury', 54, 11, true, true, true, '["ROLE_USER"]', NOW()),
+(66, 'billing_payment_method', 'Formas Pago Facturacion', 'app_maintainers_treasury_billing_payment_method_index', 'bx bx-receipt', 'maintenance_treasury', 54, 12, true, true, true, '["ROLE_USER"]', NOW()),
+(67, 'payment_method', 'Formas de Pago', 'app_maintainers_treasury_payment_method_index', 'bx bx-wallet', 'maintenance_treasury', 54, 13, true, true, true, '["ROLE_USER"]', NOW()),
+-- Diferencias
+(68, 'difference_type', 'Tipos de Diferencia', 'app_maintainers_treasury_difference_type_index', 'bx bx-error-alt', 'maintenance_treasury', 54, 14, true, true, true, '["ROLE_USER"]', NOW()),
+(69, 'difference_reason', 'Motivos de Diferencia', 'app_maintainers_treasury_difference_reason_index', 'bx bx-comment-error', 'maintenance_treasury', 54, 15, true, true, true, '["ROLE_USER"]', NOW()),
+-- Gratuidad y ubicaciones
+(70, 'gratuity_reason', 'Motivos de Gratuidad', 'app_maintainers_treasury_gratuity_reason_index', 'bx bx-gift', 'maintenance_treasury', 54, 16, true, true, true, '["ROLE_USER"]', NOW()),
+(71, 'cash_register_location', 'Ubicaciones de Caja', 'app_maintainers_treasury_cash_register_location_index', 'bx bx-map-pin', 'maintenance_treasury', 54, 17, true, true, true, '["ROLE_USER"]', NOW());
+```
+
+### Paso 3: Limpiar cache de menu
+
+```bash
+php bin/console cache:clear
+```
+
+### Rollback (en caso de necesitar borrar)
+
+```sql
+DELETE FROM menu_items WHERE parent_id = (SELECT id FROM menu_items WHERE name = 'maintenance_treasury');
+DELETE FROM menu_items WHERE name = 'maintenance_treasury';
 ```
 
 ---
