@@ -20,9 +20,11 @@ class SurgicalTeamRoleController extends AbstractMantenedorController
     public function __construct(
         private readonly SurgicalTeamRoleRepository $repository,
         TenantEntityManager $tenantEntityManager,
-        ExportService $exportService
+        ExportService $exportService,
+        TranslatorInterface $translator
     ) {
-        parent::__construct($tenantEntityManager, $exportService);
+        parent::__construct($tenantEntityManager, $translator);
+        $this->setExportService($exportService);
     }
 
     #[Route('', name: 'app_maintainers_surgery_surgical_team_role_index', methods: ['GET'])]

@@ -20,9 +20,11 @@ class SurgicalStageItemController extends AbstractMantenedorController
     public function __construct(
         TenantEntityManager $entityManager,
         private SurgicalStageItemRepository $repository,
-        ExportService $exportService
+        ExportService $exportService,
+        TranslatorInterface $translator
     ) {
-        parent::__construct($entityManager, $exportService);
+        parent::__construct($entityManager, $translator);
+        $this->setExportService($exportService);
     }
 
     #[Route('', name: 'app_maintainers_surgery_surgical_stage_item_index', methods: ['GET'])]

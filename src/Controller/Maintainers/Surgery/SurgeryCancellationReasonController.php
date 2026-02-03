@@ -20,9 +20,11 @@ class SurgeryCancellationReasonController extends AbstractMantenedorController
     public function __construct(
         private readonly SurgeryCancellationReasonRepository $repository,
         TenantEntityManager $tenantEntityManager,
-        ExportService $exportService
+        ExportService $exportService,
+        TranslatorInterface $translator
     ) {
-        parent::__construct($tenantEntityManager, $exportService);
+        parent::__construct($tenantEntityManager, $translator);
+        $this->setExportService($exportService);
     }
 
     #[Route('', name: 'app_maintainers_surgery_surgery_cancellation_reason_index', methods: ['GET'])]

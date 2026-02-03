@@ -20,9 +20,11 @@ class BloodTypeController extends AbstractMantenedorController
     public function __construct(
         private readonly BloodTypeRepository $repository,
         TenantEntityManager $tenantEntityManager,
-        ExportService $exportService
+        ExportService $exportService,
+        TranslatorInterface $translator
     ) {
-        parent::__construct($tenantEntityManager, $exportService);
+        parent::__construct($tenantEntityManager, $translator);
+        $this->setExportService($exportService);
     }
 
     #[Route('', name: 'app_maintainers_surgery_blood_type_index', methods: ['GET'])]

@@ -20,9 +20,11 @@ class SurgicalBlockController extends AbstractMantenedorController
     public function __construct(
         private readonly SurgicalBlockRepository $repository,
         TenantEntityManager $tenantEntityManager,
-        ExportService $exportService
+        ExportService $exportService,
+        TranslatorInterface $translator
     ) {
-        parent::__construct($tenantEntityManager, $exportService);
+        parent::__construct($tenantEntityManager, $translator);
+        $this->setExportService($exportService);
     }
 
     #[Route('', name: 'app_maintainers_surgery_surgical_block_index', methods: ['GET'])]

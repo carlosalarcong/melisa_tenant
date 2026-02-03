@@ -20,9 +20,11 @@ class AnesthesiaTypeController extends AbstractMantenedorController
     public function __construct(
         private readonly AnesthesiaTypeRepository $repository,
         TenantEntityManager $tenantEntityManager,
-        ExportService $exportService
+        ExportService $exportService,
+        TranslatorInterface $translator
     ) {
-        parent::__construct($tenantEntityManager, $exportService);
+        parent::__construct($tenantEntityManager, $translator);
+        $this->setExportService($exportService);
     }
 
     #[Route('', name: 'app_maintainers_surgery_anesthesia_type_index', methods: ['GET'])]

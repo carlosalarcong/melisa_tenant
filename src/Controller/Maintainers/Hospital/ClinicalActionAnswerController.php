@@ -20,9 +20,11 @@ class ClinicalActionAnswerController extends AbstractMantenedorController
     public function __construct(
         private readonly ClinicalActionAnswerRepository $repository,
         TenantEntityManager $tenantEntityManager,
-        ExportService $exportService
+        ExportService $exportService,
+        TranslatorInterface $translator
     ) {
-        parent::__construct($tenantEntityManager, $exportService);
+        parent::__construct($tenantEntityManager, $translator);
+        $this->setExportService($exportService);
     }
 
     #[Route('', name: 'app_maintainers_hospital_clinical_action_answer_index', methods: ['GET'])]
