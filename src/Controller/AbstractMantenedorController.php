@@ -567,10 +567,10 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
     protected function getSuccessMessage(string $action): string
     {
         return match($action) {
-            'create' => 'Record created successfully',
-            'edit' => 'Record updated successfully',
-            'delete' => 'Record deleted successfully',
-            default => 'Operation completed successfully'
+            'create' => 'Registro creado exitosamente',
+            'edit' => 'Registro actualizado exitosamente',
+            'delete' => 'Registro eliminado exitosamente',
+            default => 'Operación completada exitosamente'
         };
     }
 
@@ -580,9 +580,9 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
     protected function getErrorMessage(string $type): string
     {
         return match($type) {
-            'not_found' => 'Record not found',
-            'cannot_delete' => 'Cannot delete this record',
-            default => 'An error occurred'
+            'not_found' => 'Registro no encontrado',
+            'cannot_delete' => 'No se puede eliminar este registro',
+            default => 'Ocurrió un error'
         };
     }
 }
