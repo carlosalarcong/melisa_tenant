@@ -86,10 +86,11 @@ class CareInterventionController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-            'description' => 'Descripcion',
-            'careCategory.name' => 'Categoria',
-            'isActive' => 'Estado'
-        ];
+        'description' => $this->translator->trans('maintainers.columns.description', [], 'maintainers'),
+        'careCategory.name' => 'Categoria',
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
+    ];
+    
     }
 
     protected function createNewEntity(): object

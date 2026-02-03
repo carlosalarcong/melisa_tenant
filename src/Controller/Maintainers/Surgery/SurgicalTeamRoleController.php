@@ -86,11 +86,12 @@ class SurgicalTeamRoleController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-            'sortOrder' => 'Orden',
-            'name' => 'Nombre',
-            'surgeryItem.name' => 'Item Cirugía',
-            'isActive' => 'Estado'
-        ];
+        'sortOrder' => 'Orden',
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
+        'surgeryItem.name' => 'Item Cirugía',
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
+    ];
+    
     }
 
     protected function createNewEntity(): object

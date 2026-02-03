@@ -71,12 +71,13 @@ class PrescriptionDispensationController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-            'name' => 'Nombre',
-            'sortOrder' => 'Orden',
-            'quantity' => 'Cantidad',
-            'timeUnit' => 'Unidad Tiempo',
-            'isActive' => 'Estado'
-        ];
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
+        'sortOrder' => 'Orden',
+        'quantity' => 'Cantidad',
+        'timeUnit' => 'Unidad Tiempo',
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
+    ];
+    
     }
 
     protected function getTemplatePath(): string

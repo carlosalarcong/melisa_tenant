@@ -100,13 +100,14 @@ class DocumentTypeController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-        'id' => 'Id',
+        'id' => $this->translator->trans('maintainers.columns.id', [], 'maintainers'),
         'siiCode' => 'Código SII',
-        'name' => 'Nombre',
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
         'isDte' => 'DTE',
         'isLogistics' => 'Logística',
-        'isActive' => 'Estado'
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
     ];
+    
     }
 
     protected function createNewEntity(): object

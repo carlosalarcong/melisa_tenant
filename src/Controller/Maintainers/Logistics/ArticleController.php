@@ -86,14 +86,15 @@ class ArticleController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-            'code' => 'Código',
-            'name' => 'Nombre',
-            'articleType.name' => 'Tipo',
-            'isControlled' => 'Controlado',
-            'isCritical' => 'Crítico',
-            'isForSale' => 'Venta',
-            'isActive' => 'Estado'
-        ];
+        'code' => $this->translator->trans('maintainers.columns.code', [], 'maintainers'),
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
+        'articleType.name' => $this->translator->trans('maintainers.columns.type', [], 'maintainers'),
+        'isControlled' => $this->translator->trans('maintainers.columns.controlled', [], 'maintainers'),
+        'isCritical' => $this->translator->trans('maintainers.columns.critical', [], 'maintainers'),
+        'isForSale' => $this->translator->trans('maintainers.columns.sale', [], 'maintainers'),
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
+    ];
+    
     }
 
     protected function getTemplatePath(): string

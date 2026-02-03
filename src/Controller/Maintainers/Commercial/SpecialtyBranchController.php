@@ -39,11 +39,12 @@ class SpecialtyBranchController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-        'id' => 'Id',
+        'id' => $this->translator->trans('maintainers.columns.id', [], 'maintainers'),
         'specialty.name' => 'Specialty.name',
         'branch.name' => 'Sucursal',
-        'isActive' => 'Estado'
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
     ];
+    
     }
 
     protected function getTemplatePath(): string

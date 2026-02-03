@@ -76,10 +76,11 @@ class TransferIndicatorController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-        'code' => 'Código',
-        'name' => 'Nombre',
-        'isActive' => 'Estado'
+        'code' => $this->translator->trans('maintainers.columns.code', [], 'maintainers'),
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
     ];
+    
     }
 
     protected function getTemplatePath(): string

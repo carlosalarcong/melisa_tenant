@@ -87,12 +87,13 @@ class ClinicalActionAnswerController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-            'sortOrder' => 'Orden',
-            'preText' => 'Texto Previo',
-            'clinicalActionQuestion.name' => 'Pregunta',
-            'isChecked' => 'Seleccionado',
-            'isActive' => 'Estado'
-        ];
+        'sortOrder' => 'Orden',
+        'preText' => 'Texto Previo',
+        'clinicalActionQuestion.name' => 'Pregunta',
+        'isChecked' => 'Seleccionado',
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
+    ];
+    
     }
 
     protected function createNewEntity(): object

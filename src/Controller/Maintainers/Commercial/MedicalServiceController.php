@@ -39,15 +39,16 @@ class MedicalServiceController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-        'id' => 'Id',
-        'code' => 'Código',
-        'name' => 'Nombre',
+        'id' => $this->translator->trans('maintainers.columns.id', [], 'maintainers'),
+        'code' => $this->translator->trans('maintainers.columns.code', [], 'maintainers'),
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
         'fonasaCode' => 'FonasaCode',
         'imedCode' => 'ImedCode',
         'serviceType.name' => 'ServiceType.name',
         'isProcedure' => 'IsProcedure',
-        'isActive' => 'Estado'
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
     ];
+    
     }
 
     protected function getTemplatePath(): string

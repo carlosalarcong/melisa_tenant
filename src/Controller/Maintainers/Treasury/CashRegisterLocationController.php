@@ -100,11 +100,12 @@ class CashRegisterLocationController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-        'id' => 'Id',
-        'name' => 'Nombre',
+        'id' => $this->translator->trans('maintainers.columns.id', [], 'maintainers'),
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
         'branch.name' => 'Sucursal',
-        'isActive' => 'Estado'
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
     ];
+    
     }
 
     protected function createNewEntity(): object

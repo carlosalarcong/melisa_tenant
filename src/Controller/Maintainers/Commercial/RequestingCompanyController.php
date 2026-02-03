@@ -36,14 +36,15 @@ class RequestingCompanyController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-        'id' => 'Id',
-        'code' => 'Código',
+        'id' => $this->translator->trans('maintainers.columns.id', [], 'maintainers'),
+        'code' => $this->translator->trans('maintainers.columns.code', [], 'maintainers'),
         'businessName' => 'BusinessName',
         'rut' => 'RUT',
         'phone' => 'Phone',
         'hasAgreement' => 'HasAgreement',
-        'isActive' => 'Estado'
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
     ];
+    
     }
 
     protected function getTemplatePath(): string

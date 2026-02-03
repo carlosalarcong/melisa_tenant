@@ -99,10 +99,11 @@ class PaymentMethodTypeController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-        'id' => 'Id',
-        'name' => 'Nombre',
-        'isActive' => 'Estado'
+        'id' => $this->translator->trans('maintainers.columns.id', [], 'maintainers'),
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
     ];
+    
     }
 
     protected function createNewEntity(): object

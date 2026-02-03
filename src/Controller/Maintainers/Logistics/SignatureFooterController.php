@@ -81,12 +81,13 @@ class SignatureFooterController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-            'code' => 'Código',
-            'name' => 'Nombre',
-            'position' => 'Cargo',
-            'branch.name' => 'Sucursal',
-            'isActive' => 'Estado'
-        ];
+        'code' => $this->translator->trans('maintainers.columns.code', [], 'maintainers'),
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
+        'position' => 'Cargo',
+        'branch.name' => 'Sucursal',
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
+    ];
+    
     }
 
     protected function getTemplatePath(): string

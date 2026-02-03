@@ -86,15 +86,16 @@ class SurgicalStageController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-            'sortOrder' => 'Orden',
-            'abbreviation' => 'Abreviación',
-            'name' => 'Nombre',
-            'isMandatory' => 'Obligatorio',
-            'requiresLogin' => 'Req. Login',
-            'isSequential' => 'Secuencial',
-            'branch.name' => 'Sucursal',
-            'isActive' => 'Estado'
-        ];
+        'sortOrder' => 'Orden',
+        'abbreviation' => 'Abreviación',
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
+        'isMandatory' => 'Obligatorio',
+        'requiresLogin' => 'Req. Login',
+        'isSequential' => 'Secuencial',
+        'branch.name' => 'Sucursal',
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
+    ];
+    
     }
 
     protected function createNewEntity(): object

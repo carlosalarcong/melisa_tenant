@@ -39,11 +39,12 @@ class BranchPayerController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-        'id' => 'Id',
+        'id' => $this->translator->trans('maintainers.columns.id', [], 'maintainers'),
         'branch.name' => 'Sucursal',
         'payer.name' => 'Payer.name',
-        'isActive' => 'Estado'
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
     ];
+    
     }
 
     protected function getTemplatePath(): string

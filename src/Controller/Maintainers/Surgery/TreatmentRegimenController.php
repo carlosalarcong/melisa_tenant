@@ -86,10 +86,11 @@ class TreatmentRegimenController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-            'name' => 'Nombre',
-            'branch.name' => 'Sucursal',
-            'isActive' => 'Estado'
-        ];
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
+        'branch.name' => 'Sucursal',
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
+    ];
+    
     }
 
     protected function createNewEntity(): object

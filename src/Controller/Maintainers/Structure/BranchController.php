@@ -80,14 +80,15 @@ class BranchController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-        'name' => 'Nombre',
-        'code' => 'Código',
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
+        'code' => $this->translator->trans('maintainers.columns.code', [], 'maintainers'),
         'city' => 'City',
         'region' => 'Region',
         'phone' => 'Phone',
         'email' => 'Email',
-        'isActive' => 'Estado'
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
     ];
+    
     }
 
     protected function getTemplatePath(): string

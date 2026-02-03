@@ -36,14 +36,15 @@ class ExternalReferrerController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-        'id' => 'Id',
-        'code' => 'Código',
-        'name' => 'Nombre',
+        'id' => $this->translator->trans('maintainers.columns.id', [], 'maintainers'),
+        'code' => $this->translator->trans('maintainers.columns.code', [], 'maintainers'),
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
         'referrerType' => 'ReferrerType',
         'phone' => 'Phone',
         'hasAgreement' => 'HasAgreement',
-        'isActive' => 'Estado'
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
     ];
+    
     }
 
     protected function getTemplatePath(): string

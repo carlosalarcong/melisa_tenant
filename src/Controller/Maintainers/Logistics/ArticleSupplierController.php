@@ -82,11 +82,12 @@ class ArticleSupplierController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-            'article.name' => 'Artículo',
-            'supplierName' => 'Proveedor',
-            'price' => 'Precio',
-            'isActive' => 'Estado'
-        ];
+        'article.name' => 'Artículo',
+        'supplierName' => 'Proveedor',
+        'price' => $this->translator->trans('maintainers.columns.price', [], 'maintainers'),
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
+    ];
+    
     }
 
     protected function getTemplatePath(): string

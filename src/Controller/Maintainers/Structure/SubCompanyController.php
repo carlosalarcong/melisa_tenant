@@ -71,12 +71,13 @@ class SubCompanyController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-        'name' => 'Nombre',
-        'code' => 'Código',
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
+        'code' => $this->translator->trans('maintainers.columns.code', [], 'maintainers'),
         'taxId' => 'TaxId',
-        'description' => 'Descripción',
-        'isActive' => 'Estado'
+        'description' => $this->translator->trans('maintainers.columns.description', [], 'maintainers'),
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
     ];
+    
     }
 
     protected function getTemplatePath(): string

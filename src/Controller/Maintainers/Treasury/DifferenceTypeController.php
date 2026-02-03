@@ -78,11 +78,12 @@ class DifferenceTypeController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-        'name' => 'Nombre',
-        'description' => 'Descripción',
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
+        'description' => $this->translator->trans('maintainers.columns.description', [], 'maintainers'),
         'differenceDirection.name' => 'Sentido',
-        'isActive' => 'Estado'
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
     ];
+    
     }
 
     protected function getTemplatePath(): string

@@ -83,10 +83,11 @@ class WarehouseSpecialtyController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-            'warehouse.name' => 'Bodega',
-            'specialty.name' => 'Especialidad',
-            'isActive' => 'Estado'
-        ];
+        'warehouse.name' => 'Bodega',
+        'specialty.name' => 'Especialidad',
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
+    ];
+    
     }
 
     protected function getTemplatePath(): string

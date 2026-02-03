@@ -76,10 +76,11 @@ class EducationLevelDetailController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-        'name' => 'Nombre',
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
         'educationLevel' => 'Nivel Instrucción',
-        'isActive' => 'Estado'
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
     ];
+    
     }
 
     protected function getTemplatePath(): string

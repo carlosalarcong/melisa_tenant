@@ -38,15 +38,16 @@ class PathologyArticleController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-        'id' => 'Id',
+        'id' => $this->translator->trans('maintainers.columns.id', [], 'maintainers'),
         'gesPathology.name' => 'GesPathology.name',
         'articleName' => 'ArticleName',
         'articleCode' => 'ArticleCode',
         'quantity' => 'Quantity',
         'unitCost' => 'UnitCost',
         'isMandatory' => 'IsMandatory',
-        'isActive' => 'Estado'
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
     ];
+    
     }
 
     protected function getTemplatePath(): string

@@ -86,10 +86,11 @@ class SurgeryPatientStatusConfigController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-            'surgeryPatientStatus.name' => 'Estado Paciente',
-            'color' => 'Color',
-            'isActive' => 'Estado'
-        ];
+        'surgeryPatientStatus.name' => 'Estado Paciente',
+        'color' => 'Color',
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
+    ];
+    
     }
 
     protected function createNewEntity(): object

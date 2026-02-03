@@ -36,15 +36,16 @@ class GESPathologyController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-        'id' => 'Id',
+        'id' => $this->translator->trans('maintainers.columns.id', [], 'maintainers'),
         'pathologyNumber' => 'PathologyNumber',
-        'name' => 'Nombre',
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
         'minAge' => 'MinAge',
         'maxAge' => 'MaxAge',
         'genderRestriction' => 'GenderRestriction',
         'guaranteedDays' => 'GuaranteedDays',
-        'isActive' => 'Estado'
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
     ];
+    
     }
 
     protected function getTemplatePath(): string

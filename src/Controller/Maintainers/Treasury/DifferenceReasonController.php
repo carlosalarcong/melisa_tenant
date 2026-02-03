@@ -78,10 +78,11 @@ class DifferenceReasonController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-        'name' => 'Nombre',
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
         'differenceDirection.name' => 'Sentido',
-        'isActive' => 'Estado'
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
     ];
+    
     }
 
     protected function getTemplatePath(): string

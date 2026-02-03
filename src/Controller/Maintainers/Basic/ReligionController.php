@@ -81,10 +81,11 @@ class ReligionController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-        'name' => 'Nombre',
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
         'religionCodeHl7' => 'Código HL7',
-        'isActive' => 'Estado'
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
     ];
+    
     }
 
     protected function getTemplatePath(): string

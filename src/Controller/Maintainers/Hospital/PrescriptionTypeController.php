@@ -71,9 +71,10 @@ class PrescriptionTypeController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-            'name' => 'Nombre',
-            'isActive' => 'Estado'
-        ];
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
+    ];
+    
     }
 
     protected function getTemplatePath(): string

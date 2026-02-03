@@ -36,12 +36,13 @@ class PayerTypeController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-        'id' => 'Id',
-        'name' => 'Nombre',
-        'code' => 'Código',
-        'description' => 'Descripción',
-        'isActive' => 'Estado'
+        'id' => $this->translator->trans('maintainers.columns.id', [], 'maintainers'),
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
+        'code' => $this->translator->trans('maintainers.columns.code', [], 'maintainers'),
+        'description' => $this->translator->trans('maintainers.columns.description', [], 'maintainers'),
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
     ];
+    
     }
 
     protected function getTemplatePath(): string

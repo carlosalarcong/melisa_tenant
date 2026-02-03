@@ -86,13 +86,14 @@ class ClinicalActionQuestionController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-            'name' => 'Nombre',
-            'sortOrder' => 'Orden',
-            'clinicalActionCategory.name' => 'Categoria',
-            'fieldType' => 'Tipo Campo',
-            'isRequired' => 'Obligatorio',
-            'isActive' => 'Estado'
-        ];
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
+        'sortOrder' => 'Orden',
+        'clinicalActionCategory.name' => 'Categoria',
+        'fieldType' => 'Tipo Campo',
+        'isRequired' => 'Obligatorio',
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
+    ];
+    
     }
 
     protected function createNewEntity(): object

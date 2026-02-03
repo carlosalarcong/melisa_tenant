@@ -83,14 +83,15 @@ class ArticleWarehouseController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-            'article.name' => 'Artículo',
-            'warehouse.name' => 'Bodega',
-            'minStock' => 'Stock Mín.',
-            'criticalStock' => 'Stock Crít.',
-            'optimalStock' => 'Stock Ópt.',
-            'isCritical' => 'Crítico',
-            'isActive' => 'Estado'
-        ];
+        'article.name' => 'Artículo',
+        'warehouse.name' => 'Bodega',
+        'minStock' => 'Stock Mín.',
+        'criticalStock' => 'Stock Crít.',
+        'optimalStock' => 'Stock Ópt.',
+        'isCritical' => $this->translator->trans('maintainers.columns.critical', [], 'maintainers'),
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
+    ];
+    
     }
 
     protected function getTemplatePath(): string

@@ -71,10 +71,11 @@ class PrescriptionRuleDetailController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-            'intervals' => 'Intervalos',
-            'dailyQuantity' => 'Cant/Dia',
-            'isActive' => 'Estado'
-        ];
+        'intervals' => 'Intervalos',
+        'dailyQuantity' => 'Cant/Dia',
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
+    ];
+    
     }
 
     protected function getTemplatePath(): string

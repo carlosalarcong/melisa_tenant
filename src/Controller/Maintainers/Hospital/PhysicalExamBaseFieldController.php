@@ -71,12 +71,13 @@ class PhysicalExamBaseFieldController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-            'name' => 'Nombre',
-            'sortOrder' => 'Orden',
-            'fieldType' => 'Tipo Campo',
-            'isRequired' => 'Obligatorio',
-            'isActive' => 'Estado'
-        ];
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
+        'sortOrder' => 'Orden',
+        'fieldType' => 'Tipo Campo',
+        'isRequired' => 'Obligatorio',
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
+    ];
+    
     }
 
     protected function getTemplatePath(): string

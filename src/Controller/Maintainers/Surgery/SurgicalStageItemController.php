@@ -87,13 +87,14 @@ class SurgicalStageItemController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-            'sortOrder' => 'Orden',
-            'name' => 'Nombre',
-            'surgicalStage.name' => 'Etapa',
-            'parent.name' => 'Padre',
-            'isMandatory' => 'Obligatorio',
-            'isActive' => 'Estado'
-        ];
+        'sortOrder' => 'Orden',
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
+        'surgicalStage.name' => 'Etapa',
+        'parent.name' => 'Padre',
+        'isMandatory' => 'Obligatorio',
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
+    ];
+    
     }
 
     protected function createNewEntity(): object

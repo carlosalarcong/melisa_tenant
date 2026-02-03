@@ -81,10 +81,11 @@ class GenderController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-        'name' => 'Nombre',
-        'code' => 'Código',
-        'isActive' => 'Estado'
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
+        'code' => $this->translator->trans('maintainers.columns.code', [], 'maintainers'),
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
     ];
+    
     }
 
     protected function getTemplatePath(): string

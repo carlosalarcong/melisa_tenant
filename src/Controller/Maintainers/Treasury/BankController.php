@@ -77,10 +77,11 @@ class BankController extends AbstractMantenedorController
     {
         return [
         'rut' => 'RUT',
-        'name' => 'Nombre',
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
         'currentAccount' => 'Cuenta Corriente',
-        'isActive' => 'Estado'
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
     ];
+    
     }
 
     protected function getTemplatePath(): string

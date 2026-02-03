@@ -75,14 +75,15 @@ class PhysicalExamFieldController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-            'name' => 'Nombre',
-            'sortOrder' => 'Orden',
-            'unit' => 'Unidad',
-            'grouping1.name' => 'Agrupacion 1',
-            'isWeight' => 'Peso',
-            'isTemperature' => 'Temp',
-            'isActive' => 'Estado'
-        ];
+        'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
+        'sortOrder' => 'Orden',
+        'unit' => 'Unidad',
+        'grouping1.name' => 'Agrupacion 1',
+        'isWeight' => 'Peso',
+        'isTemperature' => 'Temp',
+        'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
+    ];
+    
     }
 
     protected function getTemplatePath(): string
