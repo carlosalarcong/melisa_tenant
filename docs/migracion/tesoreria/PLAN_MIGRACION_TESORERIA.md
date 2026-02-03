@@ -82,6 +82,40 @@ AbstractController
 - **Ejemplo:** `app_maintainers_treasury_bank_account_type_index`
 - **Acciones:** `index`, `create`, `edit`, `delete`, `export`
 
+### ⚡ Nuevo Formato: getColumns() Asociativo
+
+**IMPORTANTE:** A partir de febrero 2026, todos los controllers usan formato asociativo para columnas:
+
+```php
+// ❌ Formato ANTIGUO (deprecated)
+protected function getColumns(): array {
+    return ['name', 'code', 'isActive'];
+}
+
+// ✅ Formato NUEVO (usar siempre)
+protected function getColumns(): array {
+    return [
+        'name' => 'Nombre',
+        'code' => 'Código',
+        'isActive' => 'Estado'
+    ];
+}
+```
+
+**Beneficios:**
+- ✅ Columnas y labels juntos (cohesión)
+- ✅ Auto-documentación del código
+- ✅ Sin duplicación de identificadores
+- ✅ Template más limpio (sin if/elseif masivos)
+- ✅ Escalable para metadata futura
+
+**Relaciones:**
+```php
+'branch.name' => 'Sucursal',        // Relación ManyToOne
+'parent.name' => 'Padre',           // Auto-referencia
+'paymentMethodType.name' => 'Tipo' // Relación
+```
+
 ---
 
 ## FASE 1: Entidades Simples
@@ -164,7 +198,7 @@ Especificaciones:
 
 - Inyectar: BusinessTurnRepository, TenantEntityManager, ExportService
 - getData(): createQueryBuilder('bt')->orderBy('bt.id', 'DESC')
-- getColumns(): ['name', 'isActive']
+- getColumns(): ['name' => 'Nombre', 'isActive' => 'Estado']
 - getFormType(): BusinessTurnType::class
 - createNewEntity(): new BusinessTurn()
 - getTemplatePath(): 'maintainers/treasury/business_turn/index.html.twig'
@@ -259,7 +293,7 @@ Crea el archivo src/Controller/Maintainers/Treasury/BankAccountTypeController.ph
 - Prefijo rutas: app_maintainers_treasury_bank_account_type_
 - Inyectar: BankAccountTypeRepository, TenantEntityManager, ExportService
 - getData(): createQueryBuilder('bat')->orderBy('bat.id', 'DESC')
-- getColumns(): ['name', 'isActive']
+- getColumns(): ['name' => 'Nombre', 'isActive' => 'Estado']
 - getFormType(): BankAccountTypeType::class
 - createNewEntity(): new BankAccountType()
 - getTemplatePath(): 'maintainers/treasury/bank_account_type/index.html.twig'
@@ -333,7 +367,7 @@ Crea src/Controller/Maintainers/Treasury/CreditCardTypeController.php siguiendo 
 - Prefijo rutas: app_maintainers_treasury_credit_card_type_
 - Inyectar: CreditCardTypeRepository, TenantEntityManager, ExportService
 - getData(): createQueryBuilder('cct')->orderBy('cct.id', 'DESC')
-- getColumns(): ['name', 'isActive']
+- getColumns(): ['name' => 'Nombre', 'isActive' => 'Estado']
 - getFormType(): CreditCardTypeType::class
 - createNewEntity(): new CreditCardType()
 - getTemplatePath(): 'maintainers/treasury/credit_card_type/index.html.twig'
@@ -406,7 +440,7 @@ Crea src/Controller/Maintainers/Treasury/GratuityTypeController.php siguiendo el
 - Prefijo rutas: app_maintainers_treasury_gratuity_type_
 - Inyectar: GratuityTypeRepository, TenantEntityManager, ExportService
 - getData(): createQueryBuilder('gt')->orderBy('gt.id', 'DESC')
-- getColumns(): ['name', 'isActive']
+- getColumns(): ['name' => 'Nombre', 'isActive' => 'Estado']
 - getFormType(): GratuityTypeType::class
 - createNewEntity(): new GratuityType()
 - getTemplatePath(): 'maintainers/treasury/gratuity_type/index.html.twig'
@@ -493,7 +527,7 @@ Crea src/Controller/Maintainers/Treasury/CurrencyTypeController.php siguiendo el
 - Prefijo rutas: app_maintainers_treasury_currency_type_
 - Inyectar: CurrencyTypeRepository, TenantEntityManager, ExportService
 - getData(): createQueryBuilder('ct')->orderBy('ct.id', 'DESC')
-- getColumns(): ['name', 'isClp', 'isActive']
+- getColumns(): ['name' => 'Nombre', 'isClp' => 'CLP', 'isActive' => 'Estado']
 - getFormType(): CurrencyTypeType::class
 - createNewEntity(): new CurrencyType()
 - getTemplatePath(): 'maintainers/treasury/currency_type/index.html.twig'
@@ -569,7 +603,7 @@ Crea src/Controller/Maintainers/Treasury/TransferIndicatorController.php siguien
 - Prefijo rutas: app_maintainers_treasury_transfer_indicator_
 - Inyectar: TransferIndicatorRepository, TenantEntityManager, ExportService
 - getData(): createQueryBuilder('ti')->orderBy('ti.id', 'DESC')
-- getColumns(): ['code', 'name', 'isActive']
+- getColumns(): ['code' => 'Código', 'name' => 'Nombre', 'isActive' => 'Estado']
 - getFormType(): TransferIndicatorType::class
 - createNewEntity(): new TransferIndicator()
 - getTemplatePath(): 'maintainers/treasury/transfer_indicator/index.html.twig'
@@ -647,7 +681,7 @@ Crea src/Controller/Maintainers/Treasury/BillingPaymentMethodController.php sigu
 - Prefijo rutas: app_maintainers_treasury_billing_payment_method_
 - Inyectar: BillingPaymentMethodRepository, TenantEntityManager, ExportService
 - getData(): createQueryBuilder('bpm')->orderBy('bpm.id', 'DESC')
-- getColumns(): ['code', 'name', 'isCash', 'isActive']
+- getColumns(): ['code' => 'Código', 'name' => 'Nombre', 'isCash' => 'Efectivo', 'isActive' => 'Estado']
 - getFormType(): BillingPaymentMethodType::class
 - createNewEntity(): new BillingPaymentMethod()
 - getTemplatePath(): 'maintainers/treasury/billing_payment_method/index.html.twig'
@@ -731,7 +765,7 @@ Crea src/Controller/Maintainers/Treasury/PaymentConditionController.php siguiend
 - Prefijo rutas: app_maintainers_treasury_payment_condition_
 - Inyectar: PaymentConditionRepository, TenantEntityManager, ExportService
 - getData(): createQueryBuilder('pc')->orderBy('pc.id', 'DESC')
-- getColumns(): ['name', 'interfaceCode', 'maxTerm', 'isUpToDate', 'isActive']
+- getColumns(): ['name' => 'Nombre', 'interfaceCode' => 'Cód. Interfaz', 'maxTerm' => 'Plazo Máx.', 'isUpToDate' => 'Al Día', 'isActive' => 'Estado']
 - getFormType(): PaymentConditionType::class
 - createNewEntity(): new PaymentCondition()
 - getTemplatePath(): 'maintainers/treasury/payment_condition/index.html.twig'
@@ -854,7 +888,7 @@ Crea src/Controller/Maintainers/Treasury/BankController.php siguiendo el patron 
 - Prefijo rutas: app_maintainers_treasury_bank_
 - Inyectar: BankRepository, TenantEntityManager, ExportService
 - getData(): createQueryBuilder('b')->orderBy('b.id', 'DESC')
-- getColumns(): ['rut', 'name', 'currentAccount', 'isActive']
+- getColumns(): ['rut' => 'RUT', 'name' => 'Nombre', 'currentAccount' => 'Cuenta Corriente', 'isActive' => 'Estado']
 - getFormType(): BankType::class
 - createNewEntity(): new Bank()
 - getTemplatePath(): 'maintainers/treasury/bank/index.html.twig'
@@ -931,7 +965,7 @@ Crea src/Controller/Maintainers/Treasury/DifferenceTypeController.php siguiendo 
 - Prefijo rutas: app_maintainers_treasury_difference_type_
 - Inyectar: DifferenceTypeRepository, TenantEntityManager, ExportService
 - getData(): createQueryBuilder('dt')->leftJoin('dt.differenceDirection', 'dd')->orderBy('dt.id', 'DESC')
-- getColumns(): ['name', 'description', 'differenceDirection.name', 'isActive']
+- getColumns(): ['name' => 'Nombre', 'description' => 'Descripción', 'differenceDirection.name' => 'Sentido', 'isActive' => 'Estado']
 - getFormType(): DifferenceTypeType::class
 - createNewEntity(): new DifferenceType()
 - getTemplatePath(): 'maintainers/treasury/difference_type/index.html.twig'
@@ -998,7 +1032,7 @@ Crea src/Controller/Maintainers/Treasury/DifferenceReasonController.php siguiend
 - Route base: /maintainers/treasury/difference-reason
 - Prefijo rutas: app_maintainers_treasury_difference_reason_
 - getData(): createQueryBuilder('dr')->leftJoin('dr.differenceDirection', 'dd')->orderBy('dr.id', 'DESC')
-- getColumns(): ['name', 'differenceDirection.name', 'isActive']
+- getColumns(): ['name' => 'Nombre', 'differenceDirection.name' => 'Sentido', 'isActive' => 'Estado']
 - getFormType(): DifferenceReasonType::class
 - createNewEntity(): new DifferenceReason()
 - getTemplatePath(): 'maintainers/treasury/difference_reason/index.html.twig'
@@ -1068,7 +1102,7 @@ Crea src/Controller/Maintainers/Treasury/CreditCardController.php.
 - Route base: /maintainers/treasury/credit-card
 - Prefijo rutas: app_maintainers_treasury_credit_card_
 - getData(): createQueryBuilder('cc')->leftJoin('cc.creditCardType', 'cct')->orderBy('cc.id', 'DESC')
-- getColumns(): ['name', 'abbreviation', 'creditCardType.name', 'isActive']
+- getColumns(): ['name' => 'Nombre', 'abbreviation' => 'Abreviatura', 'creditCardType.name' => 'Tipo Tarjeta', 'isActive' => 'Estado']
 - getFormType(): CreditCardFormType::class
 - createNewEntity(): new CreditCard()
 - getTemplatePath(): 'maintainers/treasury/credit_card/index.html.twig'
@@ -1139,7 +1173,7 @@ Crea src/Controller/Maintainers/Treasury/GratuityReasonController.php.
 - Route base: /maintainers/treasury/gratuity-reason
 - Prefijo rutas: app_maintainers_treasury_gratuity_reason_
 - getData(): createQueryBuilder('gr')->leftJoin('gr.gratuityType','gt')->leftJoin('gr.branch','b')->orderBy('gr.id','DESC')
-- getColumns(): ['name', 'gratuityType.name', 'branch.name', 'isActive']
+- getColumns(): ['name' => 'Nombre', 'gratuityType.name' => 'Tipo Gratuidad', 'branch.name' => 'Sucursal', 'isActive' => 'Estado']
 - getFormType(): GratuityReasonType::class
 - createNewEntity(): new GratuityReason()
 - getTemplatePath(): 'maintainers/treasury/gratuity_reason/index.html.twig'
@@ -1210,7 +1244,7 @@ Crea src/Controller/Maintainers/Treasury/DocumentTypeController.php.
 - Route base: /maintainers/treasury/document-type
 - Prefijo rutas: app_maintainers_treasury_document_type_
 - getData(): createQueryBuilder('dt')->orderBy('dt.id', 'DESC')
-- getColumns(): ['siiCode', 'name', 'isDte', 'isLogistics', 'isActive']
+- getColumns(): ['siiCode' => 'Código SII', 'name' => 'Nombre', 'isDte' => 'DTE', 'isLogistics' => 'Logística', 'isActive' => 'Estado']
 - getFormType(): DocumentTypeType::class
 - createNewEntity(): new DocumentType()
 - getTemplatePath(): 'maintainers/treasury/document_type/index.html.twig'
@@ -1422,7 +1456,7 @@ Crea src/Controller/Maintainers/Treasury/PaymentMethodController.php.
     ->leftJoin('pm.paymentMethodType', 'pmt')
     ->leftJoin('pm.parent', 'p')
     ->orderBy('pm.id', 'DESC')
-- getColumns(): ['code', 'name', 'paymentMethodType.name', 'parent.name', 'visibleInCashRegister', 'isActive']
+- getColumns(): ['code' => 'Código', 'name' => 'Nombre', 'paymentMethodType.name' => 'Tipo', 'parent.name' => 'Padre', 'visibleInCashRegister' => 'Visible en Caja', 'isActive' => 'Estado']
 - getFormType(): PaymentMethodFormType::class
 - createNewEntity(): new PaymentMethod()
 - getTemplatePath(): 'maintainers/treasury/payment_method/index.html.twig'
