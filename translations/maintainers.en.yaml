@@ -1,0 +1,132 @@
+# DOMAIN: maintainers (Base Maintainers - Global Fallback)
+# This file contains general translations for all maintainers
+# Tenants can override these translations in their own files
+
+# === COMMON FOR ALL MAINTAINERS ===
+maintainers:
+  common:
+    title: 'Maintainers'
+    list: 'List'
+    create: 'Create New'
+    edit: 'Edit'
+    delete: 'Delete'
+    save: 'Save'
+    cancel: 'Cancel'
+    back: 'Back'
+    actions: 'Actions'
+    search: 'Search'
+    filter: 'Filter'
+    export: 'Export'
+    import: 'Import'
+    no_records: 'No records found'
+    confirm_delete: 'Are you sure you want to delete this record?'
+    success_create: 'Record created successfully'
+    success_update: 'Record updated successfully'
+    success_delete: 'Record deleted successfully'
+    error_create: 'Error creating record'
+    error_update: 'Error updating record'
+    error_delete: 'Error deleting record'
+    required_field: 'Required field'
+    invalid_format: 'Invalid format'
+
+# === PERSON ===
+  persona:
+    title: 'Person Management'
+    singular: 'Person'
+    plural: 'People'
+    create: 'Create Person'
+    edit: 'Edit Person'
+    fields:
+      rut: 'ID Number'
+      names: 'Names'
+      first_surname: 'First Surname'
+      second_surname: 'Second Surname'
+      birth_date: 'Birth Date'
+      gender: 'Gender'
+      email: 'Email'
+      phone: 'Phone'
+      address: 'Address'
+      city: 'City'
+      region: 'Region'
+      country: 'Country'
+      is_active: 'Active'
+    gender_options:
+      male: 'Male'
+      female: 'Female'
+      other: 'Other'
+      prefer_not_say: 'Prefer not to say'
+
+# === HOSPITAL ===
+  hospital:
+    title: 'Hospital Management'
+    singular: 'Hospital'
+    plural: 'Hospitals'
+    create: 'Create Hospital'
+    edit: 'Edit Hospital'
+    fields:
+      code: 'Code'
+      name: 'Name'
+      type: 'Establishment Type'
+      address: 'Address'
+      phone: 'Phone'
+      email: 'Email'
+      beds_capacity: 'Beds Capacity'
+      emergency_service: 'Emergency Service'
+      is_active: 'Active'
+
+# === PAVILION ===
+  pabellon:
+    title: 'Pavilion Management'
+    singular: 'Pavilion'
+    plural: 'Pavilions'
+    create: 'Create Pavilion'
+    edit: 'Edit Pavilion'
+    fields:
+      code: 'Code'
+      name: 'Name'
+      hospital: 'Hospital'
+      floor: 'Floor'
+      capacity: 'Capacity'
+      type: 'Pavilion Type'
+      is_active: 'Active'
+
+# === SPECIALTY ===
+  especialidad:
+    title: 'Specialty Management'
+    singular: 'Specialty'
+    plural: 'Specialties'
+    create: 'Create Specialty'
+    edit: 'Edit Specialty'
+    fields:
+      code: 'Code'
+      name: 'Name'
+      description: 'Description'
+      is_active: 'Active'
+
+# === SERVICE ===
+  servicio:
+    title: 'Service Management'
+    singular: 'Service'
+    plural: 'Services'
+    create: 'Create Service'
+    edit: 'Edit Service'
+    fields:
+      code: 'Code'
+      name: 'Name'
+      description: 'Description'
+      hospital: 'Hospital'
+      is_active: 'Active'
+
+# === DOCTOR ===
+  medico:
+    title: 'Doctor Management'
+    singular: 'Doctor'
+    plural: 'Doctors'
+    create: 'Create Doctor'
+    edit: 'Edit Doctor'
+    fields:
+      persona: 'Person'
+      license_number: 'License Number'
+      specialty: 'Specialty'
+      hospital: 'Hospital'
+      is_active: 'Active'

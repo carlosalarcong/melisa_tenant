@@ -1,0 +1,132 @@
+# DOMINIO: maintainers (Mantenedores Base - Fallback Global)
+# Este archivo contiene traducciones generales para todos los mantenedores
+# Los tenants pueden sobrescribir estas traducciones en sus propios archivos
+
+# === COMÚN PARA TODOS LOS MANTENEDORES ===
+maintainers:
+  common:
+    title: 'Mantenedores'
+    list: 'Listado'
+    create: 'Crear Nuevo'
+    edit: 'Editar'
+    delete: 'Eliminar'
+    save: 'Guardar'
+    cancel: 'Cancelar'
+    back: 'Volver'
+    actions: 'Acciones'
+    search: 'Buscar'
+    filter: 'Filtrar'
+    export: 'Exportar'
+    import: 'Importar'
+    no_records: 'No se encontraron registros'
+    confirm_delete: '¿Está seguro de eliminar este registro?'
+    success_create: 'Registro creado exitosamente'
+    success_update: 'Registro actualizado exitosamente'
+    success_delete: 'Registro eliminado exitosamente'
+    error_create: 'Error al crear el registro'
+    error_update: 'Error al actualizar el registro'
+    error_delete: 'Error al eliminar el registro'
+    required_field: 'Campo obligatorio'
+    invalid_format: 'Formato inválido'
+
+# === PERSONA ===
+  persona:
+    title: 'Gestión de Personas'
+    singular: 'Persona'
+    plural: 'Personas'
+    create: 'Crear Persona'
+    edit: 'Editar Persona'
+    fields:
+      rut: 'RUT'
+      names: 'Nombres'
+      first_surname: 'Apellido Paterno'
+      second_surname: 'Apellido Materno'
+      birth_date: 'Fecha de Nacimiento'
+      gender: 'Género'
+      email: 'Correo Electrónico'
+      phone: 'Teléfono'
+      address: 'Dirección'
+      city: 'Ciudad'
+      region: 'Región'
+      country: 'País'
+      is_active: 'Activo'
+    gender_options:
+      male: 'Masculino'
+      female: 'Femenino'
+      other: 'Otro'
+      prefer_not_say: 'Prefiero no decir'
+
+# === HOSPITAL ===
+  hospital:
+    title: 'Gestión de Hospitales'
+    singular: 'Hospital'
+    plural: 'Hospitales'
+    create: 'Crear Hospital'
+    edit: 'Editar Hospital'
+    fields:
+      code: 'Código'
+      name: 'Nombre'
+      type: 'Tipo de Establecimiento'
+      address: 'Dirección'
+      phone: 'Teléfono'
+      email: 'Correo Electrónico'
+      beds_capacity: 'Capacidad de Camas'
+      emergency_service: 'Servicio de Urgencia'
+      is_active: 'Activo'
+
+# === PABELLÓN ===
+  pabellon:
+    title: 'Gestión de Pabellones'
+    singular: 'Pabellón'
+    plural: 'Pabellones'
+    create: 'Crear Pabellón'
+    edit: 'Editar Pabellón'
+    fields:
+      code: 'Código'
+      name: 'Nombre'
+      hospital: 'Hospital'
+      floor: 'Piso'
+      capacity: 'Capacidad'
+      type: 'Tipo de Pabellón'
+      is_active: 'Activo'
+
+# === ESPECIALIDAD ===
+  especialidad:
+    title: 'Gestión de Especialidades'
+    singular: 'Especialidad'
+    plural: 'Especialidades'
+    create: 'Crear Especialidad'
+    edit: 'Editar Especialidad'
+    fields:
+      code: 'Código'
+      name: 'Nombre'
+      description: 'Descripción'
+      is_active: 'Activo'
+
+# === SERVICIO ===
+  servicio:
+    title: 'Gestión de Servicios'
+    singular: 'Servicio'
+    plural: 'Servicios'
+    create: 'Crear Servicio'
+    edit: 'Editar Servicio'
+    fields:
+      code: 'Código'
+      name: 'Nombre'
+      description: 'Descripción'
+      hospital: 'Hospital'
+      is_active: 'Activo'
+
+# === MÉDICO ===
+  medico:
+    title: 'Gestión de Médicos'
+    singular: 'Médico'
+    plural: 'Médicos'
+    create: 'Crear Médico'
+    edit: 'Editar Médico'
+    fields:
+      persona: 'Persona'
+      license_number: 'Número de Licencia'
+      specialty: 'Especialidad'
+      hospital: 'Hospital'
+      is_active: 'Activo'
