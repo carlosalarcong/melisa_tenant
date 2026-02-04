@@ -118,6 +118,7 @@ maintainers:
     account_number: 'Numero Cuenta'
     bank: 'Banco'
     bank_account_type: 'Tipo Cuenta Bancaria'
+    budget_footer: 'Pie Presupuesto'
     
   # Estadísticas
   stats:
