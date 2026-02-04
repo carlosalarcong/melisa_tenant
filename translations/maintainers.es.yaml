@@ -113,6 +113,11 @@ maintainers:
     is_clp: 'Es CLP'
     gratuity_type: 'Tipo Gratuidad'
     order: 'Orden'
+    uf_date: 'Fecha UF'
+    uf_value: 'Valor UF'
+    account_number: 'Numero Cuenta'
+    bank: 'Banco'
+    bank_account_type: 'Tipo Cuenta Bancaria'
     
   # Estadísticas
   stats:
