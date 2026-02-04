@@ -62,7 +62,7 @@ class CompanyAgreementController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'description', 'isActive'],
-            headers: ['Nombre', 'Descripcion', 'Activo'],
+            headers: $this->translateColumns(['name', 'description', 'is_active']),
             filename: 'convenios_empresa_' . date('Y-m-d') . '.csv'
         );
     }
@@ -80,9 +80,9 @@ class CompanyAgreementController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-            'name' => 'Nombre',
-            'description' => 'Descripcion',
-            'isActive' => 'Estado'
+            'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
+            'description' => $this->translator->trans('maintainers.columns.description', [], 'maintainers'),
+            'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
         ];
     }
 

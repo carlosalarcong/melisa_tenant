@@ -62,7 +62,7 @@ class ExamReportController extends AbstractMantenedorController
         return $this->handleExport(
             request: $request,
             columns: ['name', 'isActive'],
-            headers: ['Nombre', 'Activo'],
+            headers: $this->translateColumns(['name', 'is_active']),
             filename: 'informes_examen_' . date('Y-m-d') . '.csv'
         );
     }
@@ -80,8 +80,8 @@ class ExamReportController extends AbstractMantenedorController
     protected function getColumns(): array
     {
         return [
-            'name' => 'Nombre',
-            'isActive' => 'Estado'
+            'name' => $this->translator->trans('maintainers.columns.name', [], 'maintainers'),
+            'isActive' => $this->translator->trans('maintainers.columns.is_active', [], 'maintainers')
         ];
     }
 
