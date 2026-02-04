@@ -1,12 +1,12 @@
 <?php
 namespace App\Entity\Tenant;
-use App\Repository\Tenant\PhysicalExamFieldRepository;
+use App\Repository\Tenant\PhysicalExamTypeRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: PhysicalExamFieldRepository::class)]
-#[ORM\Table(name: 'physical_exam_field')]
-class PhysicalExamField
+#[ORM\Entity(repositoryClass: PhysicalExamTypeRepository::class)]
+#[ORM\Table(name: 'physical_exam_type')]
+class PhysicalExamType
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -17,9 +17,6 @@ class PhysicalExamField
     #[Assert\NotBlank]
     #[Assert\Length(max: 255)]
     private ?string $name = null;
-
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $description = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => true])]
     private bool $isActive = true;
@@ -40,8 +37,6 @@ class PhysicalExamField
     public function getId(): ?int { return $this->id; }
     public function getName(): ?string { return $this->name; }
     public function setName(string $name): self { $this->name = $name; return $this; }
-    public function getDescription(): ?string { return $this->description; }
-    public function setDescription(?string $description): self { $this->description = $description; return $this; }
     public function isActive(): bool { return $this->isActive; }
     public function setIsActive(bool $isActive): self { $this->isActive = $isActive; return $this; }
     public function getIdEstado(): int { return $this->idEstado; }

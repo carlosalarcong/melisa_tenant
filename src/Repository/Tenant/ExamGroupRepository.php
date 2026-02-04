@@ -1,19 +1,19 @@
 <?php
 namespace App\Repository\Tenant;
-use App\Entity\Tenant\PhysicalExamField;
+use App\Entity\Tenant\ExamGroup;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 
-class PhysicalExamFieldRepository extends ServiceEntityRepository
+class ExamGroupRepository extends ServiceEntityRepository
 {
     public function __construct(TenantEntityManager $manager) {
-        parent::__construct($manager, PhysicalExamField::class);
+        parent::__construct($manager, ExamGroup::class);
     }
     public function findAllActive(): array {
-        return $this->createQueryBuilder('pef')
-            ->where('pef.isActive = :active')
+        return $this->createQueryBuilder('eg')
+            ->where('eg.isActive = :active')
             ->setParameter('active', true)
-            ->orderBy('pef.name', 'ASC')
+            ->orderBy('eg.name', 'ASC')
             ->getQuery()
             ->getResult();
     }
