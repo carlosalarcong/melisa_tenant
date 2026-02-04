@@ -328,9 +328,13 @@
 
 {% block javascripts %}
     {{ parent() }}
-    
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-    
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"
+            crossorigin="anonymous"
+            data-turbo-track="reload"
+            onerror="console.error('Error al cargar SortableJS desde CDN'); alert('Error: No se pudo cargar la librería de drag & drop. Revisa tu conexión a internet.');">
+    </script>
+
     <script>
     (function() {
         'use strict';
@@ -341,9 +345,23 @@
         
         function initializeSortable() {
             const containers = document.querySelectorAll('.tree-children, .menu-tree-container');
-            
-            containers.forEach(container => {
-                Sortable.create(container, {
+
+            console.log('Inicializando SortableJS en', containers.length, 'contenedores');
+
+            if (containers.length === 0) {
+                console.warn('No se encontraron contenedores para drag & drop');
+                return;
+            }
+
+            containers.forEach((container, index) => {
+                // Destruir instancia previa si existe
+                if (container.sortable) {
+                    container.sortable.destroy();
+                }
+
+                console.log('Creando Sortable en contenedor', index, container);
+
+                container.sortable = Sortable.create(container, {
                     group: 'menu-tree',
                     animation: 150,
                     handle: '.tree-item-content',
@@ -352,9 +370,14 @@
                     dragClass: 'dragging',
                     fallbackOnBody: true,
                     swapThreshold: 0.65,
+                    onStart: function(evt) {
+                        console.log('Drag iniciado:', evt.item);
+                    },
                     onEnd: updateHierarchy
                 });
             });
+
+            console.log('✓ SortableJS inicializado correctamente');
         }
 
         function updateHierarchy(evt) {
@@ -588,10 +611,20 @@
         // ========================================
         // 6. INICIALIZACIÓN
         // ========================================
-        
-        document.addEventListener('DOMContentLoaded', function() {
+
+        // Inicializar en DOMContentLoaded Y turbo:load
+        function initialize() {
+            // Verificar que SortableJS esté disponible
+            if (typeof Sortable === 'undefined') {
+                console.error('SortableJS no está cargado. Drag & drop no funcionará.');
+                showToast('⚠ Error: Librería de drag & drop no cargada', 'warning');
+                return;
+            }
             initializeSortable();
-        });
+        }
+
+        document.addEventListener('DOMContentLoaded', initialize);
+        document.addEventListener('turbo:load', initialize);
 
     })();
     </script>
