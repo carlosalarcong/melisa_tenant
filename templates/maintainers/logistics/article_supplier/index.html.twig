@@ -1,7 +1,12 @@
 {% extends 'maintainers/modern_index.html.twig' %}
 
-{% block title %}Proveedores por Artículo{% endblock %}
+{% block title %}Proveedores por Artículo - Melisa{% endblock %}
 
-{% block maintainer_title %}Proveedores por Artículo{% endblock %}
-
-{% block maintainer_subtitle %}Gestión de la asignación de proveedores a artículos con precio{% endblock %}
+{% set page_title = 'Proveedores por Artículo' %}
+{% set icon = 'bx-store' %}
+{% set breadcrumb_section = 'Logística' %}
+{% set description = 'Gestiona los proveedores por artículo del sistema' %}
+{% set create_route = 'app_maintainers_logistics_article_supplier_create' %}
+{% set edit_route = 'app_maintainers_logistics_article_supplier_edit' %}
+{% set delete_route = 'app_maintainers_logistics_article_supplier_delete' %}
+{% set export_route = 'app_maintainers_logistics_article_supplier_export' %}
