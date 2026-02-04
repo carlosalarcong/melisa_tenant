@@ -207,9 +207,15 @@
                     <h5 class="text-muted">{{ 'maintainers.common.no_records'|trans({}, 'maintainers') }}</h5>
                     <p class="text-muted mb-3">{{ 'maintainers.common.no_records_message'|trans({}, 'maintainers') }}</p>
                     {% if create_route is defined %}
-                        <a href="{{ path(create_route) }}" class="btn btn-primary">
+                        <button type="button"
+                                class="btn btn-primary"
+                                style="box-shadow: 0 4px 12px rgba(94, 114, 228, 0.3);"
+                                data-bs-toggle="modal"
+                                data-bs-target="#maintainerModal"
+                                data-modal-url="{{ path(create_route) }}"
+                                data-modal-title="<i class='bx bx-plus me-2'></i>{{ 'maintainers.common.create_first'|trans({}, 'maintainers') }}">
                             <i class="bx bx-plus me-1"></i>{{ 'maintainers.common.create_first'|trans({}, 'maintainers') }}
-                        </a>
+                        </button>
                     {% endif %}
                 </div>
             {% else %}

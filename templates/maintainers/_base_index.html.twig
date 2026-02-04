@@ -9,7 +9,7 @@
             <i class="bx bx-list-ul me-2"></i>{{ page_title }}
         </h1>
         {% if create_route is defined %}
-            <a href="{{ path(create_route) }}" class="btn btn-primary">
+            <a href="{{ path(create_route) }}" class="btn btn-primary" data-turbo="false">
                 <i class="bx bx-plus me-1"></i>{{ 'maintainers.common.create'|trans({}, 'maintainers') }}
             </a>
         {% endif %}
@@ -37,7 +37,7 @@
                     <h5 class="text-muted">{{ 'maintainers.common.no_records'|trans({}, 'maintainers') }}</h5>
                     <p class="text-muted mb-3">{{ 'maintainers.common.no_records_message'|trans({}, 'maintainers') }}</p>
                     {% if create_route is defined %}
-                        <a href="{{ path(create_route) }}" class="btn btn-primary">
+                        <a href="{{ path(create_route) }}" class="btn btn-primary" data-turbo="false">
                             <i class="bx bx-plus me-1"></i>{{ 'maintainers.common.create_first'|trans({}, 'maintainers') }}
                         </a>
                     {% endif %}
@@ -93,8 +93,9 @@
                                     <td class="text-end">
                                         <div class="btn-group" role="group">
                                             {% set edit_route = app.request.attributes.get('_route')|replace({'_index': '_edit'}) %}
-                                            <a href="{{ path(edit_route, {'id': item.id}) }}" 
-                                               class="btn btn-sm btn-outline-primary" 
+                                            <a href="{{ path(edit_route, {'id': item.id}) }}"
+                                               class="btn btn-sm btn-outline-primary"
+                                               data-turbo="false"
                                                title="{{ 'maintainers.common.edit'|trans({}, 'maintainers') }}">
                                                 <i class="bx bx-edit-alt"></i>
                                             </a>
