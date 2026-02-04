@@ -672,3 +672,25 @@ maintainers:
               create_title: "Crear Indicador Traslado"
               edit_title: "Editar Indicador Traslado"
               title: "Indicadores de Traslado"
+
+  # === TÍTULOS ===
+  titles:
+    # Clinico Fase 1
+    create_medical_history: 'Crear Antecedente Médico'
+    edit_medical_history: 'Editar Antecedente Médico'
+    medical_history_list: 'Antecedentes Médicos'
+    create_diagnosis: 'Crear Diagnóstico'
+    edit_diagnosis: 'Editar Diagnóstico'
+    diagnosis_list: 'Diagnósticos'
+    create_immunotherapy_diagnosis: 'Crear Diagnóstico Inmunoterapia'
+    edit_immunotherapy_diagnosis: 'Editar Diagnóstico Inmunoterapia'
+    immunotherapy_diagnosis_list: 'Diagnósticos Inmunoterapia'
+    create_diagnosis_by_pathology: 'Crear Diagnóstico por Patología'
+    edit_diagnosis_by_pathology: 'Editar Diagnóstico por Patología'
+    diagnosis_by_pathology_list: 'Diagnósticos por Patología'
+    create_diagnosis_status: 'Crear Estado Diagnóstico'
+    edit_diagnosis_status: 'Editar Estado Diagnóstico'
+    diagnosis_status_list: 'Estados de Diagnóstico'
+    create_medical_history_type: 'Crear Tipo Antecedente'
+    edit_medical_history_type: 'Editar Tipo Antecedente'
+    medical_history_type_list: 'Tipos de Antecedentes'
