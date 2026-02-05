@@ -33,7 +33,7 @@ class OriginType extends AbstractType
                     'class' => 'form-select'
                 ]
             ])
-            ->add('active', CheckboxType::class, [
+            ->add('isActive', CheckboxType::class, [
                 'label' => 'Activo',
                 'required' => false,
                 'attr' => [

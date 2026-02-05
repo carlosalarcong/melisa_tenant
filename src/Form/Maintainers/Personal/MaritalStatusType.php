@@ -21,16 +21,7 @@ class MaritalStatusType extends AbstractType
                     'class' => 'form-control'
                 ]
             ])
-            ->add('code', TextType::class, [
-                'label' => 'Código',
-                'required' => false,
-                'attr' => [
-                    'placeholder' => 'Código (opcional)',
-                    'class' => 'form-control',
-                    'maxlength' => 10
-                ]
-            ])
-            ->add('active', CheckboxType::class, [
+            ->add('isActive', CheckboxType::class, [
                 'label' => 'Activo',
                 'required' => false,
                 'attr' => [

@@ -30,7 +30,7 @@ class MedicalBoxType extends AbstractType
                     'class' => 'form-control'
                 ]
             ])
-            ->add('active', CheckboxType::class, [
+            ->add('isActive', CheckboxType::class, [
                 'label' => 'Activo',
                 'required' => false,
                 'attr' => [

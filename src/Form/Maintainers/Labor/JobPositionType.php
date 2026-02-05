@@ -31,7 +31,7 @@ class JobPositionType extends AbstractType
                     'rows' => 3
                 ]
             ])
-            ->add('active', CheckboxType::class, [
+            ->add('isActive', CheckboxType::class, [
                 'label' => 'Activo',
                 'required' => false,
                 'attr' => [
