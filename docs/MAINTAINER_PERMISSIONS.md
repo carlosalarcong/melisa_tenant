@@ -2,11 +2,18 @@
 
 ## 📋 Resumen Ejecutivo
 
-Este documento describe el sistema de permisos implementado para los **132 mantenedores** del sistema Melisa, utilizando un enfoque híbrido basado en Symfony Voters.
+Este documento describe el sistema de permisos implementado para los **132 mantenedores** del sistema Melisa, utilizando un enfoque híbrido basado en Symfony Voters con gestión dinámica desde UI.
 
-**Estado:** ✅ **Sprint 1 - MVP Completado** (Febrero 2026)  
-**Arquitectura:** Voter Híbrido (Role-based simple)  
-**Próximas Fases:** Granularidad por categoría (Sprint 2) → Permisos específicos opcionales (Sprint 3+)
+**Estado:** ✅ **Sprint 2 - CRUD UI Completado** (Febrero 2026)  
+**Arquitectura:** Voter Híbrido + Base de Datos + Administración Web  
+**Próximas Fases:** Category-based granularity (Sprint 3) → Permisos específicos opcionales (Sprint 4+)
+
+**Novedades Sprint 2:**
+- 🎉 Administración de permisos desde interfaz web
+- 🔄 Roles cargados dinámicamente desde tabla `role`
+- ⚡ Invalidación automática de caché
+- 🛡️ Protección de permisos críticos
+- 📊 Logging de auditoría automático
 
 ---
 
@@ -126,11 +133,88 @@ Suite completa de **27 tests** que verifican todos los escenarios posibles.
 **Ejecutar tests:**
 ```bash
 # Test específico del MaintainerVoter
-php bin/phpunit tests/Unit/Security/Voter/MaintainerVoterTest.php
+php bin/phpunit tests/Unit/Security/Voter/MaintainerVoter Test.php
 
 # Con cobertura de código
 php bin/phpunit --coverage-html var/coverage tests/Unit/Security/Voter/MaintainerVoterTest.php
 ```
+
+---
+
+### 5. Administración desde UI (Sprint 2)
+
+**Ubicación:** `/admin/maintainer-permissions`  
+**Controller:** `src/Controller/MaintainerRolePermissionController.php`  
+**Form:** `src/Form/MaintainerRolePermissionType.php`  
+**Templates:** `templates/maintainers/maintainer_role_permission/`
+
+🎉 **NUEVO:** Mantenedor CRUD completo para gestionar permisos dinámicamente desde la interfaz web.
+
+**Características principales:**
+- ✅ Roles cargados dinámicamente desde tabla `role`
+- ✅ Gestión completa CRUD sin editar código
+- ✅ Invalidación automática de caché (Redis + in-memory)
+- ✅ Soporte para wildcards (*) que dan todos los permisos
+- ✅ Granularidad opcional por categoría de mantenedor
+- ✅ Protección contra eliminación de permisos críticos
+- ✅ Logging automático de cambios para auditoría
+- ✅ Solo accesible por ROLE_ADMIN
+
+**Flujo de trabajo:**
+1. Acceder a la UI en **Configuración → Permisos de Mantenedores**
+2. Crear/editar permisos seleccionando rol, permiso, categoría
+3. Los cambios se aplican **inmediatamente** (sin restart)
+4. El caché se invalida automáticamente
+
+**Campos del formulario:**
+- **Rol**: Dropdown dinámico desde tabla `role` (solo activos)
+- **Permiso**: CREATE, READ, UPDATE, DELETE, EXPORT, o wildcard (*)
+- **Concedido**: Checkbox (OTORGA o DENIEGA el permiso)
+- **Categoría**: Opcional - basic, clinical, commercial, hospital, etc.
+- **Mantenedor**: Opcional - Clase PHP específica (Phase 3)
+- **Descripción**: Texto libre para documentar el propósito
+- **Prioridad**: 0-100 (mayor prioridad se evalúa primero)
+- **Activo**: Solo permisos activos son evaluados
+
+**Validaciones especiales:**
+- ⚠️ Advierte si se crea permiso DENY (granted=false)
+- ⚠️ Sugiere prioridad >= 5 para wildcards (*)
+- 🛡️ Previene eliminación del permiso ROLE_ADMIN wildcard
+
+**Caché y performance:**
+```php
+// La invalidación de caché se ejecuta automáticamente
+// en afterSave() y afterDelete()
+$this->repository->invalidateCache();
+
+// Los cambios se reflejan en el siguiente request:
+// 1. Redis cache cleared (1 hora TTL)
+// 2. In-memory cache cleared (per-request)
+// 3. Próxima verificación usa nuevos permisos
+```
+
+**Ejemplo: Dar permiso READ a ROLE_ENFERMERA en categoría 'clinical'**
+1. Crear nuevo permiso
+2. Rol: Enfermera
+3. Permiso: READ
+4. Concedido: ✓  
+5. Categoría: clinical
+6. Guardar → Caché invalidado automáticamente
+
+**Tabla `role`:**
+La tabla centraliza todos los roles del sistema:
+```sql
+SELECT id, code, name, position, is_active FROM role ORDER BY position;
+-- Roles están ordenados por prioridad (admin primero)
+-- Solo roles activos aparecen en dropdowns
+-- Roles de sistema (is_system=true) no pueden eliminarse
+```
+
+**Acceso desde menú:**
+- Ubicación: **Configuración → Permisos de Mantenedores**
+- Icon: 🔐 (bi bi-shield-lock)
+- Ruta: `app_maintainer_permission_index`
+- Permiso requerido: ROLE_ADMIN
 
 ---
 
@@ -507,7 +591,17 @@ php bin/phpunit tests/Unit/Security/Voter/MaintainerVoterTest.php
 
 ## 📝 Changelog
 
-### [1.0.0] - 2026-02-09
+### [2.0.0] - 2026-02-09 - Sprint 2 CRUD UI
+- ✅ Tabla `role` para gestión dinámica de roles
+- ✅ MaintainerRolePermissionController con CRUD completo
+- ✅ MaintainerRolePermissionType con EntityType para roles
+- ✅ Templates para administración desde UI
+- ✅ Invalidación automática de caché en operaciones
+- ✅ Menú en Configuración (solo ROLE_ADMIN)
+- ✅ Tests funcionales básicos
+- ✅ Documentación actualizada con guía de uso UI
+
+### [1.0.0] - 2026-02-09 - Sprint 1 MVP
 - ✅ Implementación inicial de MaintainerVoter
 - ✅ Integración con AbstractMantenedorController
 - ✅ Protección de UI en templates
@@ -516,6 +610,6 @@ php bin/phpunit tests/Unit/Security/Voter/MaintainerVoterTest.php
 
 ---
 
-**🎉 Sprint 1 - MVP Completado con Éxito**
+**🎉 Sprint 2 - CRUD UI Completado con Éxito**
 
-Ahora los 132 mantenedores del sistema tienen control de acceso basado en roles, con una arquitectura escalable lista para las siguientes fases de implementación.
+Los administradores ahora pueden gestionar permisos de mantenedores dinámicamente desde la interfaz web, sin necesidad de modificar código o ejecutar scripts SQL. Los cambios se aplican instantáneamente gracias al sistema de caché optimizado.
