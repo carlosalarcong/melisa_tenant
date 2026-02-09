@@ -20,7 +20,7 @@ maintainers:
     back: 'Volver'
     actions: 'Acciones'
     search: 'Buscar'
-    search_placeholder: 'Buscar...'
+    search_placeholder: 'Buscar por nombre...'
     filter: 'Filtrar'
     filters: 'Filtros'
     columns: 'Columnas'
@@ -44,6 +44,20 @@ maintainers:
     invalid_format: 'Formato inválido'
     loading: 'Cargando formulario...'
     manage_and_admin: 'Gestiona y administra {entity}'
+  
+  # Búsqueda y Filtros
+  search:
+    label: 'Buscar'
+    placeholder: 'Buscar por nombre...'
+  
+  filter:
+    status: 'Estado'
+    all: 'Todos'
+    active: 'Activos'
+    inactive: 'Inactivos'
+  
+  filters_active: 'Filtros activos:'
+  clear_filters: 'Limpiar filtros'
     
   # Columnas comunes
   columns:

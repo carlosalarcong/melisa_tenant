@@ -20,7 +20,7 @@ maintainers:
     back: 'Back'
     actions: 'Actions'
     search: 'Search'
-    search_placeholder: 'Search...'
+    search_placeholder: 'Search by name...'
     filter: 'Filter'
     filters: 'Filters'
     columns: 'Columns'
@@ -44,6 +44,20 @@ maintainers:
     invalid_format: 'Invalid format'
     loading: 'Loading form...'
     manage_and_admin: 'Manage and administer {entity}'
+  
+  # Search and Filters
+  search:
+    label: 'Search'
+    placeholder: 'Search by name...'
+  
+  filter:
+    status: 'Status'
+    all: 'All'
+    active: 'Active'
+    inactive: 'Inactive'
+  
+  filters_active: 'Active filters:'
+  clear_filters: 'Clear filters'
     
   # Common columns
   columns:

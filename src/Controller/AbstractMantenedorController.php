@@ -120,6 +120,9 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
         
         // Auto-detección: QueryBuilder → Paginar | Array → Sin paginación
         if ($dataOrQuery instanceof QueryBuilder) {
+            // Aplicar búsqueda y filtros antes de paginar
+            $dataOrQuery = $this->applySearchAndFilters($dataOrQuery, $request);
+            
             $pagination = $this->paginate($dataOrQuery, $request);
             $data = $pagination['items'];
             $paginationData = [
@@ -131,7 +134,8 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
                 'has_next' => $pagination['has_next'],
             ];
         } else {
-            $data = $dataOrQuery;
+            // Array simple: aplicar filtros en memoria
+            $data = $this->filterArrayData($dataOrQuery, $request);
             $paginationData = null;
         }
         
@@ -148,6 +152,10 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
             'create_route' => $this->getCreateRoute(),
             'is_turbo_frame' => $this->isTurboFrameRequest($request),
             'pagination' => $paginationData,
+            'search_config' => $this->getSearchConfig(),
+            'filter_config' => $this->getFilterConfig(),
+            'search' => $request->query->get('search', ''),
+            'status' => $request->query->get('status', 'all'),
         ]);
     }
 
@@ -663,5 +671,170 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
             'cannot_delete' => $this->translator->trans('maintainers.common.error_delete', [], 'maintainers'),
             default => $this->translator->trans('maintainers.common.error_create', [], 'maintainers')
         };
+    }
+
+    /**
+     * Aplica búsqueda y filtros al QueryBuilder
+     * 
+     * @param QueryBuilder $qb Query builder base
+     * @param Request $request Request con parámetros de búsqueda
+     * @return QueryBuilder Query builder con filtros aplicados
+     */
+    protected function applySearchAndFilters(QueryBuilder $qb, Request $request): QueryBuilder
+    {
+        $alias = $qb->getRootAliases()[0];
+        
+        // Búsqueda por columnas configurables (case-insensitive)
+        if ($search = $request->query->get('search')) {
+            $searchColumns = $this->getSearchableColumns();
+            
+            if (!empty($searchColumns)) {
+                $orX = $qb->expr()->orX();
+                foreach ($searchColumns as $column) {
+                    // Búsqueda case-insensitive usando LOWER en ambos lados
+                    $orX->add(
+                        $qb->expr()->like(
+                            $qb->expr()->lower("$alias.$column"),
+                            ':search'
+                        )
+                    );
+                }
+                $qb->andWhere($orX)
+                   ->setParameter('search', '%' . strtolower($search) . '%');
+            }
+        }
+        
+        // Filtro por estado (isActive) si existe en la entidad
+        $metadata = $qb->getEntityManager()->getClassMetadata($qb->getRootEntities()[0]);
+        
+        if ($metadata->hasField('isActive')) {
+            $status = $request->query->get('status', 'all');
+            
+            if ($status === 'active') {
+                $qb->andWhere("$alias.isActive = true");
+            } elseif ($status === 'inactive') {
+                $qb->andWhere("$alias.isActive = false");
+            }
+            // 'all' = sin filtro
+        }
+        
+        // Hook para filtros custom por controller
+        $this->applyCustomFilters($qb, $request);
+        
+        return $qb;
+    }
+
+    /**
+     * Filtra datos en Array (para mantenedores sin paginación)
+     * 
+     * @param array $data Datos originales
+     * @param Request $request Request con parámetros
+     * @return array Datos filtrados
+     */
+    protected function filterArrayData(array $data, Request $request): array
+    {
+        $search = $request->query->get('search');
+        $status = $request->query->get('status', 'all');
+        
+        if (!$search && $status === 'all') {
+            return $data; // Sin filtros activos
+        }
+        
+        return array_filter($data, function($item) use ($search, $status) {
+            // Búsqueda case-insensitive en propiedades configurables
+            if ($search) {
+                $found = false;
+                $searchLower = strtolower($search);
+                
+                foreach ($this->getSearchableColumns() as $column) {
+                    $getter = 'get' . ucfirst($column);
+                    if (method_exists($item, $getter)) {
+                        $value = $item->$getter();
+                        if (stripos(strtolower((string)$value), $searchLower) !== false) {
+                            $found = true;
+                            break;
+                        }
+                    }
+                }
+                if (!$found) return false;
+            }
+            
+            // Filtro por estado
+            if ($status !== 'all' && method_exists($item, 'getIsActive')) {
+                $isActive = $item->getIsActive();
+                if ($status === 'active' && !$isActive) return false;
+                if ($status === 'inactive' && $isActive) return false;
+            }
+            
+            return true;
+        });
+    }
+
+    /**
+     * Define las columnas en las que se puede buscar
+     * 
+     * Por defecto busca en 'name'. Sobrescribir para personalizar.
+     * 
+     * @return array Lista de nombres de columnas
+     */
+    protected function getSearchableColumns(): array
+    {
+        return ['name']; // Default: buscar en columna 'name'
+    }
+
+    /**
+     * Configuración de la UI de búsqueda
+     * 
+     * @return array Configuración de búsqueda
+     */
+    protected function getSearchConfig(): array
+    {
+        return [
+            'enabled' => true,
+            'placeholder' => $this->translator->trans('maintainers.search.placeholder', [], 'maintainers'),
+            'label' => $this->translator->trans('maintainers.search.label', [], 'maintainers'),
+        ];
+    }
+
+    /**
+     * Configuración de filtros disponibles
+     * 
+     * @return array Configuración de filtros
+     */
+    protected function getFilterConfig(): array
+    {
+        return [
+            'status' => [
+                'enabled' => true,
+                'label' => $this->translator->trans('maintainers.filter.status', [], 'maintainers'),
+                'options' => [
+                    'all' => $this->translator->trans('maintainers.filter.all', [], 'maintainers'),
+                    'active' => $this->translator->trans('maintainers.filter.active', [], 'maintainers'),
+                    'inactive' => $this->translator->trans('maintainers.filter.inactive', [], 'maintainers'),
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * Hook para agregar filtros custom específicos por controller
+     * 
+     * Ejemplo de uso en controller hijo:
+     * ```php
+     * protected function applyCustomFilters(QueryBuilder $qb, Request $request): void
+     * {
+     *     if ($branchId = $request->query->get('branch')) {
+     *         $qb->andWhere('e.branch = :branch')
+     *            ->setParameter('branch', $branchId);
+     *     }
+     * }
+     * ```
+     * 
+     * @param QueryBuilder $qb Query builder
+     * @param Request $request Request con parámetros
+     */
+    protected function applyCustomFilters(QueryBuilder $qb, Request $request): void
+    {
+        // Override en controllers específicos para filtros adicionales
     }
 }

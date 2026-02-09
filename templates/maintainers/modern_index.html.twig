@@ -89,25 +89,82 @@
                     </div>
                 </div>
 
-                {# Toolbar #}
-                <div class="d-flex gap-2 flex-wrap">
-                    <div class="flex-grow-1" style="min-width: 250px;">
-                        <div class="input-group">
-                            <span class="input-group-text bg-white border-end-0">
-                                <i class="bx bx-search text-muted"></i>
-                            </span>
-                            <input type="text" class="form-control search-input border-start-0" placeholder="{{ 'maintainers.common.search_placeholder'|trans({}, 'maintainers') }}" style="border-radius: 0 8px 8px 0;">
-                        </div>
+                {# Search and Filters Toolbar #}
+                {% if search_config.enabled or filter_config.status.enabled %}
+                    <div data-controller="search-filter">
+                        <form method="get" 
+                              data-search-filter-target="form"
+                              data-action="submit->search-filter#preventRefresh">
+                            
+                            <div class="row g-3">
+                                {# Search Input #}
+                                {% if search_config.enabled %}
+                                    <div class="col-md-8">
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white border-end-0">
+                                                <i class="bx bx-search text-muted"></i>
+                                            </span>
+                                            <input type="search" 
+                                                   name="search"
+                                                   class="form-control search-input border-start-0" 
+                                                   placeholder="{{ search_config.placeholder }}"
+                                                   value="{{ search }}"
+                                                   data-search-filter-target="input"
+                                                   data-action="input->search-filter#debounce"
+                                                   style="border-radius: 0 8px 8px 0;">
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                                {# Status Filter #}
+                                {% if filter_config.status.enabled %}
+                                    <div class="col-md-4">
+                                        <select name="status" 
+                                                class="form-select"
+                                                data-action="change->search-filter#submit"
+                                                style="border-radius: 8px;">
+                                            {% for value, label in filter_config.status.options %}
+                                                <option value="{{ value }}" {% if status == value %}selected{% endif %}>
+                                                    {{ label }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            {# Hidden inputs to preserve pagination #}
+                            <input type="hidden" name="page" value="{{ app.request.query.get('page', 1) }}">
+                        </form>
+
+                        {# Active Filters Indicator #}
+                        {% if search or status != 'all' %}
+                            <div class="mt-3">
+                                <small class="text-muted d-flex align-items-center gap-2">
+                                    <i class='bx bx-filter'></i>
+                                    <span>{{ 'maintainers.filters_active'|trans({}, 'maintainers') }}</span>
+                                    
+                                    {% if search %}
+                                        <span class="badge bg-info-subtle text-info border border-info">
+                                            {{ 'maintainers.search'|trans({}, 'maintainers') }}: "{{ search }}"
+                                        </span>
+                                    {% endif %}
+                                    
+                                    {% if status != 'all' %}
+                                        <span class="badge bg-secondary-subtle text-secondary border border-secondary">
+                                            {{ filter_config.status.options[status] }}
+                                        </span>
+                                    {% endif %}
+                                    
+                                    <a href="{{ path(app.request.attributes.get('_route')) }}" 
+                                       class="text-decoration-none ms-2">
+                                        <i class='bx bx-x'></i> {{ 'maintainers.clear_filters'|trans({}, 'maintainers') }}
+                                    </a>
+                                </small>
+                            </div>
+                        {% endif %}
                     </div>
-                    <button class="btn btn-outline-secondary d-flex align-items-center gap-2">
-                        <i class="bx bx-filter-alt"></i>
-                        {{ 'maintainers.common.filters'|trans({}, 'maintainers') }}
-                    </button>
-                    <button class="btn btn-outline-secondary d-flex align-items-center gap-2">
-                        <i class="bx bx-cog"></i>
-                        {{ 'maintainers.common.columns'|trans({}, 'maintainers') }}
-                    </button>
-                </div>
+                {% endif %}
             </div>
         </div>
 
