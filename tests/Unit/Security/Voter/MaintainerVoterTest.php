@@ -86,9 +86,46 @@ class MaintainerVoterTest extends TestCase
                     return $permission === MaintainerVoter::READ;
                 }
                 
-                // ROLE_CLINICAL_MANAGER: Solo categoría 'clinical'
+                // ROLE_CLINICAL_MANAGER: Solo categoría 'clinical' (Phase 2)
                 if ($role === 'ROLE_CLINICAL_MANAGER') {
                     return $category === 'clinical';
+                }
+                
+                // ========== PHASE 3: Roles con granularidad por maintainer ==========
+                
+                // ROLE_CLINICAL_NURSE: Solo READ en Disease
+                if ($role === 'ROLE_CLINICAL_NURSE') {
+                    return $permission === MaintainerVoter::READ
+                        && $category === 'clinical'
+                        && $maintainer === 'Disease';
+                }
+                
+                // ROLE_CLINICAL_VIEWER: READ en toda categoría clinical
+                if ($role === 'ROLE_CLINICAL_VIEWER') {
+                    return $permission === MaintainerVoter::READ
+                        && $category === 'clinical';
+                }
+                
+                // ROLE_DISEASE_EDITOR: CRUD completo solo en Disease
+                if ($role === 'ROLE_DISEASE_EDITOR') {
+                    return $category === 'clinical'
+                        && $maintainer === 'Disease'
+                        && in_array($permission, [
+                            MaintainerVoter::CREATE,
+                            MaintainerVoter::READ,
+                            MaintainerVoter::UPDATE,
+                            MaintainerVoter::DELETE,
+                        ]);
+                }
+                
+                // ROLE_SPECIALTY_EDITOR: READ+UPDATE solo en Specialty
+                if ($role === 'ROLE_SPECIALTY_EDITOR') {
+                    return $category === 'clinical'
+                        && $maintainer === 'Specialty'
+                        && in_array($permission, [
+                            MaintainerVoter::READ,
+                            MaintainerVoter::UPDATE,
+                        ]);
                 }
                 
                 // Por defecto: sin permiso
@@ -662,6 +699,163 @@ class MaintainerVoterTest extends TestCase
                 "Permiso con category=NULL debe aplicar a $category"
             );
         }
+    }
+
+    // ========================================================================
+    // TESTS PHASE 3 - GRANULARIDAD POR MANTENEDOR ESPECÍFICO
+    // ========================================================================
+
+    /**
+     * Test: Permiso específico por mantenedor se respeta
+     * 
+     * Verifica que un permiso restringido a un mantenedor específico
+     * solo otorga acceso a ese mantenedor, no a otros de la misma categoría.
+     */
+    public function testSpecificMaintainerPermission_isRespected(): void
+    {
+        $this->user->expects($this->any())
+            ->method('getRoles')
+            ->willReturn(['ROLE_CLINICAL_NURSE']);
+        
+        // Caso 1: Disease → GRANTED
+        $diseaseContext = new MaintainerContext('App\Entity\Tenant\Clinical\Disease', 'clinical', 'Disease');
+        $result = $this->voter->vote($this->token, $diseaseContext, [MaintainerVoter::READ]);
+        $this->assertEquals(
+            VoterInterface::ACCESS_GRANTED,
+            $result,
+            'ROLE_CLINICAL_NURSE debe poder leer Disease'
+        );
+        
+        // Caso 2: Specialty (misma categoría, diferente mantenedor) → DENIED
+        $specialtyContext = new MaintainerContext('App\Entity\Tenant\Clinical\Specialty', 'clinical', 'Specialty');
+        $result = $this->voter->vote($this->token, $specialtyContext, [MaintainerVoter::READ]);
+        $this->assertEquals(
+            VoterInterface::ACCESS_DENIED,
+            $result,
+            'ROLE_CLINICAL_NURSE NO debe poder leer Specialty'
+        );
+    }
+
+    /**
+     * Test: NULL maintainer aplica a todos los mantenedores de la categoría
+     * 
+     * Verifica que un permiso sin maintainer específico (NULL) es un "catch-all"
+     * dentro de su categoría, otorgando acceso a todos los mantenedores.
+     */
+    public function testNullMaintainerPermission_appliesToAllInCategory(): void
+    {
+        $this->user->expects($this->any())
+            ->method('getRoles')
+            ->willReturn(['ROLE_CLINICAL_MANAGER']);
+        
+        $maintainers = ['Disease', 'Specialty', 'Department', 'TreatmentType'];
+        
+        foreach ($maintainers as $maintainer) {
+            $context = new MaintainerContext(
+                "App\\Entity\\Tenant\\Clinical\\$maintainer",
+                'clinical',
+                $maintainer
+            );
+            $result = $this->voter->vote($this->token, $context, [MaintainerVoter::CREATE]);
+            $this->assertEquals(
+                VoterInterface::ACCESS_GRANTED,
+                $result,
+                "ROLE_CLINICAL_MANAGER debe tener acceso a $maintainer"
+            );
+        }
+    }
+
+    /**
+     * Test: Combinación category + maintainer funciona correctamente
+     * 
+     * Verifica que se pueden combinar filtros de categoría y mantenedor
+     * para granularidad máxima.
+     */
+    public function testCategoryAndMaintainerCombination_works(): void
+    {
+        $this->user->expects($this->any())
+            ->method('getRoles')
+            ->willReturn(['ROLE_SPECIALTY_EDITOR']);
+        
+        // Caso 1: Specialty + clinical → GRANTED
+        $context = new MaintainerContext(
+            'App\Entity\Tenant\Clinical\Specialty',
+            'clinical',
+            'Specialty'
+        );
+        $result = $this->voter->vote($this->token, $context, [MaintainerVoter::UPDATE]);
+        $this->assertEquals(VoterInterface::ACCESS_GRANTED, $result);
+        
+        // Caso 2: Specialty pero category diferente → DENIED
+        $wrongCategoryContext = new MaintainerContext(
+            'App\Entity\Tenant\Basic\Specialty', // Asumiendo que existe
+            'basic',
+            'Specialty'
+        );
+        $result = $this->voter->vote($this->token, $wrongCategoryContext, [MaintainerVoter::UPDATE]);
+        $this->assertEquals(VoterInterface::ACCESS_DENIED, $result);
+        
+        // Caso 3: Disease + clinical (categoría correcta, mantenedor incorrecto) → DENIED
+        $wrongMaintainerContext = new MaintainerContext(
+            'App\Entity\Tenant\Clinical\Disease',
+            'clinical',
+            'Disease'
+        );
+        $result = $this->voter->vote($this->token, $wrongMaintainerContext, [MaintainerVoter::UPDATE]);
+        $this->assertEquals(VoterInterface::ACCESS_DENIED, $result);
+    }
+
+    /**
+     * Test: Permiso más específico prevalece (priority resolution)
+     * 
+     * Verifica que cuando un usuario tiene múltiples permisos que podrían aplicar,
+     * el más específico (category+maintainer) se evalúa correctamente.
+     * 
+     * Caso: Usuario tiene:
+     * - ROLE_CLINICAL_VIEWER (categoría completa, solo READ)
+     * - ROLE_DISEASE_EDITOR (solo Disease, CRUD completo)
+     * 
+     * El voter debe otorgar el permiso más amplio que encuentre.
+     */
+    public function testPriorityResolution_moreSpecificPermissionWorks(): void
+    {
+        $this->user->expects($this->any())
+            ->method('getRoles')
+            ->willReturn(['ROLE_CLINICAL_VIEWER', 'ROLE_DISEASE_EDITOR']);
+        
+        // Test 1: Disease + UPDATE → GRANTED (por ROLE_DISEASE_EDITOR)
+        $diseaseContext = new MaintainerContext(
+            'App\Entity\Tenant\Clinical\Disease',
+            'clinical',
+            'Disease'
+        );
+        $result = $this->voter->vote($this->token, $diseaseContext, [MaintainerVoter::UPDATE]);
+        $this->assertEquals(
+            VoterInterface::ACCESS_GRANTED,
+            $result,
+            'Debe poder UPDATE Disease gracias a ROLE_DISEASE_EDITOR'
+        );
+        
+        // Test 2: Specialty + READ → GRANTED (por ROLE_CLINICAL_VIEWER)
+        $specialtyContext = new MaintainerContext(
+            'App\Entity\Tenant\Clinical\Specialty',
+            'clinical',
+            'Specialty'
+        );
+        $result = $this->voter->vote($this->token, $specialtyContext, [MaintainerVoter::READ]);
+        $this->assertEquals(
+            VoterInterface::ACCESS_GRANTED,
+            $result,
+            'Debe poder READ Specialty gracias a ROLE_CLINICAL_VIEWER'
+        );
+        
+        // Test 3: Specialty + UPDATE → DENIED (ningún rol lo permite)
+        $result = $this->voter->vote($this->token, $specialtyContext, [MaintainerVoter::UPDATE]);
+        $this->assertEquals(
+            VoterInterface::ACCESS_DENIED,
+            $result,
+            'NO debe poder UPDATE Specialty (solo tiene READ genérico)'
+        );
     }
 }
 
