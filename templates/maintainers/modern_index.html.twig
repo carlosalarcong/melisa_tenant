@@ -65,7 +65,7 @@
                     </div>
                     
                     <div class="d-flex gap-2">
-                        {% if export_route is defined %}
+                        {% if export_route is defined and is_granted(constant('App\\Security\\Voter\\MaintainerVoter::EXPORT'), entity_class|default(null)) %}
                             <a href="{{ path(export_route) }}" 
                                class="btn btn-outline-secondary d-flex align-items-center gap-2"
                                title="{{ 'maintainers.common.export_csv'|trans({}, 'maintainers') }}"
@@ -74,7 +74,7 @@
                                 {{ 'maintainers.common.export'|trans({}, 'maintainers') }}
                             </a>
                         {% endif %}
-                        {% if create_route is defined %}
+                        {% if create_route is defined and is_granted(constant('App\\Security\\Voter\\MaintainerVoter::CREATE'), entity_class|default(null)) %}
                             <button type="button" 
                                     class="btn btn-primary d-flex align-items-center gap-2" 
                                     style="box-shadow: 0 4px 12px rgba(94, 114, 228, 0.3);" 
@@ -263,7 +263,7 @@
                     <i class="bx bx-inbox text-muted mb-3" style="font-size: 4rem;"></i>
                     <h5 class="text-muted">{{ 'maintainers.common.no_records'|trans({}, 'maintainers') }}</h5>
                     <p class="text-muted mb-3">{{ 'maintainers.common.no_records_message'|trans({}, 'maintainers') }}</p>
-                    {% if create_route is defined %}
+                    {% if create_route is defined and is_granted(constant('App\\Security\\Voter\\MaintainerVoter::CREATE'), entity_class|default(null)) %}
                         <button type="button"
                                 class="btn btn-primary"
                                 style="box-shadow: 0 4px 12px rgba(94, 114, 228, 0.3);"
@@ -343,6 +343,7 @@
                                     <td class="text-end px-3">
                                         <div class="d-inline-flex gap-1">
                                             {% set edit_route = app.request.attributes.get('_route')|replace({'_index': '_edit'}) %}
+                                            {% if is_granted(constant('App\\Security\\Voter\\MaintainerVoter::UPDATE'), item) %}
                                             <button type="button"
                                                class="btn btn-sm action-btn action-btn-edit border-0" 
                                                style="color: #5e72e4;"
@@ -353,7 +354,9 @@
                                                title="{{ 'maintainers.common.edit'|trans({}, 'maintainers') }}">
                                                 <i class="bx bx-edit-alt"></i>
                                             </button>
+                                            {% endif %}
                                             {% set delete_route = app.request.attributes.get('_route')|replace({'_index': '_delete'}) %}
+                                            {% if is_granted(constant('App\\Security\\Voter\\MaintainerVoter::DELETE'), item) %}
                                             <form method="post" action="{{ path(delete_route, {'id': item.id}) }}" 
                                                   onsubmit="return confirm('{{ 'maintainers.common.confirm_delete'|trans({}, 'maintainers') }}');" 
                                                   class="d-inline">
@@ -365,6 +368,7 @@
                                                     <i class="bx bx-trash-alt"></i>
                                                 </button>
                                             </form>
+                                            {% endif %}
                                         </div>
                                     </td>
                                 </tr>

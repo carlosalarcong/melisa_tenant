@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Security\Voter\MaintainerVoter;
 use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -149,6 +150,7 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
             'actions' => $this->getActions(),
             'tenant' => $this->getTenant(),
             'page_title' => $this->getPageTitle(),
+            'entity_class' => $this->getEntityClass(),
             'create_route' => $this->getCreateRoute(),
             'is_turbo_frame' => $this->isTurboFrameRequest($request),
             'pagination' => $paginationData,
@@ -165,6 +167,9 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
      */
     protected function handleCreate(Request $request): Response
     {
+        // Verificar permiso de creación
+        $this->denyAccessUnlessGranted(MaintainerVoter::CREATE, $this->getEntityClass());
+        
         $this->beforeCreate($request);
         
         $entity = $this->createNewEntity();
@@ -212,6 +217,9 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
             return $this->redirectToRoute($this->getIndexRoute());
         }
         
+        // Verificar permiso de actualización sobre la entidad específica
+        $this->denyAccessUnlessGranted(MaintainerVoter::UPDATE, $entity);
+        
         $this->beforeEdit($entity, $request);
         
         $form = $this->createForm($this->getFormType(), $entity);
@@ -255,6 +263,9 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
             $this->addFlash('error', $this->getErrorMessage('not_found'));
             return $this->redirectToRoute($this->getIndexRoute());
         }
+        
+        // Verificar permiso de eliminación sobre la entidad específica
+        $this->denyAccessUnlessGranted(MaintainerVoter::DELETE, $entity);
         
         if ($this->canDelete($entity)) {
             $this->beforeDelete($entity, $request);
@@ -303,6 +314,9 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
         ?array $headers = null,
         ?string $filename = null
     ): Response {
+        // Verificar permiso de exportación
+        $this->denyAccessUnlessGranted(MaintainerVoter::EXPORT, $this->getEntityClass());
+        
         if (!$this->exportService) {
             throw new \RuntimeException('ExportService not injected. Add #[Autowire] or setter injection.');
         }
