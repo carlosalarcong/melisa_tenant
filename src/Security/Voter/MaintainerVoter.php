@@ -8,10 +8,15 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
- * Voter para gestionar permisos de Mantenedores (Master Data)
+ * Voter para gestionar permisos de Mantenedores (Master Data) con granularidad por categoría
  * 
- * CAMBIO ARQUITECTÓNICO (Sprint 1.5):
- * La matriz de permisos ahora se almacena en base de datos (tabla maintainer_role_permission)
+ * CAMBIO ARQUITECTÓNICO (Sprint 2):
+ * Phase 2 - Granularidad por Categoría implementada.
+ * Los permisos ahora pueden restringirse por categoría de mantenedor.
+ * 
+ * Ejemplo: ROLE_CLINICAL_MANAGER solo tiene permisos sobre categoría 'clinical'
+ * 
+ * La matriz de permisos se almacena en base de datos (tabla maintainer_role_permission)
  * en lugar de estar hardcoded. Esto permite administrar permisos dinámicamente mediante un
  * mantenedor CRUD sin modificar código.
  * 
@@ -19,7 +24,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  * ✅ Permisos administrables desde UI
  * ✅ Cambios en tiempo real sin despliegue
  * ✅ Auditoría de cambios en permisos
- * ✅ Granularidad por categoría y mantenedor
+ * ✅ Granularidad por categoría de mantenedor (Phase 2)
  * ✅ Cache automático para mantener performance
  * 
  * Performance:
@@ -28,8 +33,12 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  * 
  * Uso en Controller:
  * ```php
+ * // Básico (sin categoría explícita - usa namespace)
  * $this->denyAccessUnlessGranted(MaintainerVoter::CREATE, Gender::class);
- * $this->denyAccessUnlessGranted(MaintainerVoter::UPDATE, $entity);
+ * 
+ * // Con categoría explícita (Phase 2)
+ * $context = new MaintainerContext(Gender::class, 'clinical');
+ * $this->denyAccessUnlessGranted(MaintainerVoter::CREATE, $context);
  * ```
  * 
  * Uso en Twig:
@@ -41,6 +50,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  * 
  * @author Melisa Development Team
  * @since Sprint 1.5 - Database-driven permissions (Feb 2026)
+ * @since Sprint 3 - Phase 2 Category Granularity (Feb 2026)
  */
 class MaintainerVoter extends Voter
 {
@@ -73,7 +83,7 @@ class MaintainerVoter extends Voter
      * Determina si este voter puede votar sobre el atributo y subject dados.
      * 
      * @param string $attribute El permiso solicitado (CREATE, READ, UPDATE, DELETE, EXPORT)
-     * @param mixed $subject La entidad o clase sobre la que se solicita el permiso
+     * @param mixed $subject La entidad, clase, o MaintainerContext
      * @return bool True si el voter puede votar, false en caso contrario
      */
     protected function supports(string $attribute, mixed $subject): bool
@@ -92,9 +102,10 @@ class MaintainerVoter extends Voter
         }
         
         // El subject puede ser:
-        // 1. Una entidad objeto (para UPDATE, DELETE)
-        // 2. Un string con el nombre de la clase (para CREATE, READ)
-        // 3. Null (para operaciones generales)
+        // 1. MaintainerContext (nuevo en Phase 2) - con metadata de categoría
+        // 2. Una entidad objeto (para UPDATE, DELETE) - legacy
+        // 3. Un string con el nombre de la clase (para CREATE, READ) - legacy
+        // 4. Null (para operaciones generales)
         return true;
     }
 
@@ -136,30 +147,45 @@ class MaintainerVoter extends Voter
     /**
      * Verifica si el usuario tiene acceso basado en sus roles consultando la base de datos.
      * 
-     * NUEVO APPROACH (Sprint 1.5):
+     * NUEVO APPROACH (Sprint 1.5 + Phase 2):
      * La matriz de permisos se consulta desde la tabla maintainer_role_permission.
      * Se usa cache Redis + in-memory para mantener performance óptima.
      * 
+     * Phase 2: Ahora considera la categoría del mantenedor para granularidad.
+     * Un permiso puede restringirse a una categoría específica.
+     * 
      * Lógica:
-     * 1. Iterar sobre todos los roles del usuario
-     * 2. Para cada rol, consultar permisos desde DB (con cache)
-     * 3. Si algún rol concede el permiso, retornar true
-     * 4. Si ningún rol concede, retornar false (deny by default)
+     * 1. Extraer subject y metadata del contexto (si es MaintainerContext)
+     * 2. Iterar sobre todos los roles del usuario
+     * 3. Para cada rol, consultar permisos desde DB (con cache)
+     * 4. Si algún rol concede el permiso (considerando categoría), retornar true
+     * 5. Si ningún rol concede, retornar false (deny by default)
      * 
      * @param Member $user El usuario autenticado
      * @param string $attribute El permiso solicitado
-     * @param mixed $subject La entidad o clase
+     * @param mixed $subject La entidad, clase, o MaintainerContext
      * @return bool True si el rol permite el acceso
      */
     private function canAccessByRole(Member $user, string $attribute, mixed $subject): bool
     {
         $roles = $user->getRoles();
-        $category = $this->getMaintenedorCategory($subject);
-        $maintainer = $this->getMaintainerName($subject);
+        
+        // Extraer subject real y metadata si es MaintainerContext
+        if ($subject instanceof MaintainerContext) {
+            $category = $subject->resolveCategory();
+            $maintainer = $subject->resolveMaintainer();
+            $actualSubject = $subject->subject;
+        } else {
+            // Legacy: extraer categoría del namespace
+            $category = $this->getMaintenedorCategory($subject);
+            $maintainer = $this->getMaintainerName($subject);
+            $actualSubject = $subject;
+        }
 
         // Iterar sobre todos los roles del usuario
         foreach ($roles as $role) {
             // Consultar permisos desde DB (con cache)
+            // El repository filtrará por categoría si está presente
             if ($this->permissionRepository->hasPermission($role, $attribute, $category, $maintainer)) {
                 return true;
             }

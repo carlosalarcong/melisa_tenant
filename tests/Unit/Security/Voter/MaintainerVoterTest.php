@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Security\Voter;
 use App\Entity\Tenant\Gender;
 use App\Entity\Tenant\Member;
 use App\Repository\Tenant\MaintainerRolePermissionRepository;
+use App\Security\Voter\MaintainerContext;
 use App\Security\Voter\MaintainerVoter;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -14,19 +15,23 @@ use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 /**
  * Test Suite para MaintainerVoter
  * 
- * ACTUALIZADO (Sprint 1.5): Tests adaptados para el nuevo sistema basado en DB.
- * Ahora mockeamos el repositorio MaintainerRolePermissionRepository.
+ * ACTUALIZADO (Sprint 3 - Phase 2): Tests extendidos con granularidad por categoría.
+ * Ahora incluye tests para MaintainerContext y verific ación de permisos por categoría.
  * 
  * Verifica que el sistema de permisos de mantenedores funciona correctamente
  * en todos los escenarios posibles:
  * - ROLE_ADMIN → Acceso completo (wildcard *)
  * - ROLE_MAINTAINER_MANAGER → CRUD completo + Export
  * - ROLE_MAINTAINER_USER → Solo READ
+ * - ROLE_CLINICAL_MANAGER → Permisos sobre categoría 'clinical'
  * - Usuario sin rol específico → Sin acceso
  * - Usuario no autenticado → Sin acceso
+ * - MaintainerContext con categoría explícita
+ * - Retrocompatibilidad con formato legacy
  * 
  * @author Melisa Development Team
  * @since Sprint 1.5 - Database-driven permissions (Feb 2026)
+ * @since Sprint 3 - Phase 2 Category Granularity (Feb 2026)
  */
 class MaintainerVoterTest extends TestCase
 {
@@ -56,6 +61,40 @@ class MaintainerVoterTest extends TestCase
         // Crear mock del repositorio
         $this->repository = $this->createMock(MaintainerRolePermissionRepository::class);
         
+        // Configurar mock inteligente que responde según el rol
+        $this->repository->expects($this->any())
+            ->method('hasPermission')
+            ->willReturnCallback(function($role, $permission, $category = null, $maintainer = null) {
+                // ROLE_ADMIN: wildcard - acceso a todo
+                if ($role === 'ROLE_ADMIN') {
+                    return true;
+                }
+                
+                // ROLE_MAINTAINER_MANAGER: CRUD completo + Export
+                if ($role === 'ROLE_MAINTAINER_MANAGER') {
+                    return in_array($permission, [
+                        MaintainerVoter::CREATE,
+                        MaintainerVoter::READ,
+                        MaintainerVoter::UPDATE,
+                        MaintainerVoter::DELETE,
+                        MaintainerVoter::EXPORT,
+                    ]);
+                }
+                
+                // ROLE_MAINTAINER_USER: Solo READ
+                if ($role === 'ROLE_MAINTAINER_USER') {
+                    return $permission === MaintainerVoter::READ;
+                }
+                
+                // ROLE_CLINICAL_MANAGER: Solo categoría 'clinical'
+                if ($role === 'ROLE_CLINICAL_MANAGER') {
+                    return $category === 'clinical';
+                }
+                
+                // Por defecto: sin permiso
+                return false;
+            });
+        
         // Crear el voter real con el repositorio mockeado
         $this->voter = new MaintainerVoter($this->repository);
         
@@ -73,55 +112,6 @@ class MaintainerVoterTest extends TestCase
      * Configura el mock del repositorio para simular permisos de ROLE_ADMIN
      * ROLE_ADMIN tiene wildcard (*) = acceso completo
      */
-    private function mockAdminPermissions(): void
-    {
-        $this->repository->expects($this->any())
-            ->method('hasPermission')
-            ->willReturn(true); // ROLE_ADMIN siempre retorna true (wildcard)
-    }
-    
-    /**
-     * Configura el mock del repositorio para simular permisos de ROLE_MAINTAINER_MANAGER
-     * Tiene todos los permisos: CREATE, READ, UPDATE, DELETE, EXPORT
-     */
-    private function mockManagerPermissions(): void
-    {
-        $this->repository->expects($this->any())
-            ->method('hasPermission')
-            ->willReturnCallback(function($role, $permission) {
-                return in_array($permission, [
-                    MaintainerVoter::CREATE,
-                    MaintainerVoter::READ,
-                    MaintainerVoter::UPDATE,
-                    MaintainerVoter::DELETE,
-                    MaintainerVoter::EXPORT,
-                ]);
-            });
-    }
-    
-    /**
-     * Configura el mock del repositorio para simular permisos de ROLE_MAINTAINER_USER
-     * Solo tiene READ
-     */
-    private function mockUserPermissions(): void
-    {
-        $this->repository->expects($this->any())
-            ->method('hasPermission')
-            ->willReturnCallback(function($role, $permission) {
-                return $permission === MaintainerVoter::READ;
-            });
-    }
-    
-    /**
-     * Configura el mock del repositorio para simular usuario sin permisos
-     */
-    private function mockNoPermissions(): void
-    {
-        $this->repository->expects($this->any())
-            ->method('hasPermission')
-            ->willReturn(false);
-    }
-
     // ===== TESTS: ROLE_ADMIN (God mode) =====
 
     /**
@@ -552,4 +542,126 @@ class MaintainerVoterTest extends TestCase
             );
         }
     }
+
+    // ========================================================================
+    // TESTS PHASE 2 - GRANULARIDAD POR CATEGORÍA
+    // ========================================================================
+
+    /**
+     * Test: MaintainerContext permite especificar categoría explícita
+     * 
+     * Verifica que cuando se usa MaintainerContext con categoría explícita,
+     * el voter la considera al verificar permisos.
+     */
+    public function testContextWithExplicitCategory_isRespected(): void
+    {
+        $this->user->expects($this->any())
+            ->method('getRoles')
+            ->willReturn(['ROLE_CLINICAL_MANAGER']);
+        
+        // Mock: ROLE_CLINICAL_MANAGER solo tiene permisos sobre categoría 'clinical'
+        $this->repository->expects($this->any())
+            ->method('hasPermission')
+            ->willReturnCallback(function($role, $permission, $category) {
+                if ($role === 'ROLE_CLINICAL_MANAGER' && $category === 'clinical') {
+                    return true; // Acceso completo a 'clinical'
+                }
+                return false;
+            });
+        
+        // Caso 1: Entidad con categoría 'clinical' → GRANTED
+        $clinicalContext = new MaintainerContext(Gender::class, 'clinical');
+        $result = $this->voter->vote($this->token, $clinicalContext, [MaintainerVoter::READ]);
+        $this->assertEquals(
+            VoterInterface::ACCESS_GRANTED,
+            $result,
+            'ROLE_CLINICAL_MANAGER debe tener acceso a categoría clinical'
+        );
+        
+        // Caso 2: Entidad con categoría 'commercial' → DENIED
+        $commercialContext = new MaintainerContext(Gender::class, 'commercial');
+        $result = $this->voter->vote($this->token, $commercialContext, [MaintainerVoter::READ]);
+        $this->assertEquals(
+            VoterInterface::ACCESS_DENIED,
+            $result,
+            'ROLE_CLINICAL_MANAGER NO debe tener acceso a categoría commercial'
+        );
+    }
+
+    /**
+     * Test: Retrocompatibilidad - sin MaintainerContext funciona igual
+     * 
+     * Verifica que el voter sigue funcionando con el formato antiguo
+     * (string o entidad directamente) extrayendo categoría del namespace.
+     */
+    public function testLegacyFormat_stillWorks(): void
+    {
+        $this->user->expects($this->any())
+            ->method('getRoles')
+            ->willReturn(['ROLE_ADMIN']);
+        
+        // Formato antiguo: string directamente
+        $result = $this->voter->vote($this->token, Gender::class, [MaintainerVoter::READ]);
+        $this->assertEquals(VoterInterface::ACCESS_GRANTED, $result);
+        
+        // Formato antiguo: objeto directamente
+        $entity = $this->createMock(Gender::class);
+        $result = $this->voter->vote($this->token, $entity, [MaintainerVoter::UPDATE]);
+        $this->assertEquals(VoterInterface::ACCESS_GRANTED, $result);
+    }
+
+    /**
+     * Test: Wildcard (*) da acceso a todas las categorías
+     * 
+     * Verifica que un permiso wildcard otorga acceso sin importar la categoría.
+     */
+    public function testWildcardPermission_grantsAccessToAllCategories(): void
+    {
+        $this->user->expects($this->any())
+            ->method('getRoles')
+            ->willReturn(['ROLE_ADMIN']);
+        
+        $categories = ['basic', 'clinical', 'commercial', 'hospital', 'human'];
+        
+        foreach ($categories as $category) {
+            $context = new MaintainerContext(Gender::class, $category);
+            $result = $this->voter->vote($this->token, $context, [MaintainerVoter::CREATE]);
+            $this->assertEquals(
+                VoterInterface::ACCESS_GRANTED,
+                $result,
+                "ROLE_ADMIN debe tener acceso a categoría $category"
+            );
+        }
+    }
+
+    /**
+     * Test: Permiso NULL category aplica a todas las categorías
+     * 
+     * Verifica que un permiso sin categoría específica (NULL) es un "catch-all"
+     * que otorga acceso sin importar la categoría solicitada.
+     */
+    public function testNullCategoryPermission_appliesToAll(): void
+    {
+        $this->user->expects($this->any())
+            ->method('getRoles')
+            ->willReturn(['ROLE_MAINTAINER_MANAGER']);
+        
+        // Mock: ROLE_MAINTAINER_MANAGER tiene permisos con category=NULL (aplica a todas)
+        $this->repository->expects($this->any())
+            ->method('hasPermission')
+            ->willReturn(true); // Sin restricción de categoría
+        
+        $categories = ['basic', 'clinical', 'commercial'];
+        
+        foreach ($categories as $category) {
+            $context = new MaintainerContext(Gender::class, $category);
+            $result = $this->voter->vote($this->token, $context, [MaintainerVoter::CREATE]);
+            $this->assertEquals(
+                VoterInterface::ACCESS_GRANTED,
+                $result,
+                "Permiso con category=NULL debe aplicar a $category"
+            );
+        }
+    }
 }
+

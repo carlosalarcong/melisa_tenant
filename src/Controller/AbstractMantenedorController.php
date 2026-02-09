@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Security\Voter\MaintainerContext;
 use App\Security\Voter\MaintainerVoter;
 use App\Service\Export\ExportService;
 use Doctrine\ORM\QueryBuilder;
@@ -167,8 +168,9 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
      */
     protected function handleCreate(Request $request): Response
     {
-        // Verificar permiso de creación
-        $this->denyAccessUnlessGranted(MaintainerVoter::CREATE, $this->getEntityClass());
+        // Verificar permiso de creación con contexto de categoría (Phase 2)
+        $context = new MaintainerContext($this->getEntityClass(), $this->getMaintainerCategory());
+        $this->denyAccessUnlessGranted(MaintainerVoter::CREATE, $context);
         
         $this->beforeCreate($request);
         
@@ -217,8 +219,9 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
             return $this->redirectToRoute($this->getIndexRoute());
         }
         
-        // Verificar permiso de actualización sobre la entidad específica
-        $this->denyAccessUnlessGranted(MaintainerVoter::UPDATE, $entity);
+        // Verificar permiso de actualización con contexto de categoría (Phase 2)
+        $context = new MaintainerContext($entity, $this->getMaintainerCategory());
+        $this->denyAccessUnlessGranted(MaintainerVoter::UPDATE, $context);
         
         $this->beforeEdit($entity, $request);
         
@@ -264,8 +267,9 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
             return $this->redirectToRoute($this->getIndexRoute());
         }
         
-        // Verificar permiso de eliminación sobre la entidad específica
-        $this->denyAccessUnlessGranted(MaintainerVoter::DELETE, $entity);
+        // Verificar permiso de eliminación con contexto de categoría (Phase 2)
+        $context = new MaintainerContext($entity, $this->getMaintainerCategory());
+        $this->denyAccessUnlessGranted(MaintainerVoter::DELETE, $context);
         
         if ($this->canDelete($entity)) {
             $this->beforeDelete($entity, $request);
@@ -314,8 +318,9 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
         ?array $headers = null,
         ?string $filename = null
     ): Response {
-        // Verificar permiso de exportación
-        $this->denyAccessUnlessGranted(MaintainerVoter::EXPORT, $this->getEntityClass());
+        // Verificar permiso de exportación con contexto de categoría (Phase 2)
+        $context = new MaintainerContext($this->getEntityClass(), $this->getMaintainerCategory());
+        $this->denyAccessUnlessGranted(MaintainerVoter::EXPORT, $context);
         
         if (!$this->exportService) {
             throw new \RuntimeException('ExportService not injected. Add #[Autowire] or setter injection.');
@@ -629,11 +634,6 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
      * Obtiene la clase de la entidad
      * Subclases deben sobreescribir si necesitan lógica custom
      */
-    protected function getEntityClass(): string
-    {
-        $entity = $this->createNewEntity();
-        return get_class($entity);
-    }
 
     /**
      * Guarda la entidad
@@ -782,6 +782,62 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
             
             return true;
         });
+    }
+
+    /**
+     * Obtiene la categoría del mantenedor para Phase 2 de permisos granulares
+     * 
+     * Este método puede ser sobrescrito por las subclases para especificar
+     * explicitamente su categoría, activando así los permisos granulares por categoría.
+     * 
+     * Si retorna null (default), la categoría se extraerá automáticamente del namespace.
+     * Si retorna un string, se usará esa categoría explícita.
+     * 
+     * Categorías válidas: 'basic', 'clinical', 'commercial', 'hospital', 'human',
+     * 'workshop', 'settlements', 'insurance', 'budget'
+     * 
+     * Ejemplo de uso:
+     * ```php
+     * // En TreatmentTypeController:
+     * protected function getMaintainerCategory(): ?string
+     * {
+     *     return 'commercial'; // Este mantenedor pertenece a categoría commercial
+     * }
+     * ```
+     * 
+     * @return string|null Categoría explícita o null para auto-detección
+     * @since Phase 2 - Category Granularity (Sprint 3)
+     */
+    protected function getMaintainerCategory(): ?string
+    {
+        return null; // Por defecto, usar namespace para extraer categoría
+    }
+
+    /**
+     * Obtiene el nombre de la clase de la entidad gestionada
+     * 
+     * Este método es usado por el voter de permisos y por otros componentes
+     * que necesitan conocer qué entidad gestiona este controller.
+     * 
+     * Las subclases deben sobrescribir este método para retornar el FQCN
+     * de su entidad.
+     * 
+     * Ejemplo:
+     * ```php
+     * protected function getEntityClass(): string
+     * {
+     *     return Gender::class;
+     * }
+     * ```
+     * 
+     * @return string FQCN de la entidad (Fully Qualified Class Name)
+     */
+    protected function getEntityClass(): string
+    {
+        // Por defecto, intentar extraer del createNewEntity()
+        // Esto funciona en la mayoría de casos pero puede no ser lo más eficiente
+        $entity = $this->createNewEntity();
+        return get_class($entity);
     }
 
     /**
