@@ -21,6 +21,25 @@ class AdmissionController extends AbstractTenantAwareController
     #[Route('/hospitalization', name: 'hospitalization_index', methods: ['GET'])]
     public function index(Request $request): Response
     {
+        return $this->render('admission/index.html.twig', $this->buildSearchViewData(
+            request: $request,
+            pageTitle: 'Admisión Hospitalaria',
+            searchActionRoute: 'app_admission_hospitalization_index'
+        ));
+    }
+
+    #[Route('/pre', name: 'pre_index', methods: ['GET'])]
+    public function preIndex(Request $request): Response
+    {
+        return $this->render('admission/index.html.twig', $this->buildSearchViewData(
+            request: $request,
+            pageTitle: 'Pre-Admisión',
+            searchActionRoute: 'app_admission_pre_index'
+        ));
+    }
+
+    private function buildSearchViewData(Request $request, string $pageTitle, string $searchActionRoute): array
+    {
         $searchTerm = trim((string) $request->query->get('q', ''));
         $selectedTypeId = $request->query->getInt('identification_type', 0);
         $patients = [];
@@ -57,21 +76,14 @@ class AdmissionController extends AbstractTenantAwareController
             $patients = $qb->getQuery()->getResult();
         }
 
-        return $this->render('admission/index.html.twig', [
-            'page_title' => 'Admisión Hospitalaria',
+        return [
+            'page_title' => $pageTitle,
+            'search_action_route' => $searchActionRoute,
             'identification_types' => $identificationTypes,
             'search_term' => $searchTerm,
             'selected_type_id' => $selectedTypeId,
             'patients' => $patients,
             'searched' => $searched,
-        ]);
-    }
-
-    #[Route('/pre', name: 'pre_index', methods: ['GET'])]
-    public function preIndex(Request $request): Response
-    {
-        return $this->render('admission/index.html.twig', [
-            'page_title' => 'Pre-Admisión',
-        ]);
+        ];
     }
 }

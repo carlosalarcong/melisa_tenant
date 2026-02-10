@@ -15,7 +15,7 @@
                 Búsqueda de Paciente
             </div>
             <div class="card-body">
-                <form method="get" action="{{ path('app_admission_hospitalization_index') }}">
+                <form method="get" action="{{ path(search_action_route|default('app_admission_hospitalization_index')) }}">
                     <div class="row g-2 align-items-end">
                         <div class="col-md-3">
                             <label for="identification_type" class="form-label">Tipo documento</label>
