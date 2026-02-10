@@ -11,6 +11,7 @@ use App\Entity\Tenant\MaritalStatus;
 use App\Entity\Tenant\Occupation;
 use App\Entity\Tenant\Person;
 use App\Entity\Tenant\Religion;
+use App\Form\Admission\ForeignPatientType;
 use App\Form\Admission\PatientRegistrationType;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,6 +28,17 @@ class PatientRegistrationController extends AbstractTenantAwareController
     #[Route('/register', name: 'register', methods: ['GET', 'POST'])]
     public function register(Request $request): Response
     {
+        return $this->handleRegistration($request, false);
+    }
+
+    #[Route('/register/foreign', name: 'register_foreign', methods: ['GET', 'POST'])]
+    public function registerForeign(Request $request): Response
+    {
+        return $this->handleRegistration($request, true);
+    }
+
+    private function handleRegistration(Request $request, bool $foreignMode): Response
+    {
         $identificationTypes = $this->entityManager->getRepository(IdentificationType::class)->findBy([], ['name' => 'ASC']);
         $genders = $this->entityManager->getRepository(Gender::class)->findBy([], ['name' => 'ASC']);
         $countries = $this->entityManager->getRepository(Country::class)->findBy([], ['name' => 'ASC']);
@@ -35,7 +47,8 @@ class PatientRegistrationController extends AbstractTenantAwareController
         $religions = $this->entityManager->getRepository(Religion::class)->findBy([], ['name' => 'ASC']);
         $educationLevels = $this->entityManager->getRepository(EducationLevel::class)->findBy([], ['name' => 'ASC']);
 
-        $form = $this->createForm(PatientRegistrationType::class, [
+        $formClass = $foreignMode ? ForeignPatientType::class : PatientRegistrationType::class;
+        $form = $this->createForm($formClass, [
             'identification_type' => $request->query->getInt('identification_type', 0) ?: null,
             'identification' => (string) $request->query->get('identification', ''),
             'admission_type' => (string) $request->query->get('admission_type', 'hospitalaria'),
@@ -64,6 +77,7 @@ class PatientRegistrationController extends AbstractTenantAwareController
             'occupation_choices' => $this->toChoiceMap($occupations),
             'religion_choices' => $this->toChoiceMap($religions),
             'education_level_choices' => $this->toChoiceMap($educationLevels),
+            'foreign_mode' => $foreignMode,
         ]);
         $form->handleRequest($request);
 
@@ -71,71 +85,105 @@ class PatientRegistrationController extends AbstractTenantAwareController
             /** @var array<string,mixed> $formData */
             $formData = $form->getData();
 
-            $exists = $this->entityManager->createQueryBuilder()
-                ->select('p.id')
-                ->from(Person::class, 'p')
-                ->leftJoin('p.identificationType', 'it')
-                ->where('p.identification = :identification')
-                ->setParameter('identification', (string) $formData['identification']);
+            if ($this->nullIfEmpty($formData['identification'] ?? null) !== null) {
+                $exists = $this->entityManager->createQueryBuilder()
+                    ->select('p.id')
+                    ->from(Person::class, 'p')
+                    ->leftJoin('p.identificationType', 'it')
+                    ->where('p.identification = :identification')
+                    ->setParameter('identification', (string) $formData['identification']);
 
-            if ((int) ($formData['identification_type'] ?? 0) > 0) {
-                $exists->andWhere('it.id = :typeId')->setParameter('typeId', (int) $formData['identification_type']);
-            }
-
-            if (!empty($exists->getQuery()->getScalarResult())) {
-                $this->addFlash('warning', 'Ya existe un paciente con esa identificación.');
-            } else {
-                try {
-                    $birthDateAt = new \DateTimeImmutable((string) $formData['birth_date']);
-                } catch (\Exception) {
-                    $this->addFlash('danger', 'La fecha de nacimiento no es válida.');
-
-                    return $this->render('admission/patient/register.html.twig', [
-                        'page_title' => 'Registro de paciente',
-                        'form' => $form->createView(),
-                    ]);
+                if ((int) ($formData['identification_type'] ?? 0) > 0) {
+                    $exists->andWhere('it.id = :typeId')->setParameter('typeId', (int) $formData['identification_type']);
                 }
 
-                $person = new Person();
-                $person->setIdentification((string) $formData['identification']);
-                $person->setName((string) $formData['name']);
-                $person->setLastName((string) $formData['last_name']);
-                $person->setMiddleName($this->nullIfEmpty($formData['middle_name'] ?? null));
-                $person->setMobilePhone((string) $formData['mobile_phone']);
-                $person->setHomePhone($this->nullIfEmpty($formData['home_phone'] ?? null));
-                $person->setWorkPhone($this->nullIfEmpty($formData['work_phone'] ?? null));
-                $person->setEmail($this->nullIfEmpty($formData['email'] ?? null));
-                $person->setSecondaryEmail($this->nullIfEmpty($formData['secondary_email'] ?? null));
-                $person->setSocialName($this->nullIfEmpty($formData['social_name'] ?? null));
-                $person->setNumberOfChildren($formData['number_of_children'] === null ? null : (int) $formData['number_of_children']);
-                $person->setCreatedAt(new \DateTimeImmutable());
-                $person->setUpdatedAt(new \DateTimeImmutable());
-                $person->setBirthDateAt($birthDateAt);
+                if (!empty($exists->getQuery()->getScalarResult())) {
+                    $this->addFlash('warning', 'Ya existe un paciente con esa identificación.');
+                }
+            }
 
-                $this->assignRelation($person, IdentificationType::class, 'setIdentificationType', (int) ($formData['identification_type'] ?? 0));
-                $this->assignRelation($person, Gender::class, 'setGender', (int) ($formData['gender'] ?? 0));
-                $this->assignRelation($person, Country::class, 'setNacionality', (int) ($formData['country'] ?? 0));
-                $this->assignRelation($person, MaritalStatus::class, 'setMaritalStatus', (int) ($formData['marital_status'] ?? 0));
-                $this->assignRelation($person, Occupation::class, 'setOccupation', (int) ($formData['occupation'] ?? 0));
-                $this->assignRelation($person, Religion::class, 'setReligion', (int) ($formData['religion'] ?? 0));
-                $this->assignRelation($person, EducationLevel::class, 'setEducationLevel', (int) ($formData['education_level'] ?? 0));
-
-                $this->entityManager->persist($person);
-                $this->entityManager->flush();
-
-                $this->addFlash('success', 'Persona creada. Continúa con la admisión.');
-
-                return $this->redirectToRoute('app_admission_wizard_step1', [
-                    'patientId' => $person->getId(),
-                    'type' => ((string) ($formData['admission_type'] ?? 'hospitalaria')) === 'pre' ? 'pre' : 'hospitalaria',
+            if (count($request->getSession()->getFlashBag()->peek('warning')) > 0) {
+                return $this->render('admission/patient/register.html.twig', [
+                    'page_title' => $foreignMode ? 'Registro de paciente extranjero' : 'Registro de paciente',
+                    'form' => $form->createView(),
+                    'foreign_mode' => $foreignMode,
                 ]);
             }
+
+            try {
+                $birthDateAt = new \DateTimeImmutable((string) $formData['birth_date']);
+            } catch (\Exception) {
+                $this->addFlash('danger', 'La fecha de nacimiento no es válida.');
+
+                return $this->render('admission/patient/register.html.twig', [
+                    'page_title' => $foreignMode ? 'Registro de paciente extranjero' : 'Registro de paciente',
+                    'form' => $form->createView(),
+                    'foreign_mode' => $foreignMode,
+                ]);
+            }
+
+            $person = new Person();
+            $identification = $this->nullIfEmpty($formData['identification'] ?? null);
+            if ($identification === null) {
+                $identification = $this->generateForeignIdentifier();
+            }
+
+            $person->setIdentification($identification);
+            $person->setName((string) $formData['name']);
+            $person->setLastName((string) $formData['last_name']);
+            $person->setMiddleName($this->nullIfEmpty($formData['middle_name'] ?? null));
+            $person->setMobilePhone((string) $formData['mobile_phone']);
+            $person->setHomePhone($this->nullIfEmpty($formData['home_phone'] ?? null));
+            $person->setWorkPhone($this->nullIfEmpty($formData['work_phone'] ?? null));
+            $person->setEmail($this->nullIfEmpty($formData['email'] ?? null));
+            $person->setSecondaryEmail($this->nullIfEmpty($formData['secondary_email'] ?? null));
+            $person->setSocialName($this->nullIfEmpty($formData['social_name'] ?? null));
+            $person->setNumberOfChildren($formData['number_of_children'] === null ? null : (int) $formData['number_of_children']);
+            $person->setCreatedAt(new \DateTimeImmutable());
+            $person->setUpdatedAt(new \DateTimeImmutable());
+            $person->setBirthDateAt($birthDateAt);
+
+            $this->assignRelation($person, IdentificationType::class, 'setIdentificationType', (int) ($formData['identification_type'] ?? 0));
+            $this->assignRelation($person, Gender::class, 'setGender', (int) ($formData['gender'] ?? 0));
+            $this->assignRelation($person, Country::class, 'setNacionality', (int) ($formData['country'] ?? 0));
+            $this->assignRelation($person, MaritalStatus::class, 'setMaritalStatus', (int) ($formData['marital_status'] ?? 0));
+            $this->assignRelation($person, Occupation::class, 'setOccupation', (int) ($formData['occupation'] ?? 0));
+            $this->assignRelation($person, Religion::class, 'setReligion', (int) ($formData['religion'] ?? 0));
+            $this->assignRelation($person, EducationLevel::class, 'setEducationLevel', (int) ($formData['education_level'] ?? 0));
+
+            $this->entityManager->persist($person);
+            $this->entityManager->flush();
+
+            $this->addFlash('success', 'Persona creada. Continúa con la admisión.');
+
+            return $this->redirectToRoute('app_admission_wizard_step1', [
+                'patientId' => $person->getId(),
+                'type' => ((string) ($formData['admission_type'] ?? 'hospitalaria')) === 'pre' ? 'pre' : 'hospitalaria',
+            ]);
         }
 
         return $this->render('admission/patient/register.html.twig', [
-            'page_title' => 'Registro de paciente',
+            'page_title' => $foreignMode ? 'Registro de paciente extranjero' : 'Registro de paciente',
             'form' => $form->createView(),
+            'foreign_mode' => $foreignMode,
         ]);
+    }
+
+    private function generateForeignIdentifier(): string
+    {
+        do {
+            $candidate = 'EXT-' . strtoupper(substr(bin2hex(random_bytes(4)), 0, 8));
+            $exists = $this->entityManager->createQueryBuilder()
+                ->select('p.id')
+                ->from(Person::class, 'p')
+                ->where('p.identification = :identification')
+                ->setParameter('identification', $candidate)
+                ->setMaxResults(1)
+                ->getQuery()
+                ->getOneOrNullResult();
+        } while ($exists !== null);
+
+        return $candidate;
     }
 
     private function assignRelation(Person $person, string $className, string $setter, int $id): void

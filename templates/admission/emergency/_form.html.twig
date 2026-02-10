@@ -9,22 +9,20 @@
             <div class="card-body p-4">
                 <p class="text-muted">Paciente seleccionado: #{{ patient_id }}</p>
 
-                <form method="post" action="{{ path('app_admission_emergency_create', { patientId: patient_id }) }}">
+                {{ form_start(form, { action: path('app_admission_emergency_create', { patientId: patient_id }) }) }}
+                    {% if form_errors(form) %}
+                        <div class="alert alert-danger">{{ form_errors(form) }}</div>
+                    {% endif %}
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label for="triage" class="form-label">Triage</label>
-                            <select id="triage" name="triage" class="form-select" required>
-                                <option value="">-- Seleccionar --</option>
-                                <option value="c1">C1 - Reanimación</option>
-                                <option value="c2">C2 - Emergencia</option>
-                                <option value="c3">C3 - Urgencia</option>
-                                <option value="c4">C4 - Menor urgencia</option>
-                                <option value="c5">C5 - No urgente</option>
-                            </select>
+                            {{ form_label(form.triage, 'Triage', { label_attr: { class: 'form-label' } }) }}
+                            {{ form_widget(form.triage, { attr: { class: 'form-select', id: 'triage', required: true } }) }}
+                            {{ form_errors(form.triage) }}
                         </div>
                         <div class="col-md-6">
-                            <label for="reason" class="form-label">Motivo consulta</label>
-                            <input id="reason" name="reason" type="text" class="form-control" required>
+                            {{ form_label(form.reason, 'Motivo consulta', { label_attr: { class: 'form-label' } }) }}
+                            {{ form_widget(form.reason, { attr: { class: 'form-control', id: 'reason', required: true } }) }}
+                            {{ form_errors(form.reason) }}
                         </div>
                     </div>
 
@@ -36,9 +34,8 @@
                         </a>
                         <button type="submit" class="btn btn-danger">Guardar y continuar</button>
                     </div>
-                </form>
+                {{ form_end(form) }}
             </div>
         </div>
     </div>
 {% endblock %}
-

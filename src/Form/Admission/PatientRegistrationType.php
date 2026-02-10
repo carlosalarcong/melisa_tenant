@@ -20,25 +20,29 @@ class PatientRegistrationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $foreignMode = (bool) $options['foreign_mode'];
+
         $builder
             ->add('admission_type', HiddenType::class, [
                 'required' => false,
                 'empty_data' => 'hospitalaria',
             ])
             ->add('identification_type', ChoiceType::class, [
-                'required' => true,
+                'required' => !$foreignMode,
                 'choices' => $options['identification_choices'],
                 'placeholder' => 'Seleccionar',
-                'constraints' => [
-                    new NotBlank(message: 'El tipo de documento es obligatorio.'),
-                ],
+                'constraints' => $foreignMode
+                    ? []
+                    : [new NotBlank(message: 'El tipo de documento es obligatorio.')],
             ])
             ->add('identification', TextType::class, [
-                'required' => true,
-                'constraints' => [
-                    new NotBlank(message: 'La identificación es obligatoria.'),
-                    new Length(max: 50),
-                ],
+                'required' => !$foreignMode,
+                'constraints' => $foreignMode
+                    ? [new Length(max: 50)]
+                    : [
+                        new NotBlank(message: 'La identificación es obligatoria.'),
+                        new Length(max: 50),
+                    ],
             ])
             ->add('birth_date', TextType::class, [
                 'required' => true,
@@ -137,6 +141,7 @@ class PatientRegistrationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
+            'foreign_mode' => false,
             'identification_choices' => [],
             'gender_choices' => [],
             'country_choices' => [],
@@ -147,6 +152,7 @@ class PatientRegistrationType extends AbstractType
         ]);
 
         $resolver->setAllowedTypes('identification_choices', 'array');
+        $resolver->setAllowedTypes('foreign_mode', 'bool');
         $resolver->setAllowedTypes('gender_choices', 'array');
         $resolver->setAllowedTypes('country_choices', 'array');
         $resolver->setAllowedTypes('marital_status_choices', 'array');

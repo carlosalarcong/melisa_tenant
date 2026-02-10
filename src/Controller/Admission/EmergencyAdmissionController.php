@@ -5,6 +5,7 @@ namespace App\Controller\Admission;
 use App\Controller\AbstractTenantAwareController;
 use App\Entity\Tenant\AdmissionRecord;
 use App\Entity\Tenant\Person;
+use App\Form\Admission\PatientRegistrationUrgencyType;
 use App\Service\Admission\AdmissionService;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,13 +37,21 @@ class EmergencyAdmissionController extends AbstractTenantAwareController
             return $this->redirectToRoute('app_admission_emergency_index');
         }
 
-        if ($request->isMethod('POST')) {
+        $form = $this->createForm(PatientRegistrationUrgencyType::class, [
+            'triage' => null,
+            'reason' => '',
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var array<string,mixed> $data */
+            $data = $form->getData();
             $record = new AdmissionRecord();
             $record->setPerson($patient);
             $record->setAdmissionType('urgencia');
             $record->setStatus('completed');
-            $record->setTriage(trim((string) $request->request->get('triage', '')));
-            $record->setConsultationReason(trim((string) $request->request->get('reason', '')));
+            $record->setTriage(trim((string) ($data['triage'] ?? '')));
+            $record->setConsultationReason(trim((string) ($data['reason'] ?? '')));
 
             $this->entityManager->persist($record);
             $this->entityManager->flush();
@@ -52,8 +61,13 @@ class EmergencyAdmissionController extends AbstractTenantAwareController
             ]);
         }
 
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $this->addFlash('danger', 'Debes completar triage y motivo de consulta.');
+        }
+
         return $this->render('admission/emergency/_form.html.twig', [
             'patient_id' => $patientId,
+            'form' => $form->createView(),
         ]);
     }
 

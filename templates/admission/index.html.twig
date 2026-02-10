@@ -61,6 +61,13 @@
                            data-turbo-frame="maintainer-content">
                             Agregar paciente
                         </a>
+                        <a href="{{ path('app_admission_patient_register_foreign', {
+                            admission_type: page_title == 'Pre-Admisión' ? 'pre' : 'hospitalaria'
+                        }) }}"
+                           class="btn btn-outline-primary ms-2"
+                           data-turbo-frame="maintainer-content">
+                            Agregar extranjero sin RUT
+                        </a>
                     </div>
                 </div>
             {% else %}
