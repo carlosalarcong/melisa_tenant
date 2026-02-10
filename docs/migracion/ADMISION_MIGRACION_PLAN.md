@@ -83,7 +83,7 @@ assets/controllers/admission/
             'name' => 'admission_general',
             'label' => 'Admisión General',
             'icon' => 'bx bx-user-check',
-            'route' => 'app_admission_index',
+            'route' => 'app_admission_hospitalization_index',
             'module' => 'admission',
             'children' => []
         ],
@@ -311,7 +311,7 @@ class AdmissionWizardController extends AbstractTenantAwareController
                     {# Campos del paciente #}
 
                     <div class="d-flex gap-2 justify-content-end mt-4">
-                        <a href="{{ path('app_admission_index') }}"
+                        <a href="{{ path('app_admission_hospitalization_index') }}"
                            class="btn btn-outline-secondary"
                            data-turbo-frame="maintainer-content">
                             Cancelar

@@ -128,7 +128,7 @@ class MenuDefinition
                         'name' => 'admission_general',
                         'label' => 'Admisión Hospitalaria',
                         'icon' => 'bx bx-user-check',
-                        'route' => 'app_admission_index',
+                        'route' => 'app_admission_hospitalization_index',
                         'module' => 'admission',
                         'children' => []
                     ],
