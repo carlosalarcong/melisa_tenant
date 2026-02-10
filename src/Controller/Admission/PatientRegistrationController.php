@@ -37,6 +37,7 @@ class PatientRegistrationController extends AbstractTenantAwareController
         $formData = [
             'identification_type' => $request->query->getInt('identification_type', 0),
             'identification' => (string) $request->query->get('identification', ''),
+            'admission_type' => (string) $request->query->get('admission_type', 'hospitalaria'),
             'birth_date' => '',
             'name' => '',
             'last_name' => '',
@@ -60,6 +61,7 @@ class PatientRegistrationController extends AbstractTenantAwareController
             $formData = [
                 'identification_type' => $request->request->getInt('identification_type', 0),
                 'identification' => trim((string) $request->request->get('identification', '')),
+                'admission_type' => (string) $request->request->get('admission_type', 'hospitalaria'),
                 'birth_date' => trim((string) $request->request->get('birth_date', '')),
                 'name' => trim((string) $request->request->get('name', '')),
                 'last_name' => trim((string) $request->request->get('last_name', '')),
@@ -139,6 +141,7 @@ class PatientRegistrationController extends AbstractTenantAwareController
 
                 return $this->redirectToRoute('app_admission_wizard_step1', [
                     'patientId' => $person->getId(),
+                    'type' => $formData['admission_type'] === 'pre' ? 'pre' : 'hospitalaria',
                 ]);
             }
         }

@@ -3,6 +3,8 @@
 namespace App\Controller\Admission;
 
 use App\Controller\AbstractTenantAwareController;
+use App\Entity\Tenant\AdmissionRecord;
+use App\Entity\Tenant\Person;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,11 +28,25 @@ class EmergencyAdmissionController extends AbstractTenantAwareController
     #[Route('/create/{patientId}', name: 'create', methods: ['GET', 'POST'])]
     public function create(Request $request, int $patientId): Response
     {
+        $patient = $this->entityManager->find(Person::class, $patientId);
+        if (!$patient instanceof Person) {
+            $this->addFlash('danger', 'Paciente no encontrado para urgencia.');
+            return $this->redirectToRoute('app_admission_emergency_index');
+        }
+
         if ($request->isMethod('POST')) {
-            $urgencyId = time();
+            $record = new AdmissionRecord();
+            $record->setPerson($patient);
+            $record->setAdmissionType('urgencia');
+            $record->setStatus('completed');
+            $record->setTriage(trim((string) $request->request->get('triage', '')));
+            $record->setConsultationReason(trim((string) $request->request->get('reason', '')));
+
+            $this->entityManager->persist($record);
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('app_admission_emergency_view', [
-                'id' => $urgencyId,
+                'id' => $record->getId(),
             ]);
         }
 
@@ -42,9 +58,16 @@ class EmergencyAdmissionController extends AbstractTenantAwareController
     #[Route('/{id}/view', name: 'view', methods: ['GET'])]
     public function view(int $id): Response
     {
+        /** @var AdmissionRecord|null $record */
+        $record = $this->entityManager->find(AdmissionRecord::class, $id);
+        if (!$record instanceof AdmissionRecord || $record->getAdmissionType() !== 'urgencia') {
+            throw $this->createNotFoundException('Admisión de urgencia no encontrada.');
+        }
+
         return $this->render('admission/view.html.twig', [
             'admission_id' => $id,
             'admission_type' => 'urgencia',
+            'admission_record' => $record,
         ]);
     }
 }

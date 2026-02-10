@@ -3,6 +3,7 @@
 namespace App\Controller\Admission;
 
 use App\Controller\AbstractTenantAwareController;
+use App\Entity\Tenant\AdmissionRecord;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -30,19 +31,17 @@ class AdmissionPrintController extends AbstractTenantAwareController
             );
         }
 
-        // TODO: Buscar admisión desde TenantEntityManager
-        // $admission = $this->entityManager->getRepository(Admission::class)->find($id);
-        // if (!$admission) {
-        //     throw $this->createNotFoundException('Admisión no encontrada');
-        // }
-
-        // TODO: Cuando AdmissionPrintService esté disponible:
-        // $data = $this->printService->prepareAdmissionDocument($admission);
+        /** @var AdmissionRecord|null $record */
+        $record = $this->entityManager->find(AdmissionRecord::class, $id);
+        if (!$record instanceof AdmissionRecord) {
+            throw $this->createNotFoundException('Admisión no encontrada');
+        }
 
         return $this->render('admission/print/admission_pdf.html.twig', [
             'admission_id' => $id,
             'document_type' => $type,
             'printed_at' => new \DateTimeImmutable(),
+            'admission_record' => $record,
         ]);
     }
 
@@ -60,20 +59,17 @@ class AdmissionPrintController extends AbstractTenantAwareController
             );
         }
 
-        // TODO: Buscar admisión urgencia desde TenantEntityManager
-        // $admission = $this->entityManager->getRepository(EmergencyAdmission::class)->find($id);
-        // if (!$admission) {
-        //     throw $this->createNotFoundException('Admisión urgencia no encontrada');
-        // }
-
-        // TODO: Cuando AdmissionPrintService esté disponible:
-        // $data = $this->printService->prepareUrgencyDocument($admission);
+        /** @var AdmissionRecord|null $record */
+        $record = $this->entityManager->find(AdmissionRecord::class, $id);
+        if (!$record instanceof AdmissionRecord || $record->getAdmissionType() !== 'urgencia') {
+            throw $this->createNotFoundException('Admisión urgencia no encontrada');
+        }
 
         return $this->render('admission/print/urgency_pdf.html.twig', [
             'admission_id' => $id,
             'document_type' => $type,
             'printed_at' => new \DateTimeImmutable(),
+            'admission_record' => $record,
         ]);
     }
 }
-

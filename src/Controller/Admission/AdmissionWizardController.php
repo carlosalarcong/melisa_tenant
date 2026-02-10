@@ -3,6 +3,7 @@
 namespace App\Controller\Admission;
 
 use App\Controller\AbstractTenantAwareController;
+use App\Entity\Tenant\AdmissionRecord;
 use App\Entity\Tenant\Person;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,9 +26,24 @@ class AdmissionWizardController extends AbstractTenantAwareController
             return $this->redirectToRoute('app_admission_hospitalization_index');
         }
 
+        $admissionType = (string) $request->query->get('type', 'hospitalaria');
+        if (!in_array($admissionType, ['hospitalaria', 'pre'], true)) {
+            $admissionType = 'hospitalaria';
+        }
+
         if ($request->isMethod('POST')) {
+            $record = new AdmissionRecord();
+            $record->setPerson($patient);
+            $record->setAdmissionType($admissionType);
+            $record->setStatus('draft');
+
+            $this->entityManager->persist($record);
+            $this->entityManager->flush();
+
             $request->getSession()->set('admission_wizard', [
                 'patient_id' => $patientId,
+                'admission_record_id' => $record->getId(),
+                'admission_type' => $admissionType,
                 'step1_confirmed' => true,
             ]);
 
@@ -37,6 +53,7 @@ class AdmissionWizardController extends AbstractTenantAwareController
         return $this->render('admission/wizard/step1.html.twig', [
             'patient_id' => $patientId,
             'patient' => $patient,
+            'admission_type' => $admissionType,
         ]);
     }
 
@@ -44,13 +61,33 @@ class AdmissionWizardController extends AbstractTenantAwareController
     public function step2(Request $request): Response
     {
         $wizardData = $request->getSession()->get('admission_wizard', []);
-        if (empty($wizardData['patient_id'])) {
+        if (empty($wizardData['patient_id']) || empty($wizardData['admission_record_id'])) {
+            return $this->redirectToRoute('app_admission_hospitalization_index');
+        }
+
+        /** @var AdmissionRecord|null $record */
+        $record = $this->entityManager->find(AdmissionRecord::class, (int) $wizardData['admission_record_id']);
+        if (!$record instanceof AdmissionRecord) {
+            $this->addFlash('danger', 'No se encontró la admisión en curso.');
             return $this->redirectToRoute('app_admission_hospitalization_index');
         }
 
         if ($request->isMethod('POST')) {
-            $wizardData['payer'] = (string) $request->request->get('payer', '');
-            $wizardData['agreement'] = (string) $request->request->get('agreement', '');
+            $payerId = $request->request->getInt('payer', 0);
+            $agreementId = $request->request->getInt('agreement', 0);
+            if ($payerId <= 0 || $agreementId <= 0) {
+                $this->addFlash('danger', 'Debes seleccionar financiador y convenio.');
+                return $this->render('admission/wizard/step2.html.twig', [
+                    'wizard' => $wizardData,
+                ]);
+            }
+
+            $record->setPayerId($payerId);
+            $record->setAgreementId($agreementId);
+            $this->entityManager->flush();
+
+            $wizardData['payer'] = (string) $payerId;
+            $wizardData['agreement'] = (string) $agreementId;
             $request->getSession()->set('admission_wizard', $wizardData);
 
             return $this->redirectToRoute('app_admission_wizard_step3');
@@ -65,20 +102,41 @@ class AdmissionWizardController extends AbstractTenantAwareController
     public function step3(Request $request): Response
     {
         $wizardData = $request->getSession()->get('admission_wizard', []);
-        if (empty($wizardData['patient_id'])) {
+        if (empty($wizardData['patient_id']) || empty($wizardData['admission_record_id'])) {
+            return $this->redirectToRoute('app_admission_hospitalization_index');
+        }
+
+        /** @var AdmissionRecord|null $record */
+        $record = $this->entityManager->find(AdmissionRecord::class, (int) $wizardData['admission_record_id']);
+        if (!$record instanceof AdmissionRecord) {
+            $this->addFlash('danger', 'No se encontró la admisión en curso.');
             return $this->redirectToRoute('app_admission_hospitalization_index');
         }
 
         if ($request->isMethod('POST')) {
-            $wizardData['service'] = (string) $request->request->get('service', '');
-            $wizardData['bed'] = (string) $request->request->get('bed', '');
+            $serviceId = $request->request->getInt('service', 0);
+            $bedId = $request->request->getInt('bed', 0);
+            if ($serviceId <= 0 || $bedId <= 0) {
+                $this->addFlash('danger', 'Debes seleccionar servicio y cama.');
+                return $this->render('admission/wizard/step3.html.twig', [
+                    'wizard' => $wizardData,
+                ]);
+            }
+
+            $record->setServiceId($serviceId);
+            $record->setBedId($bedId);
+            $record->setStatus('completed');
+            $this->entityManager->flush();
+
+            $wizardData['service'] = (string) $serviceId;
+            $wizardData['bed'] = (string) $bedId;
             $request->getSession()->set('admission_wizard', $wizardData);
 
-            $admissionId = time();
+            $admissionId = $record->getId();
             $request->getSession()->remove('admission_wizard');
 
-            return $this->redirectToRoute('app_admission_wizard_complete', [
-                'admissionId' => $admissionId,
+            return $this->redirectToRoute('app_admission_view', [
+                'id' => $admissionId,
             ]);
         }
 

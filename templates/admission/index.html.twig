@@ -57,7 +57,8 @@
                         </div>
                         <a href="{{ path('app_admission_patient_register', {
                             identification_type: selected_type_id,
-                            identification: search_term
+                            identification: search_term,
+                            admission_type: page_title == 'Pre-Admisión' ? 'pre' : 'hospitalaria'
                         }) }}"
                            class="btn btn-success"
                            data-turbo-frame="maintainer-content">
@@ -91,7 +92,8 @@
                                     <td>{{ patient.name }} {{ patient.lastName }} {{ patient.middleName|default('') }}</td>
                                     <td>{{ patient.mobilePhone }}</td>
                                     <td class="text-end">
-                                        <a href="{{ path('app_admission_wizard_step1', { patientId: patient.id }) }}"
+                                        {% set admission_type = page_title == 'Pre-Admisión' ? 'pre' : 'hospitalaria' %}
+                                        <a href="{{ path('app_admission_wizard_step1', { patientId: patient.id, type: admission_type }) }}"
                                            class="btn btn-primary btn-sm"
                                            data-turbo-frame="admission-wizard-content">
                                             Admitir

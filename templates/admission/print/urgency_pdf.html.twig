@@ -168,25 +168,42 @@
 
     <div class="section">
         <h2 class="section-title">Datos del paciente</h2>
-        <p><em>Pendiente de integración con entidad EmergencyAdmission</em></p>
-        {# TODO: Cuando esté integrado con AdmissionPrintService:
-        <div class="info-grid">
-            <div class="info-item">
-                <strong>Nombre completo</strong>
-                <span>{{ admission.patient.fullName }}</span>
+        {% if admission_record is defined %}
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Nombre completo</strong>
+                    <span>{{ admission_record.person.name }} {{ admission_record.person.lastName }} {{ admission_record.person.middleName|default('') }}</span>
+                </div>
+                <div class="info-item">
+                    <strong>Identificación</strong>
+                    <span>{{ admission_record.person.identificationType ? admission_record.person.identificationType.name : 'Sin tipo' }} - {{ admission_record.person.identification }}</span>
+                </div>
             </div>
-            <div class="info-item">
-                <strong>RUT/Identificación</strong>
-                <span>{{ admission.patient.rut }}</span>
-            </div>
-        </div>
-        #}
+        {% else %}
+            <p><em>Sin datos de paciente.</em></p>
+        {% endif %}
     </div>
 
     <div class="section">
         <h2 class="section-title">Datos de urgencia</h2>
-        <p><em>Pendiente de integración con entidad EmergencyAdmission</em></p>
-        {# TODO: tipo consulta, profesional, observaciones #}
+        {% if admission_record is defined %}
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Triage</strong>
+                    <span>{{ admission_record.triage|default('-') }}</span>
+                </div>
+                <div class="info-item">
+                    <strong>Motivo consulta</strong>
+                    <span>{{ admission_record.consultationReason|default('-') }}</span>
+                </div>
+                <div class="info-item">
+                    <strong>Estado</strong>
+                    <span>{{ admission_record.status|capitalize }}</span>
+                </div>
+            </div>
+        {% else %}
+            <p><em>Sin datos de urgencia.</em></p>
+        {% endif %}
     </div>
 
     <div class="footer">
@@ -195,4 +212,3 @@
     </div>
 </body>
 </html>
-

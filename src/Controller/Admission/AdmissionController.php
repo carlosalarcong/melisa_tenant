@@ -3,6 +3,7 @@
 namespace App\Controller\Admission;
 
 use App\Controller\AbstractTenantAwareController;
+use App\Entity\Tenant\AdmissionRecord;
 use App\Entity\Tenant\IdentificationType;
 use App\Entity\Tenant\Person;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
@@ -36,6 +37,22 @@ class AdmissionController extends AbstractTenantAwareController
             pageTitle: 'Pre-Admisión',
             searchActionRoute: 'app_admission_pre_index'
         ));
+    }
+
+    #[Route('/{id}/view', name: 'view', methods: ['GET'], requirements: ['id' => '\d+'])]
+    public function view(int $id): Response
+    {
+        /** @var AdmissionRecord|null $record */
+        $record = $this->entityManager->find(AdmissionRecord::class, $id);
+        if (!$record instanceof AdmissionRecord) {
+            throw $this->createNotFoundException('Admisión no encontrada.');
+        }
+
+        return $this->render('admission/view.html.twig', [
+            'admission_id' => $record->getId(),
+            'admission_type' => $record->getAdmissionType(),
+            'admission_record' => $record,
+        ]);
     }
 
     private function buildSearchViewData(Request $request, string $pageTitle, string $searchActionRoute): array

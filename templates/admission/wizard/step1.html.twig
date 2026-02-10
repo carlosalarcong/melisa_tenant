@@ -33,7 +33,7 @@
                 </div>
             </div>
 
-            <form method="post" action="{{ path('app_admission_wizard_step1', { patientId: patient_id }) }}">
+            <form method="post" action="{{ path('app_admission_wizard_step1', { patientId: patient_id, type: admission_type|default('hospitalaria') }) }}">
                 <div class="d-flex gap-2 justify-content-end">
                     <a href="{{ path('app_admission_hospitalization_index') }}"
                        class="btn btn-outline-secondary"

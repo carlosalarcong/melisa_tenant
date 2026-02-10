@@ -149,25 +149,54 @@
 
     <div class="section">
         <h2 class="section-title">Datos del paciente</h2>
-        <p><em>Pendiente de integración con entidad Admission</em></p>
-        {# TODO: Cuando esté integrado con AdmissionPrintService:
-        <div class="info-grid">
-            <div class="info-item">
-                <strong>Nombre completo</strong>
-                <span>{{ admission.patient.fullName }}</span>
+        {% if admission_record is defined %}
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Nombre completo</strong>
+                    <span>{{ admission_record.person.name }} {{ admission_record.person.lastName }} {{ admission_record.person.middleName|default('') }}</span>
+                </div>
+                <div class="info-item">
+                    <strong>Identificación</strong>
+                    <span>{{ admission_record.person.identificationType ? admission_record.person.identificationType.name : 'Sin tipo' }} - {{ admission_record.person.identification }}</span>
+                </div>
             </div>
-            <div class="info-item">
-                <strong>RUT/Identificación</strong>
-                <span>{{ admission.patient.rut }}</span>
-            </div>
-        </div>
-        #}
+        {% else %}
+            <p><em>Sin datos de paciente.</em></p>
+        {% endif %}
     </div>
 
     <div class="section">
         <h2 class="section-title">Datos de la admisión</h2>
-        <p><em>Pendiente de integración con entidad Admission</em></p>
-        {# TODO: financiador, convenio, servicio, cama, profesional #}
+        {% if admission_record is defined %}
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Estado</strong>
+                    <span>{{ admission_record.status|capitalize }}</span>
+                </div>
+                <div class="info-item">
+                    <strong>Tipo</strong>
+                    <span>{{ admission_record.admissionType|capitalize }}</span>
+                </div>
+                <div class="info-item">
+                    <strong>ID Financiador</strong>
+                    <span>{{ admission_record.payerId ?? '-' }}</span>
+                </div>
+                <div class="info-item">
+                    <strong>ID Convenio</strong>
+                    <span>{{ admission_record.agreementId ?? '-' }}</span>
+                </div>
+                <div class="info-item">
+                    <strong>ID Servicio</strong>
+                    <span>{{ admission_record.serviceId ?? '-' }}</span>
+                </div>
+                <div class="info-item">
+                    <strong>ID Cama</strong>
+                    <span>{{ admission_record.bedId ?? '-' }}</span>
+                </div>
+            </div>
+        {% else %}
+            <p><em>Sin datos de admisión.</em></p>
+        {% endif %}
     </div>
 
     <div class="footer">
@@ -176,4 +205,3 @@
     </div>
 </body>
 </html>
-
