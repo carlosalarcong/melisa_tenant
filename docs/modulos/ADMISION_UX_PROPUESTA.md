@@ -18,9 +18,9 @@ El módulo actual expone **8 pestañas horizontales** en una sola barra de naveg
 
 | # | Pestaña | Perfil requerido | Tipo | Frecuencia real |
 |---|---|---|---|---|
-| 1 | **Admisión** | `ADMISION_ADMISION` | Flujo operativo | ⬛⬛⬛⬛⬛ Muy alta |
+| 1 | **Admisión Hospitalaria** | `ADMISION_ADMISION` | Flujo operativo | ⬛⬛⬛⬛⬛ Muy alta |
 | 2 | **Pre Admisión** | `ADMISION_PRE_ADMISION` | Flujo operativo | ⬛⬛⬛⬛⬜ Alta |
-| 3 | **Urgencia** | `ADMISION_URGENCIA` | Flujo operativo | ⬛⬛⬛⬛⬜ Alta |
+| 3 | **Admisión Urgencia** | `ADMISION_URGENCIA` | Flujo operativo | ⬛⬛⬛⬛⬜ Alta |
 | 4 | **Búsqueda Avanzada** | `ADMISION_BUSQUEDA_AVANZADA` | Sub-función de 1–3 | ⬛⬛⬛⬜⬜ Media |
 | 5 | **Garantías** | `ADMISION_INFORME_GARANTIAS` | Reporte/Consulta | ⬛⬛⬜⬜⬜ Media-baja |
 | 6 | **Tabla Quirúrgica** | `ADMISION_TABLA_QUIRURGICA` | Consulta específica | ⬛⬜⬜⬜⬜ Baja |
@@ -50,7 +50,7 @@ El módulo actual expone **8 pestañas horizontales** en una sola barra de naveg
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│  [Admisión]  [Pre Admisión]  [Urgencia]  │  Más ▾                  │
+│  [Admisión Hospitalaria]  [Pre Admisión]  [Admisión Urgencia]  │  Más ▾                  │
 │   ──────────────────────────────────     └────────────────────┐     │
 │                                               Búsqueda Avanzada│     │
 │              ÁREA DE TRABAJO                  Garantías        │     │
@@ -77,7 +77,7 @@ El módulo actual expone **8 pestañas horizontales** en una sola barra de naveg
 
 ```
 ┌────────────────────────────────────────────────────────┬──────────┐
-│  [Admisión]  [Pre Admisión]  [Urgencia]                │📊 Reportes│
+│  [Admisión Hospitalaria]  [Pre Admisión]  [Admisión Urgencia]                │📊 Reportes│
 │                                                        └──────────┘
 │  ┌─────────────────────────────────────────────┐                   │
 │  │  Búsqueda por RUT:  [____________] [Buscar] │                   │
@@ -90,7 +90,7 @@ El módulo actual expone **8 pestañas horizontales** en una sola barra de naveg
                                     │ Al hacer clic en 📊 Reportes:
                                     ▼
 ┌────────────────────────────────────────────────────────┬─────────────┐
-│  [Admisión]  [Pre Admisión]  [Urgencia]                │  ✕ Reportes │
+│  [Admisión Hospitalaria]  [Pre Admisión]  [Admisión Urgencia]                │  ✕ Reportes │
 │  (contenido principal)                                 │─────────────│
 │                                                        │ Garantías   │
 │                                                        │─────────────│
@@ -183,7 +183,7 @@ El módulo actual expone **8 pestañas horizontales** en una sola barra de naveg
 ### Tarea 1: Admitir paciente hospitalario (flujo más frecuente)
 
 **Hoy (Alternativa actual):**
-1. Abrir módulo → Admisión tab (activa por defecto) → 0 clics extras
+1. Abrir módulo → Admisión Hospitalaria tab (activa por defecto) → 0 clics extras
 2. Ingresar RUT → validar formato → clic Buscar → esperar AJAX
 3. Ver resultado → clic "Admitir" → redirige a formulario paso 2
 4. Completar formulario financiador/convenio → Siguiente
@@ -200,7 +200,7 @@ El módulo actual expone **8 pestañas horizontales** en una sola barra de naveg
 
 ### Tarea 2: Admisión de urgencia
 
-**Hoy:** Clic tab "Urgencia" → nueva página cargada → buscar paciente → flujo
+**Hoy:** Clic tab "Admisión Urgencia" → nueva página cargada → buscar paciente → flujo
 **Con C:** Clic toggle "Urgencia" → mismo campo de búsqueda cambia de contexto → buscar → flujo
 **Ganancia: -1 clic + sin recarga de página**
 

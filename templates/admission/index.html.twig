@@ -5,6 +5,21 @@
 {% block content %}
     <div class="container-fluid px-4 py-4">
         <h1>{{ page_title }}</h1>
+
+        <div class="card shadow-sm border-0 mt-4">
+            <div class="card-body">
+                <h5 class="mb-3">Inicio rápido wizard</h5>
+                <p class="text-muted mb-3">
+                    Flujo mínimo temporal para migración: Step1 → Step2 → Step3.
+                </p>
+                <a href="{{ path('app_admission_wizard_step1', { patientId: 1 }) }}"
+                   class="btn btn-primary"
+                   data-turbo-frame="admission-wizard-content">
+                    Iniciar wizard (Paciente #1)
+                </a>
+            </div>
+        </div>
+
+        <turbo-frame id="admission-wizard-content" class="d-block"></turbo-frame>
     </div>
 {% endblock %}
-

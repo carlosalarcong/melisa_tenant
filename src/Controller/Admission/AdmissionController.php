@@ -16,10 +16,11 @@ class AdmissionController extends AbstractTenantAwareController
     ) {}
 
     #[Route('', name: 'index', methods: ['GET'])]
+    #[Route('/hospitalization', name: 'hospitalization_index', methods: ['GET'])]
     public function index(Request $request): Response
     {
         return $this->render('admission/index.html.twig', [
-            'page_title' => 'Admisión',
+            'page_title' => 'Admisión Hospitalaria',
         ]);
     }
 
@@ -31,4 +32,3 @@ class AdmissionController extends AbstractTenantAwareController
         ]);
     }
 }
-

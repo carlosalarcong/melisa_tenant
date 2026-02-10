@@ -81,7 +81,7 @@ assets/controllers/admission/
     'children' => [
         [
             'name' => 'admission_general',
-            'label' => 'Admisión General',
+            'label' => 'Admisión Hospitalaria',
             'icon' => 'bx bx-user-check',
             'route' => 'app_admission_hospitalization_index',
             'module' => 'admission',
@@ -89,7 +89,7 @@ assets/controllers/admission/
         ],
         [
             'name' => 'admission_emergency',
-            'label' => 'Urgencia',
+            'label' => 'Admisión Urgencia',
             'icon' => 'bx bx-first-aid',
             'route' => 'app_admission_emergency_index',
             'module' => 'admission',

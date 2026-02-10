@@ -1,0 +1,38 @@
+<turbo-frame id="admission-wizard-content">
+    <div class="card shadow-sm border-0 mt-4">
+        <div class="card-body p-4">
+            <h4 class="mb-3">Paso 3 de 3: Cama y servicio</h4>
+
+            <form method="post" action="{{ path('app_admission_wizard_step3') }}">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="service" class="form-label">Servicio</label>
+                        <input id="service"
+                               name="service"
+                               type="text"
+                               class="form-control"
+                               value="{{ wizard.service|default('') }}"
+                               required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="bed" class="form-label">Cama</label>
+                        <input id="bed"
+                               name="bed"
+                               type="text"
+                               class="form-control"
+                               value="{{ wizard.bed|default('') }}"
+                               required>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 justify-content-end mt-4">
+                    <a href="{{ path('app_admission_wizard_step2') }}" class="btn btn-outline-secondary">
+                        Volver
+                    </a>
+                    <button type="submit" class="btn btn-success">Finalizar admisión</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</turbo-frame>
+
