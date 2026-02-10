@@ -285,6 +285,37 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
     }
     
     /**
+     * Template method: Maneja la restauración de registros eliminados (soft delete)
+     * Solo disponible para entidades con SoftDeletableTrait
+     */
+    protected function handleRestore(Request $request, int $id): Response
+    {
+        // Buscar incluyendo eliminados
+        $entity = $this->findEntityIncludingDeleted($id);
+        
+        if (!$entity) {
+            $this->addFlash('error', $this->getErrorMessage('not_found'));
+            return $this->redirectToRoute($this->getIndexRoute());
+        }
+        
+        if (!method_exists($entity, 'restore')) {
+            $this->addFlash('error', 'Esta entidad no soporta restauración');
+            return $this->redirectToRoute($this->getIndexRoute());
+        }
+        
+        // Verificar permiso de creación (restore = recrear)
+        $context = new MaintainerContext($entity, $this->getMaintainerCategory());
+        $this->denyAccessUnlessGranted(MaintainerVoter::CREATE, $context);
+        
+        $entity->restore();
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush();
+        
+        $this->addFlash('success', 'Registro restaurado exitosamente');
+        return $this->redirectToRoute($this->getIndexRoute());
+    }
+    
+    /**
      * Template method: Maneja la exportación de datos a CSV
      * 
      * Características:
@@ -328,6 +359,16 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
         
         // Obtener datos de la misma forma que el index (respeta filtros)
         $dataOrQuery = $this->getData($request);
+        
+        // Si es QueryBuilder, asegurar que excluimos registros eliminados
+        if ($dataOrQuery instanceof QueryBuilder) {
+            $alias = $dataOrQuery->getRootAliases()[0];
+            $metadata = $dataOrQuery->getEntityManager()->getClassMetadata($dataOrQuery->getRootEntities()[0]);
+            
+            if ($metadata->hasField('deletedAt')) {
+                $dataOrQuery->andWhere("$alias.deletedAt IS NULL");
+            }
+        }
         
         // Columnas por defecto desde getColumns()
         $columns = $columns ?? $this->getColumns();
@@ -629,6 +670,16 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
         $entityClass = $this->getEntityClass();
         return $this->entityManager->getRepository($entityClass)->find($id);
     }
+    
+    /**
+     * Busca una entidad por ID incluyendo registros eliminados (soft delete)
+     * Por defecto usa find(), subclases pueden sobreescribir para queries custom
+     */
+    protected function findEntityIncludingDeleted(int $id): ?object
+    {
+        $entityClass = $this->getEntityClass();
+        return $this->entityManager->getRepository($entityClass)->find($id);
+    }
 
     /**
      * Obtiene la clase de la entidad
@@ -645,11 +696,20 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
     }
 
     /**
-     * Elimina la entidad
+     * Elimina la entidad (soft delete)
+     * Si la entidad tiene el trait SoftDeletableTrait, hace soft delete.
+     * Si no, hace delete físico (backward compatibility)
      */
     protected function remove(object $entity): void
     {
-        $this->entityManager->remove($entity);
+        // Soft delete si la entidad lo soporta
+        if (method_exists($entity, 'softDelete')) {
+            $entity->softDelete($this->getUser());
+            $this->entityManager->persist($entity);
+        } else {
+            // Fallback: delete físico para entidades sin trait
+            $this->entityManager->remove($entity);
+        }
         $this->entityManager->flush();
     }
 
@@ -718,9 +778,17 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
             }
         }
         
-        // Filtro por estado (isActive) si existe en la entidad
+        // Filtro soft delete: excluir registros eliminados por defecto
         $metadata = $qb->getEntityManager()->getClassMetadata($qb->getRootEntities()[0]);
         
+        if ($metadata->hasField('deletedAt')) {
+            $includeDeleted = $request->query->get('include_deleted', 'false');
+            if ($includeDeleted !== 'true') {
+                $qb->andWhere("$alias.deletedAt IS NULL");
+            }
+        }
+        
+        // Filtro por estado (isActive) si existe en la entidad
         if ($metadata->hasField('isActive')) {
             $status = $request->query->get('status', 'all');
             
