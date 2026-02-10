@@ -76,46 +76,19 @@ class EmergencyAdmissionController extends AbstractTenantAwareController
 
     private function resolveAdmissionLookups(AdmissionRecord $record): array
     {
-        $connection = $this->entityManager->getConnection();
-
-        $payerName = null;
-        if ($record->getPayerId()) {
-            $payerName = $connection->fetchOne(
-                'SELECT name FROM payer WHERE id = :id',
-                ['id' => $record->getPayerId()]
-            ) ?: null;
-        }
-
-        $agreementName = null;
-        if ($record->getAgreementId()) {
-            $agreementName = $connection->fetchOne(
-                'SELECT name FROM agreement WHERE id = :id',
-                ['id' => $record->getAgreementId()]
-            ) ?: null;
-        }
-
-        $serviceName = null;
-        if ($record->getServiceId()) {
-            $serviceName = $connection->fetchOne(
-                'SELECT name FROM service WHERE id = :id',
-                ['id' => $record->getServiceId()]
-            ) ?: null;
-        }
-
         $bedName = null;
-        if ($record->getBedId()) {
-            $bedName = $connection->fetchOne(
-                "SELECT CONCAT('Cama ', bed_number, ' (Piso ', COALESCE(CAST(floor AS TEXT), '-'), ')')
-                 FROM bed
-                 WHERE id = :id",
-                ['id' => $record->getBedId()]
-            ) ?: null;
+        if ($record->getBed()) {
+            $bedName = sprintf(
+                'Cama %s (Piso %s)',
+                $record->getBed()->getBedNumber() ?? '-',
+                $record->getBed()->getFloor() ?? '-'
+            );
         }
 
         return [
-            'payer_name' => $payerName,
-            'agreement_name' => $agreementName,
-            'service_name' => $serviceName,
+            'payer_name' => $record->getPayer()?->getName(),
+            'agreement_name' => $record->getAgreement()?->getName(),
+            'service_name' => $record->getService()?->getName(),
             'bed_name' => $bedName,
         ];
     }

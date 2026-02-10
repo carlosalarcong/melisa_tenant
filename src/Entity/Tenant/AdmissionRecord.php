@@ -25,17 +25,21 @@ class AdmissionRecord
     #[ORM\Column(length: 30)]
     private string $status = 'draft';
 
-    #[ORM\Column(nullable: true)]
-    private ?int $payerId = null;
+    #[ORM\ManyToOne(targetEntity: Payer::class)]
+    #[ORM\JoinColumn(name: 'payer_id', referencedColumnName: 'id', nullable: true)]
+    private ?Payer $payer = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $agreementId = null;
+    #[ORM\ManyToOne(targetEntity: Agreement::class)]
+    #[ORM\JoinColumn(name: 'agreement_id', referencedColumnName: 'id', nullable: true)]
+    private ?Agreement $agreement = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $serviceId = null;
+    #[ORM\ManyToOne(targetEntity: Service::class)]
+    #[ORM\JoinColumn(name: 'service_id', referencedColumnName: 'id', nullable: true)]
+    private ?Service $service = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $bedId = null;
+    #[ORM\ManyToOne(targetEntity: Bed::class)]
+    #[ORM\JoinColumn(name: 'bed_id', referencedColumnName: 'id', nullable: true)]
+    private ?Bed $bed = null;
 
     #[ORM\Column(length: 10, nullable: true)]
     private ?string $triage = null;
@@ -98,47 +102,47 @@ class AdmissionRecord
         return $this;
     }
 
-    public function getPayerId(): ?int
+    public function getPayer(): ?Payer
     {
-        return $this->payerId;
+        return $this->payer;
     }
 
-    public function setPayerId(?int $payerId): self
+    public function setPayer(?Payer $payer): self
     {
-        $this->payerId = $payerId;
+        $this->payer = $payer;
         return $this;
     }
 
-    public function getAgreementId(): ?int
+    public function getAgreement(): ?Agreement
     {
-        return $this->agreementId;
+        return $this->agreement;
     }
 
-    public function setAgreementId(?int $agreementId): self
+    public function setAgreement(?Agreement $agreement): self
     {
-        $this->agreementId = $agreementId;
+        $this->agreement = $agreement;
         return $this;
     }
 
-    public function getServiceId(): ?int
+    public function getService(): ?Service
     {
-        return $this->serviceId;
+        return $this->service;
     }
 
-    public function setServiceId(?int $serviceId): self
+    public function setService(?Service $service): self
     {
-        $this->serviceId = $serviceId;
+        $this->service = $service;
         return $this;
     }
 
-    public function getBedId(): ?int
+    public function getBed(): ?Bed
     {
-        return $this->bedId;
+        return $this->bed;
     }
 
-    public function setBedId(?int $bedId): self
+    public function setBed(?Bed $bed): self
     {
-        $this->bedId = $bedId;
+        $this->bed = $bed;
         return $this;
     }
 
@@ -174,4 +178,3 @@ class AdmissionRecord
         return $this->updatedAt;
     }
 }
-

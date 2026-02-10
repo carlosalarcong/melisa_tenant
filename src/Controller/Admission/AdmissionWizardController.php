@@ -3,8 +3,12 @@
 namespace App\Controller\Admission;
 
 use App\Controller\AbstractTenantAwareController;
+use App\Entity\Tenant\Agreement;
 use App\Entity\Tenant\AdmissionRecord;
+use App\Entity\Tenant\Bed;
+use App\Entity\Tenant\Payer;
 use App\Entity\Tenant\Person;
+use App\Entity\Tenant\Service;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -82,31 +86,33 @@ class AdmissionWizardController extends AbstractTenantAwareController
                 ]);
             }
 
-            $connection = $this->entityManager->getConnection();
-            $payerExists = $connection->fetchOne(
-                'SELECT id FROM payer WHERE id = :id AND is_active = true',
-                ['id' => $payerId]
-            );
-            if (!$payerExists) {
+            $payer = $this->entityManager->find(Payer::class, $payerId);
+            if (!$payer instanceof Payer || !$payer->isActive()) {
                 $this->addFlash('danger', 'El financiador seleccionado no existe o está inactivo.');
                 return $this->render('admission/wizard/step2.html.twig', [
                     'wizard' => $wizardData,
                 ]);
             }
 
-            $agreementExists = $connection->fetchOne(
+            $connection = $this->entityManager->getConnection();
+            $agreementMatchesPayer = $connection->fetchOne(
                 'SELECT id FROM agreement WHERE id = :id AND is_active = true AND payer_id = :payer',
                 ['id' => $agreementId, 'payer' => $payerId]
             );
-            if (!$agreementExists) {
+            $agreement = $this->entityManager->find(Agreement::class, $agreementId);
+            if (
+                !$agreementMatchesPayer
+                || !$agreement instanceof Agreement
+                || !$agreement->isActive()
+            ) {
                 $this->addFlash('danger', 'El convenio seleccionado no existe o no corresponde al financiador.');
                 return $this->render('admission/wizard/step2.html.twig', [
                     'wizard' => $wizardData,
                 ]);
             }
 
-            $record->setPayerId($payerId);
-            $record->setAgreementId($agreementId);
+            $record->setPayer($payer);
+            $record->setAgreement($agreement);
             $this->entityManager->flush();
 
             $wizardData['payer'] = (string) $payerId;
@@ -146,31 +152,24 @@ class AdmissionWizardController extends AbstractTenantAwareController
                 ]);
             }
 
-            $connection = $this->entityManager->getConnection();
-            $serviceExists = $connection->fetchOne(
-                'SELECT id FROM service WHERE id = :id AND is_active = true',
-                ['id' => $serviceId]
-            );
-            if (!$serviceExists) {
+            $service = $this->entityManager->find(Service::class, $serviceId);
+            if (!$service instanceof Service || !$service->isActive()) {
                 $this->addFlash('danger', 'El servicio seleccionado no existe o está inactivo.');
                 return $this->render('admission/wizard/step3.html.twig', [
                     'wizard' => $wizardData,
                 ]);
             }
 
-            $bedExists = $connection->fetchOne(
-                'SELECT id FROM bed WHERE id = :id AND is_active = true',
-                ['id' => $bedId]
-            );
-            if (!$bedExists) {
+            $bed = $this->entityManager->find(Bed::class, $bedId);
+            if (!$bed instanceof Bed || !$bed->isActive()) {
                 $this->addFlash('danger', 'La cama seleccionada no existe o está inactiva.');
                 return $this->render('admission/wizard/step3.html.twig', [
                     'wizard' => $wizardData,
                 ]);
             }
 
-            $record->setServiceId($serviceId);
-            $record->setBedId($bedId);
+            $record->setService($service);
+            $record->setBed($bed);
             $record->setStatus('completed');
             $this->entityManager->flush();
 
