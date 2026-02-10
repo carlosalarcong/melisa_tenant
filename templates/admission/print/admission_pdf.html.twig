@@ -178,20 +178,20 @@
                     <span>{{ admission_record.admissionType|capitalize }}</span>
                 </div>
                 <div class="info-item">
-                    <strong>ID Financiador</strong>
-                    <span>{{ admission_record.payerId ?? '-' }}</span>
+                    <strong>Financiador</strong>
+                    <span>{{ admission_lookups.payer_name|default('-') }}</span>
                 </div>
                 <div class="info-item">
-                    <strong>ID Convenio</strong>
-                    <span>{{ admission_record.agreementId ?? '-' }}</span>
+                    <strong>Convenio</strong>
+                    <span>{{ admission_lookups.agreement_name|default('-') }}</span>
                 </div>
                 <div class="info-item">
-                    <strong>ID Servicio</strong>
-                    <span>{{ admission_record.serviceId ?? '-' }}</span>
+                    <strong>Servicio</strong>
+                    <span>{{ admission_lookups.service_name|default('-') }}</span>
                 </div>
                 <div class="info-item">
-                    <strong>ID Cama</strong>
-                    <span>{{ admission_record.bedId ?? '-' }}</span>
+                    <strong>Cama</strong>
+                    <span>{{ admission_lookups.bed_name|default('-') }}</span>
                 </div>
             </div>
         {% else %}

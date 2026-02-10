@@ -82,6 +82,29 @@ class AdmissionWizardController extends AbstractTenantAwareController
                 ]);
             }
 
+            $connection = $this->entityManager->getConnection();
+            $payerExists = $connection->fetchOne(
+                'SELECT id FROM payer WHERE id = :id AND is_active = true',
+                ['id' => $payerId]
+            );
+            if (!$payerExists) {
+                $this->addFlash('danger', 'El financiador seleccionado no existe o está inactivo.');
+                return $this->render('admission/wizard/step2.html.twig', [
+                    'wizard' => $wizardData,
+                ]);
+            }
+
+            $agreementExists = $connection->fetchOne(
+                'SELECT id FROM agreement WHERE id = :id AND is_active = true AND payer_id = :payer',
+                ['id' => $agreementId, 'payer' => $payerId]
+            );
+            if (!$agreementExists) {
+                $this->addFlash('danger', 'El convenio seleccionado no existe o no corresponde al financiador.');
+                return $this->render('admission/wizard/step2.html.twig', [
+                    'wizard' => $wizardData,
+                ]);
+            }
+
             $record->setPayerId($payerId);
             $record->setAgreementId($agreementId);
             $this->entityManager->flush();
@@ -118,6 +141,29 @@ class AdmissionWizardController extends AbstractTenantAwareController
             $bedId = $request->request->getInt('bed', 0);
             if ($serviceId <= 0 || $bedId <= 0) {
                 $this->addFlash('danger', 'Debes seleccionar servicio y cama.');
+                return $this->render('admission/wizard/step3.html.twig', [
+                    'wizard' => $wizardData,
+                ]);
+            }
+
+            $connection = $this->entityManager->getConnection();
+            $serviceExists = $connection->fetchOne(
+                'SELECT id FROM service WHERE id = :id AND is_active = true',
+                ['id' => $serviceId]
+            );
+            if (!$serviceExists) {
+                $this->addFlash('danger', 'El servicio seleccionado no existe o está inactivo.');
+                return $this->render('admission/wizard/step3.html.twig', [
+                    'wizard' => $wizardData,
+                ]);
+            }
+
+            $bedExists = $connection->fetchOne(
+                'SELECT id FROM bed WHERE id = :id AND is_active = true',
+                ['id' => $bedId]
+            );
+            if (!$bedExists) {
+                $this->addFlash('danger', 'La cama seleccionada no existe o está inactiva.');
                 return $this->render('admission/wizard/step3.html.twig', [
                     'wizard' => $wizardData,
                 ]);

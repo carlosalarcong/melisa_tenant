@@ -200,6 +200,10 @@
                     <strong>Estado</strong>
                     <span>{{ admission_record.status|capitalize }}</span>
                 </div>
+                <div class="info-item">
+                    <strong>Servicio / Cama</strong>
+                    <span>{{ admission_lookups.service_name|default('-') }} / {{ admission_lookups.bed_name|default('-') }}</span>
+                </div>
             </div>
         {% else %}
             <p><em>Sin datos de urgencia.</em></p>

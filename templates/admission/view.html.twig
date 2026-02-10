@@ -27,6 +27,18 @@
                             <label class="form-label text-muted">Estado</label>
                             <div class="form-control bg-light">{{ admission_record.status|capitalize }}</div>
                         </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">Financiador / Convenio</label>
+                            <div class="form-control bg-light">
+                                {{ admission_lookups.payer_name|default('-') }} / {{ admission_lookups.agreement_name|default('-') }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">Servicio / Cama</label>
+                            <div class="form-control bg-light">
+                                {{ admission_lookups.service_name|default('-') }} / {{ admission_lookups.bed_name|default('-') }}
+                            </div>
+                        </div>
                     </div>
                 {% endif %}
 

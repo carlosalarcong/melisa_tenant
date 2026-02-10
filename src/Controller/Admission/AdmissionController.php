@@ -48,10 +48,13 @@ class AdmissionController extends AbstractTenantAwareController
             throw $this->createNotFoundException('Admisión no encontrada.');
         }
 
+        $lookups = $this->resolveAdmissionLookups($record);
+
         return $this->render('admission/view.html.twig', [
             'admission_id' => $record->getId(),
             'admission_type' => $record->getAdmissionType(),
             'admission_record' => $record,
+            'admission_lookups' => $lookups,
         ]);
     }
 
@@ -104,6 +107,52 @@ class AdmissionController extends AbstractTenantAwareController
             'selected_type_id' => $selectedTypeId,
             'patients' => $patients,
             'searched' => $searched,
+        ];
+    }
+
+    private function resolveAdmissionLookups(AdmissionRecord $record): array
+    {
+        $connection = $this->entityManager->getConnection();
+
+        $payerName = null;
+        if ($record->getPayerId()) {
+            $payerName = $connection->fetchOne(
+                'SELECT name FROM payer WHERE id = :id',
+                ['id' => $record->getPayerId()]
+            ) ?: null;
+        }
+
+        $agreementName = null;
+        if ($record->getAgreementId()) {
+            $agreementName = $connection->fetchOne(
+                'SELECT name FROM agreement WHERE id = :id',
+                ['id' => $record->getAgreementId()]
+            ) ?: null;
+        }
+
+        $serviceName = null;
+        if ($record->getServiceId()) {
+            $serviceName = $connection->fetchOne(
+                'SELECT name FROM service WHERE id = :id',
+                ['id' => $record->getServiceId()]
+            ) ?: null;
+        }
+
+        $bedName = null;
+        if ($record->getBedId()) {
+            $bedName = $connection->fetchOne(
+                "SELECT CONCAT('Cama ', bed_number, ' (Piso ', COALESCE(CAST(floor AS TEXT), '-'), ')')
+                 FROM bed
+                 WHERE id = :id",
+                ['id' => $record->getBedId()]
+            ) ?: null;
+        }
+
+        return [
+            'payer_name' => $payerName,
+            'agreement_name' => $agreementName,
+            'service_name' => $serviceName,
+            'bed_name' => $bedName,
         ];
     }
 }
