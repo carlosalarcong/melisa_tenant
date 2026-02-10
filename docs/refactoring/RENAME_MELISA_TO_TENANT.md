@@ -106,6 +106,68 @@ Deben reemplazarse por `$this->projectDir` inyectado desde `%kernel.project_dir%
 
 ---
 
+### FASE 0 — Renombrar repo GitHub y directorio del servidor (hacer PRIMERO)
+**Objetivo**: Cambiar el nombre del proyecto a nivel de infraestructura antes de tocar código.
+
+> Hacer esto primero evita que los pasos siguientes queden con referencias al nombre viejo
+> en git history, commits y mensajes de PR.
+
+#### 0.1 — Renombrar el repositorio en GitHub
+1. Ir a `https://github.com/carlosalarcong/melisa_tenant/settings`
+2. Sección **General** → campo **Repository name**
+3. Cambiar `melisa_tenant` → `tenant`
+4. Click **Rename**
+
+GitHub crea una redirección automática desde la URL vieja, pero **no confiar en ella a largo plazo**.
+
+#### 0.2 — Actualizar el remote en todos los clones locales
+```bash
+# Ejecutar en cada máquina que tenga el repo clonado
+git remote set-url origin https://github.com/carlosalarcong/tenant.git
+
+# Verificar
+git remote -v
+# Debe mostrar: origin  https://github.com/carlosalarcong/tenant.git
+```
+
+#### 0.3 — Renombrar el directorio físico en el servidor
+> **⚠️ Requiere actualizar el virtual host de Apache/Nginx. Hacer en ventana de mantenimiento.**
+
+```bash
+# 1. Detener el servidor web
+sudo systemctl stop apache2   # o nginx
+
+# 2. Renombrar el directorio
+sudo mv /var/www/html/melisa_tenant /var/www/html/tenant
+
+# 3. Actualizar el virtual host
+# En Apache: /etc/apache2/sites-available/melisa_tenant.conf
+#   DocumentRoot /var/www/html/tenant
+#   <Directory /var/www/html/tenant>
+
+# 4. Reiniciar el servidor web
+sudo systemctl start apache2
+
+# 5. Verificar que la app responde
+curl -I http://localhost
+```
+
+#### 0.4 — Actualizar el remote en el servidor (si el servidor tiene el repo clonado por git)
+```bash
+cd /var/www/html/tenant
+git remote set-url origin https://github.com/carlosalarcong/tenant.git
+git remote -v
+```
+
+#### 0.5 — Actualizar referencias al path del servidor en código
+Después de renombrar el directorio, las referencias hardcodeadas a `/var/www/html/melisa_tenant/`
+en `MigrateTenantLegacyCommand.php` quedarán rotas. Por eso la **Fase 3** (paths a `%kernel.project_dir%`)
+debe ejecutarse **inmediatamente después** de esta fase.
+
+**Verificación**: `php bin/console cache:clear` desde el nuevo directorio sin errores.
+
+---
+
 ### FASE 1 — Texto de UI (5 min, sin riesgo)
 **Objetivo**: Eliminar "Melisa" de lo que ve el usuario final.
 
@@ -342,16 +404,37 @@ DATABASE_URL="postgresql://tenant:changeme@localhost:5432/tenant_central?serverV
 ## ORDEN DE EJECUCIÓN RECOMENDADO
 
 ```
-Fase 1 (UI) → Fase 2 (comentarios) → Fase 3 (paths) →
-Fase 4 (credenciales a .env) → Fase 5 (BD: subdomains) → Fase 6 (BD: rename)
+Fase 0 (GitHub + directorio servidor)
+    ↓
+Fase 3 (paths a %kernel.project_dir%)  ← inmediatamente después del rename del directorio
+    ↓
+Fase 1 (UI) → Fase 2 (comentarios)
+    ↓
+Fase 4 (credenciales a .env)
+    ↓
+Fase 5 (BD: subdomains + dirs assets/translations)  ← requiere backup
+    ↓
+Fase 6 (BD: rename central)  ← requiere downtime
 ```
 
-Las fases 1–4 son seguras y reversibles.
-Las fases 5–6 requieren coordinación y backup previo.
+| Fases | Riesgo | Requiere |
+|-------|--------|---------|
+| 0 | Medio (downtime corto) | Ventana de mantenimiento |
+| 1, 2 | Sin riesgo | Nada especial |
+| 3 | Bajo | Después de Fase 0 |
+| 4 | Medio | Revisar con DBA las credenciales nuevas |
+| 5 | Alto | Backup previo + coordinar usuarios |
+| 6 | Alto | Downtime + backup previo |
 
 ---
 
 ## CHECKLIST DE VERIFICACIÓN FINAL
+
+**Fase 0**:
+- [ ] Repo GitHub renombrado a `tenant`
+- [ ] `git remote -v` en todos los clones muestra la nueva URL
+- [ ] Virtual host actualizado y servidor web reiniciado
+- [ ] `php bin/console cache:clear` desde `/var/www/html/tenant` sin errores
 
 - [ ] `php bin/console cache:clear && php bin/console cache:warmup`
 - [ ] Login funciona en todos los tenants
