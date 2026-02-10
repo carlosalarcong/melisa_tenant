@@ -66,9 +66,14 @@
             {% if is_granted(constant('App\\Security\\Voter\\MaintainerVoter::DELETE'), entity) %}
             <form method="post" 
                   action="{{ path(delete_route, {'id': entity.id}) }}" 
-                  onsubmit="return confirm('{{ 'maintainers.common.confirm_delete'|trans({}, 'maintainers') }}')"
                   class="d-inline"
-                  data-turbo-frame="_top">
+                  data-turbo-frame="_top"
+                  data-controller="confirm-delete"
+                  data-confirm-delete-title-value="{{ 'maintainers.common.confirm_delete_title'|trans({}, 'maintainers') }}"
+                  data-confirm-delete-text-value="{{ 'maintainers.common.confirm_delete_text'|trans({}, 'maintainers') }}"
+                  data-confirm-delete-confirm-button-text-value="{{ 'maintainers.common.yes_delete'|trans({}, 'maintainers') }}"
+                  data-confirm-delete-cancel-button-text-value="{{ 'maintainers.common.cancel'|trans({}, 'maintainers') }}"
+                  data-action="submit->confirm-delete#confirm">
                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ entity.id) }}">
                 <button type="submit"
                         class="btn btn-sm action-btn action-btn-delete border-0"

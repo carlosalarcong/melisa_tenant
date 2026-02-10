@@ -103,7 +103,12 @@
                                             <form method="post" 
                                                   action="{{ path(delete_route, {'id': item.id}) }}" 
                                                   class="d-inline"
-                                                  onsubmit="return confirm('{{ 'maintainers.common.confirm_delete_element'|trans({}, 'maintainers') }}')">
+                                                  data-controller="confirm-delete"
+                                                  data-confirm-delete-title-value="{{ 'maintainers.common.confirm_delete_title'|trans({}, 'maintainers') }}"
+                                                  data-confirm-delete-text-value="{{ 'maintainers.common.confirm_delete_text'|trans({}, 'maintainers') }}"
+                                                  data-confirm-delete-confirm-button-text-value="{{ 'maintainers.common.yes_delete'|trans({}, 'maintainers') }}"
+                                                  data-confirm-delete-cancel-button-text-value="{{ 'maintainers.common.cancel'|trans({}, 'maintainers') }}"
+                                                  data-action="submit->confirm-delete#confirm">
                                                 <button type="submit" 
                                                         class="btn btn-sm btn-outline-danger" 
                                                         title="{{ 'maintainers.common.delete'|trans({}, 'maintainers') }}">
