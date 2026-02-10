@@ -2,8 +2,8 @@
 
 ## Contexto
 El proyecto se llama `melisa_tenant` y debe ser renombrado a un sistema genérico
-llamado simplemente `tenant`. La palabra "melisa" aparece en ~82 referencias PHP,
-4 archivos de config, 2 templates Twig y múltiples directorios de assets/translations.
+llamado simplemente `tenant`. La palabra "melisa" aparece en ~90 referencias PHP,
+4 archivos de config, 2 templates Twig, 2 JS de Stimulus y múltiples directorios de assets/translations.
 
 Este cambio debe hacerse en **fases ordenadas** porque algunas referencias tocan
 infraestructura real (credenciales de BD, nombres de tenants activos en BD).
@@ -27,12 +27,24 @@ Directorios que usan el prefijo `melisa` como nombre de tenant:
 |-------------------|-----------|
 | `translations/melisahospital/` | Traducciones tenant "hospital" |
 | `translations/melisalacolina/` | Traducciones tenant "lacolina" |
-| `assets/controllers/internal/melisahospital/` | JS tenant "hospital" |
-| `assets/controllers/internal/melisalacolina/` | JS tenant "lacolina" |
+| `assets/controllers/internal/melisahospital/` | Stimulus controllers tenant "hospital" |
+| `assets/controllers/internal/melisalacolina/` | Stimulus controllers tenant "lacolina" |
+
+Los archivos JS dentro de estos directorios tienen referencias internas adicionales:
+
+**`assets/controllers/internal/melisahospital/patient_controller.js`**:
+- `tenant: "melisahospital"` (objeto de datos)
+- `console.log("📊 Tenant: melisahospital")`
+- Comentarios sobre `BD melisahospital`
+
+**`assets/controllers/internal/melisalacolina/patient_controller.js`**:
+- `clinic: 'melisalacolina'` (objeto de datos)
+- `'X-Clinic-Context': 'melisalacolina'` (header HTTP)
+- `?clinic=melisalacolina` (query param en llamadas API)
 
 > **Nota**: el prefijo `melisa` en estos directorios viene del subdomain del tenant
 > almacenado en BD (`melisahospital`, `melisalacolina`). Renombrar los directorios
-> requiere sincronizar con la Fase 5 (renombrar subdomains en BD).
+> **y el contenido de los JS** requiere sincronizar con la Fase 5 (renombrar subdomains en BD).
 
 ### Grupo C — Config YAML
 | Archivo | Línea | Cambio |
@@ -52,6 +64,22 @@ Estos archivos tienen credenciales de BD **hardcodeadas** que deben moverse a `.
 | `src/Entity/Main/TenantDb.php:84` | `return 'melisamelisa'` (password DB) |
 | `src/Controller/PasswordResetController.php:45-47` | `dbname: melisa_central`, user, password |
 | `src/Command/MigrateTenantLegacyCommand.php:28-30` | Mismas credenciales |
+| `src/Service/CustomTenantConfigProvider.php:59-60` | `user: 'melisa'`, `password: 'melisamelisa'` |
+
+### Grupo D2 — PHP: tenant por defecto hardcodeado (¡RIESGO CRÍTICO!)
+`src/EventListener/TenantDatabaseSwitchListener.php:117` tiene el tenant de fallback hardcodeado:
+
+```php
+// ANTES — si el resolver falla, redirige silenciosamente a melisahospital
+return 'melisahospital';
+
+// DESPUÉS — leer de variable de entorno
+return $_ENV['TENANT_DEFAULT_FALLBACK'] ?? throw new \RuntimeException('No tenant resolved');
+```
+
+> **⚠️ Este es el más crítico**: si el listener no resuelve el subdomain,
+> usa `melisahospital` como tenant por defecto sin avisar. En producción esto
+> puede mostrar datos del tenant equivocado.
 
 ### Grupo E — PHP: rutas absolutas hardcodeadas
 `src/Command/MigrateTenantLegacyCommand.php` tiene múltiples referencias a:
@@ -163,6 +191,8 @@ App\Command\MigrateTenantLegacyCommand:
 - `src/Entity/Main/TenantDb.php`
 - `src/Controller/PasswordResetController.php`
 - `src/Command/MigrateTenantLegacyCommand.php`
+- `src/Service/CustomTenantConfigProvider.php`
+- `src/EventListener/TenantDatabaseSwitchListener.php` ← **tenant fallback hardcodeado**
 
 **Patrón de corrección para `TenantDb.php`**:
 ```php
@@ -181,6 +211,35 @@ public function getDefaultDbPassword(): string
 }
 ```
 
+**Patrón de corrección para `CustomTenantConfigProvider.php`**:
+```php
+// ANTES
+$connection = [
+    'user'     => 'melisa',
+    'password' => 'melisamelisa',
+    'dbname'   => 'melisa_central',
+];
+
+// DESPUÉS
+$connection = [
+    'user'     => $_ENV['CENTRAL_DB_USER'],
+    'password' => $_ENV['CENTRAL_DB_PASSWORD'],
+    'dbname'   => $_ENV['CENTRAL_DB_NAME'],
+];
+```
+
+**Patrón de corrección para `TenantDatabaseSwitchListener.php:117`**:
+```php
+// ANTES — fallback silencioso al tenant equivocado
+return 'melisahospital';
+
+// OPCIÓN A — lanzar excepción (recomendado en producción)
+throw new \RuntimeException('No se pudo resolver el tenant desde el request.');
+
+// OPCIÓN B — variable de entorno (si se necesita fallback en dev)
+return $_ENV['TENANT_DEFAULT_FALLBACK'] ?? throw new \RuntimeException('No tenant resolved');
+```
+
 **Agregar a `.env`**:
 ```dotenv
 TENANT_DB_DEFAULT_USER=tenant
@@ -191,6 +250,8 @@ CENTRAL_DB_PASSWORD=changeme
 APP_DOMAIN=yourdomain.com
 MAILER_SENDER_ADDRESS=noreply@yourdomain.com
 MAILER_SENDER_NAME="Sistema"
+# Solo para desarrollo local, NO poner en producción:
+# TENANT_DEFAULT_FALLBACK=hospital
 ```
 
 **Verificación**: Probar login, reset de contraseña y `php bin/console app:migrate-tenant --help`.
@@ -236,9 +297,23 @@ mv assets/controllers/internal/melisalacolina assets/controllers/internal/lacoli
 ```
 
 **Actualizar `src/Service/LocalizationService.php`** y cualquier archivo que resuelva
-la ruta de traducción por subdomain.
+la ruta de traducción por subdomain (arrays con claves `melisahospital`, `melisalacolina`, `melisawiclinic`).
 
-**Verificación**: Login con usuario del tenant renombrado, verificar que traducciones cargan.
+**Actualizar referencias internas en archivos JS**:
+```bash
+# Reemplazar referencias al nombre del tenant dentro de los JS
+sed -i 's/melisahospital/hospital/g' assets/controllers/internal/hospital/patient_controller.js
+sed -i 's/melisalacolina/lacolina/g' assets/controllers/internal/lacolina/patient_controller.js
+```
+
+Los valores específicos a reemplazar en cada archivo:
+- `tenant: "melisahospital"` → `tenant: "hospital"`
+- `clinic: 'melisalacolina'` → `clinic: 'lacolina'`
+- `'X-Clinic-Context': 'melisalacolina'` → `'X-Clinic-Context': 'lacolina'`
+- `?clinic=melisalacolina` → `?clinic=lacolina`
+
+**Verificación**: Login con usuario del tenant renombrado, verificar que traducciones cargan
+y que las llamadas API desde el JS llevan el header/param correcto (DevTools → Network).
 
 ---
 
