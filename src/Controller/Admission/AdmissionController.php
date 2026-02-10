@@ -4,8 +4,9 @@ namespace App\Controller\Admission;
 
 use App\Controller\AbstractTenantAwareController;
 use App\Entity\Tenant\AdmissionRecord;
-use App\Entity\Tenant\IdentificationType;
-use App\Entity\Tenant\Person;
+use App\Form\Admission\PatientSearchType;
+use App\Service\Admission\AdmissionService;
+use App\Service\Admission\PatientSearchService;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +16,9 @@ use Symfony\Component\Routing\Attribute\Route;
 class AdmissionController extends AbstractTenantAwareController
 {
     public function __construct(
-        private TenantEntityManager $entityManager
+        private TenantEntityManager $entityManager,
+        private PatientSearchService $patientSearchService,
+        private AdmissionService $admissionService
     ) {}
 
     #[Route('', name: 'index', methods: ['GET'])]
@@ -48,7 +51,7 @@ class AdmissionController extends AbstractTenantAwareController
             throw $this->createNotFoundException('Admisión no encontrada.');
         }
 
-        $lookups = $this->resolveAdmissionLookups($record);
+        $lookups = $this->admissionService->resolveAdmissionLookups($record);
 
         return $this->render('admission/view.html.twig', [
             'admission_id' => $record->getId(),
@@ -60,72 +63,36 @@ class AdmissionController extends AbstractTenantAwareController
 
     private function buildSearchViewData(Request $request, string $pageTitle, string $searchActionRoute): array
     {
-        $searchTerm = trim((string) $request->query->get('q', ''));
-        $selectedTypeId = $request->query->getInt('identification_type', 0);
-        $patients = [];
-        $searched = $searchTerm !== '';
+        $identificationTypes = $this->patientSearchService->getActiveIdentificationTypes();
 
-        $identificationTypes = $this->entityManager->createQueryBuilder()
-            ->select('it')
-            ->from(IdentificationType::class, 'it')
-            ->where('it.isActive = true')
-            ->orderBy('it.name', 'ASC')
-            ->getQuery()
-            ->getResult();
-
-        if ($searched) {
-            $qb = $this->entityManager->createQueryBuilder()
-                ->select('p', 'it')
-                ->from(Person::class, 'p')
-                ->leftJoin('p.identificationType', 'it')
-                ->orderBy('p.id', 'DESC')
-                ->setMaxResults(20);
-
-            if ($selectedTypeId > 0) {
-                $qb->andWhere('it.id = :typeId')
-                    ->setParameter('typeId', $selectedTypeId)
-                    ->andWhere('LOWER(p.identification) LIKE :term')
-                    ->setParameter('term', '%' . mb_strtolower($searchTerm) . '%');
-            } else {
-                $qb->andWhere(
-                    'LOWER(p.identification) LIKE :term OR
-                     LOWER(p.name) LIKE :term OR
-                     LOWER(p.lastName) LIKE :term OR
-                     LOWER(CONCAT(p.name, \' \', p.lastName, \' \', COALESCE(p.middleName, \'\'))) LIKE :term'
-                )
-                ->setParameter('term', '%' . mb_strtolower($searchTerm) . '%');
-            }
-
-            $patients = $qb->getQuery()->getResult();
+        $identificationChoices = [];
+        foreach ($identificationTypes as $type) {
+            $identificationChoices[$type->getName()] = $type->getId();
         }
+
+        $form = $this->createForm(PatientSearchType::class, [
+            'identification_type' => $request->query->getInt('identification_type', 0) ?: null,
+            'q' => trim((string) $request->query->get('q', '')),
+        ], [
+            'identification_choices' => $identificationChoices,
+            'action' => $this->generateUrl($searchActionRoute),
+        ]);
+        $form->handleRequest($request);
+
+        $formData = $form->getData();
+        $searchTerm = trim((string) ($formData['q'] ?? ''));
+        $selectedTypeId = (int) ($formData['identification_type'] ?? 0);
+        $searched = $searchTerm !== '';
+        $patients = $this->patientSearchService->searchPatients($searchTerm, $selectedTypeId, 20);
 
         return [
             'page_title' => $pageTitle,
             'search_action_route' => $searchActionRoute,
-            'identification_types' => $identificationTypes,
             'search_term' => $searchTerm,
             'selected_type_id' => $selectedTypeId,
             'patients' => $patients,
             'searched' => $searched,
-        ];
-    }
-
-    private function resolveAdmissionLookups(AdmissionRecord $record): array
-    {
-        $bedName = null;
-        if ($record->getBed()) {
-            $bedName = sprintf(
-                'Cama %s (Piso %s)',
-                $record->getBed()->getBedNumber() ?? '-',
-                $record->getBed()->getFloor() ?? '-'
-            );
-        }
-
-        return [
-            'payer_name' => $record->getPayer()?->getName(),
-            'agreement_name' => $record->getAgreement()?->getName(),
-            'service_name' => $record->getService()?->getName(),
-            'bed_name' => $bedName,
+            'search_form' => $form->createView(),
         ];
     }
 }

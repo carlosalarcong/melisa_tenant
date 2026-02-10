@@ -8,13 +8,21 @@
                  data-admission--wizard-target="errorMessage"
                  role="alert">
             </div>
+            {% if form_errors(form.payer) or form_errors(form.agreement) %}
+                <div class="alert alert-danger" role="alert">
+                    {{ form_errors(form.payer) }}
+                    {{ form_errors(form.agreement) }}
+                </div>
+            {% endif %}
 
-            <form method="post"
-                  action="{{ path('app_admission_wizard_step2') }}">
+            {{ form_start(form, {
+                action: path('app_admission_wizard_step2')
+            }) }}
                 <div class="row g-3">
                     <div class="col-md-4">
                         <label for="branch" class="form-label">Sucursal</label>
                         <select id="branch"
+                                name="{{ form.branch.vars.full_name }}"
                                 class="form-select"
                                 data-admission--wizard-target="branchSelect"
                                 data-action="change->admission--wizard#onBranchChange">
@@ -26,12 +34,15 @@
                             Financiador <span class="text-danger">*</span>
                         </label>
                         <select id="payer"
-                                name="payer"
+                                name="{{ form.payer.vars.full_name }}"
                                 class="form-select"
                                 data-admission--wizard-target="payerSelect"
                                 data-action="change->admission--wizard#onPayerChange"
                                 required>
                             <option value="">-- Seleccionar financiador --</option>
+                            {% if form.payer.vars.value %}
+                                <option value="{{ form.payer.vars.value }}" selected>Cargando selección...</option>
+                            {% endif %}
                         </select>
                     </div>
                     <div class="col-md-4">
@@ -39,11 +50,14 @@
                             Convenio <span class="text-danger">*</span>
                         </label>
                         <select id="agreement"
-                                name="agreement"
+                                name="{{ form.agreement.vars.full_name }}"
                                 class="form-select"
                                 data-admission--wizard-target="agreementSelect"
                                 required>
                             <option value="">-- Seleccionar convenio --</option>
+                            {% if form.agreement.vars.value %}
+                                <option value="{{ form.agreement.vars.value }}" selected>Cargando selección...</option>
+                            {% endif %}
                         </select>
                         <small class="form-text text-muted">Seleccione primero un financiador</small>
                     </div>
@@ -58,7 +72,8 @@
                         Siguiente <i class="bx bx-chevron-right"></i>
                     </button>
                 </div>
-            </form>
+                {{ form_widget(form._token) }}
+            {{ form_end(form, { render_rest: false }) }}
         </div>
     </div>
 </turbo-frame>

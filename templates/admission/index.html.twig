@@ -15,28 +15,25 @@
                 Búsqueda de Paciente
             </div>
             <div class="card-body">
-                <form method="get" action="{{ path(search_action_route|default('app_admission_hospitalization_index')) }}">
+                {{ form_start(search_form, {
+                    method: 'GET',
+                    action: path(search_action_route|default('app_admission_hospitalization_index'))
+                }) }}
                     <div class="row g-2 align-items-end">
                         <div class="col-md-3">
-                            <label for="identification_type" class="form-label">Tipo documento</label>
-                            <select id="identification_type" name="identification_type" class="form-select">
-                                <option value="0">Todos</option>
-                                {% for type in identification_types %}
-                                    <option value="{{ type.id }}" {% if selected_type_id == type.id %}selected{% endif %}>
-                                        {{ type.name }}
-                                    </option>
-                                {% endfor %}
-                            </select>
+                            {{ form_label(search_form.identification_type, 'Tipo documento', { label_attr: { class: 'form-label' } }) }}
+                            {{ form_widget(search_form.identification_type, { attr: { class: 'form-select', id: 'identification_type' } }) }}
                         </div>
                         <div class="col-md-6">
-                            <label for="q" class="form-label">RUT / Documento / Nombre</label>
-                            <input id="q"
-                                   type="text"
-                                   name="q"
-                                   class="form-control"
-                                   value="{{ search_term }}"
-                                   placeholder="Ejemplo: 12345678-9 o Carlos Alarcón"
-                                   required>
+                            {{ form_label(search_form.q, 'RUT / Documento / Nombre', { label_attr: { class: 'form-label' } }) }}
+                            {{ form_widget(search_form.q, {
+                                attr: {
+                                    class: 'form-control',
+                                    id: 'q',
+                                    placeholder: 'Ejemplo: 12345678-9 o Carlos Alarcón',
+                                    required: true
+                                }
+                            }) }}
                         </div>
                         <div class="col-md-3">
                             <button type="submit" class="btn btn-primary w-100">
@@ -44,7 +41,7 @@
                             </button>
                         </div>
                     </div>
-                </form>
+                {{ form_end(search_form) }}
             </div>
         </div>
 

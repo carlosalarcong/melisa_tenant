@@ -3,12 +3,11 @@
 namespace App\Controller\Admission;
 
 use App\Controller\AbstractTenantAwareController;
-use App\Entity\Tenant\Agreement;
 use App\Entity\Tenant\AdmissionRecord;
-use App\Entity\Tenant\Bed;
-use App\Entity\Tenant\Payer;
 use App\Entity\Tenant\Person;
-use App\Entity\Tenant\Service;
+use App\Form\Admission\AdmissionStep2Type;
+use App\Form\Admission\AdmissionStep3Type;
+use App\Service\Admission\AdmissionService;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,7 +17,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class AdmissionWizardController extends AbstractTenantAwareController
 {
     public function __construct(
-        private TenantEntityManager $entityManager
+        private TenantEntityManager $entityManager,
+        private AdmissionService $admissionService
     ) {}
 
     #[Route('/step1/{patientId}', name: 'step1', methods: ['GET', 'POST'])]
@@ -36,13 +36,7 @@ class AdmissionWizardController extends AbstractTenantAwareController
         }
 
         if ($request->isMethod('POST')) {
-            $record = new AdmissionRecord();
-            $record->setPerson($patient);
-            $record->setAdmissionType($admissionType);
-            $record->setStatus('draft');
-
-            $this->entityManager->persist($record);
-            $this->entityManager->flush();
+            $record = $this->admissionService->createDraftAdmission($patient, $admissionType);
 
             $request->getSession()->set('admission_wizard', [
                 'patient_id' => $patientId,
@@ -76,44 +70,25 @@ class AdmissionWizardController extends AbstractTenantAwareController
             return $this->redirectToRoute('app_admission_hospitalization_index');
         }
 
-        if ($request->isMethod('POST')) {
-            $payerId = $request->request->getInt('payer', 0);
-            $agreementId = $request->request->getInt('agreement', 0);
-            if ($payerId <= 0 || $agreementId <= 0) {
-                $this->addFlash('danger', 'Debes seleccionar financiador y convenio.');
-                return $this->render('admission/wizard/step2.html.twig', [
-                    'wizard' => $wizardData,
-                ]);
-            }
+        $step2Defaults = [
+            'branch' => 1,
+            'payer' => isset($wizardData['payer']) ? (int) $wizardData['payer'] : null,
+            'agreement' => isset($wizardData['agreement']) ? (int) $wizardData['agreement'] : null,
+        ];
+        $form = $this->createForm(AdmissionStep2Type::class, $step2Defaults);
+        $form->handleRequest($request);
 
-            $payer = $this->entityManager->find(Payer::class, $payerId);
-            if (!$payer instanceof Payer || !$payer->isActive()) {
-                $this->addFlash('danger', 'El financiador seleccionado no existe o está inactivo.');
-                return $this->render('admission/wizard/step2.html.twig', [
-                    'wizard' => $wizardData,
-                ]);
-            }
+        if ($form->isSubmitted() && $form->isValid()) {
+            $payerId = (int) $form->get('payer')->getData();
+            $agreementId = (int) $form->get('agreement')->getData();
 
-            $connection = $this->entityManager->getConnection();
-            $agreementMatchesPayer = $connection->fetchOne(
-                'SELECT id FROM agreement WHERE id = :id AND is_active = true AND payer_id = :payer',
-                ['id' => $agreementId, 'payer' => $payerId]
-            );
-            $agreement = $this->entityManager->find(Agreement::class, $agreementId);
-            if (
-                !$agreementMatchesPayer
-                || !$agreement instanceof Agreement
-                || !$agreement->isActive()
-            ) {
+            if (!$this->admissionService->assignFinancialData($record, $payerId, $agreementId)) {
                 $this->addFlash('danger', 'El convenio seleccionado no existe o no corresponde al financiador.');
                 return $this->render('admission/wizard/step2.html.twig', [
                     'wizard' => $wizardData,
+                    'form' => $form->createView(),
                 ]);
             }
-
-            $record->setPayer($payer);
-            $record->setAgreement($agreement);
-            $this->entityManager->flush();
 
             $wizardData['payer'] = (string) $payerId;
             $wizardData['agreement'] = (string) $agreementId;
@@ -122,8 +97,13 @@ class AdmissionWizardController extends AbstractTenantAwareController
             return $this->redirectToRoute('app_admission_wizard_step3');
         }
 
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $this->addFlash('danger', 'Debes seleccionar financiador y convenio.');
+        }
+
         return $this->render('admission/wizard/step2.html.twig', [
             'wizard' => $wizardData,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -142,36 +122,24 @@ class AdmissionWizardController extends AbstractTenantAwareController
             return $this->redirectToRoute('app_admission_hospitalization_index');
         }
 
-        if ($request->isMethod('POST')) {
-            $serviceId = $request->request->getInt('service', 0);
-            $bedId = $request->request->getInt('bed', 0);
-            if ($serviceId <= 0 || $bedId <= 0) {
-                $this->addFlash('danger', 'Debes seleccionar servicio y cama.');
+        $step3Defaults = [
+            'branch' => 1,
+            'service' => isset($wizardData['service']) ? (int) $wizardData['service'] : null,
+            'bed' => isset($wizardData['bed']) ? (int) $wizardData['bed'] : null,
+        ];
+        $form = $this->createForm(AdmissionStep3Type::class, $step3Defaults);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $serviceId = (int) $form->get('service')->getData();
+            $bedId = (int) $form->get('bed')->getData();
+            if (!$this->admissionService->assignLocationData($record, $serviceId, $bedId)) {
+                $this->addFlash('danger', 'El servicio o la cama seleccionada no existen o están inactivos.');
                 return $this->render('admission/wizard/step3.html.twig', [
                     'wizard' => $wizardData,
+                    'form' => $form->createView(),
                 ]);
             }
-
-            $service = $this->entityManager->find(Service::class, $serviceId);
-            if (!$service instanceof Service || !$service->isActive()) {
-                $this->addFlash('danger', 'El servicio seleccionado no existe o está inactivo.');
-                return $this->render('admission/wizard/step3.html.twig', [
-                    'wizard' => $wizardData,
-                ]);
-            }
-
-            $bed = $this->entityManager->find(Bed::class, $bedId);
-            if (!$bed instanceof Bed || !$bed->isActive()) {
-                $this->addFlash('danger', 'La cama seleccionada no existe o está inactiva.');
-                return $this->render('admission/wizard/step3.html.twig', [
-                    'wizard' => $wizardData,
-                ]);
-            }
-
-            $record->setService($service);
-            $record->setBed($bed);
-            $record->setStatus('completed');
-            $this->entityManager->flush();
 
             $wizardData['service'] = (string) $serviceId;
             $wizardData['bed'] = (string) $bedId;
@@ -185,8 +153,13 @@ class AdmissionWizardController extends AbstractTenantAwareController
             ]);
         }
 
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $this->addFlash('danger', 'Debes seleccionar servicio y cama.');
+        }
+
         return $this->render('admission/wizard/step3.html.twig', [
             'wizard' => $wizardData,
+            'form' => $form->createView(),
         ]);
     }
 
