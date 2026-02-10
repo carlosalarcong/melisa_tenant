@@ -119,6 +119,38 @@ class MenuDefinition
                 'children' => []
             ],
             [
+                'name' => 'admision',
+                'label' => 'Admisión',
+                'icon' => 'bx bx-clinic',
+                'module' => null,
+                'children' => [
+                    [
+                        'name' => 'admission_general',
+                        'label' => 'Admisión General',
+                        'icon' => 'bx bx-user-check',
+                        'route' => 'app_admission_index',
+                        'module' => 'admission',
+                        'children' => []
+                    ],
+                    [
+                        'name' => 'admission_emergency',
+                        'label' => 'Urgencia',
+                        'icon' => 'bx bx-first-aid',
+                        'route' => 'app_admission_emergency_index',
+                        'module' => 'admission',
+                        'children' => []
+                    ],
+                    [
+                        'name' => 'admission_pre',
+                        'label' => 'Pre-Admisión',
+                        'icon' => 'bx bx-time',
+                        'route' => 'app_admission_pre_index',
+                        'module' => 'admission',
+                        'children' => []
+                    ],
+                ]
+            ],
+            [
                 'name' => 'citas',
                 'label' => 'Citas',
                 'icon' => $this->getIconForItem('citas'),

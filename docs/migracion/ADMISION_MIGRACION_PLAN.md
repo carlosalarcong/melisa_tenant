@@ -832,3 +832,128 @@ Y en `_sidebar.html.twig`, ampliar la condición de Turbo Frame:
 | Templates admission/ | ❌ PENDIENTE |
 | AdmissionService | ❌ PENDIENTE |
 | PatientSearchService | ❌ PENDIENTE |
+
+---
+
+## Tablero de ejecución (Codex + Copilot)
+
+> Usar este tablero para seguimiento diario.  
+> Regla: no pasar a la siguiente etapa sin cumplir DoD de la etapa actual.
+
+### Estado global por etapa
+
+| Etapa | Nombre | Estado | Responsable principal | Bloquea a |
+|---|---|---|---|---|
+| 0 | Preparación técnica y baseline | ⬜ Pendiente | Codex | 1-7 |
+| 1 | Menú "Admisión" en sidebar | ⬜ Pendiente | Codex | 2-7 |
+| 2 | AdmissionController + index base | ⬜ Pendiente | Codex | 3-7 |
+| 3 | Wizard de Admisión (step1-step3) | ⬜ Pendiente | Codex | 4-7 |
+| 4 | Flujo Urgencia | ⬜ Pendiente | Codex | 6-7 |
+| 5 | API JSON (sin jQuery) + Stimulus wizard | ⬜ Pendiente | Copilot (borrador) + Codex (integración) | 3-4-7 |
+| 6 | Impresión PDF | ⬜ Pendiente | Copilot (borrador) + Codex (integración) | 7 |
+| 7 | Mantenedores de admisión en menú + smoke tests | ⬜ Pendiente | Codex | Cierre |
+
+### ETAPA 0 — Preparación técnica y baseline
+
+| Tarea | Archivo(s) | Copilot | Codex | Estado |
+|---|---|---|---|---|
+| Confirmar convenciones y rutas | `docs/migracion/ADMISION_MIGRACION_PLAN.md`, `docs/migracion/GUIA_MAESTRA_MIGRACION.md` | Resume checklist | Valida y fija baseline | ⬜ |
+| Verificar frame principal | `templates/app_layout.html.twig` | N/A | Validación manual | ⬜ |
+| Verificar auto-discovery Stimulus | `assets/bootstrap.js`, `assets/app.js` | Sugiere ajustes | Valida runtime | ⬜ |
+
+**DoD Etapa 0**
+- Convenciones confirmadas (sin YAML routes, sin jQuery, TenantEntityManager por constructor).
+- Baseline sin errores JS críticos en consola.
+
+### ETAPA 1 — Menú "Admisión" en sidebar
+
+| Tarea | Archivo(s) | Copilot | Codex | Estado |
+|---|---|---|---|---|
+| Agregar bloque `admision` entre `pacientes` y `mantenedores` | `src/Service/Menu/MenuDefinition.php` | Propone bloque exacto | Inserta y ajusta orden final | ⬜ |
+| Habilitar carga en Turbo para módulo admisión | `templates/partials/_sidebar.html.twig` | Sugiere condición Twig | Corrige y valida colapsables | ⬜ |
+| Validar activo/highlight del menú | `templates/partials/_sidebar.html.twig` | N/A | Prueba navegando | ⬜ |
+
+**DoD Etapa 1**
+- Sidebar muestra “Admisión”.
+- Click en “Admisión” carga en `maintainer-content` sin recarga completa.
+- Colapsables funcionan sin rebote visual.
+
+### ETAPA 2 — AdmissionController + index base
+
+| Tarea | Archivo(s) | Copilot | Codex | Estado |
+|---|---|---|---|---|
+| Crear controller esqueleto | `src/Controller/Admission/AdmissionController.php` | Genera clase base | Revisa patrón + DI | ⬜ |
+| Crear vista `index` | `templates/admission/index.html.twig` | Genera markup base | Ajusta a layout real | ⬜ |
+| Verificar ruta principal | `/admission` | N/A | Smoke test manual | ⬜ |
+
+**DoD Etapa 2**
+- `GET /admission` responde 200.
+- Render correcto dentro de `maintainer-content`.
+
+### ETAPA 3 — Wizard de Admisión (step1-step3)
+
+| Tarea | Archivo(s) | Copilot | Codex | Estado |
+|---|---|---|---|---|
+| Crear `AdmissionWizardController` | `src/Controller/Admission/AdmissionWizardController.php` | Genera esqueleto métodos | Integra flujo Turbo | ⬜ |
+| Crear templates step1-step3 + complete | `templates/admission/wizard/*.html.twig` | Borrador de vistas | Ajuste final y navegación | ⬜ |
+| Integrar submit + validación por paso | Controller + Forms | Sugiere condiciones | Implementa comportamiento real | ⬜ |
+
+**DoD Etapa 3**
+- Step1 renderiza en `admission-wizard-content`.
+- POST válido avanza de paso por Turbo Stream.
+- POST inválido re-renderiza con errores en el frame.
+
+### ETAPA 4 — Flujo Urgencia
+
+| Tarea | Archivo(s) | Copilot | Codex | Estado |
+|---|---|---|---|---|
+| Crear `EmergencyAdmissionController` | `src/Controller/Admission/EmergencyAdmissionController.php` | Esqueleto + rutas | Ajusta lógica tenant | ⬜ |
+| Crear vistas urgencia | `templates/admission/emergency/index.html.twig`, `templates/admission/emergency/_form.html.twig` | Borrador | Integración final | ⬜ |
+| Implementar vista detalle urgencia | `templates/admission/view.html.twig` | Borrador | Ajuste final | ⬜ |
+
+**DoD Etapa 4**
+- `GET /admission/emergency` responde 200.
+- Flujo create/view operativo sin recarga completa innecesaria.
+
+### ETAPA 5 — API JSON + Stimulus wizard (sin jQuery)
+
+| Tarea | Archivo(s) | Copilot | Codex | Estado |
+|---|---|---|---|---|
+| Crear `AdmissionApiController` | `src/Controller/Admission/AdmissionApiController.php` | Genera endpoints base | Implementa consultas tenant | ⬜ |
+| Crear controller Stimulus wizard | `assets/controllers/admission/wizard_controller.js` | Genera lógica fetch/populate | Ajusta targets/actions reales | ⬜ |
+| Conectar selects dinámicos | templates wizard + form types | Sugiere `data-action` | Verifica comportamiento | ⬜ |
+
+**DoD Etapa 5**
+- `/api/admission/services|payers|agreements|beds` devuelven JSON válido.
+- Carga dinámica funciona con `fetch()` y sin jQuery.
+
+### ETAPA 6 — Impresión PDF
+
+| Tarea | Archivo(s) | Copilot | Codex | Estado |
+|---|---|---|---|---|
+| Crear `AdmissionPrintController` | `src/Controller/Admission/AdmissionPrintController.php` | Esqueleto | Integración y rutas | ⬜ |
+| Crear templates print | `templates/admission/print/admission_pdf.html.twig`, `templates/admission/print/urgency_pdf.html.twig` | Borrador HTML print | Ajuste final | ⬜ |
+| Validar links print | templates de vista | Sugiere link | Verifica `data-turbo="false"` | ⬜ |
+
+**DoD Etapa 6**
+- PDF abre en nueva pestaña (`target="_blank"`).
+- Render full-page sin Turbo frame.
+
+### ETAPA 7 — Mantenedores en menú + smoke tests finales
+
+| Tarea | Archivo(s) | Copilot | Codex | Estado |
+|---|---|---|---|---|
+| Agregar “Mantenedores Admisión” bajo menú admisión | `src/Service/Menu/MenuDefinition.php` | Sugiere bloque | Integra y ordena | ⬜ |
+| Ajustar condición módulo mantenimiento admisión | `templates/partials/_sidebar.html.twig` | Sugiere condición | Valida navegación | ⬜ |
+| Ejecutar checklist smoke tests | Sección checklist de este documento | Ayuda a marcar resultados | Ejecuta y documenta | ⬜ |
+
+**DoD Etapa 7**
+- Menú final completo y estable.
+- Checklist smoke tests completado.
+- Sin errores JS ni `turbo:frame-missing`.
+
+### Registro de avances
+
+| Fecha | Etapa | Cambio | Responsable | Evidencia |
+|---|---|---|---|---|
+| YYYY-MM-DD | Etapa X | Descripción breve | Codex/Copilot | commit / screenshot / ruta probada |
