@@ -1,0 +1,44 @@
+{% extends 'app_layout.html.twig' %}
+
+{% block title %}Admisión Urgencia - Melisa{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-4 py-4">
+        <h1>Crear Admisión Urgencia</h1>
+        <div class="card shadow-sm border-0 mt-4">
+            <div class="card-body p-4">
+                <p class="text-muted">Paciente seleccionado: #{{ patient_id }}</p>
+
+                <form method="post" action="{{ path('app_admission_emergency_create', { patientId: patient_id }) }}">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="triage" class="form-label">Triage</label>
+                            <select id="triage" name="triage" class="form-select" required>
+                                <option value="">-- Seleccionar --</option>
+                                <option value="c1">C1 - Reanimación</option>
+                                <option value="c2">C2 - Emergencia</option>
+                                <option value="c3">C3 - Urgencia</option>
+                                <option value="c4">C4 - Menor urgencia</option>
+                                <option value="c5">C5 - No urgente</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="reason" class="form-label">Motivo consulta</label>
+                            <input id="reason" name="reason" type="text" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 justify-content-end mt-4">
+                        <a href="{{ path('app_admission_emergency_index') }}"
+                           class="btn btn-outline-secondary"
+                           data-turbo-frame="maintainer-content">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-danger">Guardar y continuar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

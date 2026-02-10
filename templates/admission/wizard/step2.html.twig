@@ -1,39 +1,64 @@
 <turbo-frame id="admission-wizard-content">
     <div class="card shadow-sm border-0 mt-4">
-        <div class="card-body p-4">
+        <div class="card-body p-4" data-controller="admission--wizard">
             <h4 class="mb-3">Paso 2 de 3: Financiador y convenio</h4>
 
-            <form method="post" action="{{ path('app_admission_wizard_step2') }}">
+            {# Mensaje de error para fallos de fetch #}
+            <div class="alert alert-danger d-none"
+                 data-admission--wizard-target="errorMessage"
+                 role="alert">
+            </div>
+
+            <form method="post"
+                  action="{{ path('app_admission_wizard_step2') }}">
                 <div class="row g-3">
-                    <div class="col-md-6">
-                        <label for="payer" class="form-label">Financiador</label>
-                        <input id="payer"
-                               name="payer"
-                               type="text"
-                               class="form-control"
-                               value="{{ wizard.payer|default('') }}"
-                               required>
+                    <div class="col-md-4">
+                        <label for="branch" class="form-label">Sucursal</label>
+                        <select id="branch"
+                                class="form-select"
+                                data-admission--wizard-target="branchSelect"
+                                data-action="change->admission--wizard#onBranchChange">
+                            <option value="1" selected>Sucursal principal</option>
+                        </select>
                     </div>
-                    <div class="col-md-6">
-                        <label for="agreement" class="form-label">Convenio</label>
-                        <input id="agreement"
-                               name="agreement"
-                               type="text"
-                               class="form-control"
-                               value="{{ wizard.agreement|default('') }}"
-                               required>
+                    <div class="col-md-4">
+                        <label for="payer" class="form-label">
+                            Financiador <span class="text-danger">*</span>
+                        </label>
+                        <select id="payer"
+                                name="payer"
+                                class="form-select"
+                                data-admission--wizard-target="payerSelect"
+                                data-action="change->admission--wizard#onPayerChange"
+                                required>
+                            <option value="">-- Seleccionar financiador --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="agreement" class="form-label">
+                            Convenio <span class="text-danger">*</span>
+                        </label>
+                        <select id="agreement"
+                                name="agreement"
+                                class="form-select"
+                                data-admission--wizard-target="agreementSelect"
+                                required>
+                            <option value="">-- Seleccionar convenio --</option>
+                        </select>
+                        <small class="form-text text-muted">Seleccione primero un financiador</small>
                     </div>
                 </div>
 
                 <div class="d-flex gap-2 justify-content-end mt-4">
                     <a href="{{ path('app_admission_wizard_step1', { patientId: wizard.patient_id }) }}"
                        class="btn btn-outline-secondary">
-                        Volver
+                        <i class="bx bx-chevron-left"></i> Volver
                     </a>
-                    <button type="submit" class="btn btn-primary">Siguiente</button>
+                    <button type="submit" class="btn btn-primary">
+                        Siguiente <i class="bx bx-chevron-right"></i>
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </turbo-frame>
-

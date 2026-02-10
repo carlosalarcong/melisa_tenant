@@ -22,5 +22,29 @@ class EmergencyAdmissionController extends AbstractTenantAwareController
             'page_title' => 'Admisión Urgencia',
         ]);
     }
-}
 
+    #[Route('/create/{patientId}', name: 'create', methods: ['GET', 'POST'])]
+    public function create(Request $request, int $patientId): Response
+    {
+        if ($request->isMethod('POST')) {
+            $urgencyId = time();
+
+            return $this->redirectToRoute('app_admission_emergency_view', [
+                'id' => $urgencyId,
+            ]);
+        }
+
+        return $this->render('admission/emergency/_form.html.twig', [
+            'patient_id' => $patientId,
+        ]);
+    }
+
+    #[Route('/{id}/view', name: 'view', methods: ['GET'])]
+    public function view(int $id): Response
+    {
+        return $this->render('admission/view.html.twig', [
+            'admission_id' => $id,
+            'admission_type' => 'urgencia',
+        ]);
+    }
+}
