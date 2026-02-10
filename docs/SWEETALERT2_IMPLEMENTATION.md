@@ -1,128 +1,97 @@
 # Implementación de SweetAlert2 para Confirmaciones de Eliminación
 
 ## Resumen
-Reemplazo del `confirm()` nativo del navegador por **SweetAlert2** del template Velzon (Themesbrand v4.3.0).
+Se reemplazó `confirm()` nativo por **SweetAlert2** usando un controller Stimulus reutilizable.
 
-## Cambios Realizados
+## Estado Actual (implementación real)
 
-### 1. Stimulus Controller ✅
+### 1) Controller Stimulus de confirmación
 **Archivo**: `assets/controllers/confirm_delete_controller.js`
 
-Controller reutilizable con soporte para traducciones y configuración personalizada:
+- Controller: `confirm-delete`
+- Acción: `submit->confirm-delete#confirm`
+- Importa SweetAlert2 directamente (`import Swal from 'sweetalert2'`)
+- Usa fallback a `window.Swal` y, si no existe, fallback final a `confirm()` nativo
+- Previene doble envío con flag `confirmed`
 
-```javascript
-// Uso básico en cualquier formulario DELETE
-<form data-controller="confirm-delete" 
+Uso en formulario:
+
+```twig
+<form method="post"
+      data-controller="confirm-delete"
       data-action="submit->confirm-delete#confirm"
-      method="post">
-  <button type="submit">Eliminar</button>
-</form>
-
-// Configuración personalizada con traducciones
-<form data-controller="confirm-delete"
-      data-confirm-delete-title-value="{{ 'title'|trans }}"
-      data-confirm-delete-text-value="{{ 'text'|trans }}"
-      data-action="submit->confirm-delete#confirm">
+      data-confirm-delete-title-value="{{ 'maintainers.common.confirm_delete_title'|trans({}, 'maintainers') }}"
+      data-confirm-delete-text-value="{{ 'maintainers.common.confirm_delete_text'|trans({}, 'maintainers') }}"
+      data-confirm-delete-confirm-button-text-value="{{ 'maintainers.common.yes_delete'|trans({}, 'maintainers') }}"
+      data-confirm-delete-cancel-button-text-value="{{ 'maintainers.common.cancel'|trans({}, 'maintainers') }}">
+    <button type="submit">Eliminar</button>
 </form>
 ```
 
-### 2. Templates Actualizados ✅
+### 2) Inicialización de frontend
+**Archivos**:
+- `assets/bootstrap.js`
+- `assets/app.js`
+- `templates/base.html.twig`
+- `config/packages/framework.yaml`
 
-#### Mantenedores Modernos (con Turbo)
+Cambios relevantes:
+
+- Stimulus se inicia con `startStimulusApp()` en `assets/bootstrap.js`
+- `framework.asset_mapper.paths` incluye `assets/` para auto-discovery de controllers
+- `{{ importmap('app') }}` se carga en `<head>` (no en el bloque de scripts al final) para evitar conflictos en navegación Turbo
+- `assets/app.js` mantiene `window.Swal = Swal` y reinicialización de componentes Bootstrap en `DOMContentLoaded`, `turbo:load` y `turbo:frame-load`
+
+### 3) Turbo
+**Archivo**: `assets/turbo-config.js`
+
+- Usa `import '@hotwired/turbo'`
+- No usa `import { Turbo } ...` (esa forma generaba error)
+- No fuerza `data-turbo-permanent` sobre importmaps
+- No intercepta/oculta warnings de consola
+
+## Templates con eliminación usando SweetAlert2
+
 - `templates/maintainers/_table_row.html.twig`
-  - Reemplazado: `onsubmit="return confirm('...')"`
-  - Por: `data-controller="confirm-delete"` + valores de traducción
-
-#### Mantenedores Legacy
 - `templates/maintainers/_base_index.html.twig`
-  - Same approach
 
-#### Admin
-- `templates/admin/menu_config/index.html.twig`
-  - Eliminación de ítems de menú con SweetAlert2
+En ambos: se eliminó `onsubmit="return confirm(...)"` y se usa `data-controller="confirm-delete"`.
 
-### 3. Traducciones ✅
+## Traducciones
+
 **Archivo**: `translations/maintainers.es.yaml`
 
-```yaml
-maintainers:
-  common:
-    confirm_delete_title: '¿Está seguro?'
-    confirm_delete_text: 'Esta acción no se puede deshacer'
-    yes_delete: 'Sí, eliminar'
-    cancel: 'Cancelar'
-```
+Claves utilizadas:
+- `maintainers.common.confirm_delete_title`
+- `maintainers.common.confirm_delete_text`
+- `maintainers.common.yes_delete`
+- `maintainers.common.cancel`
 
-## Ventajas de SweetAlert2
+## Problemas resueltos durante la implementación
 
-### Antes (confirm nativo)
-- ❌ Feo, sin estilos
-- ❌ No personalizable
-- ❌ Inconsistente entre navegadores
-- ❌ Bloquea el thread del navegador
+1. Controller no conectaba:
+- Causa: AssetMapper sin `assets/` en `framework.asset_mapper.paths`.
+- Solución: agregar `assets/`.
 
-### Después (SweetAlert2)
-- ✅ Moderno y responsive
-- ✅ Totalmente personalizable
-- ✅ Consistente en todos los navegadores
-- ✅ Prometizado (no bloqueante)
-- ✅ Iconos y colores configurables
-- ✅ Soporte para traducciones
-- ✅ Animaciones suaves
-- ✅ Accessible (ARIA)
+2. Error Turbo por export inválido:
+- Causa: `import { Turbo } from '@hotwired/turbo'`.
+- Solución: `import '@hotwired/turbo'`.
 
-## Configuración Disponible
-
-```javascript
-// Valores configurables por data-attributes:
-data-confirm-delete-title-value        // Título del modal
-data-confirm-delete-text-value         // Texto descriptivo
-data-confirm-delete-confirm-button-text-value  // Botón confirmar
-data-confirm-delete-cancel-button-text-value   // Botón cancelar
-data-confirm-delete-icon-value         // Icono: warning, error, question
-
-// Colores predeterminados:
-confirmButtonColor: '#dc3545'  // danger (rojo)
-cancelButtonColor: '#6c757d'   // secondary (gris)
-```
-
-## Propagación Automática
-
-Como todos los mantenedores heredan de:
-- `AbstractMantenedorController` 
-- `modern_index.html.twig` + `_table_row.html.twig`
-
-**Los 132 mantenedores obtienen automáticamente SweetAlert2** sin modificar cada uno.
+3. Conflictos de importmap en navegación Turbo:
+- Causa: importmap reinyectado y/o manipulado como permanente.
+- Solución: mover `importmap('app')` a `<head>` y eliminar manipulación de importmap en JS.
 
 ## Compatibilidad
 
-- ✅ Turbo Frames (Refresh sin reload)
-- ✅ Turbo Streams (DELETE con remove())
-- ✅ Legacy pages sin Turbo
-- ✅ Responsive (mobile/tablet/desktop)
-- ✅ RTL support
-- ✅ Dark mode ready
+- Turbo Frames
+- Turbo Drive
+- Páginas legacy
+- Responsive
 
-## Assets
+## Verificación rápida
 
-SweetAlert2 ya estaba incluido en Velzon:
-- `assets/libs/sweetalert2/` (librería minificada)
-- `assets/app.js` (importado como `window.Swal`)
-- No requiere instalación adicional
-
-## Testing
-
-Probar en:
-1. Cualquier mantenedor (ej: `/app_servicio/servicio`)
-2. Click en botón de eliminar (🗑️)
-3. Verificar modal de SweetAlert2 aparece
-4. Confirmar → Registro eliminado con Turbo Stream
-5. Cancelar → Modal se cierra, sin acción
-
-## Rollback
-
-Si se necesita volver a confirm() nativo:
-```twig
-{# Remover data-attributes y agregar: #}
-onsubmit="return confirm('¿Eliminar?')"
-```
+1. Ir a cualquier mantenedor con botón eliminar.
+2. Click en eliminar.
+3. Debe aparecer SweetAlert2.
+4. Confirmar: envía formulario y elimina.
+5. Cancelar: no envía.
