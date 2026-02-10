@@ -3,6 +3,8 @@
 namespace App\Controller\Admission;
 
 use App\Controller\AbstractTenantAwareController;
+use App\Entity\Tenant\IdentificationType;
+use App\Entity\Tenant\Person;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,8 +21,49 @@ class AdmissionController extends AbstractTenantAwareController
     #[Route('/hospitalization', name: 'hospitalization_index', methods: ['GET'])]
     public function index(Request $request): Response
     {
+        $searchTerm = trim((string) $request->query->get('q', ''));
+        $selectedTypeId = $request->query->getInt('identification_type', 0);
+        $patients = [];
+        $searched = $searchTerm !== '';
+
+        $identificationTypes = $this->entityManager->createQueryBuilder()
+            ->select('it')
+            ->from(IdentificationType::class, 'it')
+            ->where('it.isActive = true')
+            ->orderBy('it.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        if ($searched) {
+            $qb = $this->entityManager->createQueryBuilder()
+                ->select('p', 'it')
+                ->from(Person::class, 'p')
+                ->leftJoin('p.identificationType', 'it')
+                ->andWhere(
+                    'LOWER(p.identification) LIKE :term OR
+                     LOWER(p.name) LIKE :term OR
+                     LOWER(p.lastName) LIKE :term OR
+                     LOWER(CONCAT(p.name, \' \', p.lastName, \' \', COALESCE(p.middleName, \'\'))) LIKE :term'
+                )
+                ->setParameter('term', '%' . mb_strtolower($searchTerm) . '%')
+                ->orderBy('p.id', 'DESC')
+                ->setMaxResults(20);
+
+            if ($selectedTypeId > 0) {
+                $qb->andWhere('it.id = :typeId')
+                    ->setParameter('typeId', $selectedTypeId);
+            }
+
+            $patients = $qb->getQuery()->getResult();
+        }
+
         return $this->render('admission/index.html.twig', [
             'page_title' => 'Admisión Hospitalaria',
+            'identification_types' => $identificationTypes,
+            'search_term' => $searchTerm,
+            'selected_type_id' => $selectedTypeId,
+            'patients' => $patients,
+            'searched' => $searched,
         ]);
     }
 
