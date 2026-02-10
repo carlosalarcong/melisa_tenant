@@ -169,19 +169,21 @@
         </div>
 
         {# Flash Messages #}
-        {% for message in app.flashes('success') %}
-            <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 mb-4" role="alert" style="border-radius: 12px;">
-                <i class="bx bx-check-circle me-2"></i>{{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        {% endfor %}
+        <div id="flash-messages">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 mb-4" role="alert" style="border-radius: 12px;">
+                    <i class="bx bx-check-circle me-2"></i>{{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
 
-        {% for message in app.flashes('error') %}
-            <div class="alert alert-danger alert-dismissible fade show shadow-sm border-0 mb-4" role="alert" style="border-radius: 12px;">
-                <i class="bx bx-error-circle me-2"></i>{{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        {% endfor %}
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-danger alert-dismissible fade show shadow-sm border-0 mb-4" role="alert" style="border-radius: 12px;">
+                    <i class="bx bx-error-circle me-2"></i>{{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        </div>
 
         {# Stats Cards #}
         <div class="row g-3 mb-4">
@@ -300,78 +302,12 @@
                                 </th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="maintainer-table-body">
                             {% for item in data %}
-                                <tr style="border-bottom: 1px solid #f1f5f9;">
-                                    <td class="px-3">
-                                        <input type="checkbox" class="form-check-input">
-                                    </td>
-                                    {% for column_key, column_value in columns %}
-                                        {# Determinar nombre de columna según formato #}
-                                        {% set column = (column_key == loop.index0) ? column_value : column_key %}
-                                        <td class="px-3" style="font-size: 0.875rem; color: #0f172a;">
-                                            {% if '.' in column %}
-                                                {% set parts = column|split('.') %}
-                                                {% set rel = attribute(item, parts[0]) %}
-                                                {% set value = rel is not null ? attribute(rel, parts[1]) : null %}
-                                            {% else %}
-                                                {% set value = attribute(item, column) %}
-                                            {% endif %}
-                                            {% if column == 'isActive' %}
-                                                {% if value %}
-                                                    <span class="badge rounded-pill" style="background-color: #d1fae5; color: #065f46; padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 600;">
-                                                        {{ 'maintainers.columns.active'|trans({}, 'maintainers') }}
-                                                    </span>
-                                                {% else %}
-                                                    <span class="badge rounded-pill bg-secondary">{{ 'maintainers.columns.inactive'|trans({}, 'maintainers') }}</span>
-                                                {% endif %}
-                                            {% elseif column in ['isDte', 'isLogistics', 'isCash', 'isClp', 'isUpToDate'] %}
-                                                {% if value %}
-                                                    <span class="badge rounded-pill" style="background-color: #dbeafe; color: #1e40af; padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 600;">{{ 'maintainers.columns.yes'|trans({}, 'maintainers') }}</span>
-                                                {% else %}
-                                                    <span class="badge rounded-pill bg-light text-muted" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">{{ 'maintainers.columns.no'|trans({}, 'maintainers') }}</span>
-                                                {% endif %}
-                                            {% elseif column == 'educationLevel' and value %}
-                                                {{ value.name }}
-                                            {% elseif column == 'originType' and value %}
-                                                {{ value.name }}
-                                            {% else %}
-                                                {{ value ?? '-' }}
-                                            {% endif %}
-                                        </td>
-                                    {% endfor %}
-                                    <td class="text-end px-3">
-                                        <div class="d-inline-flex gap-1">
-                                            {% set edit_route = app.request.attributes.get('_route')|replace({'_index': '_edit'}) %}
-                                            {% if is_granted(constant('App\\Security\\Voter\\MaintainerVoter::UPDATE'), item) %}
-                                            <button type="button"
-                                               class="btn btn-sm action-btn action-btn-edit border-0" 
-                                               style="color: #5e72e4;"
-                                               data-bs-toggle="modal" 
-                                               data-bs-target="#maintainerModal"
-                                               data-modal-url="{{ path(edit_route, {'id': item.id}) }}"
-                                               data-modal-title="<i class='bx bx-edit me-2'></i>{{ 'maintainers.common.edit'|trans({}, 'maintainers') }} {{ page_title }}"
-                                               title="{{ 'maintainers.common.edit'|trans({}, 'maintainers') }}">
-                                                <i class="bx bx-edit-alt"></i>
-                                            </button>
-                                            {% endif %}
-                                            {% set delete_route = app.request.attributes.get('_route')|replace({'_index': '_delete'}) %}
-                                            {% if is_granted(constant('App\\Security\\Voter\\MaintainerVoter::DELETE'), item) %}
-                                            <form method="post" action="{{ path(delete_route, {'id': item.id}) }}" 
-                                                  onsubmit="return confirm('{{ 'maintainers.common.confirm_delete'|trans({}, 'maintainers') }}');" 
-                                                  class="d-inline">
-                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ item.id) }}">
-                                                <button type="submit" 
-                                                        class="btn btn-sm action-btn action-btn-delete border-0" 
-                                                        style="color: #f5365c;"
-                                                        title="{{ 'maintainers.common.delete'|trans({}, 'maintainers') }}">
-                                                    <i class="bx bx-trash-alt"></i>
-                                                </button>
-                                            </form>
-                                            {% endif %}
-                                        </div>
-                                    </td>
-                                </tr>
+                                {% include 'maintainers/_table_row.html.twig' with {
+                                    'entity': item,
+                                    'columns': columns,
+                                } %}
                             {% endfor %}
                         </tbody>
                     </table>

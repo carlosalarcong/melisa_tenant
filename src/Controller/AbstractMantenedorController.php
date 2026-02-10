@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\UX\Turbo\TurboBundle;
 
 /**
  * Controlador base para Mantenedores (Master Data)
@@ -186,7 +187,12 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
             
             $this->addFlash('success', $this->getSuccessMessage('create'));
             
-            // Siempre redirigir - el data-turbo-frame="_top" hace que salga del frame
+            // Si es petición Turbo Frame, retornar Turbo Stream para insertar nueva fila
+            if ($this->isTurboFrameRequest($request)) {
+                return $this->renderTurboStreamCreate($entity);
+            }
+            
+            // Fallback: redirect normal
             return $this->redirectToRoute($this->getIndexRoute());
         }
         
@@ -235,7 +241,12 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
             
             $this->addFlash('success', $this->getSuccessMessage('edit'));
             
-            // Siempre redirigir - el data-turbo-frame="_top" hace que salga del frame
+            // Si es petición Turbo Frame, retornar Turbo Stream para reemplazar fila
+            if ($this->isTurboFrameRequest($request)) {
+                return $this->renderTurboStreamUpdate($entity);
+            }
+            
+            // Fallback: redirect normal
             return $this->redirectToRoute($this->getIndexRoute());
         }
         
@@ -272,11 +283,17 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
         $this->denyAccessUnlessGranted(MaintainerVoter::DELETE, $context);
         
         if ($this->canDelete($entity)) {
+            $entityId = $entity->getId();
             $this->beforeDelete($entity, $request);
             $this->remove($entity);
             $this->afterDelete($entity, $request);
             
             $this->addFlash('success', $this->getSuccessMessage('delete'));
+            
+            // Si es petición Turbo Frame, retornar Turbo Stream para remover fila
+            if ($this->isTurboFrameRequest($request)) {
+                return $this->renderTurboStreamDelete($entityId);
+            }
         } else {
             $this->addFlash('error', $this->getErrorMessage('cannot_delete'));
         }
@@ -974,5 +991,100 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
     protected function applyCustomFilters(QueryBuilder $qb, Request $request): void
     {
         // Override en controllers específicos para filtros adicionales
+    }
+
+    // ========================================
+    // TURBO STREAMS METHODS
+    // ========================================
+
+    /**
+     * Renderiza respuesta Turbo Stream para CREATE (prepend nueva fila)
+     * 
+     * @param object $entity Entidad recién creada
+     * @return Response Respuesta Turbo Stream
+     */
+    protected function renderTurboStreamCreate(object $entity): Response
+    {
+        $stream = TurboBundle::renderAction(
+            'prepend',
+            'maintainer-table-body',
+            $this->renderView($this->getTableRowTemplatePath(), [
+                'entity' => $entity,
+            ])
+        );
+
+        // También actualizar mensajes flash
+        $flashStream = TurboBundle::renderAction(
+            'update',
+            'flash-messages',
+            $this->renderView('components/_flash_messages.html.twig')
+        );
+
+        return new Response($stream . $flashStream, 200, [
+            'Content-Type' => 'text/vnd.turbo-stream.html',
+        ]);
+    }
+
+    /**
+     * Renderiza respuesta Turbo Stream para UPDATE (replace fila existente)
+     * 
+     * @param object $entity Entidad actualizada
+     * @return Response Respuesta Turbo Stream
+     */
+    protected function renderTurboStreamUpdate(object $entity): Response
+    {
+        $stream = TurboBundle::renderAction(
+            'replace',
+            'maintainer-row-' . $entity->getId(),
+            $this->renderView($this->getTableRowTemplatePath(), [
+                'entity' => $entity,
+            ])
+        );
+
+        $flashStream = TurboBundle::renderAction(
+            'update',
+            'flash-messages',
+            $this->renderView('components/_flash_messages.html.twig')
+        );
+
+        return new Response($stream . $flashStream, 200, [
+            'Content-Type' => 'text/vnd.turbo-stream.html',
+        ]);
+    }
+
+    /**
+     * Renderiza respuesta Turbo Stream para DELETE (remove fila)
+     * 
+     * @param int $entityId ID de la entidad eliminada
+     * @return Response Respuesta Turbo Stream
+     */
+    protected function renderTurboStreamDelete(int $entityId): Response
+    {
+        $stream = TurboBundle::renderAction(
+            'remove',
+            'maintainer-row-' . $entityId
+        );
+
+        $flashStream = TurboBundle::renderAction(
+            'update',
+            'flash-messages',
+            $this->renderView('components/_flash_messages.html.twig')
+        );
+
+        return new Response($stream . $flashStream, 200, [
+            'Content-Type' => 'text/vnd.turbo-stream.html',
+        ]);
+    }
+
+    /**
+     * Retorna la ruta al template de fila de tabla para Turbo Streams
+     * 
+     * Override en controllers específicos si necesitan template custom
+     * 
+     * @return string Ruta al template
+     */
+    protected function getTableRowTemplatePath(): string
+    {
+        return 'maintainers/_table_row.html.twig';
     }
 }
