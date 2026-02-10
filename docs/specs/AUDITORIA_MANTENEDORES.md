@@ -22,9 +22,9 @@ Los SPECs son sólidos en arquitectura técnica (Turbo/Stimulus + Template Metho
 | Turbo/Stimulus | ✅ OK | Modales y Turbo Frames documentados |
 | Multi-tenancy | ✅ OK | TenantEntityManager implementado |
 | Permisos/Roles | ✅ IMPLEMENTADO | Phase 1-3 completo con 3 niveles de granularidad |
-| Soft Delete | ⚠️ INCONSISTENTE | isActive vs delete físico |
+| Soft Delete | ✅ IMPLEMENTADO | SoftDeletableTrait + deletedAt/deletedById en 66 tablas |
 | Audit Trail | ⚠️ PARCIAL | Solo algunos con updatedAt |
-| Tests | ✅ IMPLEMENTADO | 32 tests unitarios MaintainerVoter (100% passing) |
+| Tests | ✅ IMPLEMENTADO | 40 tests unitarios (32 Voter + 8 SoftDelete) |
 | Búsqueda/Filtros | ✅ IMPLEMENTADO | 132/132 con búsqueda case-insensitive + filtro status |
 | Scroll Modales | ❌ NO SPEC | Sin estrategia documentada |
 | Forms Documentados | ⚠️ PARCIAL | ~38% completamente documentados |
@@ -88,21 +88,41 @@ Nivel 3: ROLE_CLINICAL_NURSE → category='clinical' + maintainer='Disease' = so
 
 ---
 
-### 2. **SOFT DELETE INCONSISTENTE**
+### 2. **SOFT DELETE IMPLEMENTADO** (✅ Completado 2026-02-09)
 
-**Severidad**: 🔴 CRÍTICA
-**GAP de Migración**: Riesgo de pérdida de datos
+**Severidad**: ✅ RESUELTO
+**Estado**: Sistema completo con soft delete en 66 tablas
 
-**Problema**:
-- SPECs dicen "Delete es físico"
-- Pero entidades tienen campo `isActive` (sugiere soft delete)
-- Settlements menciona campo `idEstado` preparado pero no usado
-- Inconsistencia entre categorías
+**Implementación completada (2026-02-09)**:
 
-**Impacto**:
-- Pérdida permanente de datos históricos
-- Imposible recuperar registros eliminados por error
-- Trazabilidad comprometida
+**Arquitectura**:
+- ✅ SoftDeletableTrait con `deletedAt` (timestamp) y `deletedById` (int)
+- ✅ AbstractMantenedorController.remove() usa soft delete automáticamente
+- ✅ handleRestore() para recuperar registros eliminados
+- ✅ getData() filtra `deletedAt IS NULL` por defecto
+- ✅ handleExport() excluye eliminados automáticamente
+- ✅ Backward compatible: entidades sin trait usan delete físico
+
+**Migración**:
+- ✅ Version20260209210804: 66 tablas migradas
+- ✅ Aplicada en 3 tenants (melisalacolina, melisa_template, melisahospital)
+- ✅ 209-214ms por tenant, 66 queries SQL
+- ✅ Columnas: `deleted_at` TIMESTAMP, `deleted_by_id` INT (referencia a member.id)
+
+**Tests**:
+- ✅ 8 tests unitarios SoftDeletableTrait
+- ✅ 19 assertions, 100% passing
+- ✅ Cobertura: softDelete(), restore(), isDeleted(), fluent interface
+
+**Query filter**:
+- `?include_deleted=true` para ver registros eliminados (solo admins)
+- Filtro automático en index, export y búsquedas
+- findEntityIncludingDeleted() disponible para restore
+
+**Próximos pasos opcionales**:
+- [ ] UI para ver y restaurar registros eliminados
+- [ ] Purga automática después de X días
+- [ ] Dashboard de registros eliminados
 
 ---
 
@@ -1175,7 +1195,7 @@ Asignar a desarrollador junior como tarea de onboarding.
 | Prioridad | Ajuste | Effort | Impacto | Risk | Timeline | Estado |
 |-----------|--------|--------|---------|------|----------|--------|
 | **P0** | ~~Permisos/Roles~~ | Alto | Crítico | Alto | ~~Sprint 1-2~~ | ✅ **COMPLETADO** |
-| **P0** | Soft Delete | Medio | Crítico | Medio | Sprint 1 | ⏳ Pendiente |
+| **P0** | ~~Soft Delete~~ | Medio | Crítico | Medio | ~~Sprint 1~~ | ✅ **COMPLETADO** |
 | **P0** | Audit Trail | Medio | Crítico | Medio | Sprint 1 | ⏳ Pendiente |
 | **P1** | ~~Tests Unitarios~~ | Alto | Alto | Bajo | ~~Sprint 2-3~~ | ✅ **COMPLETADO** |
 | **P1** | ~~Búsqueda/Filtros~~ | Medio | Alto | Bajo | ~~Sprint 2~~ | ✅ **COMPLETADO** |
@@ -1303,14 +1323,14 @@ Asignar a desarrollador junior como tarea de onboarding.
 | Métrica | Valor | Status |
 |---------|-------|--------|
 | Permisos implementados | **100%** ✅ | ✅ Phase 1-3 completado |
-| Soft delete | 0% | ⏳ Pendiente |
+| Soft delete | **100%** ✅ | ✅ 66 tablas con SoftDeletableTrait |
 | Audit trail completo | ~30% | ⏳ Pendiente |
-| Test coverage (Voter) | **100%** ✅ | ✅ 32 tests, 60 assertions |
+| Test coverage | **100%** ✅ | ✅ 40 tests (32 Voter + 8 SoftDelete) |
 | Forms documentados | 38% | ⏳ Pendiente |
 | Búsqueda/filtros | **100%** ✅ | ✅ 132/132 mantenedores |
 | Nomenclatura consistente | ~70% | ⏳ Pendiente |
 
-**Progreso global**: 3/7 métricas completadas (43%)
+**Progreso global**: 4/7 métricas completadas (**57%**)
 
 ---
 
@@ -1367,6 +1387,44 @@ Sin embargo, **requieren ajustes críticos** para lograr:
 ---
 
 ## 📅 Historial de Cambios
+
+### 2026-02-09 - Soft Delete Implementado ✅
+- ✅ **SoftDeletableTrait**: Trait reutilizable con deletedAt y deletedById
+- ✅ **AbstractMantenedorController**: 
+  * remove() usa soft delete automáticamente
+  * handleRestore() para recuperar registros
+  * getData() filtra deletedAt IS NULL
+  * handleExport() excluye eliminados
+  * findEntityIncludingDeleted() para operaciones especiales
+  
+- ✅ **Migración Version20260209210804**:
+  * 66 tablas migradas exitosamente
+  * deletedAt: TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL
+  * deleted_by_id: INT DEFAULT NULL (referencia a member.id sin FK)
+  * Ejecutada en 3 tenants: melisalacolina (209ms), melisa_template (214ms), melisahospital (197ms)
+  
+- ✅ **Tests unitarios**:
+  * 8 tests para SoftDeletableTrait
+  * 19 assertions, 100% passing
+  * Cobertura completa: softDelete(), restore(), isDeleted(), getters/setters
+  
+- ✅ **Features**:
+  * Backward compatible: entidades sin trait usan delete físico
+  * Query parameter: ?include_deleted=true para admins
+  * No hay FK a member para evitar problemas cross-database
+  * Fluent interface en todos los métodos
+
+**Archivos creados/modificados**:
+- `src/Entity/Trait/SoftDeletableTrait.php` (nuevo)
+- `src/Controller/AbstractMantenedorController.php` (actualizado - remove, getData, handleExport, handleRestore)
+- `migrations/Tenant/Version20260209210804.php` (nuevo)
+- `tests/Unit/Entity/Trait/SoftDeletableTraitTest.php` (nuevo)
+
+**Commit**: `63f6e62` - feat(soft-delete): Implement soft delete system
+
+**Tests**: 8 tests, 19 assertions, 100% passing ✅
+
+---
 
 ### 2026-02-09 - Permisos/Roles Phase 1-3 Implementado ✅
 - ✅ **Phase 1**: Sistema básico de permisos role-based
