@@ -44,7 +44,7 @@
                         </div>
                         <div class="col-md-4">
                             {{ form_label(form.birth_date, 'Fecha Nacimiento *', { label_attr: { class: 'form-label' } }) }}
-                            {{ form_widget(form.birth_date, { attr: { class: 'form-control', id: 'birth_date', required: true, autocomplete: 'off', placeholder: 'aaaa-mm-dd', 'data-controller': 'admission--birth-date-picker' } }) }}
+                            {{ form_widget(form.birth_date, { attr: { class: 'form-control', id: 'birth_date', required: true, autocomplete: 'off', placeholder: 'dd-mm-aaaa', 'data-controller': 'admission--birth-date-picker' } }) }}
                             {{ form_errors(form.birth_date) }}
                         </div>
                         <div class="col-md-4">

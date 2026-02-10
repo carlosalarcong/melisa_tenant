@@ -38,17 +38,31 @@ export default class extends Controller {
             this.picker = flatpickr(this.element, {
                 locale: spanishLocale,
                 clickOpens: true,
+                altInput: true,
+                altInputClass: 'form-control',
+                altFormat: 'd-m-Y',
                 dateFormat: 'Y-m-d',
                 maxDate,
                 defaultDate: currentValue,
                 allowInput: true,
                 disableMobile: true,
-                monthSelectorType: 'static'
+                monthSelectorType: 'static',
             });
+
+            if (!this.picker || !this.picker.calendarContainer) {
+                throw new Error('Flatpickr no inicializo correctamente');
+            }
+
+            this.openTarget = this.picker.altInput || this.element;
+            this.picker.set('positionElement', this.openTarget);
+            this.openHandler = () => this.open();
+            this.openTarget.addEventListener('focus', this.openHandler);
+            this.openTarget.addEventListener('click', this.openHandler);
         } catch (error) {
             console.error('No se pudo inicializar el datepicker de Fecha Nacimiento.', error);
             this.element.type = 'date';
             this.element.lang = 'es-CL';
+            this.element.placeholder = '';
         }
     }
 
@@ -59,6 +73,10 @@ export default class extends Controller {
     }
 
     disconnect() {
+        if (this.openTarget && this.openHandler) {
+            this.openTarget.removeEventListener('focus', this.openHandler);
+            this.openTarget.removeEventListener('click', this.openHandler);
+        }
         if (this.picker) {
             this.picker.destroy();
         }
