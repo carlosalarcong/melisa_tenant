@@ -1,6 +1,10 @@
 {% extends 'app_layout.html.twig' %}
 
 {% block title %}{{ page_title }} - Melisa{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('libs/flatpickr/flatpickr.min.css') }}">
+{% endblock %}
 
 {% block content %}
     <div class="container-fluid px-4 py-4">
@@ -16,7 +20,13 @@
                 Datos del Paciente
             </div>
             <div class="card-body">
-                {{ form_start(form, { action: path('app_admission_patient_register') }) }}
+                {{ form_start(form, {
+                    action: path('app_admission_patient_register'),
+                    attr: {
+                        'data-controller': 'admission--email-validator',
+                        'data-action': 'submit->admission--email-validator#validateOnSubmit'
+                    }
+                }) }}
                     {{ form_widget(form.admission_type) }}
                     {% if form_errors(form) %}
                         <div class="alert alert-danger">{{ form_errors(form) }}</div>
@@ -34,7 +44,7 @@
                         </div>
                         <div class="col-md-4">
                             {{ form_label(form.birth_date, 'Fecha Nacimiento *', { label_attr: { class: 'form-label' } }) }}
-                            {{ form_widget(form.birth_date, { attr: { class: 'form-control', id: 'birth_date', type: 'date', required: true } }) }}
+                            {{ form_widget(form.birth_date, { attr: { class: 'form-control', id: 'birth_date', required: true, autocomplete: 'off', placeholder: 'aaaa-mm-dd', 'data-controller': 'admission--birth-date-picker' } }) }}
                             {{ form_errors(form.birth_date) }}
                         </div>
                         <div class="col-md-4">
@@ -84,12 +94,12 @@
                         </div>
                         <div class="col-md-4">
                             {{ form_label(form.email, 'Email', { label_attr: { class: 'form-label' } }) }}
-                            {{ form_widget(form.email, { attr: { class: 'form-control', id: 'email', type: 'email' } }) }}
+                            {{ form_widget(form.email, { attr: { class: 'form-control', id: 'email', type: 'email', 'data-admission--email-validator-target': 'email', 'data-action': 'input->admission--email-validator#validatePrimary blur->admission--email-validator#validatePrimary' } }) }}
                             {{ form_errors(form.email) }}
                         </div>
                         <div class="col-md-4">
                             {{ form_label(form.secondary_email, 'Email secundario', { label_attr: { class: 'form-label' } }) }}
-                            {{ form_widget(form.secondary_email, { attr: { class: 'form-control', id: 'secondary_email', type: 'email' } }) }}
+                            {{ form_widget(form.secondary_email, { attr: { class: 'form-control', id: 'secondary_email', type: 'email', 'data-admission--email-validator-target': 'secondaryEmail', 'data-action': 'input->admission--email-validator#validateSecondary blur->admission--email-validator#validateSecondary' } }) }}
                             {{ form_errors(form.secondary_email) }}
                         </div>
                         <div class="col-md-4">

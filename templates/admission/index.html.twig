@@ -17,12 +17,23 @@
             <div class="card-body">
                 {{ form_start(search_form, {
                     method: 'GET',
-                    action: path(search_action_route|default('app_admission_hospitalization_index'))
+                    action: path(search_action_route|default('app_admission_hospitalization_index')),
+                    attr: {
+                        'data-controller': 'admission--rut-validator',
+                        'data-admission--rut-validator-rut-type-id-value': rut_type_id|default(0),
+                        'data-admission--rut-validator-target': 'form',
+                        'data-action': 'submit->admission--rut-validator#validateOnSubmit'
+                    }
                 }) }}
                     <div class="row g-2 align-items-end">
                         <div class="col-md-3">
                             {{ form_label(search_form.identification_type, 'Tipo documento', { label_attr: { class: 'form-label' } }) }}
-                            {{ form_widget(search_form.identification_type, { attr: { class: 'form-select', id: 'identification_type' } }) }}
+                            {{ form_widget(search_form.identification_type, { attr: {
+                                class: 'form-select',
+                                id: 'identification_type',
+                                'data-admission--rut-validator-target': 'typeSelect',
+                                'data-action': 'change->admission--rut-validator#onTypeChange'
+                            } }) }}
                         </div>
                         <div class="col-md-6">
                             {{ form_label(search_form.q, 'RUT / Documento / Nombre', { label_attr: { class: 'form-label' } }) }}
@@ -31,7 +42,9 @@
                                     class: 'form-control',
                                     id: 'q',
                                     placeholder: 'Ejemplo: 12345678-9 o Carlos Alarcón',
-                                    required: true
+                                    required: true,
+                                    'data-admission--rut-validator-target': 'queryInput',
+                                    'data-action': 'input->admission--rut-validator#onQueryInput'
                                 }
                             }) }}
                         </div>
@@ -41,6 +54,8 @@
                             </button>
                         </div>
                     </div>
+                    <div class="text-danger small mt-2 d-none"
+                         data-admission--rut-validator-target="errorMessage"></div>
                 {{ form_end(search_form) }}
             </div>
         </div>

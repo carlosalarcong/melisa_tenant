@@ -39,6 +39,9 @@ class PatientRegistrationController extends AbstractTenantAwareController
 
     private function handleRegistration(Request $request, bool $foreignMode): Response
     {
+        $rawIdentificationType = (string) $request->query->get('identification_type', '');
+        $initialIdentificationType = ctype_digit($rawIdentificationType) ? (int) $rawIdentificationType : 0;
+
         $identificationTypes = $this->entityManager->getRepository(IdentificationType::class)->findBy([], ['name' => 'ASC']);
         $genders = $this->entityManager->getRepository(Gender::class)->findBy([], ['name' => 'ASC']);
         $countries = $this->entityManager->getRepository(Country::class)->findBy([], ['name' => 'ASC']);
@@ -49,7 +52,7 @@ class PatientRegistrationController extends AbstractTenantAwareController
 
         $formClass = $foreignMode ? ForeignPatientType::class : PatientRegistrationType::class;
         $form = $this->createForm($formClass, [
-            'identification_type' => $request->query->getInt('identification_type', 0) ?: null,
+            'identification_type' => $initialIdentificationType ?: null,
             'identification' => (string) $request->query->get('identification', ''),
             'admission_type' => (string) $request->query->get('admission_type', 'hospitalaria'),
             'birth_date' => '',

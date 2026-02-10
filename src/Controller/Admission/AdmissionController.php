@@ -63,15 +63,22 @@ class AdmissionController extends AbstractTenantAwareController
 
     private function buildSearchViewData(Request $request, string $pageTitle, string $searchActionRoute): array
     {
+        $rawType = (string) $request->query->get('identification_type', '');
+        $initialTypeId = ctype_digit($rawType) ? (int) $rawType : 0;
+
         $identificationTypes = $this->patientSearchService->getActiveIdentificationTypes();
 
-        $identificationChoices = [];
+        $identificationChoices = ['Todos' => 0];
+        $rutTypeId = 0;
         foreach ($identificationTypes as $type) {
             $identificationChoices[$type->getName()] = $type->getId();
+            if (mb_strtolower((string) $type->getName()) === 'rut') {
+                $rutTypeId = (int) $type->getId();
+            }
         }
 
         $form = $this->createForm(PatientSearchType::class, [
-            'identification_type' => $request->query->getInt('identification_type', 0) ?: null,
+            'identification_type' => $initialTypeId,
             'q' => trim((string) $request->query->get('q', '')),
         ], [
             'identification_choices' => $identificationChoices,
@@ -81,7 +88,10 @@ class AdmissionController extends AbstractTenantAwareController
 
         $formData = $form->getData();
         $searchTerm = trim((string) ($formData['q'] ?? ''));
-        $selectedTypeId = (int) ($formData['identification_type'] ?? 0);
+        $selectedTypeId = $initialTypeId;
+        if (isset($formData['identification_type']) && ctype_digit((string) $formData['identification_type'])) {
+            $selectedTypeId = (int) $formData['identification_type'];
+        }
         $searched = $searchTerm !== '';
         $patients = $this->patientSearchService->searchPatients($searchTerm, $selectedTypeId, 20);
 
@@ -93,6 +103,7 @@ class AdmissionController extends AbstractTenantAwareController
             'patients' => $patients,
             'searched' => $searched,
             'search_form' => $form->createView(),
+            'rut_type_id' => $rutTypeId,
         ];
     }
 }
