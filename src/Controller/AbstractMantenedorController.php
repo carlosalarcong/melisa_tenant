@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\UX\Turbo\TurboBundle;
+use Symfony\UX\Turbo\TurboStreamResponse;
 
 /**
  * Controlador base para Mantenedores (Master Data)
@@ -1005,24 +1005,16 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
      */
     protected function renderTurboStreamCreate(object $entity): Response
     {
-        $stream = TurboBundle::renderAction(
-            'prepend',
-            'maintainer-table-body',
-            $this->renderView($this->getTableRowTemplatePath(), [
-                'entity' => $entity,
-            ])
-        );
-
-        // También actualizar mensajes flash
-        $flashStream = TurboBundle::renderAction(
-            'update',
-            'flash-messages',
-            $this->renderView('components/_flash_messages.html.twig')
-        );
-
-        return new Response($stream . $flashStream, 200, [
-            'Content-Type' => 'text/vnd.turbo-stream.html',
+        $rowHtml = $this->renderView($this->getTableRowTemplatePath(), [
+            'entity' => $entity,
+            'columns' => $this->getColumns(),
         ]);
+
+        $flashHtml = $this->renderView('components/_flash_messages.html.twig');
+
+        return (new TurboStreamResponse())
+            ->prepend('maintainer-table-body', $rowHtml)
+            ->update('flash-messages', $flashHtml);
     }
 
     /**
@@ -1033,23 +1025,16 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
      */
     protected function renderTurboStreamUpdate(object $entity): Response
     {
-        $stream = TurboBundle::renderAction(
-            'replace',
-            'maintainer-row-' . $entity->getId(),
-            $this->renderView($this->getTableRowTemplatePath(), [
-                'entity' => $entity,
-            ])
-        );
-
-        $flashStream = TurboBundle::renderAction(
-            'update',
-            'flash-messages',
-            $this->renderView('components/_flash_messages.html.twig')
-        );
-
-        return new Response($stream . $flashStream, 200, [
-            'Content-Type' => 'text/vnd.turbo-stream.html',
+        $rowHtml = $this->renderView($this->getTableRowTemplatePath(), [
+            'entity' => $entity,
+            'columns' => $this->getColumns(),
         ]);
+
+        $flashHtml = $this->renderView('components/_flash_messages.html.twig');
+
+        return (new TurboStreamResponse())
+            ->replace('maintainer-row-' . $entity->getId(), $rowHtml)
+            ->update('flash-messages', $flashHtml);
     }
 
     /**
@@ -1060,20 +1045,11 @@ abstract class AbstractMantenedorController extends AbstractTenantAwareControlle
      */
     protected function renderTurboStreamDelete(int $entityId): Response
     {
-        $stream = TurboBundle::renderAction(
-            'remove',
-            'maintainer-row-' . $entityId
-        );
+        $flashHtml = $this->renderView('components/_flash_messages.html.twig');
 
-        $flashStream = TurboBundle::renderAction(
-            'update',
-            'flash-messages',
-            $this->renderView('components/_flash_messages.html.twig')
-        );
-
-        return new Response($stream . $flashStream, 200, [
-            'Content-Type' => 'text/vnd.turbo-stream.html',
-        ]);
+        return (new TurboStreamResponse())
+            ->remove('maintainer-row-' . $entityId)
+            ->update('flash-messages', $flashHtml);
     }
 
     /**
