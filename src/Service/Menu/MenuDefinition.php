@@ -148,6 +148,38 @@ class MenuDefinition
                         'module' => 'admission',
                         'children' => []
                     ],
+                    [
+                        'name' => 'admission_maintainers',
+                        'label' => 'Mantenedores Admisión',
+                        'icon' => 'bx bx-cog',
+                        'module' => null,
+                        'children' => [
+                            [
+                                'name' => 'emergency_consultation_type',
+                                'label' => 'Tipos Consulta Urgencia',
+                                'icon' => 'bx bx-list-ul',
+                                'route' => 'app_maintainers_admission_emergency_consultation_type_index',
+                                'module' => 'maintenance_admission',
+                                'children' => []
+                            ],
+                            [
+                                'name' => 'company_agreement',
+                                'label' => 'Convenios Empresa',
+                                'icon' => 'bx bx-buildings',
+                                'route' => 'app_maintainers_admission_company_agreement_index',
+                                'module' => 'maintenance_admission',
+                                'children' => []
+                            ],
+                            [
+                                'name' => 'cancellation_reason',
+                                'label' => 'Motivos de Anulación',
+                                'icon' => 'bx bx-x-circle',
+                                'route' => 'app_maintainers_admission_cancellation_reason_index',
+                                'module' => 'maintenance_admission',
+                                'children' => []
+                            ],
+                        ]
+                    ],
                 ]
             ],
             [

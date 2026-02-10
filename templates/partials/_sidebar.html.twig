@@ -43,7 +43,11 @@
         <li class="nav-item">
             <a class="nav-link nav-level-{{ level }} {% if item.is_active|default(false) %}active{% endif %}" 
                href="{{ (item.route is defined and item.route) ? path(item.route) : '#' }}"
-               {% if item.module|default(false) and ('maintenance_' in item.module or item.module == 'admission') %}
+               {% if item.module|default(false) and (
+                   'maintenance_' in item.module or
+                   item.module == 'admission' or
+                   item.module == 'maintenance_admission'
+               ) %}
                    data-turbo-frame="maintainer-content"
                    data-turbo-action="advance"
                {% endif %}
