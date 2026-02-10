@@ -23,8 +23,8 @@ Los SPECs son sólidos en arquitectura técnica (Turbo/Stimulus + Template Metho
 | Multi-tenancy | ✅ OK | TenantEntityManager implementado |
 | Permisos/Roles | ✅ IMPLEMENTADO | Phase 1-3 completo con 3 niveles de granularidad |
 | Soft Delete | ✅ IMPLEMENTADO | SoftDeletableTrait + deletedAt/deletedById en 66 tablas |
-| Audit Trail | ⚠️ PARCIAL | Solo algunos con updatedAt |
-| Tests | ✅ IMPLEMENTADO | 40 tests unitarios (32 Voter + 8 SoftDelete) |
+| Audit Trail | ✅ IMPLEMENTADO | AuditableTrait + createdAt/createdBy/updatedAt/updatedBy en 66 tablas |
+| Tests | ✅ IMPLEMENTADO | 51 tests unitarios (32 Voter + 8 SoftDelete + 11 Audit) |
 | Búsqueda/Filtros | ✅ IMPLEMENTADO | 132/132 con búsqueda case-insensitive + filtro status |
 | Scroll Modales | ❌ NO SPEC | Sin estrategia documentada |
 | Forms Documentados | ⚠️ PARCIAL | ~38% completamente documentados |
@@ -126,21 +126,81 @@ Nivel 3: ROLE_CLINICAL_NURSE → category='clinical' + maintainer='Disease' = so
 
 ---
 
-### 3. **AUDIT TRAIL INCOMPLETO**
+### 3. **AUDIT TRAIL IMPLEMENTADO** (✅ Completado 2026-02-10)
 
-**Severidad**: 🔴 CRÍTICA
-**GAP de Migración**: Legacy probablemente registra quién hace cambios
+**Severidad**: ✅ RESUELTO
+**Estado**: Sistema completo con audit trail en 66 tablas
 
-**Problema**:
-- Solo algunos mantenedores tienen hook `beforeSave()` con `updatedAt`
-- Faltan campos: `createdBy`, `updatedBy`, `deletedBy`
-- No se registra quién creó, modificó o eliminó registros
-- Inconsistencia entre categorías (algunos sí, otros no)
+**Implementación completada (2026-02-10)**:
 
-**Impacto**:
-- Imposible rastrear quién hizo un cambio
-- Auditorías incompletas
-- Problemas de compliance
+**Arquitectura**:
+- ✅ AuditableTrait con `createdAt` (required), `createdBy`, `updatedAt`, `updatedBy`
+- ✅ AuditTrailListener con eventos Doctrine PrePersist y PreUpdate
+- ✅ Auto-población automática de campos usando Symfony Security
+- ✅ Migración Version20260210015000 para 66 tablas
+- ✅ 11 tests unitarios (30 assertions, 100% passing)
+
+**Campos implementados**:
+```php
+// AuditableTrait
+private \DateTimeInterface $createdAt;  // Required, NOT NULL
+private ?int $createdBy;                 // Nullable, user ID
+private ?\DateTimeInterface $updatedAt; // Nullable
+private ?int $updatedBy;                 // Nullable, user ID
+```
+
+**Características**:
+- `markCreated()`: Acepta object|int|null (usuario o ID directo)
+- `markUpdated()`: Acepta object|int|null (usuario o ID directo)
+- `createdAt`: DEFAULT CURRENT_TIMESTAMP en DB
+- INT fields sin FK: Evita cross-database issues (Member en tenant DB)
+- Fluent interface: Todos los setters retornan $this
+- Listener auto-registrado con #[AsDoctrineListener]
+
+**AuditTrailListener**:
+```php
+#[AsDoctrineListener(event: Events::prePersist, priority: 500, connection: 'default')]
+public function prePersist(PrePersistEventArgs $args): void
+{
+    $entity = $args->getObject();
+    if (method_exists($entity, 'markCreated')) {
+        $user = $this->security->getUser();
+        $entity->markCreated($user);
+    }
+}
+
+#[AsDoctrineListener(event: Events::preUpdate, priority: 500, connection: 'default')]
+public function preUpdate(PreUpdateEventArgs $args): void
+{
+    $entity = $args->getObject();
+    if (method_exists($entity, 'markUpdated')) {
+        $user = $this->security->getUser();
+        $entity->markUpdated($user);
+    }
+}
+```
+
+**Migración**:
+- Tenant 5 (melisalacolina): 66 queries, 282.1ms
+- Tenant 6 (melisa_template): 66 queries, 247ms
+- Tenant 7 (melisahospital): 66 queries, 242.6ms
+
+**Tests**:
+- ✅ 11 tests unitarios (AuditableTraitTest.php)
+- ✅ 30 assertions
+- ✅ 100% passing
+- ✅ Test: markCreated sets timestamp and user
+- ✅ Test: markCreated without user still sets timestamp
+- ✅ Test: markUpdated sets timestamp and user
+- ✅ Test: markUpdated without user still sets timestamp
+- ✅ Test: fluent interface works
+- ✅ Test: createdAt required but others nullable
+- ✅ Test: markCreated does not overwrite existing timestamp
+
+**Próximos pasos (opcional)**:
+- [ ] Agregar columnas en CSV exports (createdAt, createdBy, etc.)
+- [ ] Mostrar info de auditoría en modales/forms
+- [ ] Template helper: `{{ show_audit_info(entity) }}`
 
 ---
 
@@ -1196,7 +1256,7 @@ Asignar a desarrollador junior como tarea de onboarding.
 |-----------|--------|--------|---------|------|----------|--------|
 | **P0** | ~~Permisos/Roles~~ | Alto | Crítico | Alto | ~~Sprint 1-2~~ | ✅ **COMPLETADO** |
 | **P0** | ~~Soft Delete~~ | Medio | Crítico | Medio | ~~Sprint 1~~ | ✅ **COMPLETADO** |
-| **P0** | Audit Trail | Medio | Crítico | Medio | Sprint 1 | ⏳ Pendiente |
+| **P0** | ~~Audit Trail~~ | Medio | Crítico | Medio | ~~Sprint 1~~ | ✅ **COMPLETADO** |
 | **P1** | ~~Tests Unitarios~~ | Alto | Alto | Bajo | ~~Sprint 2-3~~ | ✅ **COMPLETADO** |
 | **P1** | ~~Búsqueda/Filtros~~ | Medio | Alto | Bajo | ~~Sprint 2~~ | ✅ **COMPLETADO** |
 | **P1** | Turbo Frame Refresh | Bajo | Alto | Bajo | Sprint 1 | ⏳ Pendiente |
@@ -1318,19 +1378,19 @@ Asignar a desarrollador junior como tarea de onboarding.
 | Búsqueda/filtros | 0% | 100% |
 | Nomenclatura consistente | ~70% | 100% |
 
-### Después de Ajustes (Estado Actual - 2026-02-09 PM)
+### Después de Ajustes (Estado Actual - 2026-02-10)
 
 | Métrica | Valor | Status |
 |---------|-------|--------|
 | Permisos implementados | **100%** ✅ | ✅ Phase 1-3 completado |
 | Soft delete | **100%** ✅ | ✅ 66 tablas con SoftDeletableTrait |
-| Audit trail completo | ~30% | ⏳ Pendiente |
-| Test coverage | **100%** ✅ | ✅ 40 tests (32 Voter + 8 SoftDelete) |
+| Audit trail completo | **100%** ✅ | ✅ 66 tablas con AuditableTrait |
+| Test coverage | **100%** ✅ | ✅ 51 tests (32 Voter + 8 SoftDelete + 11 Audit) |
 | Forms documentados | 38% | ⏳ Pendiente |
 | Búsqueda/filtros | **100%** ✅ | ✅ 132/132 mantenedores |
 | Nomenclatura consistente | ~70% | ⏳ Pendiente |
 
-**Progreso global**: 4/7 métricas completadas (**57%**)
+**Progreso global**: 5/7 métricas completadas (**71%**)
 
 ---
 
@@ -1497,7 +1557,52 @@ Sin embargo, **requieren ajustes críticos** para lograr:
 
 ---
 
+### 2026-02-10 - Audit Trail Implementado ✅
+- ✅ **AuditableTrait**: Trait reutilizable con createdAt, createdBy, updatedAt, updatedBy
+- ✅ **AuditTrailListener**: EventSubscriber con auto-registro usando #[AsDoctrineListener]
+  * PrePersist: auto-popula createdAt + createdBy
+  * PreUpdate: auto-popula updatedAt + updatedBy
+  * Usa Symfony Security para obtener usuario actual
+  * Valida existencia de métodos antes de llamarlos
+  
+- ✅ **Migración Version20260210015000**:
+  * 66 tablas migradas exitosamente
+  * created_at: TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+  * created_by: INT DEFAULT NULL
+  * updated_at: TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL
+  * updated_by: INT DEFAULT NULL
+  * Ejecutada en 3 tenants: melisalacolina (282.1ms), melisa_template (247ms), melisahospital (242.6ms)
+  
+- ✅ **Tests unitarios**:
+  * 11 tests para AuditableTrait
+  * 30 assertions, 100% passing
+  * Cobertura completa: markCreated(), markUpdated(), getters/setters, fluent interface
+  
+- ✅ **Features**:
+  * markCreated(object|int|null): Acepta usuario, ID o null
+  * markUpdated(object|int|null): Acepta usuario, ID o null
+  * createdAt: Requerido, auto-set con DEFAULT CURRENT_TIMESTAMP
+  * INT fields sin FK para evitar problemas cross-database
+  * Fluent interface en todos los métodos
+  * Listener se auto-registra con atributos PHP 8
+
+**Archivos creados**:
+- `src/Entity/Trait/AuditableTrait.php` (nuevo)
+- `src/EventListener/AuditTrailListener.php` (nuevo)
+- `migrations/Tenant/Version20260210015000.php` (nuevo)
+- `tests/Unit/Entity/Trait/AuditableTraitTest.php` (nuevo)
+
+**Commit**: `4bbe2b2` - feat(audit-trail): Implement comprehensive audit trail system
+
+**Tests**: 11 tests, 30 assertions, 100% passing ✅
+
+**Total project tests**: 51 maintainer-related (32 Voter + 8 SoftDelete + 11 Audit)
+
+**Progreso global**: 5/10 ajustes prioritarios completados (50%)
+
+---
+
 **Documento generado**: 2026-02-09
-**Última actualización**: 2026-02-09 (Búsqueda/Filtros implementado)
-**Próxima revisión**: Después de implementar ajustes P0
+**Última actualización**: 2026-02-10 (Audit Trail implementado)
+**Próxima revisión**: Después de implementar ajustes P1 (Turbo Frame Refresh)
 **Responsable**: Equipo de Migración Symfony 7.4
