@@ -11,137 +11,106 @@
                 Datos del Paciente
             </div>
             <div class="card-body">
-                <form method="post" action="{{ path('app_admission_patient_register') }}">
-                    <input type="hidden" name="admission_type" value="{{ form_data.admission_type|default('hospitalaria') }}">
+                {{ form_start(form, { action: path('app_admission_patient_register') }) }}
+                    {{ form_widget(form.admission_type) }}
+                    {% if form_errors(form) %}
+                        <div class="alert alert-danger">{{ form_errors(form) }}</div>
+                    {% endif %}
                     <div class="row g-3">
                         <div class="col-md-4">
-                            <label for="identification_type" class="form-label">Tipo Documento *</label>
-                            <select id="identification_type" name="identification_type" class="form-select" required>
-                                <option value="">Seleccionar</option>
-                                {% for type in identification_types %}
-                                    <option value="{{ type.id }}" {% if form_data.identification_type == type.id %}selected{% endif %}>
-                                        {{ type.name }}
-                                    </option>
-                                {% endfor %}
-                            </select>
+                            {{ form_label(form.identification_type, 'Tipo Documento *', { label_attr: { class: 'form-label' } }) }}
+                            {{ form_widget(form.identification_type, { attr: { class: 'form-select', id: 'identification_type', required: true } }) }}
+                            {{ form_errors(form.identification_type) }}
                         </div>
                         <div class="col-md-4">
-                            <label for="identification" class="form-label">Identificación *</label>
-                            <input id="identification"
-                                   name="identification"
-                                   class="form-control"
-                                   value="{{ form_data.identification }}"
-                                   required>
+                            {{ form_label(form.identification, 'Identificación *', { label_attr: { class: 'form-label' } }) }}
+                            {{ form_widget(form.identification, { attr: { class: 'form-control', id: 'identification', required: true } }) }}
+                            {{ form_errors(form.identification) }}
                         </div>
                         <div class="col-md-4">
-                            <label for="birth_date" class="form-label">Fecha Nacimiento *</label>
-                            <input id="birth_date" name="birth_date" type="date" class="form-control" value="{{ form_data.birth_date }}" required>
+                            {{ form_label(form.birth_date, 'Fecha Nacimiento *', { label_attr: { class: 'form-label' } }) }}
+                            {{ form_widget(form.birth_date, { attr: { class: 'form-control', id: 'birth_date', type: 'date', required: true } }) }}
+                            {{ form_errors(form.birth_date) }}
                         </div>
                         <div class="col-md-4">
-                            <label for="name" class="form-label">Nombre *</label>
-                            <input id="name" name="name" class="form-control" value="{{ form_data.name }}" required>
+                            {{ form_label(form.name, 'Nombre *', { label_attr: { class: 'form-label' } }) }}
+                            {{ form_widget(form.name, { attr: { class: 'form-control', id: 'name', required: true } }) }}
+                            {{ form_errors(form.name) }}
                         </div>
                         <div class="col-md-4">
-                            <label for="last_name" class="form-label">Apellido Paterno *</label>
-                            <input id="last_name" name="last_name" class="form-control" value="{{ form_data.last_name }}" required>
+                            {{ form_label(form.last_name, 'Apellido Paterno *', { label_attr: { class: 'form-label' } }) }}
+                            {{ form_widget(form.last_name, { attr: { class: 'form-control', id: 'last_name', required: true } }) }}
+                            {{ form_errors(form.last_name) }}
                         </div>
                         <div class="col-md-4">
-                            <label for="middle_name" class="form-label">Apellido Materno</label>
-                            <input id="middle_name" name="middle_name" class="form-control" value="{{ form_data.middle_name }}">
+                            {{ form_label(form.middle_name, 'Apellido Materno', { label_attr: { class: 'form-label' } }) }}
+                            {{ form_widget(form.middle_name, { attr: { class: 'form-control', id: 'middle_name' } }) }}
+                            {{ form_errors(form.middle_name) }}
                         </div>
                         <div class="col-md-4">
-                            <label for="gender" class="form-label">Sexo</label>
-                            <select id="gender" name="gender" class="form-select">
-                                <option value="0">Seleccionar</option>
-                                {% for gender in genders %}
-                                    <option value="{{ gender.id }}" {% if form_data.gender == gender.id %}selected{% endif %}>
-                                        {{ gender.name }}
-                                    </option>
-                                {% endfor %}
-                            </select>
+                            {{ form_label(form.gender, 'Sexo', { label_attr: { class: 'form-label' } }) }}
+                            {{ form_widget(form.gender, { attr: { class: 'form-select', id: 'gender' } }) }}
+                            {{ form_errors(form.gender) }}
                         </div>
                         <div class="col-md-4">
-                            <label for="country" class="form-label">Nacionalidad</label>
-                            <select id="country" name="country" class="form-select">
-                                <option value="0">Seleccionar</option>
-                                {% for country in countries %}
-                                    <option value="{{ country.id }}" {% if form_data.country == country.id %}selected{% endif %}>
-                                        {{ country.name }}
-                                    </option>
-                                {% endfor %}
-                            </select>
+                            {{ form_label(form.country, 'Nacionalidad', { label_attr: { class: 'form-label' } }) }}
+                            {{ form_widget(form.country, { attr: { class: 'form-select', id: 'country' } }) }}
+                            {{ form_errors(form.country) }}
                         </div>
                         <div class="col-md-4">
-                            <label for="marital_status" class="form-label">Estado civil</label>
-                            <select id="marital_status" name="marital_status" class="form-select">
-                                <option value="0">Seleccionar</option>
-                                {% for marital_status in marital_statuses %}
-                                    <option value="{{ marital_status.id }}" {% if form_data.marital_status == marital_status.id %}selected{% endif %}>
-                                        {{ marital_status.name }}
-                                    </option>
-                                {% endfor %}
-                            </select>
+                            {{ form_label(form.marital_status, 'Estado civil', { label_attr: { class: 'form-label' } }) }}
+                            {{ form_widget(form.marital_status, { attr: { class: 'form-select', id: 'marital_status' } }) }}
+                            {{ form_errors(form.marital_status) }}
                         </div>
                         <div class="col-md-4">
-                            <label for="mobile_phone" class="form-label">Teléfono Móvil *</label>
-                            <input id="mobile_phone" name="mobile_phone" class="form-control" value="{{ form_data.mobile_phone }}" required>
+                            {{ form_label(form.mobile_phone, 'Teléfono Móvil *', { label_attr: { class: 'form-label' } }) }}
+                            {{ form_widget(form.mobile_phone, { attr: { class: 'form-control', id: 'mobile_phone', required: true } }) }}
+                            {{ form_errors(form.mobile_phone) }}
                         </div>
                         <div class="col-md-4">
-                            <label for="home_phone" class="form-label">Teléfono fijo</label>
-                            <input id="home_phone" name="home_phone" class="form-control" value="{{ form_data.home_phone }}">
+                            {{ form_label(form.home_phone, 'Teléfono fijo', { label_attr: { class: 'form-label' } }) }}
+                            {{ form_widget(form.home_phone, { attr: { class: 'form-control', id: 'home_phone' } }) }}
+                            {{ form_errors(form.home_phone) }}
                         </div>
                         <div class="col-md-4">
-                            <label for="work_phone" class="form-label">Teléfono trabajo</label>
-                            <input id="work_phone" name="work_phone" class="form-control" value="{{ form_data.work_phone }}">
+                            {{ form_label(form.work_phone, 'Teléfono trabajo', { label_attr: { class: 'form-label' } }) }}
+                            {{ form_widget(form.work_phone, { attr: { class: 'form-control', id: 'work_phone' } }) }}
+                            {{ form_errors(form.work_phone) }}
                         </div>
                         <div class="col-md-4">
-                            <label for="email" class="form-label">Email</label>
-                            <input id="email" name="email" type="email" class="form-control" value="{{ form_data.email }}">
+                            {{ form_label(form.email, 'Email', { label_attr: { class: 'form-label' } }) }}
+                            {{ form_widget(form.email, { attr: { class: 'form-control', id: 'email', type: 'email' } }) }}
+                            {{ form_errors(form.email) }}
                         </div>
                         <div class="col-md-4">
-                            <label for="secondary_email" class="form-label">Email secundario</label>
-                            <input id="secondary_email" name="secondary_email" type="email" class="form-control" value="{{ form_data.secondary_email }}">
+                            {{ form_label(form.secondary_email, 'Email secundario', { label_attr: { class: 'form-label' } }) }}
+                            {{ form_widget(form.secondary_email, { attr: { class: 'form-control', id: 'secondary_email', type: 'email' } }) }}
+                            {{ form_errors(form.secondary_email) }}
                         </div>
                         <div class="col-md-4">
-                            <label for="social_name" class="form-label">Nombre social</label>
-                            <input id="social_name" name="social_name" class="form-control" value="{{ form_data.social_name }}">
+                            {{ form_label(form.social_name, 'Nombre social', { label_attr: { class: 'form-label' } }) }}
+                            {{ form_widget(form.social_name, { attr: { class: 'form-control', id: 'social_name' } }) }}
+                            {{ form_errors(form.social_name) }}
                         </div>
                         <div class="col-md-4">
-                            <label for="number_of_children" class="form-label">N° hijos</label>
-                            <input id="number_of_children" name="number_of_children" type="number" min="0" class="form-control" value="{{ form_data.number_of_children }}">
+                            {{ form_label(form.number_of_children, 'N° hijos', { label_attr: { class: 'form-label' } }) }}
+                            {{ form_widget(form.number_of_children, { attr: { class: 'form-control', id: 'number_of_children', min: 0, type: 'number' } }) }}
+                            {{ form_errors(form.number_of_children) }}
                         </div>
                         <div class="col-md-4">
-                            <label for="occupation" class="form-label">Ocupación</label>
-                            <select id="occupation" name="occupation" class="form-select">
-                                <option value="0">Seleccionar</option>
-                                {% for occupation in occupations %}
-                                    <option value="{{ occupation.id }}" {% if form_data.occupation == occupation.id %}selected{% endif %}>
-                                        {{ occupation.name }}
-                                    </option>
-                                {% endfor %}
-                            </select>
+                            {{ form_label(form.occupation, 'Ocupación', { label_attr: { class: 'form-label' } }) }}
+                            {{ form_widget(form.occupation, { attr: { class: 'form-select', id: 'occupation' } }) }}
+                            {{ form_errors(form.occupation) }}
                         </div>
                         <div class="col-md-4">
-                            <label for="religion" class="form-label">Religión</label>
-                            <select id="religion" name="religion" class="form-select">
-                                <option value="0">Seleccionar</option>
-                                {% for religion in religions %}
-                                    <option value="{{ religion.id }}" {% if form_data.religion == religion.id %}selected{% endif %}>
-                                        {{ religion.name }}
-                                    </option>
-                                {% endfor %}
-                            </select>
+                            {{ form_label(form.religion, 'Religión', { label_attr: { class: 'form-label' } }) }}
+                            {{ form_widget(form.religion, { attr: { class: 'form-select', id: 'religion' } }) }}
+                            {{ form_errors(form.religion) }}
                         </div>
                         <div class="col-md-4">
-                            <label for="education_level" class="form-label">Nivel instrucción</label>
-                            <select id="education_level" name="education_level" class="form-select">
-                                <option value="0">Seleccionar</option>
-                                {% for education_level in education_levels %}
-                                    <option value="{{ education_level.id }}" {% if form_data.education_level == education_level.id %}selected{% endif %}>
-                                        {{ education_level.name }}
-                                    </option>
-                                {% endfor %}
-                            </select>
+                            {{ form_label(form.education_level, 'Nivel instrucción', { label_attr: { class: 'form-label' } }) }}
+                            {{ form_widget(form.education_level, { attr: { class: 'form-select', id: 'education_level' } }) }}
+                            {{ form_errors(form.education_level) }}
                         </div>
                     </div>
 
@@ -153,7 +122,7 @@
                         </a>
                         <button type="submit" class="btn btn-success">Guardar y continuar</button>
                     </div>
-                </form>
+                {{ form_end(form) }}
             </div>
         </div>
     </div>
