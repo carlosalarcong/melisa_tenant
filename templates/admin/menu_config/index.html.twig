@@ -305,12 +305,7 @@
                 <form method="POST"
                       action="{{ path('admin_menu_config_delete', {id: item.id}) }}"
                       class="d-inline action-form"
-                      data-controller="confirm-delete"
-                      data-confirm-delete-title-value="¿Eliminar {{ item.label }}?"
-                      data-confirm-delete-text-value="Esta acción no se puede deshacer"
-                      data-confirm-delete-confirm-button-text-value="Sí, eliminar"
-                      data-confirm-delete-cancel-button-text-value="Cancelar"
-                      data-action="submit->confirm-delete#confirm">
+                      onsubmit="return confirm('¿Eliminar {{ item.label }}?');">
                     <button type="submit"
                             class="btn btn-sm btn-danger action-btn"
                             title="Eliminar">
