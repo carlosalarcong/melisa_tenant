@@ -3,8 +3,14 @@
 namespace App\Controller\Admission;
 
 use App\Controller\AbstractTenantAwareController;
+use App\Entity\Tenant\Country;
+use App\Entity\Tenant\EducationLevel;
+use App\Entity\Tenant\Gender;
 use App\Entity\Tenant\IdentificationType;
+use App\Entity\Tenant\MaritalStatus;
+use App\Entity\Tenant\Occupation;
 use App\Entity\Tenant\Person;
+use App\Entity\Tenant\Religion;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,60 +26,111 @@ class PatientRegistrationController extends AbstractTenantAwareController
     #[Route('/register', name: 'register', methods: ['GET', 'POST'])]
     public function register(Request $request): Response
     {
-        $identificationTypes = $this->entityManager->createQueryBuilder()
-            ->select('it')
-            ->from(IdentificationType::class, 'it')
-            ->where('it.isActive = true')
-            ->orderBy('it.name', 'ASC')
-            ->getQuery()
-            ->getResult();
+        $identificationTypes = $this->entityManager->getRepository(IdentificationType::class)->findBy([], ['name' => 'ASC']);
+        $genders = $this->entityManager->getRepository(Gender::class)->findBy([], ['name' => 'ASC']);
+        $countries = $this->entityManager->getRepository(Country::class)->findBy([], ['name' => 'ASC']);
+        $maritalStatuses = $this->entityManager->getRepository(MaritalStatus::class)->findBy([], ['name' => 'ASC']);
+        $occupations = $this->entityManager->getRepository(Occupation::class)->findBy([], ['name' => 'ASC']);
+        $religions = $this->entityManager->getRepository(Religion::class)->findBy([], ['name' => 'ASC']);
+        $educationLevels = $this->entityManager->getRepository(EducationLevel::class)->findBy([], ['name' => 'ASC']);
 
-        $prefillTypeId = $request->query->getInt('identification_type', 0);
-        $prefillIdentification = (string) $request->query->get('identification', '');
+        $formData = [
+            'identification_type' => $request->query->getInt('identification_type', 0),
+            'identification' => (string) $request->query->get('identification', ''),
+            'birth_date' => '',
+            'name' => '',
+            'last_name' => '',
+            'middle_name' => '',
+            'mobile_phone' => '',
+            'home_phone' => '',
+            'work_phone' => '',
+            'email' => '',
+            'secondary_email' => '',
+            'social_name' => '',
+            'number_of_children' => '',
+            'gender' => 0,
+            'country' => 0,
+            'marital_status' => 0,
+            'occupation' => 0,
+            'religion' => 0,
+            'education_level' => 0,
+        ];
 
         if ($request->isMethod('POST')) {
-            $typeId = $request->request->getInt('identification_type', 0);
-            $identification = trim((string) $request->request->get('identification', ''));
-            $name = trim((string) $request->request->get('name', ''));
-            $lastName = trim((string) $request->request->get('last_name', ''));
-            $middleName = trim((string) $request->request->get('middle_name', ''));
-            $mobilePhone = trim((string) $request->request->get('mobile_phone', ''));
-            $email = trim((string) $request->request->get('email', ''));
-            $birthDate = trim((string) $request->request->get('birth_date', ''));
+            $formData = [
+                'identification_type' => $request->request->getInt('identification_type', 0),
+                'identification' => trim((string) $request->request->get('identification', '')),
+                'birth_date' => trim((string) $request->request->get('birth_date', '')),
+                'name' => trim((string) $request->request->get('name', '')),
+                'last_name' => trim((string) $request->request->get('last_name', '')),
+                'middle_name' => trim((string) $request->request->get('middle_name', '')),
+                'mobile_phone' => trim((string) $request->request->get('mobile_phone', '')),
+                'home_phone' => trim((string) $request->request->get('home_phone', '')),
+                'work_phone' => trim((string) $request->request->get('work_phone', '')),
+                'email' => trim((string) $request->request->get('email', '')),
+                'secondary_email' => trim((string) $request->request->get('secondary_email', '')),
+                'social_name' => trim((string) $request->request->get('social_name', '')),
+                'number_of_children' => trim((string) $request->request->get('number_of_children', '')),
+                'gender' => $request->request->getInt('gender', 0),
+                'country' => $request->request->getInt('country', 0),
+                'marital_status' => $request->request->getInt('marital_status', 0),
+                'occupation' => $request->request->getInt('occupation', 0),
+                'religion' => $request->request->getInt('religion', 0),
+                'education_level' => $request->request->getInt('education_level', 0),
+            ];
 
-            if ($identification === '' || $name === '' || $lastName === '' || $mobilePhone === '' || $birthDate === '') {
+            if ($formData['identification'] === '' || $formData['name'] === '' || $formData['last_name'] === '' || $formData['mobile_phone'] === '' || $formData['birth_date'] === '') {
                 $this->addFlash('danger', 'Completa los campos obligatorios del paciente.');
             } else {
-                try {
-                    $birthDateAt = new \DateTimeImmutable($birthDate);
-                } catch (\Exception) {
-                    $this->addFlash('danger', 'La fecha de nacimiento no es válida.');
+                $exists = $this->entityManager->createQueryBuilder()
+                    ->select('p.id')
+                    ->from(Person::class, 'p')
+                    ->leftJoin('p.identificationType', 'it')
+                    ->where('p.identification = :identification')
+                    ->setParameter('identification', $formData['identification']);
 
-                    return $this->render('admission/patient/register.html.twig', [
-                        'page_title' => 'Registro de paciente',
-                        'identification_types' => $identificationTypes,
-                        'prefill_type_id' => $typeId,
-                        'prefill_identification' => $identification,
-                    ]);
+                if ($formData['identification_type'] > 0) {
+                    $exists->andWhere('it.id = :typeId')->setParameter('typeId', $formData['identification_type']);
                 }
 
+                if (!empty($exists->getQuery()->getScalarResult())) {
+                    $this->addFlash('warning', 'Ya existe un paciente con esa identificación.');
+                }
+            }
+
+            if (count($request->getSession()->getFlashBag()->peek('danger')) === 0 && count($request->getSession()->getFlashBag()->peek('warning')) === 0) {
+                try {
+                    $birthDateAt = new \DateTimeImmutable($formData['birth_date']);
+                } catch (\Exception) {
+                    $this->addFlash('danger', 'La fecha de nacimiento no es válida.');
+                    $birthDateAt = null;
+                }
+            }
+
+            if (count($request->getSession()->getFlashBag()->peek('danger')) === 0 && count($request->getSession()->getFlashBag()->peek('warning')) === 0) {
                 $person = new Person();
-                $person->setIdentification($identification);
-                $person->setName($name);
-                $person->setLastName($lastName);
-                $person->setMiddleName($middleName === '' ? null : $middleName);
-                $person->setMobilePhone($mobilePhone);
-                $person->setEmail($email === '' ? null : $email);
+                $person->setIdentification($formData['identification']);
+                $person->setName($formData['name']);
+                $person->setLastName($formData['last_name']);
+                $person->setMiddleName($formData['middle_name'] === '' ? null : $formData['middle_name']);
+                $person->setMobilePhone($formData['mobile_phone']);
+                $person->setHomePhone($formData['home_phone'] === '' ? null : $formData['home_phone']);
+                $person->setWorkPhone($formData['work_phone'] === '' ? null : $formData['work_phone']);
+                $person->setEmail($formData['email'] === '' ? null : $formData['email']);
+                $person->setSecondaryEmail($formData['secondary_email'] === '' ? null : $formData['secondary_email']);
+                $person->setSocialName($formData['social_name'] === '' ? null : $formData['social_name']);
+                $person->setNumberOfChildren($formData['number_of_children'] === '' ? null : (int) $formData['number_of_children']);
                 $person->setCreatedAt(new \DateTimeImmutable());
                 $person->setUpdatedAt(new \DateTimeImmutable());
                 $person->setBirthDateAt($birthDateAt);
 
-                if ($typeId > 0) {
-                    $type = $this->entityManager->find(IdentificationType::class, $typeId);
-                    if ($type instanceof IdentificationType) {
-                        $person->setIdentificationType($type);
-                    }
-                }
+                $this->assignRelation($person, IdentificationType::class, 'setIdentificationType', $formData['identification_type']);
+                $this->assignRelation($person, Gender::class, 'setGender', $formData['gender']);
+                $this->assignRelation($person, Country::class, 'setNacionality', $formData['country']);
+                $this->assignRelation($person, MaritalStatus::class, 'setMaritalStatus', $formData['marital_status']);
+                $this->assignRelation($person, Occupation::class, 'setOccupation', $formData['occupation']);
+                $this->assignRelation($person, Religion::class, 'setReligion', $formData['religion']);
+                $this->assignRelation($person, EducationLevel::class, 'setEducationLevel', $formData['education_level']);
 
                 $this->entityManager->persist($person);
                 $this->entityManager->flush();
@@ -84,16 +141,30 @@ class PatientRegistrationController extends AbstractTenantAwareController
                     'patientId' => $person->getId(),
                 ]);
             }
-
-            $prefillTypeId = $typeId;
-            $prefillIdentification = $identification;
         }
 
         return $this->render('admission/patient/register.html.twig', [
             'page_title' => 'Registro de paciente',
             'identification_types' => $identificationTypes,
-            'prefill_type_id' => $prefillTypeId,
-            'prefill_identification' => $prefillIdentification,
+            'genders' => $genders,
+            'countries' => $countries,
+            'marital_statuses' => $maritalStatuses,
+            'occupations' => $occupations,
+            'religions' => $religions,
+            'education_levels' => $educationLevels,
+            'form_data' => $formData,
         ]);
+    }
+
+    private function assignRelation(Person $person, string $className, string $setter, int $id): void
+    {
+        if ($id <= 0) {
+            return;
+        }
+
+        $entity = $this->entityManager->find($className, $id);
+        if ($entity !== null) {
+            $person->{$setter}($entity);
+        }
     }
 }

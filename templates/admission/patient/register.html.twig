@@ -18,7 +18,7 @@
                             <select id="identification_type" name="identification_type" class="form-select" required>
                                 <option value="">Seleccionar</option>
                                 {% for type in identification_types %}
-                                    <option value="{{ type.id }}" {% if prefill_type_id == type.id %}selected{% endif %}>
+                                    <option value="{{ type.id }}" {% if form_data.identification_type == type.id %}selected{% endif %}>
                                         {{ type.name }}
                                     </option>
                                 {% endfor %}
@@ -29,32 +29,118 @@
                             <input id="identification"
                                    name="identification"
                                    class="form-control"
-                                   value="{{ prefill_identification }}"
+                                   value="{{ form_data.identification }}"
                                    required>
                         </div>
                         <div class="col-md-4">
                             <label for="birth_date" class="form-label">Fecha Nacimiento *</label>
-                            <input id="birth_date" name="birth_date" type="date" class="form-control" required>
+                            <input id="birth_date" name="birth_date" type="date" class="form-control" value="{{ form_data.birth_date }}" required>
                         </div>
                         <div class="col-md-4">
                             <label for="name" class="form-label">Nombre *</label>
-                            <input id="name" name="name" class="form-control" required>
+                            <input id="name" name="name" class="form-control" value="{{ form_data.name }}" required>
                         </div>
                         <div class="col-md-4">
                             <label for="last_name" class="form-label">Apellido Paterno *</label>
-                            <input id="last_name" name="last_name" class="form-control" required>
+                            <input id="last_name" name="last_name" class="form-control" value="{{ form_data.last_name }}" required>
                         </div>
                         <div class="col-md-4">
                             <label for="middle_name" class="form-label">Apellido Materno</label>
-                            <input id="middle_name" name="middle_name" class="form-control">
+                            <input id="middle_name" name="middle_name" class="form-control" value="{{ form_data.middle_name }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="gender" class="form-label">Sexo</label>
+                            <select id="gender" name="gender" class="form-select">
+                                <option value="0">Seleccionar</option>
+                                {% for gender in genders %}
+                                    <option value="{{ gender.id }}" {% if form_data.gender == gender.id %}selected{% endif %}>
+                                        {{ gender.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="country" class="form-label">Nacionalidad</label>
+                            <select id="country" name="country" class="form-select">
+                                <option value="0">Seleccionar</option>
+                                {% for country in countries %}
+                                    <option value="{{ country.id }}" {% if form_data.country == country.id %}selected{% endif %}>
+                                        {{ country.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="marital_status" class="form-label">Estado civil</label>
+                            <select id="marital_status" name="marital_status" class="form-select">
+                                <option value="0">Seleccionar</option>
+                                {% for marital_status in marital_statuses %}
+                                    <option value="{{ marital_status.id }}" {% if form_data.marital_status == marital_status.id %}selected{% endif %}>
+                                        {{ marital_status.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="col-md-4">
                             <label for="mobile_phone" class="form-label">Teléfono Móvil *</label>
-                            <input id="mobile_phone" name="mobile_phone" class="form-control" required>
+                            <input id="mobile_phone" name="mobile_phone" class="form-control" value="{{ form_data.mobile_phone }}" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="home_phone" class="form-label">Teléfono fijo</label>
+                            <input id="home_phone" name="home_phone" class="form-control" value="{{ form_data.home_phone }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="work_phone" class="form-label">Teléfono trabajo</label>
+                            <input id="work_phone" name="work_phone" class="form-control" value="{{ form_data.work_phone }}">
                         </div>
                         <div class="col-md-4">
                             <label for="email" class="form-label">Email</label>
-                            <input id="email" name="email" type="email" class="form-control">
+                            <input id="email" name="email" type="email" class="form-control" value="{{ form_data.email }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="secondary_email" class="form-label">Email secundario</label>
+                            <input id="secondary_email" name="secondary_email" type="email" class="form-control" value="{{ form_data.secondary_email }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="social_name" class="form-label">Nombre social</label>
+                            <input id="social_name" name="social_name" class="form-control" value="{{ form_data.social_name }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="number_of_children" class="form-label">N° hijos</label>
+                            <input id="number_of_children" name="number_of_children" type="number" min="0" class="form-control" value="{{ form_data.number_of_children }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="occupation" class="form-label">Ocupación</label>
+                            <select id="occupation" name="occupation" class="form-select">
+                                <option value="0">Seleccionar</option>
+                                {% for occupation in occupations %}
+                                    <option value="{{ occupation.id }}" {% if form_data.occupation == occupation.id %}selected{% endif %}>
+                                        {{ occupation.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="religion" class="form-label">Religión</label>
+                            <select id="religion" name="religion" class="form-select">
+                                <option value="0">Seleccionar</option>
+                                {% for religion in religions %}
+                                    <option value="{{ religion.id }}" {% if form_data.religion == religion.id %}selected{% endif %}>
+                                        {{ religion.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="education_level" class="form-label">Nivel instrucción</label>
+                            <select id="education_level" name="education_level" class="form-select">
+                                <option value="0">Seleccionar</option>
+                                {% for education_level in education_levels %}
+                                    <option value="{{ education_level.id }}" {% if form_data.education_level == education_level.id %}selected{% endif %}>
+                                        {{ education_level.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
 
@@ -71,4 +157,3 @@
         </div>
     </div>
 {% endblock %}
-

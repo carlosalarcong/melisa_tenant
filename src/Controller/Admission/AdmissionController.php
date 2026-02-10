@@ -58,19 +58,22 @@ class AdmissionController extends AbstractTenantAwareController
                 ->select('p', 'it')
                 ->from(Person::class, 'p')
                 ->leftJoin('p.identificationType', 'it')
-                ->andWhere(
-                    'LOWER(p.identification) LIKE :term OR
-                     LOWER(p.name) LIKE :term OR
-                     LOWER(p.lastName) LIKE :term OR
-                     LOWER(CONCAT(p.name, \' \', p.lastName, \' \', COALESCE(p.middleName, \'\'))) LIKE :term'
-                )
-                ->setParameter('term', '%' . mb_strtolower($searchTerm) . '%')
                 ->orderBy('p.id', 'DESC')
                 ->setMaxResults(20);
 
             if ($selectedTypeId > 0) {
                 $qb->andWhere('it.id = :typeId')
-                    ->setParameter('typeId', $selectedTypeId);
+                    ->setParameter('typeId', $selectedTypeId)
+                    ->andWhere('LOWER(p.identification) LIKE :term')
+                    ->setParameter('term', '%' . mb_strtolower($searchTerm) . '%');
+            } else {
+                $qb->andWhere(
+                    'LOWER(p.identification) LIKE :term OR
+                     LOWER(p.name) LIKE :term OR
+                     LOWER(p.lastName) LIKE :term OR
+                     LOWER(CONCAT(p.name, \' \', p.lastName, \' \', COALESCE(p.middleName, \'\'))) LIKE :term'
+                )
+                ->setParameter('term', '%' . mb_strtolower($searchTerm) . '%');
             }
 
             $patients = $qb->getQuery()->getResult();

@@ -3,6 +3,7 @@
 namespace App\Controller\Admission;
 
 use App\Controller\AbstractTenantAwareController;
+use App\Entity\Tenant\Person;
 use Hakam\MultiTenancyBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,6 +19,12 @@ class AdmissionWizardController extends AbstractTenantAwareController
     #[Route('/step1/{patientId}', name: 'step1', methods: ['GET', 'POST'])]
     public function step1(Request $request, int $patientId): Response
     {
+        $patient = $this->entityManager->find(Person::class, $patientId);
+        if (!$patient instanceof Person) {
+            $this->addFlash('danger', 'Paciente no encontrado.');
+            return $this->redirectToRoute('app_admission_hospitalization_index');
+        }
+
         if ($request->isMethod('POST')) {
             $request->getSession()->set('admission_wizard', [
                 'patient_id' => $patientId,
@@ -29,6 +36,7 @@ class AdmissionWizardController extends AbstractTenantAwareController
 
         return $this->render('admission/wizard/step1.html.twig', [
             'patient_id' => $patientId,
+            'patient' => $patient,
         ]);
     }
 
@@ -87,4 +95,3 @@ class AdmissionWizardController extends AbstractTenantAwareController
         ]);
     }
 }
-
